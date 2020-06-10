@@ -33,7 +33,9 @@ jobs:
       - name: Install dependencies
         run: |
           install.packages("remotes")
-          remotes::install_deps(dependencies = TRUE)
+          remotes::install_local(dependencies = FALSE, force = TRUE)
+          remotes::install_local("cpp11test", dependencies = TRUE, INSTALL_opts = "--install-tests", force = TRUE)
+          remotes::install_local(dependencies = TRUE, force = TRUE)
           remotes::install_dev("pkgdown")
         shell: Rscript {0}
 
