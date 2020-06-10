@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -o pipefail
+
+Rscript -e 'pkgload::load_all("cpp11test", quiet = FALSE)' 2>&1 | perl -pe 's/(_?_Z\w+)/`c++filt $1`/eg'

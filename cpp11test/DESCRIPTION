@@ -1,0 +1,23 @@
+Package: cpp11test
+Title: A test suite and benchmark code for 'cpp11'
+Version: 0.0.0.9000
+Authors@R: 
+    c(person(given = "Jim",
+             family = "Hester",
+             role = c("aut", "cre"),
+             email = "james.f.hester@gmail.com",
+             comment = c(ORCID = "0000-0002-2739-7082")),
+      person(given = "RStudio",
+             role = c("cph", "fnd")))
+Description: Provides a test suite and benchmarking code for the 'cpp11' package.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LinkingTo: Rcpp, cpp11, testthat
+Suggests:
+    testthat,
+    xml2
+LazyData: true
+Roxygen: list(markdown = TRUE)
+SystemRequirements: C++11
+RoxygenNote: 7.1.0
+Remotes: jimhester/testthat@catch-detailed-output

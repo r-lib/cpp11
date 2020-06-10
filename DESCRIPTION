@@ -1,0 +1,49 @@
+Package: cpp11
+Title: A C++11 Interface for R's C Interface
+Version: 0.0.0.9000
+Authors@R: 
+    c(person(given = "Jim",
+             family = "Hester",
+             role = c("aut", "cre"),
+             email = "james.f.hester@gmail.com",
+             comment = c(ORCID = "0000-0002-2739-7082")),
+      person(given = "RStudio",
+             role = c("cph", "fnd")))
+Description: Provides a header only, C++11 interface to R's C interface.
+  Compared to other approaches 'cpp11' strives to be safe against long jumps
+  from the C API as well as C++ exceptions, conform to Rs normal semantics and
+  supports interaction with 'ALTREP' vectors.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+SystemRequirements: C++11
+RoxygenNote: 7.1.0
+Suggests:
+    bench,
+    cli,
+    callr,
+    covr,
+    decor,
+    desc,
+    dplyr,
+    glue,
+    ggplot2,
+    knitr,
+    lobstr,
+    pkgbuild,
+    pkgload,
+    purrr,
+    scales,
+    testthat,
+    cpp11test,
+    utils,
+    vctrs,
+    withr,
+    xml2,
+    rmarkdown
+Remotes:
+  r-lib/pkgbuild@cpp11,
+  jimhester/decor@userdefined,
+  rstudio/rmarkdown
+VignetteBuilder: knitr

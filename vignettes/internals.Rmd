@@ -1,0 +1,84 @@
+---
+title: "cpp11 internals"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{cpp11 internals}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The development repository for cpp11 is <https://github.com/r-lib/cpp11>.
+
+## Code organization
+
+cpp11 is a header only library, so all source code exposed to users lives in [inst/include].
+R code used to generate the exporting attributes and for `cpp11::source_cpp()` is in [R/].
+Tests for _only_ the code in [R/] is in [tests/]
+The rest of the code is in a separate [cpp11test/] package.
+Inside [cpp11test/src] files that start with `test-` are C++ tests using the [Catch](https://testthat.r-lib.org/reference/use_catch.html) support in testthat.
+In addition there are some regular R tests in [cpp11test/tests/testthat/].
+
+## Running tests
+
+All of the tests in both packages can be run by using `devtools::test()` from the cpp11 root directory.
+In order to calculate code coverage you need to source [coverage.R](https://github.com/r-lib/cpp11/blob/master/coverage.R), then run `cpp11_coverage()`, e.g. to generate a local coverage report.
+
+```r
+source("coverage.R")
+covr::report(cpp11_coverage())
+```
+
+## Naming conventions
+
+All header files are named with a `.hpp` extension.
+All source files are named with a `.cpp` extension.
+Public header files should be put in `inst/include/cpp11`
+Read only vector classes and free functions should be put in the `cpp11` namespace.
+Writable vector class should be put in the `cpp11::writable` namespace.
+Private objects should be put in the `cpp11::internal` namespace.
+
+## Vector classes
+
+All of the basic vector classes are class templates, the base template is defined in [cpp11/vector.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/vector.hpp)
+The template parameter is the type of **value** the vector stores.
+This differs from Rcpp, whose first parameter is the R API type the vector stores.
+
+The template The class first has its declarations, then definitions further down in the file.
+Specializations for the various types are in separate files, e.g. [cpp11/doubles.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/double.hpp)
+
+## Coercion functions
+
+There are two different coercion functions
+
+`as_sexp()` takes a C++ object and coerces it to a SEXP object, so it can be used in R.
+`as_cpp<>()` is a templated function that takes a SEXP and creates a C++ object from it
+
+The various methods for both functions are defined in [cpp11/as.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/as.hpp)
+
+This is definitely the most complex part of the cpp11 code.
+These functions use [template metaprogramming](https://en.wikipedia.org/wiki/Template_metaprogramming).
+In particular the [substitution failure is not an error (SFINAE)](https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error) technique to overload the functions.
+If we could use C++20 we could use [Concepts](https://en.cppreference.com/w/cpp/language/constraints) but alas.
+The most common types are included in the test suite and should work, more exotic types found in real projects may cause issues.
+
+Some useful links on SFINAE
+
+- https://www.fluentcpp.com/2018/05/15/make-sfinae-pretty-1-what-value-sfinae-brings-to-code/, https://www.fluentcpp.com/2018/05/18/make-sfinae-pretty-2-hidden-beauty-sfinae/
+
+## Protection
+
+cpp11 uses an idea proposed by [Luke Tierney](https://github.com/RcppCore/Rcpp/issues/1081#issuecomment-630330838) to use a double linked list with the head preserved to protect objects cpp11 is protecting.
+Each node in the list uses the head (`CAR`) part to point to the previous node, and the `CDR` part to point to the next node. The `TAG` is used to point to the object being protected.
+The head and tail of the list have `R_NilValue` as their `CAR` and `CDR` pointers respectively.
+Calling `protect_sexp()` with a regular R object will add a new node to the list and return a protect token corresponding to the node added.
+Calling `release_protect()` on this returned token will release the protection by unlinking the node from the linked list.
+This scheme scales in O(1) time to release or insert an object vs O(N) or worse time with `R_PreserveObject()` / `R_ReleaseObject()`.
+
+These functions are defined in protect.hpp.

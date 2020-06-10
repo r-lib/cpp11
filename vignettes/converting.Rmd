@@ -1,0 +1,126 @@
+---
+title: "Converting from Rcpp"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Converting from Rcpp}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(cpp11)
+```
+
+# Converting from Rcpp
+
+In many cases there is no need to convert a package from Rcpp.
+If the code is already written and you don't have a very compelling need to use cpp11 I would recommend you continue to use Rcpp.
+However if you _do_ feel like your project will benefit from using cpp11 this vignette will provide some guidance and doing the conversion.
+
+It is also a place to highlight some of the largest differences between Rcpp and cpp11.
+
+## Class comparison table
+
+| Rcpp            | cpp11 (read-only) | cpp11 (writable)         | cpp11 header          |
+| ---             | ---                 | ---                        | ---                     |
+| NumericVector   | doubles       | writable::doubles    | <cpp11/doubles.hpp>    |
+| IntegerVector   | integers      | writable::integers   | <cpp11/integers.hpp>   |
+| CharacterVector | strings    | writable::strings | <cpp11/strings.hpp> |
+| RawVector       | raws          | writable::raws       | <cpp11/raws.hpp>       |
+| List            | list                | writable::list             | <cpp11/list.hpp>      |
+| RObject         | sexp                |                            | <cpp11/sexp.hpp>      |
+| wrap            | as_sexp             |                            | <cpp11/as.hpp>        |
+| as              | as_cpp              |                            | <cpp11/as.hpp>        |
+
+## Incomplete list of Rcpp features not included in cpp11
+
+- None of [Modules](https://CRAN.R-project.org/package=Rcpp/vignettes/Rcpp-modules.pdf)
+- None of [Sugar](https://CRAN.R-project.org/package=Rcpp/vignettes/Rcpp-sugar.pdf)
+- Some parts of [Attributes](https://CRAN.R-project.org/package=Rcpp/vignettes/Rcpp-attributes.pdf)
+  - No dependencies
+  - No random number generator restoration
+  - No support for roxygen2 comments
+  - No interfaces
+
+## Read-only vs writable vectors
+
+The largest difference between cpp11 and Rcpp classes is that Rcpp classes modify their data in place, whereas cpp11 classes require copying the data to a writable class for modification.
+
+The default classes, e.g. `cpp11::doubles` are *read-only* classes that do not permit modification.
+If you want to modify the data you need to use the classes in the `cpp11::writable` namespace, e.g. `cpp11::writable::doubles`.
+
+In addition use the `writable` variants if you need to create a new R vector entirely in C++.
+
+## Appending behavior
+
+One major difference in Rcpp and cpp11 is how vectors are grown.
+Rcpp vectors have a `push_back()` method, but unlike `std::vector()` no additional space is reserved when pushing.
+This makes calling `push_back()` repeatably very expensive, as the entire vector has to be copied each call.
+
+In contrast `cpp11` vectors grow efficiently, reserving extra space.
+Because of this you can do ~10,000,00 vector appends with cpp11 in approximately the same amount of time that Rcpp does 10,000, as this benchmark demonstrates.
+
+```{r, message = FALSE, eval = cpp11test:::should_run_benchmarks()}
+grid <- expand.grid(len = 10 ^ (0:7), pkg = "cpp11", stringsAsFactors = FALSE)
+grid <- rbind(
+  grid,
+  expand.grid(len = 10 ^ (0:4), pkg = "rcpp", stringsAsFactors = FALSE)
+)
+b_grow <- bench::press(.grid = grid,
+  {
+    fun = match.fun(sprintf("%sgrow_", ifelse(pkg == "cpp11", "", paste0(pkg, "_"))))
+    bench::mark(
+      fun(len)
+    )
+  }
+)[c("len", "pkg", "min", "mem_alloc", "n_itr", "n_gc")]
+saveRDS(b_grow, "growth.Rds", version = 2)
+```
+
+```{r, echo = FALSE, dev = "svg"}
+b_grow <- readRDS("growth.Rds")
+library(ggplot2)
+ggplot(b_grow, aes(x = len, y = min, color = pkg)) +
+  geom_point() +
+  geom_line() +
+  bench::scale_y_bench_time() +
+  scale_x_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+  ) +
+  coord_fixed() +
+  theme(panel.grid.minor = element_blank()) +
+  labs(title = "log-log plot of vector size vs construction time", x = NULL, y = NULL)
+```
+
+```{r, echo = FALSE}
+knitr::kable(b_grow)
+```
+
+## Mechanics of converting a package from Rcpp
+
+1. Add cpp11 to `LinkingTo`
+1. Convert all instances of `// [[Rcpp::export]]` to `[[cpp11::export]]`
+1. Clean and recompile the package, e.g. `pkgbuild::clean_dll()` `pkgload::load_all()`
+1. Run tests `devtools::test()`
+1. Start converting function by function
+   - Remember you can usually inter-convert between cpp11 and Rcpp classes by going through `SEXP` if needed.
+   - Converting the code a bit at a time (and regularly running your tests) is the best way to do the conversion correctly and make progress
+
+## Calling R from C++
+
+```c++
+Rcpp::Function as_tibble("as_tibble", Rcpp::Environment::namespace_env("tibble"));
+as_tibble(x, Rcpp::Named(".rows", num_rows), Rcpp::Named(".name_repair", name_repair));
+```
+
+```c++
+using namespace cpp11::literals; // so we can use ""_nm syntax
+
+cpp11::function as_tibble = cpp11::package("tibble")["as_tibble"];
+return as_tibble(x, ".rows"_nm = num_rows, ".name_repair"_nm = name_repair);
+```

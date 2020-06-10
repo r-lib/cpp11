@@ -1,0 +1,52 @@
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+name: test-coverage
+
+jobs:
+  test-coverage:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: r-lib/actions/setup-r@master
+
+      - uses: r-lib/actions/setup-pandoc@master
+
+      - name: Query dependencies
+        run: |
+          install.packages('remotes')
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+        shell: Rscript {0}
+
+      - name: Cache R packages
+        uses: actions/cache@v1
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: macOS-r-4.0-1-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: macOS-r-4.0-1-
+
+      - name: Install dependencies
+        run: |
+          install.packages(c("remotes"))
+          remotes::install_local(dependencies = TRUE, INSTALL_opts = "--install-tests", force = TRUE)
+          remotes::install_github("r-lib/covr")
+        shell: Rscript {0}
+
+      - name: Setup coverage
+        run: |
+          mkdir ~/.R
+          echo 'CX11FLAGS+=-O0 --coverage\nLDFLAGS+=--coverage' >> ~/.R/Makevars
+
+      - name: Test coverage
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          source("coverage.R")
+          covr::codecov(coverage = cpp11_coverage())
+        shell: Rscript {0}

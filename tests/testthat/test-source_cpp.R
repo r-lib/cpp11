@@ -1,0 +1,36 @@
+test_that("source_cpp works with the `code` parameter", {
+  dll_info <- source_cpp(
+    code = '
+    #include "cpp11/integers.hpp"
+
+    [[cpp11::export]]
+    int num_odd(cpp11::integers x) {
+      int total = 0;
+      for (int val : x) {
+        if ((val % 2) == 1) {
+          ++total;
+        }
+      }
+      return total;
+    }
+    ', clean = TRUE)
+    on.exit(dyn.unload(dll_info[["path"]]))
+
+    expect_equal(num_odd(as.integer(c(1:10, 15, 23))), 7)
+})
+
+test_that("source_cpp works with the `file` parameter", {
+  tf <- tempfile(fileext = ".cpp")
+  writeLines(
+    "[[cpp11::export]]
+    bool always_true() {
+      return true;
+    }
+    ", tf)
+  on.exit(unlink(tf))
+
+  dll_info <- source_cpp(tf, clean = TRUE, quiet = TRUE)
+  on.exit(dyn.unload(dll_info[["path"]]), add = TRUE)
+
+  expect_true(always_true())
+})

@@ -1,0 +1,9 @@
+script.R
+README.html
+.Rproj.user
+.clangd/
+cpp11test/compile_commands.json
+cpp11test/src/Makevars
+compile_flags.txt
+inst/doc
+vignettes/*_cache

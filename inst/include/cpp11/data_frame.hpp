@@ -1,0 +1,79 @@
+#pragma once
+
+#include "cpp11/list.hpp"
+
+namespace cpp11 {
+
+namespace writable {
+class data_frame;
+}
+
+class data_frame : public list {
+  using list::list;
+
+  friend class writable::data_frame;
+
+  /* we cannot use Rf_getAttrib because it has a special case for c(NA, -n) and creates
+   * the full vector */
+  static SEXP get_attrib0(SEXP x, SEXP sym) {
+    for (SEXP attr = ATTRIB(x); attr != R_NilValue; attr = CDR(attr)) {
+      if (TAG(attr) == sym) {
+        return CAR(attr);
+      }
+    }
+
+    return R_NilValue;
+  }
+
+  static int calc_nrow(SEXP x) {
+    auto nms = get_attrib0(x, R_RowNamesSymbol);
+    bool has_short_rownames =
+        (Rf_isInteger(nms) && Rf_xlength(nms) == 2 && INTEGER(nms)[0] == NA_INTEGER);
+    if (has_short_rownames) {
+      return abs(INTEGER(nms)[1]);
+    }
+
+    if (!Rf_isNull(nms)) {
+      return Rf_xlength(nms);
+    }
+
+    if (Rf_xlength(x) == 0) {
+      return 0;
+    }
+
+    return Rf_xlength(VECTOR_ELT(x, 0));
+  }
+
+ public:
+  /* Adapted from
+   * https://github.com/wch/r-source/blob/f2a0dfab3e26fb42b8b296fcba40cbdbdbec767d/src/main/attrib.c#L198-L207
+   */
+  R_xlen_t nrow() const { return calc_nrow(*this); }
+  R_xlen_t ncol() const { return size(); }
+};
+
+namespace writable {
+class data_frame : public cpp11::data_frame {
+ private:
+  writable::list set_data_frame_attributes(writable::list&& x) {
+    x.attr(R_RowNamesSymbol) = {NA_INTEGER, -static_cast<int>(calc_nrow(x))};
+    x.attr(R_ClassSymbol) = "data.frame";
+    return std::move(x);
+  }
+
+ public:
+  data_frame(const SEXP& data) : cpp11::data_frame(set_data_frame_attributes(data)) {}
+  data_frame(const SEXP& data, bool is_altrep)
+      : cpp11::data_frame(set_data_frame_attributes(data), is_altrep) {}
+  data_frame(std::initializer_list<list> il)
+      : cpp11::data_frame(set_data_frame_attributes(writable::list(il))) {}
+  data_frame(std::initializer_list<named_arg> il)
+      : cpp11::data_frame(set_data_frame_attributes(writable::list(il))) {}
+
+  using cpp11::data_frame::ncol;
+  using cpp11::data_frame::nrow;
+};
+
+}  // namespace writable
+
+}  // namespace cpp11
