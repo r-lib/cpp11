@@ -46,22 +46,22 @@ For more advanced topics, the _Effective C++_ series by Scott Meyers is a popula
 
 ### Outline
 
-* Section [rcpp-intro](#rcpp-intro) teaches you how to write C++ by converting simple R functions to their C++ equivalents.
+* Section [intro](#intro) teaches you how to write C++ by converting simple R functions to their C++ equivalents.
   You'll learn how C++ differs from R, and what the key scalar, vector, and matrix classes are called.
 
-* Section [source_cpp](#sourcecpp) shows you how to use `cpp11::source_cpp()` to load a C++ file from disk in the same way you use `source()` to load a file of R code.
+* Section [source_cpp](#source-cpp) shows you how to use `cpp11::source_cpp()` to load a C++ file from disk in the same way you use `source()` to load a file of R code.
 
-* Section [cpp11-classes](#cpp11-classes) discusses how to modify attributes from cpp11, and mentions some of the other important classes.
+* Section [classes](#classes) discusses how to modify attributes from cpp11, and mentions some of the other important classes.
 
-* Section [cpp11-na](#cpp11-na) teaches you how to work with R's missing values in C++.
+* Section [na](#na) teaches you how to work with R's missing values in C++.
 
 * Section [stl](#stl) shows you how to use some of the most important data structures and algorithms from the standard template library, or STL, built-in to C++.
 
-* Section [cpp11-case-studies](cpp11-case-studies) shows two real case studies where cpp11 was used to get considerable performance improvements.
+* Section [case-studies](#case-studies) shows two real case studies where cpp11 was used to get considerable performance improvements.
 
-* Section [cpp11-package](#cpp11-package) teaches you how to add C++ code to an R package.
+* Section [package](#package) teaches you how to add C++ code to an R package.
 
-* Section [cpp11-more](#cpp11-more) concludes the vignette with pointers to more resources to help you learn cpp11 and C++.
+* Section [more](#more) concludes the vignette with pointers to more resources to help you learn cpp11 and C++.
 
 ### Prerequisites
 
@@ -79,7 +79,7 @@ To get it:
 * On Mac, install Xcode from the app store.
 * On Linux, `sudo apt-get install r-base-dev` or similar.
 
-## Getting started with C++ {#rcpp-intro}
+## Getting started with C++ {#intro}
 
 `cpp_function()` allows you to write C++ functions in R:
 
@@ -294,7 +294,7 @@ The C++ function avoids this overhead because it uses an intermediate scalar.
 600 / (5e-3 - 2e-3)
 ```
 
-### Using source_cpp {#source_cpp}
+### Using source_cpp {#source-cpp}
 
 So far, we've used inline C++ with `cpp_function()`.
 This makes presentation simpler, but for real problems, it's usually easier to use stand-alone C++ files and then source them into R using `source_cpp()`.
@@ -422,7 +422,7 @@ int f4(cpp11::function pred, list x) {
        Whenever implementing a numerical algorithm, it's always good to check
        what is already known about the problem.
 
-## Other classes {#rcpp-classes}
+## Other classes {#classes}
 
 You've already seen the basic vector classes (`integers`, `doubles`, `logicals`, `strings`) and their scalar (`int`, `double`, `bool`, `string`) equivalents.
 cpp11 also provides wrappers for other base data types.
@@ -525,7 +525,7 @@ doubles attribs() {
 }
 ```
 
-## Missing values {#cpp11-na}
+## Missing values {#na}
 If you're working with missing values, you need to know two things:
 * How R's missing values behave in C++'s scalars (e.g., `double`).
 * How to get and set missing values in vectors (e.g., `doubles`).
@@ -891,7 +891,7 @@ To practice using the STL algorithms and data structures, implement the followin
 1. `setdiff()`, `union()`, and `intersect()` for integers using sorted ranges
    and `set_union`, `set_intersection` and `set_difference`.
 
-## Case studies {#rcpp-case-studies}
+## Case studies {#case-studies}
 
 The following case studies illustrate some real life uses of C++ to replace slow R code.
 
@@ -1064,7 +1064,7 @@ Not surprisingly, our original approach with loops is very slow.
 Vectorising in R gives a huge speedup, and we can eke out even more performance (about ten times) with the C++ loop.
 I was a little surprised that the C++ was so much faster, but it is because the R version has to create 11 vectors to store intermediate results, where the C++ code only needs to create 1.
 
-## Using cpp11 in a package {#cpp11-package}
+## Using cpp11 in a package {#package}
 
 The same C++ code that is used with `source_cpp()` can also be bundled into a package.
 There are several benefits of moving code from a stand-alone C++ source file to a package:
@@ -1088,7 +1088,7 @@ This function scans the C++ files for `cpp11::export` attributes and generates t
 Re-run `cpp11:generate_exports()` whenever functions are added, removed, or have their signatures changed.
 This is done automatically by the pkgbuild package.
 
-## Learning more {#cpp11-more}
+## Learning more {#more}
 
 C++ is a large, complex language that takes years to master.
 If you would like to dive deeper or write more complex functions other resources I've found helpful in learning C++ are:
