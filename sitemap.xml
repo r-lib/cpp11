@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://cpp11.r-lib.org/index.html</loc>
+  </url>
+  <url>
+    <loc>https://cpp11.r-lib.org/reference/cpp11-package.html</loc>
+  </url>
+  <url>
+    <loc>https://cpp11.r-lib.org/reference/generate_exports.html</loc>
+  </url>
+  <url>
+    <loc>https://cpp11.r-lib.org/reference/source_cpp.html</loc>
+  </url>
+  <url>
+    <loc>https://cpp11.r-lib.org/reference/vendor_cpp11.html</loc>
+  </url>
+  <url>
+    <loc>https://cpp11.r-lib.org/articles/converting.html</loc>
+  </url>
+  <url>
+    <loc>https://cpp11.r-lib.org/articles/cpp11.html</loc>
+  </url>
+  <url>
+    <loc>https://cpp11.r-lib.org/articles/internals.html</loc>
+  </url>
+  <url>
+    <loc>https://cpp11.r-lib.org/articles/motivations.html</loc>
+  </url>
+</urlset>
