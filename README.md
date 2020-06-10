@@ -10,7 +10,7 @@ Its goals and syntax are similar to the excellent [Rcpp](https://cran.r-project.
 
 ## Getting started
 
-See [vignette("cpp11")](vignettes/cpp11.Rmd) to get started using cpp11.
+See [vignette("cpp11")](https://cpp11.r-lib.org/articles/cpp11.html) to get started using cpp11.
 
 ## Motivations
 
@@ -21,26 +21,26 @@ Adding these features to Rcpp would require a great deal work, or in some cases 
 
 Changes that motivated cpp11 include:
 
-- Enforcing [copy-on-write semantics](vignettes/motivations.Rmd#copy-on-write-semantics).
-- Improving the [safety](vignettes/motivations.Rmd#improve-safety) of using the R API from C++ code.
-- Supporting [ALTREP objects](vignettes/motivations.Rmd#altrep-support).
-- Using [UTF-8 strings](vignettes/motivations.Rmd#utf-8-everywhere) everywhere.
-- Applying newer [C++11 features](vignettes/motivations.Rmd#c11-features).
-- Having a more straightforward, [simpler implementation](vignettes/motivations.Rmd#simpler-implementation).
-- Faster [compilation time](vignettes/motivations.Rmd#compilation-speed) with lower memory requirements.
-- Being *completely* [header only](vignettes/motivations.Rmd#header-only) to avoid ABI issues.
-- More robust [protection](vignettes/motivations.Rmd#protection) using a much more efficient linked list data structure.
-- [Growing vectors](vignettes/motivations.Rmd#growing-vectors) more efficiently.
+- Enforcing [copy-on-write semantics](https://cpp11.r-lib.org/articles/motivations.html#copy-on-write-semantics).
+- Improving the [safety](https://cpp11.r-lib.org/articles/motivations.html#improve-safety) of using the R API from C++ code.
+- Supporting [ALTREP objects](https://cpp11.r-lib.org/articles/motivations.html#altrep-support).
+- Using [UTF-8 strings](https://cpp11.r-lib.org/articles/motivations.html#utf-8-everywhere) everywhere.
+- Applying newer [C++11 features](https://cpp11.r-lib.org/articles/motivations.html#c11-features).
+- Having a more straightforward, [simpler implementation](https://cpp11.r-lib.org/articles/motivations.html#simpler-implementation).
+- Faster [compilation time](https://cpp11.r-lib.org/articles/motivations.html#compilation-speed) with lower memory requirements.
+- Being *completely* [header only](https://cpp11.r-lib.org/articles/motivations.html#header-only) to avoid ABI issues.
+- More robust [protection](https://cpp11.r-lib.org/articles/motivations.html#protection) using a much more efficient linked list data structure.
+- [Growing vectors](https://cpp11.r-lib.org/articles/motivations.html#growing-vectors) more efficiently.
 
-See [vignette("motivations")](vignettes/motivations.Rmd) for full details on the motivations for writing cpp11.
+See [vignette("motivations")](https://cpp11.r-lib.org/articles/motivations.html) for full details on the motivations for writing cpp11.
 
 ## Conversion from Rcpp
 
-See [vignette("converting")](vignettes/converting.Rmd) if you are already familiar with Rcpp or have an existing package that uses Rcpp and want to convert it to use cpp11.
+See [vignette("converting")](https://cpp11.r-lib.org/articles/converting.html) if you are already familiar with Rcpp or have an existing package that uses Rcpp and want to convert it to use cpp11.
 
 ## Internals
 
-See [vignette("internals")](vignettes/internals.Rmd) for details on the cpp11 implementation or if you would like to contribute to cpp11.
+See [vignette("internals")](https://cpp11.r-lib.org/articles/internals.html) for details on the cpp11 implementation or if you would like to contribute to cpp11.
 
 ## Thanks
 
