@@ -15,8 +15,6 @@ knitr::opts_chunk$set(
 library(cpp11)
 ```
 
-# Converting from Rcpp
-
 In many cases there is no need to convert a package from Rcpp.
 If the code is already written and you don't have a very compelling need to use cpp11 I would recommend you continue to use Rcpp.
 However if you _do_ feel like your project will benefit from using cpp11 this vignette will provide some guidance and doing the conversion.
