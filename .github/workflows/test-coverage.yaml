@@ -44,8 +44,6 @@ jobs:
           echo 'CX11FLAGS+=-O0 --coverage\nLDFLAGS+=--coverage' >> ~/.R/Makevars
 
       - name: Test coverage
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           source("coverage.R")
           covr::codecov(coverage = cpp11_coverage())
