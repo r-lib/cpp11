@@ -1,6 +1,7 @@
 #include <vector>
-#include "Rcpp.h"
 #include "cpp11/sexp.hpp"
+
+#include "Rcpp.h"
 
 [[cpp11::export]] void cpp11_release_(int n) {
   std::vector<cpp11::sexp> x;

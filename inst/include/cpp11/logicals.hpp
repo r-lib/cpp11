@@ -1,10 +1,10 @@
 #pragma once
 
-#include <algorithm>              // for min
-#include <array>                  // for array
-#include <initializer_list>       // for initializer_list
-#include <stdexcept>              // for out_of_range
-#include "R_ext/Boolean.h"        // for Rboolean, (anonymous)
+#include <algorithm>         // for min
+#include <array>             // for array
+#include <initializer_list>  // for initializer_list
+#include <stdexcept>         // for out_of_range
+#include "cpp11/R.hpp"
 #include "cpp11/named_arg.hpp"  // for named_arg
 #include "cpp11/protect.hpp"    // for protect_sexp, Rf_allocVector
 #include "cpp11/vector.hpp"     // for vector, vector<>::proxy, vector<>::...

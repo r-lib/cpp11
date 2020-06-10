@@ -61,7 +61,7 @@ context("logicals-C++") {
 
     x.push_back(TRUE);
     x.push_back(FALSE);
-    x.push_back(TRUE);
+    x.push_back(NA_LOGICAL);
     x.push_back(FALSE);
     x.push_back(TRUE);
 
@@ -71,7 +71,7 @@ context("logicals-C++") {
 
     expect_true(x.size() == 4);
     expect_true(x[0] == FALSE);
-    expect_true(x[1] == TRUE);
+    expect_true(x[1] == NA_LOGICAL);
     expect_true(x[2] == FALSE);
     expect_true(x[3] == TRUE);
 
@@ -79,7 +79,7 @@ context("logicals-C++") {
 
     expect_true(x.size() == 3);
     expect_true(x[0] == FALSE);
-    expect_true(x[1] == TRUE);
+    expect_true(x[1] == NA_LOGICAL);
     expect_true(x[2] == TRUE);
   }
   test_that("logicals.iterator* = ") {

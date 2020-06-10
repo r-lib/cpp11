@@ -1,5 +1,23 @@
 #pragma once
 
+#include <limits>
+
+#include "R_ext/Arith.h"
+
+#undef FALSE
+#undef TRUE
+#undef NA_LOGICAL
+
+extern "C" {
+typedef enum {
+  FALSE = 0,
+  TRUE = 1,
+  NA_LOGICAL = std::numeric_limits<int>::min()
+} Rboolean;
+}
+
+#define R_EXT_BOOLEAN_H_
+
 #define R_NO_REMAP
 #define STRICT_R_HEADERS
 #include "Rinternals.h"

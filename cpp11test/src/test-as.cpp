@@ -2,8 +2,9 @@
 #include <deque>
 #include <string>
 #include <vector>
-#include "Rcpp.h"
 #include "cpp11/declarations.hpp"
+
+#include "Rcpp.h"
 
 context("as_cpp-C++") {
   test_that("as_cpp<integer>(INTSEXP)") {
@@ -358,8 +359,7 @@ context("as_cpp-C++") {
   }
 
   test_that("as_sexp(vector<cpp11::string>)") {
-    SEXP s1 =
-        PROTECT(cpp11::as_sexp(std::vector<cpp11::string>({"foo", "bar", "baz"})));
+    SEXP s1 = PROTECT(cpp11::as_sexp(std::vector<cpp11::string>({"foo", "bar", "baz"})));
 
     expect_true(Rf_isString(s1));
     expect_true(Rf_xlength(s1) == 3);

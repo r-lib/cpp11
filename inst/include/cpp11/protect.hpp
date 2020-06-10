@@ -1,11 +1,11 @@
 #pragma once
 
-#include <exception>        // for exception
-#include "R_ext/Boolean.h"  // for Rboolean
-#include "R_ext/Error.h"    // for Rf_error
-#include "R_ext/Utils.h"    // for R_CheckUserInterrupt
-#include "Rversion.h"       // for R_VERSION, R_Version
-#include "cpp11/R.hpp"      // for SEXP, SEXPREC, R_MakeUnwindCont, R_Preser...
+#include <exception>    // for exception
+#include "cpp11/R.hpp"  // for SEXP, SEXPREC, R_MakeUnwindCont, R_Preser...
+
+#include "R_ext/Error.h"  // for Rf_error
+#include "R_ext/Utils.h"  // for R_CheckUserInterrupt
+#include "Rversion.h"     // for R_VERSION, R_Version
 
 namespace cpp11 {
 class unwind_exception : public std::exception {

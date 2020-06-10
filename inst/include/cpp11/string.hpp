@@ -1,8 +1,9 @@
 #pragma once
 
 #include <string>
-#include "R_ext/Memory.h"       // for vmaxget, vmaxset
-#include "cpp11/R.hpp"        // for SEXP, SEXPREC, Rf_translateCharUTF8
+#include "cpp11/R.hpp"  // for SEXP, SEXPREC, Rf_translateCharUTF8
+
+#include "R_ext/Memory.h"     // for vmaxget, vmaxset
 #include "cpp11/protect.hpp"  // for unwind_protect, protect, protect::fun...
 #include "cpp11/sexp.hpp"
 

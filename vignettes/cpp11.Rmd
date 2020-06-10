@@ -557,7 +557,7 @@ However, as we'll see in the following sections, things are not quite as straigh
 #### Integers
 With integers, missing values are stored as the smallest integer.
 If you don't do anything to them, they'll be preserved.
-But, since C++ doesn't know that the smallest integer has this special behaviour, if you do anything to it you're likely to get an incorrect value: for example, `eval_cpp('NA_INTEGER + 1')`` gives -2147483647.
+But, since C++ doesn't know that the smallest integer has this special behaviour, if you do anything to it you're likely to get an incorrect value: for example, `eval_cpp('NA_INTEGER + 1')` gives -2147483647.
 
 So if you want to work with missing values in integers, either use a length 1 `integers` or be very careful with your code.
 
@@ -609,13 +609,11 @@ list missing_sampler() {
   return writable::list({
     writable::doubles({NA_REAL}),
     writable::integers({NA_INTEGER}),
-//  writable::logicals({NA_LOGICAL}),
-//  writable::strings({NA_STRING})
+    writable::logicals({NA_LOGICAL}),
+    writable::strings({NA_STRING})
   });
 }
 ```
-
-TODO: get NAs for logical and strings working for this example
 
 ```{r}
 str(missing_sampler())

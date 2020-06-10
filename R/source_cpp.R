@@ -47,8 +47,11 @@ source_cpp <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   suppressWarnings(
     all_decorations <- decor::cpp_decorations(dir, is_attribute = TRUE)
   )
-  exports <- get_exported_functions(all_decorations, "cpp11")
+  cli_suppress(
+    exports <- get_exported_functions(all_decorations, "cpp11")
+  )
   cpp_functions_definitions <- generate_cpp_functions(exports)
+
   exports_file <- file.path(dir, "src", "cpp11-exports.cpp")
   writeLines(c('#include "cpp11/declarations.hpp"', "using namespace cpp11;", cpp_functions_definitions), exports_file)
 
