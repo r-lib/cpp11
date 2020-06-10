@@ -12,5 +12,6 @@ coverage:
         target: auto
         threshold: 1%
         informational: true
-  fixes:
-    "::inst/"
+
+fixes:
+  "::inst/"
