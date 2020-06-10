@@ -130,6 +130,19 @@ context("strings-C++") {
     UNPROTECT(1);
   }
 
+  test_that("NA_STRING constructor") {
+    cpp11::writable::strings x({NA_STRING});
+
+    expect_true(x.size() == 1);
+    expect_true(x[0] == NA_STRING);
+
+    cpp11::writable::strings y({NA_STRING, "foo"});
+
+    expect_true(y.size() == 2);
+    expect_true(y[0] == NA_STRING);
+    expect_true(y[1] == "foo");
+  }
+
   // test_that("writable::strings(ALTREP_SEXP)") {
   // SEXP x = PROTECT(R_compact_uint8_trange(1, 5));
   //// Need to find (or create) an altrep class that implements duplicate.

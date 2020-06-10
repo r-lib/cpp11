@@ -1,8 +1,8 @@
 #pragma once
 
-#include <initializer_list>       // for initializer_list
-#include <stdexcept>              // for out_of_range
-#include <string>                 // for basic_string
+#include <initializer_list>     // for initializer_list
+#include <stdexcept>            // for out_of_range
+#include <string>               // for basic_string
 #include "cpp11/R.hpp"          // for SET_STRING_ELT, SEXP, SEXPREC, R_Pr...
 #include "cpp11/as.hpp"         // for as_sexp
 #include "cpp11/named_arg.hpp"  // for named_arg
@@ -70,6 +70,27 @@ inline vector<string>::proxy::operator string() const {
 
 inline bool operator==(const vector<string>::proxy& lhs, string rhs) {
   return static_cast<string>(lhs).operator==(static_cast<std::string>(rhs).c_str());
+}
+
+inline SEXP alloc_or_copy(const SEXP& data) {
+  switch (TYPEOF(data)) {
+    case CHARSXP:
+      return cpp11::vector<string>(safe[Rf_allocVector](STRSXP, 1));
+    case STRSXP:
+      return safe[Rf_shallow_duplicate](data);
+    default:
+      throw type_error(STRSXP, TYPEOF(data));
+  }
+}
+
+template <>
+inline vector<string>::vector(const SEXP& data)
+    : cpp11::vector<string>(alloc_or_copy(data)),
+      protect_(protect_sexp(data_)),
+      capacity_(length_) {
+  if (TYPEOF(data) == CHARSXP) {
+    SET_STRING_ELT(data_, 0, data);
+  }
 }
 
 template <>
