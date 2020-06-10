@@ -47,3 +47,5 @@ Remotes:
   jimhester/decor@userdefined,
   rstudio/rmarkdown
 VignetteBuilder: knitr
+URL: https://github.com/r-lib/cpp11
+BugReports: https://github.com/r-lib/cpp11/issues
