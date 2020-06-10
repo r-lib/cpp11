@@ -79,7 +79,7 @@ b_grow <- bench::press(.grid = grid,
 saveRDS(b_grow, "growth.Rds", version = 2)
 ```
 
-```{r, echo = FALSE, dev = "svg"}
+```{r, echo = FALSE, dev = "svg", fig.ext = "svg"}
 b_grow <- readRDS("growth.Rds")
 library(ggplot2)
 ggplot(b_grow, aes(x = len, y = min, color = pkg)) +
