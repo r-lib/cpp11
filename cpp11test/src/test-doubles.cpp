@@ -2,6 +2,7 @@
 #include <cstring>
 #include "cpp11/doubles.hpp"
 #include "cpp11/sexp.hpp"
+#include "cpp11/strings.hpp"
 
 context("doubles-C++") {
   test_that("doubles::vector()") {
@@ -171,8 +172,7 @@ context("doubles-C++") {
     expect_true(y.data() != x.data());
     expect_true(y.is_altrep() == x.is_altrep());
 
-    cpp11::writable::doubles z(
-        Rf_coerceVector(R_compact_intrange(1, 5), REALSXP));
+    cpp11::writable::doubles z(Rf_coerceVector(R_compact_intrange(1, 5), REALSXP));
     cpp11::writable::doubles w({0.});
     w = z;
     expect_true(w.size() == 5);
@@ -190,8 +190,7 @@ context("doubles-C++") {
     expect_true(y.data() == x_data);
     expect_true(y.is_altrep() == false);
 
-    cpp11::writable::doubles z(
-        Rf_coerceVector(R_compact_intrange(1, 5), REALSXP));
+    cpp11::writable::doubles z(Rf_coerceVector(R_compact_intrange(1, 5), REALSXP));
     cpp11::writable::doubles w({0.});
     expect_true(z.is_altrep() == true);
 
@@ -256,5 +255,18 @@ context("doubles-C++") {
     expect_true(y.size() == 5);
     expect_true(y[0] == 1);
     expect_true(y[4] == 5);
+  }
+
+  test_that("writable::doubles attributes are kept when converted to doubles") {
+    cpp11::writable::doubles x({1, 2});
+    x.names() = {"a", "b"};
+    cpp11::strings x_nms(x.names());
+    expect_true(x_nms[0] == "a");
+    expect_true(x_nms[1] == "b");
+
+    cpp11::doubles y(x);
+    cpp11::strings y_nms(y.names());
+    expect_true(y_nms[0] == "a");
+    expect_true(y_nms[1] == "b");
   }
 }
