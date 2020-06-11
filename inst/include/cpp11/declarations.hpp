@@ -5,6 +5,8 @@
 #include <vector>
 #include "cpp11.hpp"
 
+#include <R_ext/Rdynload.h>
+
 namespace cpp11 {
 template <class T>
 T& unmove(T&& t) {
