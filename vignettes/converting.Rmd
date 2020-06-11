@@ -117,6 +117,14 @@ Due to cpp11 redefining the Rboolean enum any cpp11 header needs to come _before
 
 Indicate this is a problem and can be resolved by ensuring the cpp11 headers are included first.
 
+## STL includes
+
+Rcpp.h includes a number of STL headers automatically, notably `<string>` and `<vector>`, however the cpp11 headers generally do not. If you have errors like
+
+> error: no type named 'string' in namespace 'std'
+
+You will need to include the appropriate STL header, in this case `<string>`.
+
 ## Calling R from C++
 
 ```c++
