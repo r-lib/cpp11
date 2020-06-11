@@ -109,6 +109,14 @@ knitr::kable(b_grow)
    - Remember you can usually inter-convert between cpp11 and Rcpp classes by going through `SEXP` if needed.
    - Converting the code a bit at a time (and regularly running your tests) is the best way to do the conversion correctly and make progress
 
+## Include order
+
+Due to cpp11 redefining the Rboolean enum any cpp11 header needs to come _before_ any Rcpp or Rinternals.h include. Errors like
+
+> error: redefinition of enumerator 'FALSE'
+
+Indicate this is a problem and can be resolved by ensuring the cpp11 headers are included first.
+
 ## Calling R from C++
 
 ```c++
