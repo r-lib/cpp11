@@ -1,5 +1,6 @@
 #pragma once
 
+#include "cpp11/attribute_proxy.hpp"
 #include "cpp11/list.hpp"
 
 namespace cpp11 {
@@ -72,6 +73,16 @@ class data_frame : public cpp11::data_frame {
 
   using cpp11::data_frame::ncol;
   using cpp11::data_frame::nrow;
+
+  attribute_proxy<data_frame> attr(const char* name) const { return {*this, name}; }
+
+  attribute_proxy<data_frame> attr(const std::string& name) const {
+    return {*this, name.c_str()};
+  }
+
+  attribute_proxy<data_frame> attr(SEXP name) const { return {*this, name}; }
+
+  attribute_proxy<data_frame> names() const { return {*this, R_NamesSymbol}; }
 };
 
 }  // namespace writable

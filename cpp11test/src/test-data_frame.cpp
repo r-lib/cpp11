@@ -1,8 +1,8 @@
 #include <testthat.h>
-#include "cpp11/strings.hpp"
 #include "cpp11/data_frame.hpp"
 #include "cpp11/function.hpp"
 #include "cpp11/integers.hpp"
+#include "cpp11/strings.hpp"
 
 context("data_frame-C++") {
   test_that("data_frame works") {
@@ -72,5 +72,21 @@ context("data_frame-C++") {
     expect_true(row_names[0] == 1);
     expect_true(row_names[1] == 2);
     expect_true(row_names[2] == 3);
+  }
+
+  test_that("can set attributes on a data_frame") {
+    using namespace cpp11::literals;
+
+    cpp11::writable::data_frame df({"x"_nm = {1, 2, 3}, "y"_nm = {"a", "b", "c"}});
+
+    df.attr("foo") = "bar";
+
+    cpp11::string foo = cpp11::strings(df.attr("foo"))[0];
+    expect_true(foo == "bar");
+
+    df.names() = {"a", "b"};
+
+    expect_true(cpp11::integers(df["a"])[0] == 1);
+    expect_true(cpp11::strings(df["b"])[2] == "c");
   }
 }
