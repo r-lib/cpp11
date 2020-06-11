@@ -143,6 +143,14 @@ context("strings-C++") {
     expect_true(y[1] == "foo");
   }
 
+  test_that("CHARSXP move constructor") {
+    SEXP x = PROTECT(Rf_mkChar("foo"));
+    cpp11::writable::strings y(std::move(x));
+
+    expect_true(y.size() == 1);
+    expect_true(y[0] == "foo");
+  }
+
   // test_that("writable::strings(ALTREP_SEXP)") {
   // SEXP x = PROTECT(R_compact_uint8_trange(1, 5));
   //// Need to find (or create) an altrep class that implements duplicate.

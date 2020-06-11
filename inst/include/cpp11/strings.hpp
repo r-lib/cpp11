@@ -83,9 +83,30 @@ inline SEXP alloc_or_copy(const SEXP& data) {
   }
 }
 
+inline SEXP alloc_if_charsxp(const SEXP& data) {
+  switch (TYPEOF(data)) {
+    case CHARSXP:
+      return cpp11::vector<string>(safe[Rf_allocVector](STRSXP, 1));
+    case STRSXP:
+      return data;
+    default:
+      throw type_error(STRSXP, TYPEOF(data));
+  }
+}
+
 template <>
 inline vector<string>::vector(const SEXP& data)
     : cpp11::vector<string>(alloc_or_copy(data)),
+      protect_(protect_sexp(data_)),
+      capacity_(length_) {
+  if (TYPEOF(data) == CHARSXP) {
+    SET_STRING_ELT(data_, 0, data);
+  }
+}
+
+template <>
+inline vector<string>::vector(SEXP&& data)
+    : cpp11::vector<string>(alloc_if_charsxp(data)),
       protect_(protect_sexp(data_)),
       capacity_(length_) {
   if (TYPEOF(data) == CHARSXP) {
