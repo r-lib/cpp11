@@ -329,6 +329,24 @@
 </li>
 </ol>
 </div>
+<div id="include-order" class="section level2">
+<h2 class="hasAnchor">
+<a href="#include-order" class="anchor"></a>Include order</h2>
+<p>Due to cpp11 redefining the Rboolean enum any cpp11 header needs to come <em>before</em> any Rcpp or Rinternals.h include. Errors like</p>
+<blockquote>
+<p>error: redefinition of enumerator ‘FALSE’</p>
+</blockquote>
+<p>Indicate this is a problem and can be resolved by ensuring the cpp11 headers are included first.</p>
+</div>
+<div id="stl-includes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#stl-includes" class="anchor"></a>STL includes</h2>
+<p>Rcpp.h includes a number of STL headers automatically, notably <code>&lt;string&gt;</code> and <code>&lt;vector&gt;</code>, however the cpp11 headers generally do not. If you have errors like</p>
+<blockquote>
+<p>error: no type named ‘string’ in namespace ‘std’</p>
+</blockquote>
+<p>You will need to include the appropriate STL header, in this case <code>&lt;string&gt;</code>.</p>
+</div>
 <div id="calling-r-from-c" class="section level2">
 <h2 class="hasAnchor">
 <a href="#calling-r-from-c" class="anchor"></a>Calling R from C++</h2>
