@@ -384,10 +384,11 @@ Here are some real examples of the reduction in compile time and peak memory usa
 gtime -f %M:%e R CMD INSTALL --libs-only --use-vanilla .
 ```
 
-| package | Rcpp compile time | cpp11 compile time | Rcpp peak memory | cpp11 peak memory |
-| ---     | ---               | ---                  | ---              | ---                 |
-| haven   | 16.18s            | 6.10s                | 421MB            | 200MB               |
-| tidyr   | 13.40s            | 2.78s                | 361MB            |  83MB               |
+| package | Rcpp compile time | cpp11 compile time | Rcpp peak memory | cpp11 peak memory | Rcpp commit | cpp11 commit |
+| ---     | ---               | ---                | ---              | ---               | ---         | ---          |
+| haven   | 17.42s            | 7.13s              | 428MB            | 204MB             | a3cf75a4    | 978cb034     |
+| tidyr   | 14.25s            | 3.34s              | 363MB            | 83MB              | 3899ed51    | 60f7c7d4     |
+| readr   | 124.13s           | 81.08s             | 969MB            | 684MB             | ec0d8989    | aa89ff72     |
 
 ## Header only
 
