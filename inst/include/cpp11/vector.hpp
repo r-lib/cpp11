@@ -409,7 +409,7 @@ inline T vector<T>::const_iterator::operator*() {
 template <typename T>
 inline T vector<T>::operator[](const int pos) const {
   return operator[](static_cast<R_xlen_t>(pos));
-};
+}
 #endif
 
 namespace writable {
