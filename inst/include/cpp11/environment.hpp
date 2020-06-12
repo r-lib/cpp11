@@ -37,6 +37,8 @@ class environment {
   void remove(SEXP name) { R_removeVarFromFrame(name, env_); }
 
   void remove(const char* name) { remove(safe[Rf_install](name)); }
+
+  R_xlen_t size() const { return Rf_xlength(env_); }
 };
 
 }  // namespace cpp11
