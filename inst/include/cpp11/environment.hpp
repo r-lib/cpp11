@@ -1,5 +1,13 @@
-#include "cpp11/as.hpp"    // for sexp
+#include "cpp11/as.hpp"
 #include "cpp11/sexp.hpp"  // for sexp
+
+#if R_VERSION < R_Version(4, 0, 0)
+#define HAS_REMOVE_VAR_FROM_FRAME
+#endif
+
+#ifndef HAS_REMOVE_VAR_FROM_FRAME
+#include "cpp11/function.hpp"
+#endif
 
 namespace cpp11 {
 
@@ -34,7 +42,14 @@ class environment {
   }
   bool exists(const char* name) const { return exists(safe[Rf_install](name)); }
 
-  void remove(SEXP name) { R_removeVarFromFrame(name, env_); }
+  void remove(SEXP name) {
+#if HAS_REMOVE_VAR_FROM_FRAME
+    R_removeVarFromFrame(name, env_);
+#else
+    auto remove = package("base")["remove"];
+    remove(name, "envir"_nm = env_);
+#endif
+  }
 
   void remove(const char* name) { remove(safe[Rf_install](name)); }
 
