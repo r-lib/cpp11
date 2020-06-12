@@ -455,11 +455,13 @@
 <p>Here are some real examples of the reduction in compile time and peak memory usage after converting packages to cpp11.</p>
 <table class="table">
 <colgroup>
-<col width="20%">
-<col width="20%">
-<col width="20%">
-<col width="20%">
-<col width="20%">
+<col width="14%">
+<col width="14%">
+<col width="14%">
+<col width="14%">
+<col width="14%">
+<col width="14%">
+<col width="14%">
 </colgroup>
 <thead><tr class="header">
 <th>package</th>
@@ -467,21 +469,36 @@
 <th>cpp11 compile time</th>
 <th>Rcpp peak memory</th>
 <th>cpp11 peak memory</th>
+<th>Rcpp commit</th>
+<th>cpp11 commit</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td>haven</td>
-<td>16.18s</td>
-<td>6.10s</td>
-<td>421MB</td>
-<td>200MB</td>
+<td>17.42s</td>
+<td>7.13s</td>
+<td>428MB</td>
+<td>204MB</td>
+<td>a3cf75a4</td>
+<td>978cb034</td>
 </tr>
 <tr class="even">
 <td>tidyr</td>
-<td>13.40s</td>
-<td>2.78s</td>
-<td>361MB</td>
+<td>14.25s</td>
+<td>3.34s</td>
+<td>363MB</td>
 <td>83MB</td>
+<td>3899ed51</td>
+<td>60f7c7d4</td>
+</tr>
+<tr class="odd">
+<td>readr</td>
+<td>124.13s</td>
+<td>81.08s</td>
+<td>969MB</td>
+<td>684MB</td>
+<td>ec0d8989</td>
+<td>aa89ff72</td>
 </tr>
 </tbody>
 </table>
