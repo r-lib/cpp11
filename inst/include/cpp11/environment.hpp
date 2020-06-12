@@ -25,14 +25,14 @@ class environment {
 
  public:
   environment(SEXP env) : env_(env) {}
-  proxy operator[](SEXP name) { return {env_, name}; }
-  proxy operator[](const char* name) { return operator[](safe[Rf_install](name)); }
+  proxy operator[](SEXP name) const { return {env_, name}; }
+  proxy operator[](const char* name) const { return operator[](safe[Rf_install](name)); }
 
-  bool exists(SEXP name) {
+  bool exists(SEXP name) const {
     SEXP res = safe[Rf_findVarInFrame3](env_, name, FALSE);
     return res != R_UnboundValue;
   }
-  bool exists(const char* name) { return exists(safe[Rf_install](name)); }
+  bool exists(const char* name) const { return exists(safe[Rf_install](name)); }
 
   void remove(SEXP name) { R_removeVarFromFrame(name, env_); }
 
