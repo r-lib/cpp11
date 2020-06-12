@@ -22,6 +22,14 @@ static SEXP preserve(SEXP obj) {
 static SEXP protect_list = preserve(Rf_cons(R_NilValue, R_NilValue));
 
 inline SEXP protect_sexp(SEXP obj) {
+  if (obj == R_NilValue) {
+    return R_NilValue;
+  }
+#ifdef CPP11_USE_PRESERVE_OBJECT
+  R_PreserveObject(obj);
+  return obj;
+#endif
+
   // Add a new cell that points to the previous end.
   SEXP cell = PROTECT(Rf_cons(protect_list, CDR(protect_list)));
   SET_TAG(cell, obj);
@@ -49,6 +57,11 @@ inline void release_protect(SEXP protect) {
   if (protect == R_NilValue) {
     return;
   }
+#ifdef CPP11_USE_PRESERVE_OBJECT
+  R_ReleaseObject(protect);
+  return;
+#endif
+
   SEXP before = CAR(protect);
   SEXP after = CDR(protect);
 
