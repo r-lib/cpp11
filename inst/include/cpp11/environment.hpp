@@ -43,7 +43,7 @@ class environment {
   bool exists(const char* name) const { return exists(safe[Rf_install](name)); }
 
   void remove(SEXP name) {
-#if HAS_REMOVE_VAR_FROM_FRAME
+#ifdef HAS_REMOVE_VAR_FROM_FRAME
     R_removeVarFromFrame(name, env_);
 #else
     auto remove = package("base")["remove"];
