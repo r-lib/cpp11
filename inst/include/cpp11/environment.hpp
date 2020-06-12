@@ -1,7 +1,9 @@
 #include "cpp11/as.hpp"
 #include "cpp11/sexp.hpp"  // for sexp
 
-#if R_VERSION < R_Version(4, 0, 0)
+#include "Rversion.h"
+
+#if R_VERSION >= R_Version(4, 0, 0)
 #define HAS_REMOVE_VAR_FROM_FRAME
 #endif
 
