@@ -149,6 +149,7 @@ context("strings-C++") {
 
     expect_true(y.size() == 1);
     expect_true(y[0] == "foo");
+    UNPROTECT(1);
   }
 
   // test_that("writable::strings(ALTREP_SEXP)") {
