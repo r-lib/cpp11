@@ -1,7 +1,8 @@
 #pragma once
 
-#include <initializer_list>       // for initializer_list
-#include <stdexcept>              // for out_of_range
+#include <initializer_list>  // for initializer_list
+#include <stdexcept>         // for out_of_range
+
 #include "cpp11/R.hpp"          // for SEXP, SEXPREC, protect_sexp
 #include "cpp11/named_arg.hpp"  // for named_arg
 #include "cpp11/protect.hpp"    // for protect, protect::function, safe
@@ -60,8 +61,7 @@ inline vector<SEXP>::proxy::operator SEXP() const {
 
 template <>
 inline vector<SEXP>::vector(std::initializer_list<SEXP> il)
-    : cpp11::vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())),
-      capacity_(il.size()) {
+    : cpp11::vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())), capacity_(il.size()) {
   protect_ = protect_sexp(data_);
   auto it = il.begin();
   for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
@@ -71,8 +71,7 @@ inline vector<SEXP>::vector(std::initializer_list<SEXP> il)
 
 template <>
 inline vector<SEXP>::vector(std::initializer_list<named_arg> il)
-    : cpp11::vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())),
-      capacity_(il.size()) {
+    : cpp11::vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())), capacity_(il.size()) {
   try {
     unwind_protect([&] {
       protect_ = protect_sexp(data_);

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string.h>               // for strcmp
-#include <type_traits>            // for forward
+#include <string.h>             // for strcmp
+#include <type_traits>          // for forward
 #include "cpp11/named_arg.hpp"  // for named_arg
 #include "cpp11/protect.hpp"    // for SEXP, SEXPREC, protect, protect::fu...
 #include "cpp11/sexp.hpp"       // for sexp
@@ -66,5 +66,4 @@ class package {
 
   SEXP data_;
 };
-
 }  // namespace cpp11
