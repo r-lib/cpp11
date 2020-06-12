@@ -130,7 +130,7 @@ SEXP unwind_protect_sexp(Fun code) {
 
 template <typename Fun>
 void unwind_protect(Fun code) {
-  static SEXP token = R_MakeUnwindCont();
+  static SEXP token = init_unwind_continuation();
   internal::unwind_data_t unwind_data = {token};
   R_UnwindProtect(&internal::unwind_protect_unwrap_void<Fun>, &code, internal::maybe_jump,
                   &unwind_data, token);
