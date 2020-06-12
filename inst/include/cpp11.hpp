@@ -6,6 +6,8 @@
 #include "cpp11/attribute_proxy.hpp"
 #include "cpp11/data_frame.hpp"
 #include "cpp11/doubles.hpp"
+#include "cpp11/environment.hpp"
+#include "cpp11/external_pointer.hpp"
 #include "cpp11/function.hpp"
 #include "cpp11/integers.hpp"
 #include "cpp11/list.hpp"
