@@ -1,9 +1,9 @@
 #pragma once
 
 #include <cmath>
-#include <initializer_list>     // for initializer_list
-#include <string>               // for basic_string
-#include <type_traits>          // for enable_if, is_same, is_constructible
+#include <initializer_list>   // for initializer_list
+#include <string>             // for basic_string
+#include <type_traits>        // for enable_if, is_same, is_constructible
 #include "cpp11/protect.hpp"  // for SEXP, SEXPREC, R_xlen_t, Rf_allocVector
 
 namespace cpp11 {
@@ -165,7 +165,9 @@ inline SEXP as_sexp(T from) {
   return safe[Rf_ScalarLogical](from);
 }
 
-template <typename C, typename T = typename C::value_type, is_integral<T>* = nullptr>
+template <typename C, typename T = typename C::value_type,
+          typename std::enable_if<!std::is_convertible<C, SEXP>::value,
+                                  is_integral<T>>::type* = nullptr>
 inline SEXP as_sexp(C from) {
   R_xlen_t size = from.size();
   SEXP data = safe[Rf_allocVector](INTSXP, size);

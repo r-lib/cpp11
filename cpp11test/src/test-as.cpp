@@ -196,6 +196,27 @@ context("as_cpp-C++") {
     UNPROTECT(1);
   }
 
+  test_that("as_cpp<raws>()") {
+    cpp11::writable::raws x;
+    x.push_back(0);
+    x.push_back(1);
+    x.push_back(2);
+
+    auto res1 = cpp11::as_sexp(x);
+    expect_true(TYPEOF(res1) == RAWSXP);
+    expect_true(RAW(res1)[0] == 0);
+    expect_true(RAW(res1)[1] == 1);
+    expect_true(RAW(res1)[2] == 2);
+
+    cpp11::raws y(x);
+
+    auto res2 = cpp11::as_sexp(y);
+    expect_true(TYPEOF(res2) == RAWSXP);
+    expect_true(RAW(res2)[0] == 0);
+    expect_true(RAW(res2)[1] == 1);
+    expect_true(RAW(res2)[2] == 2);
+  }
+
   test_that("as_cpp<Rcpp::List>()") {
     SEXP l1 = PROTECT(Rf_allocVector(VECSXP, 3));
     SET_VECTOR_ELT(l1, 0, Rf_allocVector(VECSXP, 1));
