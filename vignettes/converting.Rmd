@@ -64,7 +64,7 @@ Rcpp vectors have a `push_back()` method, but unlike `std::vector()` no addition
 This makes calling `push_back()` repeatably very expensive, as the entire vector has to be copied each call.
 
 In contrast `cpp11` vectors grow efficiently, reserving extra space.
-Because of this you can do ~10,000,00 vector appends with cpp11 in approximately the same amount of time that Rcpp does 10,000, as this benchmark demonstrates.
+Because of this you can do ~10,000,000 vector appends with cpp11 in approximately the same amount of time that Rcpp does 10,000, as this benchmark demonstrates.
 
 ```{r, message = FALSE, eval = cpp11test:::should_run_benchmarks()}
 grid <- expand.grid(len = 10 ^ (0:7), pkg = "cpp11", stringsAsFactors = FALSE)
