@@ -16,6 +16,22 @@ cpp11_insert_ <- function(num_sxp){
   .Call("_cpp11test_cpp11_insert_" , num_sxp)
 }
 
+gibbs_cpp <- function(N, thin){
+  .Call("_cpp11test_gibbs_cpp" , N, thin)
+}
+
+gibbs_cpp2 <- function(N, thin){
+  .Call("_cpp11test_gibbs_cpp2" , N, thin)
+}
+
+gibbs_rcpp <- function(N, thin){
+  .Call("_cpp11test_gibbs_rcpp" , N, thin)
+}
+
+gibbs_rcpp2 <- function(N, thin){
+  .Call("_cpp11test_gibbs_rcpp2" , N, thin)
+}
+
 cpp11_release_ <- function(n){
   invisible(.Call("_cpp11test_cpp11_release_" , n))
 }

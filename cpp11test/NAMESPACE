@@ -2,4 +2,5 @@
 
 export(run_tests)
 exportPattern("_$")
+importFrom(Rcpp,sourceCpp)
 useDynLib(cpp11test, .registration = TRUE)

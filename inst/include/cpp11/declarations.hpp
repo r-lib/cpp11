@@ -14,6 +14,9 @@ T& unmove(T&& t) {
 }
 }  // namespace cpp11
 
+using namespace cpp11;
+namespace writable = cpp11::writable;
+
 #ifdef HAS_UNWIND_PROTECT
 #define CPP11_UNWIND R_ContinueUnwind(err);
 #else

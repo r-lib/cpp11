@@ -3,7 +3,7 @@
 #include <stddef.h>          // for size_t
 #include <initializer_list>  // for initializer_list
 #include <string>            // for basic_string
-#include "cpp11/R.hpp"     // for protect_sexp, REAL_ELT, SEXP, SEX...
+#include "cpp11/R.hpp"       // for protect_sexp, REAL_ELT, SEXP, SEX...
 #include "cpp11/attribute_proxy.hpp"
 #include "cpp11/protect.hpp"  // for unwind_exception
 

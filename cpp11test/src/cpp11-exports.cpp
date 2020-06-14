@@ -32,6 +32,34 @@ extern "C" SEXP _cpp11test_cpp11_insert_(SEXP num_sxp) {
     return cpp11::as_sexp(cpp11_insert_(cpp11::unmove(cpp11::as_cpp<SEXP>(num_sxp))));
   END_CPP11
 }
+// matrix.cpp
+SEXP gibbs_cpp(int N, int thin);
+extern "C" SEXP _cpp11test_gibbs_cpp(SEXP N, SEXP thin) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(gibbs_cpp(cpp11::unmove(cpp11::as_cpp<int>(N)), cpp11::unmove(cpp11::as_cpp<int>(thin))));
+  END_CPP11
+}
+// matrix.cpp
+cpp11::doubles_matrix gibbs_cpp2(int N, int thin);
+extern "C" SEXP _cpp11test_gibbs_cpp2(SEXP N, SEXP thin) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(gibbs_cpp2(cpp11::unmove(cpp11::as_cpp<int>(N)), cpp11::unmove(cpp11::as_cpp<int>(thin))));
+  END_CPP11
+}
+// matrix.cpp
+NumericMatrix gibbs_rcpp(int N, int thin);
+extern "C" SEXP _cpp11test_gibbs_rcpp(SEXP N, SEXP thin) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(gibbs_rcpp(cpp11::unmove(cpp11::as_cpp<int>(N)), cpp11::unmove(cpp11::as_cpp<int>(thin))));
+  END_CPP11
+}
+// matrix.cpp
+NumericMatrix gibbs_rcpp2(int N, int thin);
+extern "C" SEXP _cpp11test_gibbs_rcpp2(SEXP N, SEXP thin) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(gibbs_rcpp2(cpp11::unmove(cpp11::as_cpp<int>(N)), cpp11::unmove(cpp11::as_cpp<int>(thin))));
+  END_CPP11
+}
 // release.cpp
 void cpp11_release_(int n);
 extern "C" SEXP _cpp11test_cpp11_release_(SEXP n) {
@@ -147,6 +175,10 @@ extern SEXP _cpp11test_cpp11_insert_(SEXP);
 extern SEXP _cpp11test_cpp11_release_(SEXP);
 extern SEXP _cpp11test_cpp11_safe_(SEXP);
 extern SEXP _cpp11test_data_frame_();
+extern SEXP _cpp11test_gibbs_cpp(SEXP, SEXP);
+extern SEXP _cpp11test_gibbs_cpp2(SEXP, SEXP);
+extern SEXP _cpp11test_gibbs_rcpp(SEXP, SEXP);
+extern SEXP _cpp11test_gibbs_rcpp2(SEXP, SEXP);
 extern SEXP _cpp11test_grow_(SEXP);
 extern SEXP _cpp11test_rcpp_grow_(SEXP);
 extern SEXP _cpp11test_rcpp_release_(SEXP);
@@ -169,6 +201,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_cpp11_release_",           (DL_FUNC) &_cpp11test_cpp11_release_,           1},
     {"_cpp11test_cpp11_safe_",              (DL_FUNC) &_cpp11test_cpp11_safe_,              1},
     {"_cpp11test_data_frame_",              (DL_FUNC) &_cpp11test_data_frame_,              0},
+    {"_cpp11test_gibbs_cpp",                (DL_FUNC) &_cpp11test_gibbs_cpp,                2},
+    {"_cpp11test_gibbs_cpp2",               (DL_FUNC) &_cpp11test_gibbs_cpp2,               2},
+    {"_cpp11test_gibbs_rcpp",               (DL_FUNC) &_cpp11test_gibbs_rcpp,               2},
+    {"_cpp11test_gibbs_rcpp2",              (DL_FUNC) &_cpp11test_gibbs_rcpp2,              2},
     {"_cpp11test_grow_",                    (DL_FUNC) &_cpp11test_grow_,                    1},
     {"_cpp11test_rcpp_grow_",               (DL_FUNC) &_cpp11test_rcpp_grow_,               1},
     {"_cpp11test_rcpp_release_",            (DL_FUNC) &_cpp11test_rcpp_release_,            1},
