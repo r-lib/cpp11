@@ -701,8 +701,8 @@ SEXP table_cpp(doubles x) {
 <div id="gibbs-sampler" class="section level3">
 <h3 class="hasAnchor">
 <a href="#gibbs-sampler" class="anchor"></a>Gibbs sampler</h3>
-<p>TODO: No Matrix Classes yet <!-- FIXME: needs more context? --></p>
-<p>The following case study updates an example <a href="http://dirk.eddelbuettel.com/blog/2011/07/14/">blogged about</a> by Dirk Eddelbuettel, illustrating the conversion of a Gibbs sampler in R to C++. The R and C++ code shown below is very similar (it only took a few minutes to convert the R version to the C++ version), but runs about 20 times faster on my computer. Dirk’s blog post also shows another way to make it even faster: using the faster random number generator functions in GSL (easily accessible from R through the RcppGSL package) can make it another two to three times faster.</p>
+<!-- FIXME: needs more context? -->
+<p>The following case study updates an example <a href="http://dirk.eddelbuettel.com/blog/2011/07/14/">blogged about</a> by Dirk Eddelbuettel, illustrating the conversion of a Gibbs sampler in R to C++. The R and C++ code shown below is very similar (it only took a few minutes to convert the R version to the C++ version), but runs about 30 times faster on my computer. Dirk’s blog post also shows another way to make it even faster: using the faster random number generator functions in GSL (easily accessible from R through the RcppGSL package) can make it another two to three times faster.</p>
 <p>The R code is as follows:</p>
 <div class="sourceCode" id="cb38"><html><body><pre class="r"><span class="no">gibbs_r</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">N</span>, <span class="no">thin</span>) {
   <span class="no">mat</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw">nrow</span> <span class="kw">=</span> <span class="no">N</span>, <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">2</span>)
@@ -716,33 +716,43 @@ SEXP table_cpp(doubles x) {
   }
   <span class="no">mat</span>
 }</pre></body></html></div>
-<p>This is straightforward to convert to C++. We:</p>
+<p>This is relatively straightforward to convert to C++. We:</p>
 <ul>
 <li><p>Add type declarations to all variables.</p></li>
 <li><p>Use <code>(</code> instead of <code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> to index into the matrix.</p></li>
-<li><p>Subscript the results of <code>rgamma</code> and <code>rnorm</code> to convert from a vector into a scalar.</p></li>
+<li><p>Include “Rmath.h” and call the functions with <code>Rf_</code>.</p></li>
 </ul>
-<div class="sourceCode" id="cb39"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb39-1"><a href="#cb39-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
-<span id="cb39-2"><a href="#cb39-2"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp;</span>
-<span id="cb39-3"><a href="#cb39-3"></a><span class="co">// [[Rcpp::export]]</span></span>
-<span id="cb39-4"><a href="#cb39-4"></a>NumericMatrix gibbs_cpp(<span class="dt">int</span> N, <span class="dt">int</span> thin) {</span>
-<span id="cb39-5"><a href="#cb39-5"></a>  NumericMatrix mat(N, <span class="dv">2</span>);</span>
-<span id="cb39-6"><a href="#cb39-6"></a>  <span class="dt">double</span> x = <span class="dv">0</span>, y = <span class="dv">0</span>;</span>
-<span id="cb39-7"><a href="#cb39-7"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; N; i++) {</span>
-<span id="cb39-8"><a href="#cb39-8"></a>    <span class="cf">for</span>(<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; thin; j++) {</span>
-<span id="cb39-9"><a href="#cb39-9"></a>      x = rgamma(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">1</span> / (y * y + <span class="dv">4</span>))[<span class="dv">0</span>];</span>
-<span id="cb39-10"><a href="#cb39-10"></a>      y = rnorm(<span class="dv">1</span>, <span class="dv">1</span> / (x + <span class="dv">1</span>), <span class="dv">1</span> / sqrt(<span class="dv">2</span> * (x + <span class="dv">1</span>)))[<span class="dv">0</span>];</span>
-<span id="cb39-11"><a href="#cb39-11"></a>    }</span>
-<span id="cb39-12"><a href="#cb39-12"></a>    mat(i, <span class="dv">0</span>) = x;</span>
-<span id="cb39-13"><a href="#cb39-13"></a>    mat(i, <span class="dv">1</span>) = y;</span>
-<span id="cb39-14"><a href="#cb39-14"></a>  }</span>
-<span id="cb39-15"><a href="#cb39-15"></a>  <span class="cf">return</span>(mat);</span>
-<span id="cb39-16"><a href="#cb39-16"></a>}</span></code></pre></div>
-<p>Benchmarking the two implementations yields:</p>
+<pre class="cpp11"><code>#include "cpp11/matrix.hpp"
+#include "cpp11/doubles.hpp"
+#include "Rmath.h"
+using namespace cpp11;
+namespace writable = cpp11::writable;
+
+[[cpp11::export]] cpp11::doubles_matrix gibbs_cpp(int N, int thin) {
+  writable::doubles_matrix mat(N, 2);
+  double x = 0, y = 0;
+  for (int i = 0; i &lt; N; i++) {
+    for (int j = 0; j &lt; thin; j++) {
+      x = Rf_rgamma(3., 1. / double(y * y + 4));
+      y = Rf_rnorm(1. / (x + 1.), 1. / sqrt(2. * (x + 1.)));
+    }
+    mat(i, 0) = x;
+    mat(i, 1) = y;
+  }
+  return mat;
+}</code></pre>
+<p>Benchmarking the two implementations yields a significant speedup for running the loops in C++:</p>
 <div class="sourceCode" id="cb40"><html><body><pre class="r"><span class="kw pkg">bench</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/mark.html">mark</a></span>(
-  <span class="fu">gibbs_r</span>(<span class="fl">100</span>, <span class="fl">10</span>),
-  <span class="fu">gibbs_cpp</span>(<span class="fl">100</span>, <span class="fl">10</span>),
-  <span class="kw">check</span> <span class="kw">=</span> <span class="fl">FALSE</span>
+  <span class="kw">r</span> <span class="kw">=</span> {
+    <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">42</span>)
+    <span class="fu">gibbs_r</span>(<span class="fl">100</span>, <span class="fl">10</span>)
+  },
+  <span class="kw">cpp</span> <span class="kw">=</span> {
+    <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">42</span>)
+    <span class="fu">gibbs_cpp</span>(<span class="fl">100</span>, <span class="fl">10</span>)
+  },
+  <span class="kw">check</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
+  <span class="kw">relative</span> <span class="kw">=</span> <span class="fl">TRUE</span>
 )</pre></body></html></div>
 </div>
 <div id="r-vectorisation-versus-c-vectorisation" class="section level3">
