@@ -1,3 +1,5 @@
+#pragma once
+
 #include "cpp11/list.hpp"
 
 namespace cpp11 {

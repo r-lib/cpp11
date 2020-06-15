@@ -1,3 +1,5 @@
+#pragma once
+
 #include "cpp11/as.hpp"
 #include "cpp11/sexp.hpp"  // for sexp
 
