@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstddef>
 #include <memory>
 #include "cpp11/sexp.hpp"
