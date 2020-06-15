@@ -45,14 +45,25 @@ class external_pointer {
   external_pointer(T* p)
       : data_(safe[R_MakeExternalPtr]((void*)p, R_NilValue, R_NilValue)) {}
 
-  external_pointer& operator=(external_pointer&& r) noexcept {
-    reset(r.release());
-    deleter_ = std::forward<Deleter>(r.get_deleter());
+  external_pointer(const external_pointer& rhs) {
+    data_ = safe[Rf_shallow_duplicate](rhs.data_);
+    deleter_ = std::forward<Deleter>(rhs.get_deleter());
   }
+
+  external_pointer(external_pointer&& rhs) {
+    reset(rhs.release());
+    deleter_ = std::forward<Deleter>(rhs.get_deleter());
+  }
+
+  external_pointer& operator=(external_pointer&& rhs) noexcept {
+    reset(rhs.release());
+    deleter_ = std::forward<Deleter>(rhs.get_deleter());
+  }
+
   template <class U, class E>
-  external_pointer& operator=(external_pointer<U, E>&& r) noexcept {
-    reset(r.release());
-    deleter_ = std::forward<E>(r.get_deleter());
+  external_pointer& operator=(external_pointer<U, E>&& rhs) noexcept {
+    reset(rhs.release());
+    deleter_ = std::forward<E>(rhs.get_deleter());
   }
   external_pointer& operator=(std::nullptr_t) noexcept { reset(); };
 
