@@ -65,7 +65,7 @@ x
 ```
 
 C++ does not have copy-on-write built into the language, however it has related concepts, copy-by-value and copy-by-reference.
-Copy-by-value works similarly to R, except that only copying when something is changed it _always_ copies.
+Copy-by-value works similarly to R, except that R only copies when something is changed, C++ _always_ copies.
 
 ```cpp
 int x = 42;
