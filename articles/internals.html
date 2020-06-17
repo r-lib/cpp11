@@ -135,11 +135,22 @@
 <div id="protection" class="section level2">
 <h2 class="hasAnchor">
 <a href="#protection" class="anchor"></a>Protection</h2>
+<div id="protect-list" class="section level3">
+<h3 class="hasAnchor">
+<a href="#protect-list" class="anchor"></a>Protect list</h3>
 <p>cpp11 uses an idea proposed by <a href="https://github.com/RcppCore/Rcpp/issues/1081#issuecomment-630330838">Luke Tierney</a> to use a double linked list with the head preserved to protect objects cpp11 is protecting.</p>
 <p>Each node in the list uses the head (<code>CAR</code>) part to point to the previous node, and the <code>CDR</code> part to point to the next node. The <code>TAG</code> is used to point to the object being protected. The head and tail of the list have <code>R_NilValue</code> as their <code>CAR</code> and <code>CDR</code> pointers respectively.</p>
 <p>Calling <code>protect_sexp()</code> with a regular R object will add a new node to the list and return a protect token corresponding to the node added. Calling <code>release_protect()</code> on this returned token will release the protection by unlinking the node from the linked list.</p>
 <p>This scheme scales in O(1) time to release or insert an object vs O(N) or worse time with <code>R_PreserveObject()</code> / <code>R_ReleaseObject()</code>.</p>
 <p>These functions are defined in protect.hpp.</p>
+</div>
+<div id="unwind-protect" class="section level3">
+<h3 class="hasAnchor">
+<a href="#unwind-protect" class="anchor"></a>Unwind Protect</h3>
+<p>In R 3.5+ cpp11 uses <code>R_UnwindProtect</code> to protect (most) calls to the R API that could fail. These are usually those that allocate memory, though in truth most R API functions could error along some paths. Using <code>R_UnwindProtect</code> when an error happens first a C++ exception is thrown and is caught by the try catch block defined in the <code>BEGIN_CPP11</code> macro in <a href="https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/declarations.hpp">cpp11/declarations.hpp</a> This allows any C++ destructors to run, freeing resources held by C++ objects. Then after the try catch block the R error unwinding is continued by <code>R_ContinueUnwind()</code></p>
+<p>In R versions prior to 3.5 <code>R_UnwindProtect()</code> is not available. Unfortunately the options to emulate it are not ideal. 1. <code>R_TopLevelExec()</code> works to avoid the C long jump, but because the code is always run in a top level context any errors or messages thrown cannot be caught by <code><a href="https://rdrr.io/r/base/conditions.html">tryCatch()</a></code> or similar blocks. 2. <code>R_TryCatch()</code> is not available prior to R 3.4, and also has a bug (fixed in R 3.5) 3. Calling the R <code><a href="https://rdrr.io/r/base/conditions.html">tryCatch()</a></code> function which contains an expression that then runs a C function which runs the C++ code would be an option, but implementing this is convoluted and it would impact performance, perhaps severely. 4. Have <code>cpp11::unwind_protect()</code> be a no-op, this would mean any resources held by C++ objects would leak, including cpp11::vector / cpp11::sexp objects.</p>
+<p>Because 1. Causes behavior changes and test failures it was ruled out. 2. was also ruled out since we want to support R 3.3. 3. was ruled out partially because the implementation would be somewhat tricky and more because performance would suffer greatly. Therefore 4. is what we now do in cpp11. We somewhat mitigate the scope of leaks by calling <code>release_existing_protections()</code> at the start of any wrapped cpp11 function. This function releases any existing protected nodes, so any R object leaks should only last until the next cpp11 call.</p>
+</div>
 </div>
   </div>
 
