@@ -23,7 +23,7 @@ class matrix {
   int nrow_;
 
  public:
-  matrix(SEXP data) : vector_(data), nrow_(INTEGER_ELT(vector_, 0)) {}
+  matrix(SEXP data) : vector_(data), nrow_(INTEGER_ELT(vector_.attr("dim"), 0)) {}
 
   template <typename V2, typename T2>
   matrix(const cpp11::matrix<V2, T2>& rhs) : vector_(rhs) {}
@@ -44,13 +44,13 @@ class matrix {
 
   // operator sexp() { return sexp(vector_); }
 
-  sexp attr(const char* name) const { return vector_.attr(name); }
+  sexp attr(const char* name) const { return SEXP(vector_.attr(name)); }
 
-  sexp attr(const std::string& name) const { return vector_.attr(name); }
+  sexp attr(const std::string& name) const { return SEXP(vector_.attr(name)); }
 
-  sexp attr(SEXP name) const { return vector_.attr(name); }
+  sexp attr(SEXP name) const { return SEXP(vector_.attr(name)); }
 
-  vector<string> names() const { return vector_.names(); }
+  vector<string> names() const { return SEXP(vector_.names()); }
 
   row operator[](const int pos) { return {*this, pos}; }
 
