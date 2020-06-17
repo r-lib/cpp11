@@ -19,3 +19,4 @@ script.R
 ^coverage\.R$
 ^book$
 ^vignettes/.*_cache$
+^_pkgdown\.yml$
