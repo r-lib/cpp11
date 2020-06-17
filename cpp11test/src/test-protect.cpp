@@ -1,7 +1,7 @@
 #include "cpp11/protect.hpp"
 #include "testthat.h"
 
-#if HAS_UNWIND_PROTECT
+#ifdef HAS_UNWIND_PROTECT
 context("unwind_protect") {
   test_that("unwind_protect works if there is no error") {
     SEXP out = PROTECT(cpp11::unwind_protect_sexp([&] {
