@@ -75,6 +75,8 @@ Some useful links on SFINAE
 
 ## Protection
 
+### Protect list
+
 cpp11 uses an idea proposed by [Luke Tierney](https://github.com/RcppCore/Rcpp/issues/1081#issuecomment-630330838) to use a double linked list with the head preserved to protect objects cpp11 is protecting.
 
 Each node in the list uses the head (`CAR`) part to point to the previous node, and the `CDR` part to point to the next node. The `TAG` is used to point to the object being protected.
@@ -86,3 +88,25 @@ Calling `release_protect()` on this returned token will release the protection b
 This scheme scales in O(1) time to release or insert an object vs O(N) or worse time with `R_PreserveObject()` / `R_ReleaseObject()`.
 
 These functions are defined in protect.hpp.
+
+### Unwind Protect
+
+In R 3.5+ cpp11 uses `R_UnwindProtect` to protect (most) calls to the R API that could fail.
+These are usually those that allocate memory, though in truth most R API functions could error along some paths.
+Using `R_UnwindProtect` when an error happens first a C++ exception is thrown and is caught by the try catch block defined in the `BEGIN_CPP11` macro in [cpp11/declarations.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/declarations.hpp)
+This allows any C++ destructors to run, freeing resources held by C++ objects.
+Then after the try catch block the R error unwinding is continued by `R_ContinueUnwind()`
+
+In R versions prior to 3.5 `R_UnwindProtect()` is not available.
+Unfortunately the options to emulate it are not ideal.
+1. `R_TopLevelExec()` works to avoid the C long jump, but because the code is always run in a top level context any errors or messages thrown cannot be caught by `tryCatch()` or similar blocks.
+2. `R_TryCatch()` is not available prior to R 3.4, and also has a bug (fixed in R 3.5)
+3. Calling the R `tryCatch()` function which contains an expression that then runs a C function which runs the C++ code would be an option, but implementing this is convoluted and it would impact performance, perhaps severely.
+4. Have `cpp11::unwind_protect()` be a no-op, this would mean any resources held by C++ objects would leak, including cpp11::vector / cpp11::sexp objects.
+
+Because 1. Causes behavior changes and test failures it was ruled out.
+2. was also ruled out since we want to support R 3.3.
+3. was ruled out partially because the implementation would be somewhat tricky and more because performance would suffer greatly.
+Therefore 4. is what we now do in cpp11.
+We somewhat mitigate the scope of leaks by calling `release_existing_protections()` at the start of any wrapped cpp11 function.
+This function releases any existing protected nodes, so any R object leaks should only last until the next cpp11 call.

@@ -53,6 +53,16 @@ inline void print_protect() {
   REprintf("---\n");
 }
 
+inline void release_existing_protections() {
+#if !defined(HAS_UNWIND_PROTECT) && !defined(CPP_USE_PRESREVE_OBJECT)
+  SEXP first = CDR(protect_list);
+  if (first != R_NilValue) {
+    SETCAR(first, R_NilValue);
+    SETCDR(protect_list, R_NilValue);
+  }
+#endif
+}
+
 inline void release_protect(SEXP protect) {
   if (protect == R_NilValue) {
     return;
@@ -136,49 +146,16 @@ void unwind_protect(Fun code) {
                   &unwind_data, token);
 }
 #else
-
-namespace internal {
-template <typename Fun>
-struct toplevel_data {
-  Fun* code;
-  SEXP value;
-};
-
-template <typename Fun>
-void toplevel_exec_unwrap_sexp(void* data) {
-  toplevel_data<Fun>* p = static_cast<toplevel_data<Fun>*>(data);
-  Fun* callback = p->code;
-  p->value = (*callback)();
-  R_PreserveObject(p->value);
-}
-
-template <typename Fun>
-void toplevel_exec_unwrap_void(void* data) {
-  Fun* callback = (Fun*)data;
-  (*callback)();
-}
-
-}  // namespace internal
-
+// Dont' do anything if we dont' have unwind protect. This will leak C++ resources,
+// including those
 template <typename Fun>
 SEXP unwind_protect_sexp(Fun code) {
-  internal::toplevel_data<Fun> data{&code, R_NilValue};
-  bool success = R_ToplevelExec(&internal::toplevel_exec_unwrap_sexp<Fun>, &data);
-  if (!success) {
-    throw unwind_exception(R_NilValue);
-  }
-
-  R_ReleaseObject(data.value);
-
-  return data.value;
+  return code();
 }
 
 template <typename Fun>
 void unwind_protect(Fun code) {
-  bool success = R_ToplevelExec(&internal::toplevel_exec_unwrap_void<Fun>, &code);
-  if (!success) {
-    throw unwind_exception(R_NilValue);
-  }
+  code();
 }
 #endif
 
