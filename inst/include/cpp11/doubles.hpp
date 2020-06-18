@@ -1,9 +1,9 @@
 #pragma once
 
-#include <algorithm>              // for min
-#include <array>                  // for array
-#include <initializer_list>       // for initializer_list
-#include <stdexcept>              // for out_of_range
+#include <algorithm>            // for min
+#include <array>                // for array
+#include <initializer_list>     // for initializer_list
+#include <stdexcept>            // for out_of_range
 #include "cpp11/as.hpp"         // for as_sexp
 #include "cpp11/named_arg.hpp"  // for named_arg
 #include "cpp11/protect.hpp"    // for SEXP, SEXPREC, REAL_ELT, R_Preserve...
@@ -46,8 +46,8 @@ inline double* vector<double>::get_p(bool is_altrep, SEXP data) {
 
 template <>
 inline void vector<double>::const_iterator::fill_buf(R_xlen_t pos) {
-  length_ = std::min(static_cast<R_xlen_t>(64L), data_.size() - pos);
-  unwind_protect([&] { REAL_GET_REGION(data_.data_, pos, length_, buf_.data()); });
+  length_ = std::min(static_cast<R_xlen_t>(64L), data_->size() - pos);
+  REAL_GET_REGION(data_->data_, pos, length_, buf_.data());
   block_start_ = pos;
 }
 

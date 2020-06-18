@@ -8,6 +8,30 @@ data_frame_ <- function(){
   .Call("_cpp11test_data_frame_" )
 }
 
+remove_altrep <- function(x){
+  .Call("_cpp11test_remove_altrep" , x)
+}
+
+upper_bound <- function(x, breaks){
+  .Call("_cpp11test_upper_bound" , x, breaks)
+}
+
+findInterval2 <- function(x, breaks){
+  .Call("_cpp11test_findInterval2" , x, breaks)
+}
+
+findInterval2_5 <- function(x, breaks){
+  .Call("_cpp11test_findInterval2_5" , x, breaks)
+}
+
+findInterval3 <- function(x, breaks){
+  .Call("_cpp11test_findInterval3" , x, breaks)
+}
+
+findInterval4 <- function(x, breaks){
+  .Call("_cpp11test_findInterval4" , x, breaks)
+}
+
 grow_ <- function(n){
   .Call("_cpp11test_grow_" , n)
 }
@@ -33,11 +57,11 @@ gibbs_rcpp2 <- function(N, thin){
 }
 
 cpp11_release_ <- function(n){
-  invisible(.Call("_cpp11test_cpp11_release_" , n))
+  invisible(.Call("_cpp11test_cpp11_release_", PACKAGE = "cpp11test" , n))
 }
 
 rcpp_release_ <- function(n){
-  invisible(.Call("_cpp11test_rcpp_release_" , n))
+  invisible(.Call("_cpp11test_rcpp_release_", PACKAGE = "cpp11test" , n))
 }
 
 cpp11_safe_ <- function(x_sxp){

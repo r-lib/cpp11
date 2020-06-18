@@ -94,26 +94,31 @@ class vector {
     using value_type = T;
     using pointer = T*;
     using reference = T&;
-    using iterator_category = std::forward_iterator_tag;
+    using iterator_category = std::random_access_iterator_tag;
 
-    const_iterator(const vector& data, R_xlen_t pos);
+    const_iterator(const vector* data, R_xlen_t pos);
 
     inline const_iterator& operator++();
+    // inline const_iterator& operator--();
 
     inline T operator*();
 
     inline bool operator!=(const const_iterator& other) const;
+    // inline bool operator==(const const_iterator& other) const;
 
-    inline const_iterator& operator+(R_xlen_t rhs);
+    inline ptrdiff_t operator-(const const_iterator& other) const;
+
+    inline const_iterator& operator+(R_xlen_t pos);
+    inline const_iterator& operator+=(R_xlen_t pos);
 
     friend class writable::vector<T>::iterator;
 
    private:
-    const vector& data_;
+    const vector* data_;
     void fill_buf(R_xlen_t pos);
 
     R_xlen_t pos_;
-    std::array<T, 64> buf_;
+    std::array<T, 64 * 64> buf_;
     R_xlen_t block_start_ = 0;
     R_xlen_t length_ = 0;
   };
@@ -330,28 +335,28 @@ inline SEXP vector<T>::data() const {
 
 template <typename T>
 inline typename vector<T>::const_iterator vector<T>::begin() const {
-  return const_iterator(*this, 0);
+  return const_iterator(this, 0);
 }
 
 template <typename T>
 inline typename vector<T>::const_iterator vector<T>::end() const {
-  return const_iterator(*this, length_);
+  return const_iterator(this, length_);
 }
 
 template <typename T>
 inline typename vector<T>::const_iterator vector<T>::cbegin() const {
-  return const_iterator(*this, 0);
+  return const_iterator(this, 0);
 }
 
 template <typename T>
 inline typename vector<T>::const_iterator vector<T>::cend() const {
-  return const_iterator(*this, length_);
+  return const_iterator(this, length_);
 }
 
 template <typename T>
-vector<T>::const_iterator::const_iterator(const vector& data, R_xlen_t pos)
+vector<T>::const_iterator::const_iterator(const vector* data, R_xlen_t pos)
     : data_(data), pos_(pos), buf_() {
-  if (data_.is_altrep()) {
+  if (data_->is_altrep()) {
     fill_buf(pos);
   }
 }
@@ -359,7 +364,17 @@ vector<T>::const_iterator::const_iterator(const vector& data, R_xlen_t pos)
 template <typename T>
 inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator++() {
   ++pos_;
-  if (data_.is_altrep() && pos_ >= block_start_ + length_) {
+  if (data_->is_altrep() && pos_ >= block_start_ + length_) {
+    fill_buf(pos_);
+  }
+  return *this;
+}
+
+template <typename T>
+inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator+=(
+    R_xlen_t i) {
+  pos_ += i;
+  if (data_->is_altrep() && pos_ >= block_start_ + length_) {
     fill_buf(pos_);
   }
   return *this;
@@ -371,11 +386,23 @@ inline bool vector<T>::const_iterator::operator!=(
   return pos_ != other.pos_;
 }
 
+// template <typename T>
+// inline bool vector<T>::const_iterator::operator==(
+// const vector<T>::const_iterator& other) const {
+// return pos_ == other.pos_;
+//}
+
+template <typename T>
+inline ptrdiff_t vector<T>::const_iterator::operator-(
+    const vector<T>::const_iterator& other) const {
+  return pos_ - other.pos_;
+}
+
 template <typename T>
 inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator+(
     R_xlen_t rhs) {
   pos_ += rhs;
-  if (data_.is_altrep() && pos_ >= block_start_ + length_) {
+  if (data_->is_altrep() && pos_ >= block_start_ + length_) {
     fill_buf(pos_);
   }
   return *this;
@@ -398,10 +425,10 @@ inline T cpp11::vector<T>::operator[](const string& name) const {
 
 template <typename T>
 inline T vector<T>::const_iterator::operator*() {
-  if (data_.is_altrep()) {
+  if (data_->is_altrep()) {
     return buf_[pos_ - block_start_];
   } else {
-    return data_.data_p_[pos_];
+    return data_->data_p_[pos_];
   }
 }
 
@@ -430,7 +457,7 @@ inline typename vector<T>::proxy vector<T>::iterator::operator*() {
 
 template <typename T>
 vector<T>::iterator::iterator(const vector& data, R_xlen_t pos)
-    : vector<T>::const_iterator(data.data_, pos), data_(data) {}
+    : vector<T>::const_iterator(&data, pos), data_(data) {}
 
 template <typename T>
 inline typename vector<T>::iterator& vector<T>::iterator::operator++() {

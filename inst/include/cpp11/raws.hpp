@@ -1,10 +1,10 @@
 #pragma once
 
-#include <algorithm>              // for min
-#include <array>                  // for array
-#include <cstdint>                // for uint8_t
-#include <initializer_list>       // for initializer_list
-#include <stdexcept>              // for out_of_range
+#include <algorithm>            // for min
+#include <array>                // for array
+#include <cstdint>              // for uint8_t
+#include <initializer_list>     // for initializer_list
+#include <stdexcept>            // for out_of_range
 #include "cpp11/R.hpp"          // for RAW, protect_sexp, SEXP, SEXPREC
 #include "cpp11/named_arg.hpp"  // for named_arg
 #include "cpp11/protect.hpp"    // for unwind_protect, protect, protect::f...
@@ -48,9 +48,9 @@ inline uint8_t* vector<uint8_t>::get_p(bool is_altrep, SEXP data) {
 
 template <>
 inline void vector<uint8_t>::const_iterator::fill_buf(R_xlen_t pos) {
-  length_ = std::min(static_cast<R_xlen_t>(64L), data_.size() - pos);
+  length_ = std::min(static_cast<R_xlen_t>(64L), data_->size() - pos);
   unwind_protect(
-      [&] { RAW_GET_REGION(data_.data_, pos, length_, (uint8_t*)buf_.data()); });
+      [&] { RAW_GET_REGION(data_->data_, pos, length_, (uint8_t*)buf_.data()); });
   block_start_ = pos;
 }
 

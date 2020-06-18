@@ -656,7 +656,7 @@ For example we could re-write our sum function using iterators:
 using namespace cpp11;
 
 [[cpp11::export]]
-double sum3(doubles x) {
+double sum2(doubles x) {
   double total = 0;
 
   for(auto it = x.begin(); it != x.end(); ++it) {
@@ -685,7 +685,7 @@ This code can be simplified still further through the use of a C++11 feature: ra
 using namespace cpp11;
 
 [[cpp11::export]]
-double sum4(doubles xs) {
+double sum3(doubles xs) {
   double total = 0;
 
   for(auto x : xs) {
@@ -706,9 +706,19 @@ To use `accumulate()` we need to include the `<numeric>` header.
 using namespace cpp11;
 
 [[cpp11::export]]
-double sum5(doubles x) {
+double sum4(doubles x) {
   return std::accumulate(x.begin(), x.end(), 0.0);
 }
+```
+
+```{r, include = FALSE, error = FALSE}
+# Verify that our sum implementations work
+local({
+  x <- c(.5, .1, .3, .7, 12.)
+  stopifnot(identical(sum(x), sum2(x)))
+  stopifnot(identical(sum(x), sum3(x)))
+  stopifnot(identical(sum(x), sum4(x)))
+})
 ```
 
 ### Algorithms
@@ -719,23 +729,32 @@ For example, we could write a basic cpp11 version of `findInterval()` that takes
 This shows off a few more advanced iterator features.
 Read the code below and see if you can figure out how it works.
 
-TODO: this example is not working
-```{r, engine = "cpp11", eval = FALSE}
+```{r, engine = "cpp11"}
 #include <algorithm>
 #include "cpp11.hpp"
 using namespace cpp11;
 
-[[cpp11::export]]
-integers findInterval2(doubles x, doubles breaks) {
+[[cpp11::export]] integers findInterval2(doubles x, doubles breaks) {
   writable::integers out(x.size());
-  auto it = x.begin();
   auto out_it = out.begin();
-  for(; it != x.end(); ++it, ++out_it) {
-    doubles::const_iterator pos(std::upper_bound(breaks.begin(), breaks.end(), *it));
+
+  for (auto&& val : x) {
+    auto pos = std::upper_bound(breaks.begin(), breaks.end(), val);
     *out_it = std::distance(breaks.begin(), pos);
+    ++out_it;
   }
   return out;
 }
+```
+
+```{r, include = FALSE, error = FALSE}
+# Verify that our findInterval2 implementation works
+local({
+  n <- 1e3
+  x <- sort(round(stats::rt(n, df = 2), 2))
+  tt <- c(-n, seq(-2, 2, length = n + 1), n)
+  stopifnot(identical(findInterval(tt, x), findInterval2(tt, x)))
+})
 ```
 
 The key points are:
@@ -747,11 +766,7 @@ The key points are:
 * `upper_bound()` returns an iterator.
   If we wanted the value of the `upper_bound()` we could dereference it; to figure out its location, we use the `distance()` function.
 
-* Small note: if we want this function to be as fast as `findInterval()` in R (which uses handwritten C code), we need to compute the calls to `.begin()` and `.end()` once and save the results.
-  This distracts from this example so it has been omitted.
-  Making this change yields a function that's slightly faster than R's `findInterval()` function, but is about 1/10 of the code.
-
-It's generally better to use algorithms from the STL than hand rolled loops.
+When in doubt, it is generally better to use algorithms from the STL than hand rolled loops.
 In _Effective STL_, Scott Meyers gives three reasons: efficiency, correctness, and maintainability.
 Algorithms from the STL are written by C++ experts to be extremely efficient, and they have been around for a long time so they are well tested.
 Using standard algorithms also makes the intent of your code more clear, helping to make it more readable and more maintainable.

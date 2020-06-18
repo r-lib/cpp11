@@ -45,8 +45,8 @@ inline Rboolean* vector<Rboolean>::get_p(bool is_altrep, SEXP data) {
 
 template <>
 inline void vector<Rboolean>::const_iterator::fill_buf(R_xlen_t pos) {
-  length_ = std::min(static_cast<R_xlen_t>(64L), data_.size() - pos);
-  LOGICAL_GET_REGION(data_.data_, pos, length_, reinterpret_cast<int*>(buf_.data()));
+  length_ = std::min(static_cast<R_xlen_t>(64L), data_->size() - pos);
+  LOGICAL_GET_REGION(data_->data_, pos, length_, reinterpret_cast<int*>(buf_.data()));
   block_start_ = pos;
 }
 

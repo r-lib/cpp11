@@ -49,7 +49,7 @@ inline void vector<string>::const_iterator::fill_buf(R_xlen_t) {
 
 template <>
 inline string vector<string>::const_iterator::operator*() {
-  return STRING_ELT(data_.data(), pos_);
+  return STRING_ELT(data_->data(), pos_);
 }
 
 typedef vector<string> strings;

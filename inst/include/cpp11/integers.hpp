@@ -47,8 +47,8 @@ inline int* vector<int>::get_p(bool is_altrep, SEXP data) {
 
 template <>
 inline void vector<int>::const_iterator::fill_buf(R_xlen_t pos) {
-  length_ = std::min(static_cast<R_xlen_t>(64L), data_.size() - pos);
-  unwind_protect([&] { INTEGER_GET_REGION(data_.data_, pos, length_, buf_.data()); });
+  length_ = std::min(static_cast<R_xlen_t>(64L), data_->size() - pos);
+  unwind_protect([&] { INTEGER_GET_REGION(data_->data_, pos, length_, buf_.data()); });
   block_start_ = pos;
 }
 
