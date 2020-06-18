@@ -81,10 +81,18 @@
 <!-- badges: start -->
 
 <p>cpp11 is a header-only R package that helps R package developers handle R objects with C++ code. Its goals and syntax are similar to the excellent <a href="https://cran.r-project.org/package=Rcpp">Rcpp</a> package.</p>
+<div id="using-cpp11-in-a-package" class="section level2">
+<h2 class="hasAnchor">
+<a href="#using-cpp11-in-a-package" class="anchor"></a>Using cpp11 in a package</h2>
+<p>To add cpp11 to an existing package, you put your C++ files in the src/ directory and add the following to your DESCRIPTION file.</p>
+<pre><code>LinkingTo: cpp11</code></pre>
+<p>The easiest way to set this up automatically is to call <code>usethis::use_cpp11()</code>.</p>
+<p>Then decorate C++ functions you want to expose to R with <code>[[cpp11::export]]</code>. <em>Note this is a <a href="https://en.cppreference.com/w/cpp/language/attributes">C++11 attribute</a>, not a comment like is used in Rcpp.</em></p>
+</div>
 <div id="getting-started" class="section level2">
 <h2 class="hasAnchor">
 <a href="#getting-started" class="anchor"></a>Getting started</h2>
-<p>See <a href="https://cpp11.r-lib.org/articles/cpp11.html">vignette(“cpp11”)</a> to get started using cpp11.</p>
+<p>See <a href="https://cpp11.r-lib.org/articles/cpp11.html">vignette(“cpp11”)</a> to get started using cpp11 in your scripts, particularly if you are new to C++ programming.</p>
 </div>
 <div id="motivations" class="section level2">
 <h2 class="hasAnchor">

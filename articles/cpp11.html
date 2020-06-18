@@ -593,7 +593,7 @@ list missing_sampler() {
 using namespace cpp11;
 
 [[cpp11::export]]
-double sum3(doubles x) {
+double sum2(doubles x) {
   double total = 0;
 
   for(auto it = x.begin(); it != x.end(); ++it) {
@@ -612,7 +612,7 @@ double sum3(doubles x) {
 using namespace cpp11;
 
 [[cpp11::export]]
-double sum4(doubles xs) {
+double sum3(doubles xs) {
   double total = 0;
 
   for(auto x : xs) {
@@ -626,7 +626,7 @@ double sum4(doubles xs) {
 using namespace cpp11;
 
 [[cpp11::export]]
-double sum5(doubles x) {
+double sum4(doubles x) {
   return std::accumulate(x.begin(), x.end(), 0.0);
 }</code></pre>
 </div>
@@ -634,19 +634,18 @@ double sum5(doubles x) {
 <h3 class="hasAnchor">
 <a href="#algorithms" class="anchor"></a>Algorithms</h3>
 <p>The <code>&lt;algorithm&gt;</code> header provides a large number of algorithms that work with iterators. A good reference is available at <a href="https://en.cppreference.com/w/cpp/algorithm" class="uri">https://en.cppreference.com/w/cpp/algorithm</a>. For example, we could write a basic cpp11 version of <code><a href="https://rdrr.io/r/base/findInterval.html">findInterval()</a></code> that takes two arguments, a vector of values and a vector of breaks, and locates the bin that each x falls into. This shows off a few more advanced iterator features. Read the code below and see if you can figure out how it works.</p>
-<p>TODO: this example is not working</p>
 <pre class="cpp11"><code>#include &lt;algorithm&gt;
 #include "cpp11.hpp"
 using namespace cpp11;
 
-[[cpp11::export]]
-integers findInterval2(doubles x, doubles breaks) {
+[[cpp11::export]] integers findInterval2(doubles x, doubles breaks) {
   writable::integers out(x.size());
-  auto it = x.begin();
   auto out_it = out.begin();
-  for(; it != x.end(); ++it, ++out_it) {
-    doubles::const_iterator pos(std::upper_bound(breaks.begin(), breaks.end(), *it));
+
+  for (auto&amp;&amp; val : x) {
+    auto pos = std::upper_bound(breaks.begin(), breaks.end(), val);
     *out_it = std::distance(breaks.begin(), pos);
+    ++out_it;
   }
   return out;
 }</code></pre>
@@ -655,9 +654,8 @@ integers findInterval2(doubles x, doubles breaks) {
 <li><p>We step through two iterators (input and output) simultaneously.</p></li>
 <li><p>We can assign into an dereferenced iterator (<code>out_it</code>) to change the values in <code>out</code>.</p></li>
 <li><p><code>upper_bound()</code> returns an iterator. If we wanted the value of the <code>upper_bound()</code> we could dereference it; to figure out its location, we use the <code>distance()</code> function.</p></li>
-<li><p>Small note: if we want this function to be as fast as <code><a href="https://rdrr.io/r/base/findInterval.html">findInterval()</a></code> in R (which uses handwritten C code), we need to compute the calls to <code>.begin()</code> and <code>.end()</code> once and save the results. This distracts from this example so it has been omitted. Making this change yields a function that’s slightly faster than R’s <code><a href="https://rdrr.io/r/base/findInterval.html">findInterval()</a></code> function, but is about 1/10 of the code.</p></li>
 </ul>
-<p>It’s generally better to use algorithms from the STL than hand rolled loops. In <em>Effective STL</em>, Scott Meyers gives three reasons: efficiency, correctness, and maintainability. Algorithms from the STL are written by C++ experts to be extremely efficient, and they have been around for a long time so they are well tested. Using standard algorithms also makes the intent of your code more clear, helping to make it more readable and more maintainable.</p>
+<p>When in doubt, it is generally better to use algorithms from the STL than hand rolled loops. In <em>Effective STL</em>, Scott Meyers gives three reasons: efficiency, correctness, and maintainability. Algorithms from the STL are written by C++ experts to be extremely efficient, and they have been around for a long time so they are well tested. Using standard algorithms also makes the intent of your code more clear, helping to make it more readable and more maintainable.</p>
 </div>
 <div id="data-structures-cpp11" class="section level3">
 <h3 class="hasAnchor">
@@ -918,7 +916,7 @@ doubles vacc3(doubles age, logicals female,
 <pre><code>```
 LinkingTo: cpp11
 ```</code></pre>
-<p>The easiest way to set this up automatically is to call <code>usethis::use_cpp11()</code>. TODO: aspirational</p>
+<p>The easiest way to set this up automatically is to call <code>usethis::use_cpp11()</code>.</p>
 <p>Before building the package, you’ll need to run <code><a href="../reference/generate_exports.html">cpp11::generate_exports()</a></code>. This function scans the C++ files for <code>cpp11::export</code> attributes and generates the code required to make the functions available in R. Re-run <code>cpp11:generate_exports()</code> whenever functions are added, removed, or have their signatures changed. This is done automatically by the pkgbuild package.</p>
 </div>
 <div id="more" class="section level2">
