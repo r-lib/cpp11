@@ -8,9 +8,22 @@
 cpp11 is a header-only R package that helps R package developers handle R objects with C++ code.
 Its goals and syntax are similar to the excellent [Rcpp](https://cran.r-project.org/package=Rcpp) package.
 
+## Using cpp11 in a package
+
+To add cpp11 to an existing package, you put your C++ files in the src/ directory and add the following to your DESCRIPTION file.
+
+```
+LinkingTo: cpp11
+```
+
+The easiest way to set this up automatically is to call `usethis::use_cpp11()`.
+
+Then decorate C++ functions you want to expose to R with `[[cpp11::export]]`. 
+*Note this is a [C++11 attribute](https://en.cppreference.com/w/cpp/language/attributes), not a comment like is used in Rcpp.*
+
 ## Getting started
 
-See [vignette("cpp11")](https://cpp11.r-lib.org/articles/cpp11.html) to get started using cpp11.
+See [vignette("cpp11")](https://cpp11.r-lib.org/articles/cpp11.html) to get started using cpp11 in your scripts, particularly if you are new to C++ programming.
 
 ## Motivations
 
