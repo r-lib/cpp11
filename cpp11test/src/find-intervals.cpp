@@ -76,3 +76,21 @@ using namespace Rcpp;
 
   return out;
 }
+
+/* R code to benchmark these implementations
+res <- bench::press(
+  n1 = 10^seq(1, 3),
+  n2 = 10^seq(1, 5),
+  {
+    x <- c(-n1, seq(-2, 2, length = n1 + 1), n1)
+    y <- sort(round(stats::rt(n2, df = 2), 2))
+    bench::mark(
+      findInterval(x, y),
+      findInterval2(x, y),
+      findInterval2_5(x, y),
+      findInterval3(x, y),
+      findInterval4(x, y)
+    )
+  }
+)
+*/
