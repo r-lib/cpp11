@@ -1089,7 +1089,7 @@ To add `cpp11` to an existing package, you put your C++ files in the `src/` dire
     LinkingTo: cpp11
     ```
 
-The easiest way to set this up automatically is to call `usethis::use_cpp11()`. TODO: aspirational
+The easiest way to set this up automatically is to call `usethis::use_cpp11()`.
 
 Before building the package, you'll need to run `cpp11::generate_exports()`.
 This function scans the C++ files for `cpp11::export` attributes and generates the code required to make the functions available in R.
