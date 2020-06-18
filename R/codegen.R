@@ -143,7 +143,7 @@ generate_r_functions <- function(exports, package = "cpp11") {
         ""
       }
       call <- if(return_type == "void") {
-        glue::glue('invisible(.Call("_{package}_{name}" {params}))')
+        glue::glue('invisible(.Call("_{package}_{name}", PACKAGE = "{package}" {params}))')
       } else {
         glue::glue('.Call("_{package}_{name}" {params})')
       }

@@ -8,7 +8,7 @@
 \usage{
 source_cpp(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE)
 
-cpp_function(code, env = parent.frame())
+cpp_function(code, env = parent.frame(), clean = TRUE, quiet = TRUE)
 
 eval_cpp(code)
 }

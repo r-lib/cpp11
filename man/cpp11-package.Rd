@@ -11,6 +11,14 @@ Provides a header only, C++11 interface to R's C interface.
   from the C API as well as C++ exceptions, conform to Rs normal semantics and
   supports interaction with 'ALTREP' vectors.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/r-lib/cpp11}
+  \item Report bugs at \url{https://github.com/r-lib/cpp11/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Jim Hester \email{james.f.hester@gmail.com} (\href{https://orcid.org/0000-0002-2739-7082}{ORCID})
 

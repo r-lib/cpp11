@@ -34,8 +34,9 @@ source_cpp <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   dir.create(file.path(dir, "src"))
 
   if (!is.null(code)) {
-    writeLines(code, file.path(dir, "src", "code.cpp"))
-    file <- file.path(dir, "src", "code.cpp")
+    file <- file.path(dir, "src", sprintf("code_%s.cpp", the$count))
+    writeLines(code, file)
+    the$count <- the$count + 1L
   } else {
     if (!any(tools::file_ext(file) %in% c("cpp", "cc"))) {
       stop("`file` must have a `.cpp` or `.cc` extension")
@@ -44,13 +45,15 @@ source_cpp <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     file <- file.path(dir, "src", basename(file))
   }
 
+  package <- tools::file_path_sans_ext(basename(file))
+
   suppressWarnings(
     all_decorations <- decor::cpp_decorations(dir, is_attribute = TRUE)
   )
   cli_suppress(
     exports <- get_exported_functions(all_decorations, "cpp11")
   )
-  cpp_functions_definitions <- generate_cpp_functions(exports)
+  cpp_functions_definitions <- generate_cpp_functions(exports, package = package)
 
   exports_file <- file.path(dir, "src", "cpp11-exports.cpp")
   writeLines(c('#include "cpp11/declarations.hpp"', "using namespace cpp11;", cpp_functions_definitions), exports_file)
@@ -61,7 +64,7 @@ source_cpp <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     on.exit(unlink(dir, recursive = TRUE))
   }
 
-  r_functions <- generate_r_functions(exports)
+  r_functions <- generate_r_functions(exports, package = package)
 
   makevars_content <- generate_makevars(includes)
 
@@ -76,8 +79,11 @@ source_cpp <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   writeLines(r_functions, r_exports)
   source(r_exports, local = env)
 
-  dyn.load(shared_lib, local = FALSE, now = TRUE)
+  dyn.load(shared_lib, local = TRUE, now = TRUE)
 }
+
+the <- new.env(parent = emptyenv())
+the$count <- 0L
 
 generate_include_paths <- function(packages) {
   out <- character(length(packages))
@@ -93,8 +99,8 @@ generate_makevars <- function(includes) {
 
 #' @rdname source_cpp
 #' @export
-cpp_function <- function(code, env = parent.frame()) {
-  source_cpp(code = paste(c('#include "cpp11.hpp"', "using namespace cpp11;", "namespace writable = cpp11::writable;", "[[cpp11::export]]", code), collapse = "\n"), env = env)
+cpp_function <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE) {
+  source_cpp(code = paste(c('#include "cpp11.hpp"', "using namespace cpp11;", "namespace writable = cpp11::writable;", "[[cpp11::export]]", code), collapse = "\n"), env = env, clean = clean, quiet = quiet)
 }
 
 utils::globalVariables("f")
