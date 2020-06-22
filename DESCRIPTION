@@ -44,7 +44,7 @@ Suggests:
     rmarkdown
 Remotes:
   r-lib/pkgbuild@cpp11,
-  jimhester/decor@userdefined,
+  jimhester/decor,
   rstudio/rmarkdown
 VignetteBuilder: knitr
 URL: https://github.com/r-lib/cpp11
