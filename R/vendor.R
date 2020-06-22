@@ -8,7 +8,15 @@
 #' 'cpp11 version: XYZ' to the top of the files, where XYZ is the version of
 #' cpp11 currently installed on your machine.
 #'
+#' If you choose to vendor the headers you should _remove_ `LinkingTo:
+#' cpp11` from your DESCRIPTION.
+#'
+#' **Note**: vendoring places the responsibility of updating the code on
+#' **you**. Bugfixes and new features in cpp11 will not be available for your
+#' code until you run `vector_cpp11()` again.
+#'
 #' @inheritParams generate_exports
+#' @return The file path to the vendored code (invisibly).
 #' @export
 vendor_cpp11 <- function(path = ".") {
   new <- file.path(path, "inst", "include", "cpp11")

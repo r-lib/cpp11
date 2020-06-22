@@ -9,6 +9,9 @@ vendor_cpp11(path = ".")
 \arguments{
 \item{path}{The path to the package root directory}
 }
+\value{
+The file path to the vendored code (invisibly).
+}
 \description{
 Vendoring is the act of making your own copy of the 3rd party packages your
 project is using. It is often used in the go language community.
@@ -18,4 +21,10 @@ This function vendors cpp11 into your package by copying the cpp11
 headers into the \code{inst/include} folder of your package and adding
 'cpp11 version: XYZ' to the top of the files, where XYZ is the version of
 cpp11 currently installed on your machine.
+
+If you choose to vendor the headers you should \emph{remove} \code{LinkingTo: cpp11} from your DESCRIPTION.
+
+\strong{Note}: vendoring places the responsibility of updating the code on
+\strong{you}. Bugfixes and new features in cpp11 will not be available for your
+code until you run \code{vector_cpp11()} again.
 }

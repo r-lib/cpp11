@@ -21,6 +21,11 @@ The easiest way to set this up automatically is to call `usethis::use_cpp11()`.
 Then decorate C++ functions you want to expose to R with `[[cpp11::export]]`. 
 *Note this is a [C++11 attribute](https://en.cppreference.com/w/cpp/language/attributes), not a comment like is used in Rcpp.*
 
+cpp11 has no hard dependencies and does not use a shared library, so it is straightforward and reliable to use in packages.
+
+Alternatively, you can [vendor](https://cpp11.r-lib.org/articles/motivations.html#vendoring) the current installed version of cpp11 headers into your package with `cpp11::vendor_cpp11()`.
+This ensures the headers will remain unchanged until you explicitly update them.
+
 ## Getting started
 
 See [vignette("cpp11")](https://cpp11.r-lib.org/articles/cpp11.html) to get started using cpp11 in your scripts, particularly if you are new to C++ programming.
@@ -42,6 +47,7 @@ Changes that motivated cpp11 include:
 - Having a more straightforward, [simpler implementation](https://cpp11.r-lib.org/articles/motivations.html#simpler-implementation).
 - Faster [compilation time](https://cpp11.r-lib.org/articles/motivations.html#compilation-speed) with lower memory requirements.
 - Being *completely* [header only](https://cpp11.r-lib.org/articles/motivations.html#header-only) to avoid ABI issues.
+- Capable of [vendoring](https://cpp11.r-lib.org/articles/motivations.html#vendoring) if desired.
 - More robust [protection](https://cpp11.r-lib.org/articles/motivations.html#protection) using a much more efficient linked list data structure.
 - [Growing vectors](https://cpp11.r-lib.org/articles/motivations.html#growing-vectors) more efficiently.
 

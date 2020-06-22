@@ -43,6 +43,7 @@ Changes that motivated cpp11 include:
 - Having a more straightforward, [simpler implementation](#simpler-implementation).
 - Faster [compilation time](#compilation-speed) with lower memory requirements.
 - Being *completely* [header only](#header-only) to avoid ABI issues.
+- Capable of [vendoring](#vendoring) if desired.
 - More robust [protection](#protection) using a much more efficient linked list data structure.
 - [Growing vectors](#growing-vectors) more efficiently.
 
@@ -396,6 +397,21 @@ Rcpp has long been a *mostly* [header only](https://en.wikipedia.org/wiki/Header
 There have been [cases](https://github.com/tidyverse/dplyr/issues/2308) when a package was first installed with version X of Rcpp, and then a newer version of Rcpp was later installed. Then when the original package X was loaded R would crash, because the [Application Binary Interface](https://en.wikipedia.org/wiki/Application_binary_interface) of Rcpp had changed between the two versions.
 
 Because cpp11 consists of exclusively headers this issue does not occur.
+
+## Vendoring
+
+In the go community the concept of [vendoring](https://go.googlesource.com/proposal/+/master/design/25719-go15vendor.md) is widespread.
+Vendoring means that you copy the code for the dependencies into your project's source tree.
+This ensures the dependency code is fixed and stable until it is updated.
+Because cpp11 is fully [header only](#header-only) you can vendor the code in the same way.
+`cpp11::vendor_cpp11()` is provided to do this if you choose.
+
+Vendoring has advantages and drawbacks however.
+The advantage is that changes to the cpp11 project could never break your existing code.
+The drawbacks are both minor, your package size is now slightly larger, and major, you no longer get bugfixes and new features until you explicitly update cpp11.
+
+I think the majority of packages should use `LinkingTo: cpp11` and _not_ vendor the cpp11 dependency.
+However, vendoring can be appropriate for certain situations.
 
 ## Protection
 
