@@ -7,11 +7,15 @@
 
 namespace cpp11 {
 
-template <typename T, typename Deleter = std::default_delete<T>>
+template <typename T>
+void default_deleter(T* obj) {
+  delete obj;
+}
+
+template <typename T, void Deleter(T*) = default_deleter<T>>
 class external_pointer {
  private:
   sexp data_ = R_NilValue;
-  Deleter deleter_;
 
   static SEXP valid_type(SEXP data) {
     if (TYPEOF(data) != EXTPTRSXP) {
@@ -32,48 +36,32 @@ class external_pointer {
 
     R_ClearExternalPtr(p);
 
-    Deleter()(ptr);
+    Deleter(ptr);
   }
 
  public:
   using pointer = T*;
-  using deleter_type = Deleter;
 
   external_pointer() noexcept {}
   external_pointer(std::nullptr_t) noexcept {}
 
   external_pointer(SEXP data) : data_(valid_type(data)) {}
 
-  external_pointer(pointer p, deleter_type d, bool finalize_on_exit = true)
-      : data_(safe[R_MakeExternalPtr]((void*)p, R_NilValue, R_NilValue)), deleter_(d) {
-    R_RegisterCFinalizerEx(data_, wrapper, static_cast<Rboolean>(finalize_on_exit));
-  }
-
-  external_pointer(pointer p, bool finalize_on_exit = true)
+  external_pointer(pointer p, bool use_deleter = true, bool finalize_on_exit = true)
       : data_(safe[R_MakeExternalPtr]((void*)p, R_NilValue, R_NilValue)) {
-    R_RegisterCFinalizerEx(data_, wrapper, static_cast<Rboolean>(finalize_on_exit));
+    if (use_deleter) {
+      R_RegisterCFinalizerEx(data_, wrapper, static_cast<Rboolean>(finalize_on_exit));
+    }
   }
 
   external_pointer(const external_pointer& rhs) {
     data_ = safe[Rf_shallow_duplicate](rhs.data_);
-    deleter_ = std::forward<Deleter>(rhs.get_deleter());
   }
 
-  external_pointer(external_pointer&& rhs) {
-    reset(rhs.release());
-    deleter_ = std::forward<Deleter>(rhs.get_deleter());
-  }
+  external_pointer(external_pointer&& rhs) { reset(rhs.release()); }
 
-  external_pointer& operator=(external_pointer&& rhs) noexcept {
-    reset(rhs.release());
-    deleter_ = std::forward<Deleter>(rhs.get_deleter());
-  }
+  external_pointer& operator=(external_pointer&& rhs) noexcept { reset(rhs.release()); }
 
-  template <class U, class E>
-  external_pointer& operator=(external_pointer<U, E>&& rhs) noexcept {
-    reset(rhs.release());
-    deleter_ = std::forward<E>(rhs.get_deleter());
-  }
   external_pointer& operator=(std::nullptr_t) noexcept { reset(); };
 
   operator SEXP() const noexcept { return data_; }
@@ -90,8 +78,6 @@ class external_pointer {
 
   T* operator->() const noexcept { return get(); }
 
-  deleter_type get_deleter() const noexcept { return deleter_; }
-
   pointer release() noexcept {
     if (get() == nullptr) {
       return nullptr;
@@ -106,7 +92,7 @@ class external_pointer {
     pointer old_ptr = get();
     data_ = safe[R_MakeExternalPtr]((void*)ptr, R_NilValue, R_NilValue);
     if (old_ptr != nullptr) {
-      get_deleter()(old_ptr);
+      Deleter(old_ptr);
     }
   }
 
@@ -119,38 +105,44 @@ class external_pointer {
   operator bool() noexcept { return data_ != nullptr; }
 };
 
-template <class T, class Deleter>
+template <class T, void Deleter(T*)>
 void swap(external_pointer<T, Deleter>& lhs, external_pointer<T, Deleter>& rhs) noexcept {
   lhs.swap(rhs);
 }
 
-template <class T1, class D1, class T2, class D2>
-bool operator==(const external_pointer<T1, D1>& x, const external_pointer<T2, D2>& y) {
+template <class T, void Deleter(T*)>
+bool operator==(const external_pointer<T, Deleter>& x,
+                const external_pointer<T, Deleter>& y) {
   return x.data_ == y.data_;
 }
 
-template <class T1, class D1, class T2, class D2>
-bool operator!=(const external_pointer<T1, D1>& x, const external_pointer<T2, D2>& y) {
+template <class T, void Deleter(T*)>
+bool operator!=(const external_pointer<T, Deleter>& x,
+                const external_pointer<T, Deleter>& y) {
   return x.data_ != y.data_;
 }
 
-template <class T1, class D1, class T2, class D2>
-bool operator<(const external_pointer<T1, D1>& x, const external_pointer<T2, D2>& y) {
+template <class T, void Deleter(T*)>
+bool operator<(const external_pointer<T, Deleter>& x,
+               const external_pointer<T, Deleter>& y) {
   return x.data_ < y.data_;
 }
 
-template <class T1, class D1, class T2, class D2>
-bool operator<=(const external_pointer<T1, D1>& x, const external_pointer<T2, D2>& y) {
+template <class T, void Deleter(T*)>
+bool operator<=(const external_pointer<T, Deleter>& x,
+                const external_pointer<T, Deleter>& y) {
   return x.data_ <= y.data_;
 }
 
-template <class T1, class D1, class T2, class D2>
-bool operator>(const external_pointer<T1, D1>& x, const external_pointer<T2, D2>& y) {
+template <class T, void Deleter(T*)>
+bool operator>(const external_pointer<T, Deleter>& x,
+               const external_pointer<T, Deleter>& y) {
   return x.data_ > y.data_;
 }
 
-template <class T1, class D1, class T2, class D2>
-bool operator>=(const external_pointer<T1, D1>& x, const external_pointer<T2, D2>& y) {
+template <class T, void Deleter(T*)>
+bool operator>=(const external_pointer<T, Deleter>& x,
+                const external_pointer<T, Deleter>& y) {
   return x.data_ >= y.data_;
 }
 

@@ -2,6 +2,12 @@
 #include <iostream>
 #include "cpp11/external_pointer.hpp"
 
+bool deleted = false;
+void deleter(int* ptr) {
+  deleted = true;
+  delete ptr;
+}
+
 context("external_pointer-C++") {
   test_that("external_pointer works") {
     std::vector<int>* v = new std::vector<int>;
@@ -22,13 +28,7 @@ context("external_pointer-C++") {
   }
 
   test_that("external_pointer works with a custom deleter") {
-    bool deleted = false;
-    auto deleter = [&](int* ptr) {
-      deleted = true;
-      delete ptr;
-    };
-
-    cpp11::external_pointer<int, decltype(deleter)> uniq(new int, deleter);
+    cpp11::external_pointer<int, deleter> uniq(new int);
     expect_true(deleted == false);
     uniq.reset();
     expect_true(deleted == true);
