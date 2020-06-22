@@ -98,18 +98,19 @@ class vector {
 
     const_iterator(const vector* data, R_xlen_t pos);
 
-    inline const_iterator& operator++();
-    // inline const_iterator& operator--();
-
-    inline T operator*();
-
-    inline bool operator!=(const const_iterator& other) const;
-    // inline bool operator==(const const_iterator& other) const;
-
+    inline const_iterator& operator+(R_xlen_t pos);
     inline ptrdiff_t operator-(const const_iterator& other) const;
 
-    inline const_iterator& operator+(R_xlen_t pos);
+    inline const_iterator& operator++();
+    inline const_iterator& operator--();
+
     inline const_iterator& operator+=(R_xlen_t pos);
+    inline const_iterator& operator-=(R_xlen_t pos);
+
+    inline bool operator!=(const const_iterator& other) const;
+    inline bool operator==(const const_iterator& other) const;
+
+    inline T operator*();
 
     friend class writable::vector<T>::iterator;
 
@@ -371,6 +372,15 @@ inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator++
 }
 
 template <typename T>
+inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator--() {
+  --pos_;
+  if (data_->is_altrep() && pos_ > 0 && pos_ < block_start_) {
+    fill_buf(std::max(static_cast<R_xlen_t>(0), pos_ - 64));
+  }
+  return *this;
+}
+
+template <typename T>
 inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator+=(
     R_xlen_t i) {
   pos_ += i;
@@ -381,16 +391,26 @@ inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator+=
 }
 
 template <typename T>
+inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator-=(
+    R_xlen_t i) {
+  pos_ -= i;
+  if (data_->is_altrep() && pos_ >= block_start_ + length_) {
+    fill_buf(std::max(static_cast<R_xlen_t>(0), pos_ - 64));
+  }
+  return *this;
+}
+
+template <typename T>
 inline bool vector<T>::const_iterator::operator!=(
     const vector<T>::const_iterator& other) const {
   return pos_ != other.pos_;
 }
 
-// template <typename T>
-// inline bool vector<T>::const_iterator::operator==(
-// const vector<T>::const_iterator& other) const {
-// return pos_ == other.pos_;
-//}
+template <typename T>
+inline bool vector<T>::const_iterator::operator==(
+    const vector<T>::const_iterator& other) const {
+  return pos_ == other.pos_;
+}
 
 template <typename T>
 inline ptrdiff_t vector<T>::const_iterator::operator-(

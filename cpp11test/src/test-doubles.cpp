@@ -11,6 +11,43 @@ context("doubles-C++") {
 
     expect_error(cpp11::doubles(Rf_allocVector(INTSXP, 2)));
   }
+
+  test_that("doubles::vector::const_iterator()") {
+    cpp11::doubles x(Rf_allocVector(REALSXP, 100));
+    REAL(x)[0] = 1;
+    REAL(x)[1] = 2;
+    REAL(x)[2] = 3;
+    REAL(x)[3] = 4;
+    REAL(x)[4] = 5;
+    REAL(x)[97] = 98;
+    REAL(x)[98] = 99;
+    REAL(x)[99] = 100;
+    expect_true(x.size() == 100);
+
+    auto it = x.begin();
+    auto it2 = x.begin();
+    expect_true(it == it2);
+
+    ++it;
+    expect_true(!(it == it2));
+    expect_true(it != it2);
+
+    ++it;
+    expect_true(*it == 3);
+    --it;
+    expect_true(*it == 2);
+    --it;
+
+    it += 99;
+    expect_true(*it == 100);
+    --it;
+    expect_true(*it == 99);
+    --it;
+    expect_true(*it == 98);
+    it -= 95;
+    expect_true(*it == 3);
+  }
+
   test_that("doubles.push_back()") {
     cpp11::writable::doubles x;
     x.push_back(1);
