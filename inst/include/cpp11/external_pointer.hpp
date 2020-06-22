@@ -8,7 +8,6 @@
 namespace cpp11 {
 
 template <typename T, typename Deleter = std::default_delete<T>>
-
 class external_pointer {
  private:
   sexp data_ = R_NilValue;
@@ -22,6 +21,20 @@ class external_pointer {
     return data;
   }
 
+  static void wrapper(SEXP p) {
+    if (TYPEOF(p) != EXTPTRSXP) return;
+
+    T* ptr = static_cast<T*>(R_ExternalPtrAddr(p));
+
+    if (ptr == NULL) {
+      return;
+    }
+
+    R_ClearExternalPtr(p);
+
+    Deleter()(ptr);
+  }
+
  public:
   using pointer = T*;
   using deleter_type = Deleter;
@@ -31,19 +44,15 @@ class external_pointer {
 
   external_pointer(SEXP data) : data_(valid_type(data)) {}
 
-  external_pointer(pointer p, deleter_type d)
-      : data_(safe[R_MakeExternalPtr]((void*)p, R_NilValue, R_NilValue)), deleter_(d) {}
-
-  ~external_pointer() {
-    pointer ptr = get();
-    if (ptr == nullptr) {
-      return;
-    }
-    get_deleter()(ptr);
+  external_pointer(pointer p, deleter_type d, bool finalize_on_exit = true)
+      : data_(safe[R_MakeExternalPtr]((void*)p, R_NilValue, R_NilValue)), deleter_(d) {
+    R_RegisterCFinalizerEx(data_, wrapper, static_cast<Rboolean>(finalize_on_exit));
   }
 
-  external_pointer(T* p)
-      : data_(safe[R_MakeExternalPtr]((void*)p, R_NilValue, R_NilValue)) {}
+  external_pointer(pointer p, bool finalize_on_exit = true)
+      : data_(safe[R_MakeExternalPtr]((void*)p, R_NilValue, R_NilValue)) {
+    R_RegisterCFinalizerEx(data_, wrapper, static_cast<Rboolean>(finalize_on_exit));
+  }
 
   external_pointer(const external_pointer& rhs) {
     data_ = safe[Rf_shallow_duplicate](rhs.data_);
