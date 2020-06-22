@@ -60,6 +60,8 @@ class vector {
 
   T at(const R_xlen_t pos) const;
 
+  bool contains(const string& name) const;
+
   vector& operator=(const vector& rhs) = default;
 
   bool is_altrep() const;
@@ -446,6 +448,21 @@ inline T cpp11::vector<T>::operator[](const string& name) const {
   }
 
   throw std::out_of_range("vector");
+}
+
+template <typename T>
+inline bool cpp11::vector<T>::contains(const string& name) const {
+  SEXP names = this->names();
+  R_xlen_t size = Rf_xlength(names);
+
+  for (R_xlen_t pos = 0; pos < size; ++pos) {
+    auto cur = Rf_translateCharUTF8(STRING_ELT(names, pos));
+    if (name == cur) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 template <typename T>

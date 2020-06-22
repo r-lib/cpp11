@@ -252,6 +252,9 @@ context("doubles-C++") {
     expect_true(x[0] == 1.);
     expect_true(x[1] == 2.);
 
+    expect_true(x.contains("a"));
+    expect_true(!x.contains("c"));
+
     expect_true(x["a"] == 1.);
     expect_true(x["b"] == 2.);
 
