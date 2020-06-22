@@ -240,6 +240,12 @@ context("doubles-C++") {
 
 #endif
 
+  test_that("doubles::names(empty)") {
+    cpp11::doubles x;
+    auto nms = x.names();
+    expect_true(nms.size() == 0);
+  }
+
   test_that("doubles::names") {
     using namespace cpp11::literals;
     cpp11::writable::doubles x({"a"_nm = 1., "b"_nm = 2.});

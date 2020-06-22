@@ -85,7 +85,12 @@ class vector {
   sexp attr(SEXP name) const { return SEXP(attribute_proxy<vector<T>>(*this, name)); }
 
   vector<string> names() const {
-    return SEXP(attribute_proxy<vector<T>>(*this, R_NamesSymbol));
+    SEXP nms = SEXP(attribute_proxy<vector<T>>(*this, R_NamesSymbol));
+    if (nms == R_NilValue) {
+      return vector<string>();
+    }
+
+    return nms;
   }
 
   class const_iterator {
