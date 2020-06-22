@@ -23,9 +23,15 @@ eval_cpp(code)
 
 \item{quiet}{If 'TRUE`, do not show compiler output}
 }
+\value{
+For \code{\link[=source_cpp]{source_cpp()}} and \verb{[cpp_function()]} the results of
+\code{\link[=dyn.load]{dyn.load()}} (invisibly). For \verb{[eval_cpp()]} the results of the evaluated
+expression.
+}
 \description{
-\code{cpp_function()} is a helper which makes it easier to compile a single function for use in R.
-\code{eval_cpp()} is a helper to evaluate a single expression and return the result.
+\code{\link[=source_cpp]{source_cpp()}} compiles and loads a single C++ file for use in R.
+\code{\link[=cpp_function]{cpp_function()}} compiles and loads a single function for use in R.
+\code{\link[=eval_cpp]{eval_cpp()}} evaluates a single C++ expression and returns the result.
 }
 \examples{
 \dontrun{

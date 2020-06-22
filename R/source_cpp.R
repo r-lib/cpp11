@@ -1,13 +1,17 @@
 #' Compile C++ code
 #'
-#' `cpp_function()` is a helper which makes it easier to compile a single function for use in R.
-#' `eval_cpp()` is a helper to evaluate a single expression and return the result.
+#' [source_cpp()] compiles and loads a single C++ file for use in R.
+#' [cpp_function()] compiles and loads a single function for use in R.
+#' [eval_cpp()] evaluates a single C++ expression and returns the result.
 #'
 #' @param file A file containing C++ code to compile
 #' @param code If non-null, the C++ code to compile
 #' @param env The R environment where the R wrapping functions should be defined.
 #' @param clean If `TRUE`, cleanup the files after sourcing
 #' @param quiet If 'TRUE`, do not show compiler output
+#' @return For [source_cpp()] and `[cpp_function()]` the results of
+#'   [dyn.load()] (invisibly). For `[eval_cpp()]` the results of the evaluated
+#'   expression.
 #' @examples
 #' \dontrun{
 #' source_cpp(
