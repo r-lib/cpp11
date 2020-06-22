@@ -144,6 +144,8 @@ class vector {
   const_iterator cbegin() const;
   const_iterator cend() const;
 
+  const_iterator find(const string& name) const;
+
  private:
   SEXP data_ = R_NilValue;
   bool is_altrep_ = false;
@@ -277,6 +279,8 @@ class vector : public cpp11::vector<T> {
 
   using cpp11::vector<T>::cbegin;
   using cpp11::vector<T>::cend;
+
+  iterator find(const string& name) const;
 
   attribute_proxy<vector<T>> attr(const char* name) const {
     return attribute_proxy<vector<T>>(*this, name);
@@ -466,6 +470,22 @@ inline bool cpp11::vector<T>::contains(const string& name) const {
 }
 
 template <typename T>
+inline typename cpp11::vector<T>::const_iterator cpp11::vector<T>::find(
+    const string& name) const {
+  SEXP names = this->names();
+  R_xlen_t size = Rf_xlength(names);
+
+  for (R_xlen_t pos = 0; pos < size; ++pos) {
+    auto cur = Rf_translateCharUTF8(STRING_ELT(names, pos));
+    if (name == cur) {
+      return begin() + pos;
+    }
+  }
+
+  return end();
+}
+
+template <typename T>
 inline T vector<T>::const_iterator::operator*() {
   if (data_->is_altrep()) {
     return buf_[pos_ - block_start_];
@@ -611,6 +631,21 @@ inline typename vector<T>::proxy vector<T>::operator[](const string& name) const
   }
 
   throw std::out_of_range("vector");
+}
+
+template <typename T>
+inline typename vector<T>::iterator vector<T>::find(const string& name) const {
+  SEXP names = this->names();
+  R_xlen_t size = Rf_xlength(names);
+
+  for (R_xlen_t pos = 0; pos < size; ++pos) {
+    auto cur = Rf_translateCharUTF8(STRING_ELT(names, pos));
+    if (name == cur) {
+      return begin() + pos;
+    }
+  }
+
+  return end();
 }
 
 template <typename T>

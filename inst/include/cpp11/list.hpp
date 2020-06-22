@@ -27,6 +27,20 @@ inline SEXP vector<SEXP>::operator[](const R_xlen_t pos) const {
 }
 
 template <>
+inline SEXP vector<SEXP>::operator[](const string& name) const {
+  SEXP names = this->names();
+  R_xlen_t size = Rf_xlength(names);
+
+  for (R_xlen_t pos = 0; pos < size; ++pos) {
+    auto cur = Rf_translateCharUTF8(STRING_ELT(names, pos));
+    if (name == cur) {
+      return operator[](pos);
+    }
+  }
+  return R_NilValue;
+}
+
+template <>
 inline SEXP vector<SEXP>::at(const R_xlen_t pos) const {
   if (pos < 0 || pos >= length_) {
     throw std::out_of_range("doubles");
