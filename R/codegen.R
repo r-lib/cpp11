@@ -1,5 +1,11 @@
 #' Generate C function exports and R wrappers for decorated functions
+#'
+#' Functions decorated with `[[cpp11::export]]` in files ending in `.cc`,
+#' `.cpp`, `.h` or `.hpp` will be wrapped in generated code which allows them to be
+#' called from R.
+#'
 #' @param path The path to the package root directory
+#' @return The paths to the generated R and C++ source files (in that order).
 #' @export
 generate_exports <- function(path = ".") {
   `%>%` <- dplyr::`%>%`
@@ -82,6 +88,8 @@ generate_exports <- function(path = ".") {
   ))
 
   cli::cli_alert_success("generated file {.file {basename(cpp_exports)}}")
+
+  invisible(c(r_exports, cpp_exports))
 }
 
 utils::globalVariables(c("name", "return_type", "line", "decoration", "context", ".", "functions"))

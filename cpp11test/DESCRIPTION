@@ -19,5 +19,5 @@ Suggests:
 LazyData: true
 Roxygen: list(markdown = TRUE)
 SystemRequirements: C++11
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.0.9000
 Remotes: jimhester/testthat@catch-detailed-output

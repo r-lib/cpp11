@@ -9,6 +9,11 @@ generate_exports(path = ".")
 \arguments{
 \item{path}{The path to the package root directory}
 }
+\value{
+The paths to the generated R and C++ source files (in that order).
+}
 \description{
-Generate C function exports and R wrappers for decorated functions
+Functions decorated with \verb{[[cpp11::export]]} in files ending in \code{.cc},
+\code{.cpp}, \code{.h} or \code{.hpp} will be wrapped in generated code which allows them to be
+called from R.
 }
