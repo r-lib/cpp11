@@ -25,7 +25,7 @@ class external_pointer {
     return data;
   }
 
-  static void wrapper(SEXP p) {
+  static void r_deleter(SEXP p) {
     if (TYPEOF(p) != EXTPTRSXP) return;
 
     T* ptr = static_cast<T*>(R_ExternalPtrAddr(p));
@@ -50,7 +50,7 @@ class external_pointer {
   external_pointer(pointer p, bool use_deleter = true, bool finalize_on_exit = true)
       : data_(safe[R_MakeExternalPtr]((void*)p, R_NilValue, R_NilValue)) {
     if (use_deleter) {
-      R_RegisterCFinalizerEx(data_, wrapper, static_cast<Rboolean>(finalize_on_exit));
+      R_RegisterCFinalizerEx(data_, r_deleter, static_cast<Rboolean>(finalize_on_exit));
     }
   }
 
@@ -89,11 +89,9 @@ class external_pointer {
   }
 
   void reset(pointer ptr = pointer()) {
-    pointer old_ptr = get();
+    SEXP old_data = data_;
     data_ = safe[R_MakeExternalPtr]((void*)ptr, R_NilValue, R_NilValue);
-    if (old_ptr != nullptr) {
-      Deleter(old_ptr);
-    }
+    r_deleter(old_data);
   }
 
   void swap(external_pointer& other) noexcept {
