@@ -2,10 +2,9 @@
 #include "Rmath.h"
 #include "cpp11/doubles.hpp"
 using namespace cpp11;
-namespace writable = cpp11::writable;
 
 [[cpp11::export]] SEXP gibbs_cpp(int N, int thin) {
-  writable::doubles_matrix mat(N, 2);
+  cpp11::writable::doubles_matrix mat(N, 2);
   double x = 0, y = 0;
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < thin; j++) {
@@ -20,7 +19,7 @@ namespace writable = cpp11::writable;
 }
 
 [[cpp11::export]] cpp11::doubles_matrix gibbs_cpp2(int N, int thin) {
-  writable::doubles_matrix mat(N, 2);
+  cpp11::writable::doubles_matrix mat(N, 2);
   double x = 0, y = 0;
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < thin; j++) {
