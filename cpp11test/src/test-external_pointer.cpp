@@ -3,6 +3,7 @@
 #include "cpp11/external_pointer.hpp"
 
 bool deleted = false;
+
 void deleter(int* ptr) {
   deleted = true;
   delete ptr;
@@ -28,6 +29,7 @@ context("external_pointer-C++") {
   }
 
   test_that("external_pointer works with a custom deleter") {
+    deleted = false;
     cpp11::external_pointer<int, deleter> uniq(new int);
     expect_true(deleted == false);
     uniq.reset();
