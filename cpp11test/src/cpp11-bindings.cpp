@@ -102,6 +102,78 @@ extern "C" SEXP _cpp11test_gibbs_rcpp2(SEXP N, SEXP thin) {
     return cpp11::as_sexp(gibbs_rcpp2(cpp11::unmove(cpp11::as_cpp<int>(N)), cpp11::unmove(cpp11::as_cpp<int>(thin))));
   END_CPP11
 }
+// protect.cpp
+void protect_one_(SEXP x, int n);
+extern "C" SEXP _cpp11test_protect_one_(SEXP x, SEXP n) {
+  BEGIN_CPP11
+    protect_one_(cpp11::unmove(cpp11::as_cpp<SEXP>(x)), cpp11::unmove(cpp11::as_cpp<int>(n)));
+  return R_NilValue;
+  END_CPP11
+}
+// protect.cpp
+void protect_one_sexp_(SEXP x, int n);
+extern "C" SEXP _cpp11test_protect_one_sexp_(SEXP x, SEXP n) {
+  BEGIN_CPP11
+    protect_one_sexp_(cpp11::unmove(cpp11::as_cpp<SEXP>(x)), cpp11::unmove(cpp11::as_cpp<int>(n)));
+  return R_NilValue;
+  END_CPP11
+}
+// protect.cpp
+void protect_one_cpp11_(SEXP x, int n);
+extern "C" SEXP _cpp11test_protect_one_cpp11_(SEXP x, SEXP n) {
+  BEGIN_CPP11
+    protect_one_cpp11_(cpp11::unmove(cpp11::as_cpp<SEXP>(x)), cpp11::unmove(cpp11::as_cpp<int>(n)));
+  return R_NilValue;
+  END_CPP11
+}
+// protect.cpp
+void protect_one_preserve_(SEXP x, int n);
+extern "C" SEXP _cpp11test_protect_one_preserve_(SEXP x, SEXP n) {
+  BEGIN_CPP11
+    protect_one_preserve_(cpp11::unmove(cpp11::as_cpp<SEXP>(x)), cpp11::unmove(cpp11::as_cpp<int>(n)));
+  return R_NilValue;
+  END_CPP11
+}
+// protect.cpp
+void protect_many_(int n);
+extern "C" SEXP _cpp11test_protect_many_(SEXP n) {
+  BEGIN_CPP11
+    protect_many_(cpp11::unmove(cpp11::as_cpp<int>(n)));
+  return R_NilValue;
+  END_CPP11
+}
+// protect.cpp
+void protect_many_cpp11_(int n);
+extern "C" SEXP _cpp11test_protect_many_cpp11_(SEXP n) {
+  BEGIN_CPP11
+    protect_many_cpp11_(cpp11::unmove(cpp11::as_cpp<int>(n)));
+  return R_NilValue;
+  END_CPP11
+}
+// protect.cpp
+void protect_many_sexp_(int n);
+extern "C" SEXP _cpp11test_protect_many_sexp_(SEXP n) {
+  BEGIN_CPP11
+    protect_many_sexp_(cpp11::unmove(cpp11::as_cpp<int>(n)));
+  return R_NilValue;
+  END_CPP11
+}
+// protect.cpp
+void protect_many_preserve_(int n);
+extern "C" SEXP _cpp11test_protect_many_preserve_(SEXP n) {
+  BEGIN_CPP11
+    protect_many_preserve_(cpp11::unmove(cpp11::as_cpp<int>(n)));
+  return R_NilValue;
+  END_CPP11
+}
+// protect.cpp
+void protect_many_rcpp_(int n);
+extern "C" SEXP _cpp11test_protect_many_rcpp_(SEXP n) {
+  BEGIN_CPP11
+    protect_many_rcpp_(cpp11::unmove(cpp11::as_cpp<int>(n)));
+  return R_NilValue;
+  END_CPP11
+}
 // release.cpp
 void cpp11_release_(int n);
 extern "C" SEXP _cpp11test_cpp11_release_(SEXP n) {
@@ -226,6 +298,15 @@ extern SEXP _cpp11test_gibbs_cpp2(SEXP, SEXP);
 extern SEXP _cpp11test_gibbs_rcpp(SEXP, SEXP);
 extern SEXP _cpp11test_gibbs_rcpp2(SEXP, SEXP);
 extern SEXP _cpp11test_grow_(SEXP);
+extern SEXP _cpp11test_protect_many_(SEXP);
+extern SEXP _cpp11test_protect_many_cpp11_(SEXP);
+extern SEXP _cpp11test_protect_many_preserve_(SEXP);
+extern SEXP _cpp11test_protect_many_rcpp_(SEXP);
+extern SEXP _cpp11test_protect_many_sexp_(SEXP);
+extern SEXP _cpp11test_protect_one_(SEXP, SEXP);
+extern SEXP _cpp11test_protect_one_cpp11_(SEXP, SEXP);
+extern SEXP _cpp11test_protect_one_preserve_(SEXP, SEXP);
+extern SEXP _cpp11test_protect_one_sexp_(SEXP, SEXP);
 extern SEXP _cpp11test_rcpp_grow_(SEXP);
 extern SEXP _cpp11test_rcpp_release_(SEXP);
 extern SEXP _cpp11test_rcpp_sum_dbl_accumulate_(SEXP);
@@ -258,6 +339,15 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_gibbs_rcpp",               (DL_FUNC) &_cpp11test_gibbs_rcpp,               2},
     {"_cpp11test_gibbs_rcpp2",              (DL_FUNC) &_cpp11test_gibbs_rcpp2,              2},
     {"_cpp11test_grow_",                    (DL_FUNC) &_cpp11test_grow_,                    1},
+    {"_cpp11test_protect_many_",            (DL_FUNC) &_cpp11test_protect_many_,            1},
+    {"_cpp11test_protect_many_cpp11_",      (DL_FUNC) &_cpp11test_protect_many_cpp11_,      1},
+    {"_cpp11test_protect_many_preserve_",   (DL_FUNC) &_cpp11test_protect_many_preserve_,   1},
+    {"_cpp11test_protect_many_rcpp_",       (DL_FUNC) &_cpp11test_protect_many_rcpp_,       1},
+    {"_cpp11test_protect_many_sexp_",       (DL_FUNC) &_cpp11test_protect_many_sexp_,       1},
+    {"_cpp11test_protect_one_",             (DL_FUNC) &_cpp11test_protect_one_,             2},
+    {"_cpp11test_protect_one_cpp11_",       (DL_FUNC) &_cpp11test_protect_one_cpp11_,       2},
+    {"_cpp11test_protect_one_preserve_",    (DL_FUNC) &_cpp11test_protect_one_preserve_,    2},
+    {"_cpp11test_protect_one_sexp_",        (DL_FUNC) &_cpp11test_protect_one_sexp_,        2},
     {"_cpp11test_rcpp_grow_",               (DL_FUNC) &_cpp11test_rcpp_grow_,               1},
     {"_cpp11test_rcpp_release_",            (DL_FUNC) &_cpp11test_rcpp_release_,            1},
     {"_cpp11test_rcpp_sum_dbl_accumulate_", (DL_FUNC) &_cpp11test_rcpp_sum_dbl_accumulate_, 1},

@@ -56,6 +56,42 @@ gibbs_rcpp2 <- function(N, thin){
   .Call("_cpp11test_gibbs_rcpp2" , N, thin)
 }
 
+protect_one_ <- function(x, n){
+  invisible(.Call("_cpp11test_protect_one_", PACKAGE = "cpp11test" , x, n))
+}
+
+protect_one_sexp_ <- function(x, n){
+  invisible(.Call("_cpp11test_protect_one_sexp_", PACKAGE = "cpp11test" , x, n))
+}
+
+protect_one_cpp11_ <- function(x, n){
+  invisible(.Call("_cpp11test_protect_one_cpp11_", PACKAGE = "cpp11test" , x, n))
+}
+
+protect_one_preserve_ <- function(x, n){
+  invisible(.Call("_cpp11test_protect_one_preserve_", PACKAGE = "cpp11test" , x, n))
+}
+
+protect_many_ <- function(n){
+  invisible(.Call("_cpp11test_protect_many_", PACKAGE = "cpp11test" , n))
+}
+
+protect_many_cpp11_ <- function(n){
+  invisible(.Call("_cpp11test_protect_many_cpp11_", PACKAGE = "cpp11test" , n))
+}
+
+protect_many_sexp_ <- function(n){
+  invisible(.Call("_cpp11test_protect_many_sexp_", PACKAGE = "cpp11test" , n))
+}
+
+protect_many_preserve_ <- function(n){
+  invisible(.Call("_cpp11test_protect_many_preserve_", PACKAGE = "cpp11test" , n))
+}
+
+protect_many_rcpp_ <- function(n){
+  invisible(.Call("_cpp11test_protect_many_rcpp_", PACKAGE = "cpp11test" , n))
+}
+
 cpp11_release_ <- function(n){
   invisible(.Call("_cpp11test_cpp11_release_", PACKAGE = "cpp11test" , n))
 }
