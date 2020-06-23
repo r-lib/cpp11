@@ -7,13 +7,13 @@
     <loc>https://cpp11.r-lib.org/reference/cpp11-package.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/reference/generate_exports.html</loc>
+    <loc>https://cpp11.r-lib.org/reference/cpp_generate_bindings.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/reference/source_cpp.html</loc>
+    <loc>https://cpp11.r-lib.org/reference/cpp_source.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/reference/vendor_cpp11.html</loc>
+    <loc>https://cpp11.r-lib.org/reference/cpp_vendor.html</loc>
   </url>
   <url>
     <loc>https://cpp11.r-lib.org/articles/converting.html</loc>

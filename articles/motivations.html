@@ -99,6 +99,7 @@
 <li>Having a more straightforward, <a href="#simpler-implementation">simpler implementation</a>.</li>
 <li>Faster <a href="#compilation-speed">compilation time</a> with lower memory requirements.</li>
 <li>Being <em>completely</em> <a href="#header-only">header only</a> to avoid ABI issues.</li>
+<li>Capable of <a href="#vendoring">vendoring</a> if desired.</li>
 <li>More robust <a href="#protection">protection</a> using a much more efficient linked list data structure.</li>
 <li>
 <a href="#growing-vectors">Growing vectors</a> more efficiently.</li>
@@ -528,6 +529,13 @@
 <a href="#header-only" class="anchor"></a>Header only</h2>
 <p>Rcpp has long been a <em>mostly</em> <a href="https://en.wikipedia.org/wiki/Header-only">header only</a> library, however is not a <em>completely</em> header only library. There have been <a href="https://github.com/tidyverse/dplyr/issues/2308">cases</a> when a package was first installed with version X of Rcpp, and then a newer version of Rcpp was later installed. Then when the original package X was loaded R would crash, because the <a href="https://en.wikipedia.org/wiki/Application_binary_interface">Application Binary Interface</a> of Rcpp had changed between the two versions.</p>
 <p>Because cpp11 consists of exclusively headers this issue does not occur.</p>
+</div>
+<div id="vendoring" class="section level2">
+<h2 class="hasAnchor">
+<a href="#vendoring" class="anchor"></a>Vendoring</h2>
+<p>In the go community the concept of <a href="https://go.googlesource.com/proposal/+/master/design/25719-go15vendor.md">vendoring</a> is widespread. Vendoring means that you copy the code for the dependencies into your project’s source tree. This ensures the dependency code is fixed and stable until it is updated. Because cpp11 is fully <a href="#header-only">header only</a> you can vendor the code in the same way. <code>cpp11::vendor_cpp11()</code> is provided to do this if you choose.</p>
+<p>Vendoring has advantages and drawbacks however. The advantage is that changes to the cpp11 project could never break your existing code. The drawbacks are both minor, your package size is now slightly larger, and major, you no longer get bugfixes and new features until you explicitly update cpp11.</p>
+<p>I think the majority of packages should use <code>LinkingTo: cpp11</code> and <em>not</em> vendor the cpp11 dependency. However, vendoring can be appropriate for certain situations.</p>
 </div>
 <div id="protection" class="section level2">
 <h2 class="hasAnchor">

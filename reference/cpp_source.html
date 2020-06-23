@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • cpp11</title>
+<title>Compile C++ code — cpp_source • cpp11</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,10 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Compile C++ code — cpp_source" />
+<meta property="og:description" content="cpp_source() compiles and loads a single C++ file for use in R.
+cpp_function() compiles and loads a single function for use in R.
+cpp_eval() evaluates a single C++ expression and returns the result." />
 
 
 
@@ -58,7 +61,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -111,54 +114,88 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Compile C++ code</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/cpp11/blob/master/R/source_cpp.R'><code>R/source_cpp.R</code></a></small>
+    <div class="hidden name"><code>cpp_source.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p><code>cpp_source()</code> compiles and loads a single C++ file for use in R.
+<code>cpp_function()</code> compiles and loads a single function for use in R.
+<code>cpp_eval()</code> evaluates a single C++ expression and returns the result.</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>cpp_source</span>(<span class='kw'>file</span>, code = <span class='kw'>NULL</span>, env = <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(), clean = <span class='fl'>TRUE</span>, quiet = <span class='fl'>TRUE</span>)
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="cpp_generate_bindings.html">cpp_generate_bindings()</a></code> </p>
-        </td>
-        <td><p>Generate C function exports and R wrappers for decorated functions</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cpp_source.html">cpp_source()</a></code> <code><a href="cpp_source.html">cpp_function()</a></code> <code><a href="cpp_source.html">cpp_eval()</a></code> </p>
-        </td>
-        <td><p>Compile C++ code</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cpp_vendor.html">cpp_vendor()</a></code> </p>
-        </td>
-        <td><p>Vendor the cpp11 dependency</p></td>
-      </tr>
-    </tbody>
+<span class='fu'>cpp_function</span>(<span class='kw'>code</span>, env = <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(), clean = <span class='fl'>TRUE</span>, quiet = <span class='fl'>TRUE</span>)
+
+<span class='fu'>cpp_eval</span>(<span class='kw'>code</span>)</pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>file</th>
+      <td><p>A file containing C++ code to compile</p></td>
+    </tr>
+    <tr>
+      <th>code</th>
+      <td><p>If non-null, the C++ code to compile</p></td>
+    </tr>
+    <tr>
+      <th>env</th>
+      <td><p>The R environment where the R wrapping functions should be defined.</p></td>
+    </tr>
+    <tr>
+      <th>clean</th>
+      <td><p>If <code>TRUE</code>, cleanup the files after sourcing</p></td>
+    </tr>
+    <tr>
+      <th>quiet</th>
+      <td><p>If 'TRUE`, do not show compiler output</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>For <code>cpp_source()</code> and <code>[cpp_function()]</code> the results of
+<code><a href='https://rdrr.io/r/base/dynload.html'>dyn.load()</a></code> (invisibly). For <code>[cpp_eval()]</code> the results of the evaluated
+expression.</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'>cpp_source</span>(
+  code = <span class='st'>'#include "cpp11/integers.hpp"
+
+  [[cpp11::export]]
+  int num_odd(cpp11::integers x) {
+    int total = 0;
+    for (int val : x) {
+      if ((val % 2) == 1) {
+        ++total;
+      }
+    }
+    return total;
+  }
+  '</span>ode = '#include "cpp11/integers.hpp"
+
+  [[cpp11::export]]
+  int num_odd(cpp11::integers x) {
+    int total = 0;
+    for (int val : x) {
+      if ((val % 2) == 1) {
+        ++total;
+      }
+    }
+    return total;
+  }
+  ')
+
+<span class='fu'>num_odd</span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, <span class='fl'>15</span>, <span class='fl'>23</span>)))
+}</div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
