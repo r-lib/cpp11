@@ -9,3 +9,7 @@ local_package <- function() {
 pkg_path <- function(pkg) {
   dirname(pkg$.__enclos_env__$private$path)
 }
+
+glue_str <- function(...) {
+  glue::as_glue(unlist(list(...)))
+}

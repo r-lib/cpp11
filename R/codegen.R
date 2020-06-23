@@ -171,15 +171,15 @@ generate_r_functions <- function(exports, package = "cpp11") {
 glue_collapse_data <- function(data, ..., sep = ", ", last = "") {
   res <- glue::glue_collapse(glue::glue_data(data, ...), sep = sep, last = last)
   if(length(res) == 0) res <- ""
-  res
+  unclass(res)
 }
 
 wrap_call <- function(name, return_type, args) {
   call <- glue::glue('{name}({list_params})', list_params = glue_collapse_data(args, "cpp11::unmove(cpp11::as_cpp<{type}>({name}))"))
-  if(return_type == "void") {
-    glue::glue("  {call};\n  return R_NilValue;", .trim = FALSE)
+  if (return_type == "void") {
+    unclass(glue::glue("  {call};\n  return R_NilValue;", .trim = FALSE))
   } else {
-    glue::glue("  return cpp11::as_sexp({call});")
+    unclass(glue::glue("  return cpp11::as_sexp({call});"))
   }
 }
 
@@ -209,9 +209,25 @@ get_init_functions <- function(decorations) {
 }
 
 get_call_entries <- function(path) {
-  res <- utils::capture.output(tools::package_native_routine_registration_skeleton(path, character_only = FALSE))
+  con <- textConnection("res", open = "w")
+
+  try(
+    tools::package_native_routine_registration_skeleton(path,
+      con,
+      character_only = FALSE,
+      include_declarations = TRUE
+    ),
+    silent = TRUE
+  )
+
+  close(con)
+
   start <- grep("/* .Call calls */", res, fixed = TRUE)
   end <- grep("};", res, fixed = TRUE)
+
+  if (length(start) == 0) {
+    return("")
+  }
   res[seq(start, end)]
 }
 
