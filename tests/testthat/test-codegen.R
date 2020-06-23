@@ -87,3 +87,56 @@ describe("wrap_call", {
     )
   })
 })
+
+describe("get_exported_functions", {
+  it("returns an empty tibble given a non-existent file", {
+    f <- tempfile()
+    decorations <- decor::cpp_decorations(files = f, is_attribute = TRUE)
+    res <- get_exported_functions(decorations, "cpp11")
+    expect_equal(names(res), c("file", "line", "decoration", "params", "context", "name", "return_type", "args"))
+    expect_equal(NROW(res), 0)
+  })
+
+  it("returns an empty tibble given a empty file", {
+    f <- tempfile()
+    file.create(f)
+    decorations <- decor::cpp_decorations(files = f, is_attribute = TRUE)
+    res <- get_exported_functions(decorations, "cpp11")
+    expect_equal(names(res), c("file", "line", "decoration", "params", "context", "name", "return_type", "args"))
+    expect_equal(NROW(res), 0)
+  })
+
+  it("works with a single export", {
+    decorations <- decor::cpp_decorations(files = test_path("single.cpp"), is_attribute = TRUE)
+    res <- get_exported_functions(decorations, "cpp11")
+    expect_equal(names(res), c("file", "line", "decoration", "params", "context", "name", "return_type", "args"))
+    expect_equal(NROW(res), 1L)
+    expect_equal(res$name, "foo")
+    expect_equal(res$return_type, "int")
+    expect_equal(names(res$args[[1]]), c("type", "name", "default"))
+    expect_equal(NROW(res$args[[1]]), 0)
+  })
+
+  it("works with multiple exports", {
+    decorations <- decor::cpp_decorations(files = test_path("multiple.cpp"), is_attribute = TRUE)
+    res <- get_exported_functions(decorations, "cpp11")
+    expect_equal(names(res), c("file", "line", "decoration", "params", "context", "name", "return_type", "args"))
+    expect_equal(NROW(res), 3L)
+    expect_equal(res$name, c("foo", "bar", "baz"))
+    expect_equal(res$return_type, c("int", "double", "bool"))
+    expect_equal(names(res$args[[1]]), c("type", "name", "default"))
+    expect_equal(NROW(res$args[[1]]), 0)
+
+    expect_equal(names(res$args[[2]]), c("type", "name", "default"))
+    expect_equal(NROW(res$args[[2]]), 1)
+    expect_equal(res$args[[2]]$type, "bool")
+    expect_equal(res$args[[2]]$name, "run")
+    expect_equal(res$args[[2]]$default, NA_character_)
+
+    expect_equal(names(res$args[[3]]), c("type", "name", "default"))
+    expect_equal(NROW(res$args[[3]]), 2)
+    expect_equal(res$args[[3]]$type, c("bool", "int"))
+    expect_equal(res$args[[3]]$name, c("run", "value"))
+    expect_equal(res$args[[3]]$default, c(NA_character_, "0"))
+  })
+})

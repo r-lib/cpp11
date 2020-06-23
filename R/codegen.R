@@ -95,6 +95,9 @@ cpp_generate_bindings <- function(path = ".") {
 utils::globalVariables(c("name", "return_type", "line", "decoration", "context", ".", "functions"))
 
 get_exported_functions <- function(decorations, export_tag) {
+  if (NROW(decorations) == 0) {
+    return(tibble::tibble(file = character(), line = integer(), decoration = character(), params = list(), context = list(), name = character(), return_type = character(), args = list()))
+  }
   `%>%` <- dplyr::`%>%`
 
   out <- decorations %>%
@@ -102,12 +105,11 @@ get_exported_functions <- function(decorations, export_tag) {
     # the three lines below can be expressed with rap()
     # more concisely
     # rap(            ~ decor:::parse_cpp_function(context))
-    dplyr::mutate(functions = purrr::map(context, asNamespace("decor")$parse_cpp_function)) %>%
+    dplyr::mutate(functions = purrr::map(context, decor::parse_cpp_function, is_attribute = TRUE)) %>%
     { vctrs::vec_cbind(., vctrs::vec_rbind(!!!dplyr::pull(., functions))) } %>%
     dplyr::select(-functions) %>%
     dplyr::mutate(
-      decoration = sub("::export", "", decoration),
-      return_type = sub("\\[\\[cpp11::[[:alpha:]]+\\]\\][[:space:]]*", "", return_type)
+      decoration = sub("::export", "", decoration)
     )
 
   cli::cli_alert_info(glue::glue("{n} functions decorated with [[{tags}::export]]", n = nrow(out), tags = paste0(export_tag, collapse = "|")))
@@ -168,12 +170,6 @@ generate_r_functions <- function(exports, package = "cpp11") {
     glue::glue_collapse(sep = "\n")
 }
 
-glue_collapse_data <- function(data, ..., sep = ", ", last = "") {
-  res <- glue::glue_collapse(glue::glue_data(data, ...), sep = sep, last = last)
-  if(length(res) == 0) res <- ""
-  unclass(res)
-}
-
 wrap_call <- function(name, return_type, args) {
   call <- glue::glue('{name}({list_params})', list_params = glue_collapse_data(args, "cpp11::unmove(cpp11::as_cpp<{type}>({name}))"))
   if (return_type == "void") {
@@ -192,7 +188,8 @@ get_init_functions <- function(decorations) {
   }
 
   inits <- inits %>%
-    dplyr::mutate(functions = purrr::map(context, asNamespace("decor")$parse_cpp_function)) %>%
+    dplyr::mutate(functions = purrr::map(context, decor::parse_cpp_function, is_attribute = TRUE)) %>%
+    tidyr::unnest_longer() %>%
     { vctrs::vec_cbind(., vctrs::vec_rbind(!!!dplyr::pull(., functions))) } %>%
     dplyr::select(-functions) %>%
     dplyr::mutate(return_type = sub("\\[\\[cpp11::[[:alpha:]]+\\]\\][[:space:]]*", "", return_type))
