@@ -15,10 +15,10 @@
 #' **you**. Bugfixes and new features in cpp11 will not be available for your
 #' code until you run `vector_cpp11()` again.
 #'
-#' @inheritParams generate_exports
+#' @inheritParams cpp_generate_bindings
 #' @return The file path to the vendored code (invisibly).
 #' @export
-vendor_cpp11 <- function(path = ".") {
+cpp_vendor <- function(path = ".") {
   new <- file.path(path, "inst", "include", "cpp11")
 
   if (dir.exists(new)) {

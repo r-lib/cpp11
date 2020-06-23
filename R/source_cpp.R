@@ -1,20 +1,20 @@
 #' Compile C++ code
 #'
-#' [source_cpp()] compiles and loads a single C++ file for use in R.
+#' [cpp_source()] compiles and loads a single C++ file for use in R.
 #' [cpp_function()] compiles and loads a single function for use in R.
-#' [eval_cpp()] evaluates a single C++ expression and returns the result.
+#' [cpp_eval()] evaluates a single C++ expression and returns the result.
 #'
 #' @param file A file containing C++ code to compile
 #' @param code If non-null, the C++ code to compile
 #' @param env The R environment where the R wrapping functions should be defined.
 #' @param clean If `TRUE`, cleanup the files after sourcing
 #' @param quiet If 'TRUE`, do not show compiler output
-#' @return For [source_cpp()] and `[cpp_function()]` the results of
-#'   [dyn.load()] (invisibly). For `[eval_cpp()]` the results of the evaluated
+#' @return For [cpp_source()] and `[cpp_function()]` the results of
+#'   [dyn.load()] (invisibly). For `[cpp_eval()]` the results of the evaluated
 #'   expression.
 #' @examples
 #' \dontrun{
-#' source_cpp(
+#' cpp_source(
 #'   code = '#include "cpp11/integers.hpp"
 #'
 #'   [[cpp11::export]]
@@ -31,7 +31,8 @@
 #'
 #' num_odd(as.integer(c(1:10, 15, 23)))
 #' }
-source_cpp <- function(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE) {
+#' @export
+cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE) {
   dir <- tempfile()
   dir.create(dir)
   dir.create(file.path(dir, "R"))
@@ -101,17 +102,17 @@ generate_makevars <- function(includes) {
   c("CXX_STD=CXX11", sprintf("PKG_CPPFLAGS=%s", paste0(includes, collapse = " ")))
 }
 
-#' @rdname source_cpp
+#' @rdname cpp_source
 #' @export
 cpp_function <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE) {
-  source_cpp(code = paste(c('#include "cpp11.hpp"', "using namespace cpp11;", "namespace writable = cpp11::writable;", "[[cpp11::export]]", code), collapse = "\n"), env = env, clean = clean, quiet = quiet)
+  cpp_source(code = paste(c('#include "cpp11.hpp"', "using namespace cpp11;", "namespace writable = cpp11::writable;", "[[cpp11::export]]", code), collapse = "\n"), env = env, clean = clean, quiet = quiet)
 }
 
 utils::globalVariables("f")
 
-#' @rdname source_cpp
+#' @rdname cpp_source
 #' @export
-eval_cpp <- function(code) {
-  source_cpp(code = paste(c('#include "cpp11.hpp"', "using namespace cpp11;", "namespace writable = cpp11::writable;", "[[cpp11::export]]", "SEXP f() { return as_sexp(", code, ");", "}"), collapse = "\n"), env = environment())
+cpp_eval <- function(code) {
+  cpp_source(code = paste(c('#include "cpp11.hpp"', "using namespace cpp11;", "namespace writable = cpp11::writable;", "[[cpp11::export]]", "SEXP f() { return as_sexp(", code, ");", "}"), collapse = "\n"), env = environment())
   f()
 }

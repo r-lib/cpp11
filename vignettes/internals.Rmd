@@ -19,7 +19,7 @@ The development repository for cpp11 is <https://github.com/r-lib/cpp11>.
 ## Code organization
 
 cpp11 is a header only library, so all source code exposed to users lives in [inst/include](https://github.com/r-lib/cpp11/tree/master/inst/include).
-R code used to generate the exporting attributes and for `cpp11::source_cpp()` is in [R/](https://github.com/r-lib/cpp11/tree/master/R).
+R code used to generate the exporting attributes and for `cpp11::cpp_source()` is in [R/](https://github.com/r-lib/cpp11/tree/master/R).
 Tests for _only_ the code in [R/] is in [tests/testthat/](https://github.com/r-lib/cpp11/tree/master/tests/testthat)
 The rest of the code is in a separate [cpp11test/](https://github.com/r-lib/cpp11/tree/master/cpp11test) package.
 Inside [cpp11test/src](https://github.com/r-lib/cpp11/tree/master/cpp11test/src) the files that start with `test-` are C++ tests using the [Catch](https://testthat.r-lib.org/reference/use_catch.html) support in testthat.

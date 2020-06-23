@@ -1,5 +1,5 @@
-test_that("source_cpp works with the `code` parameter", {
-  dll_info <- source_cpp(
+test_that("cpp_source works with the `code` parameter", {
+  dll_info <- cpp_source(
     code = '
     #include "cpp11/integers.hpp"
 
@@ -19,7 +19,7 @@ test_that("source_cpp works with the `code` parameter", {
     expect_equal(num_odd(as.integer(c(1:10, 15, 23))), 7)
 })
 
-test_that("source_cpp works with the `file` parameter", {
+test_that("cpp_source works with the `file` parameter", {
   tf <- tempfile(fileext = ".cpp")
   writeLines(
     "[[cpp11::export]]
@@ -29,7 +29,7 @@ test_that("source_cpp works with the `file` parameter", {
     ", tf)
   on.exit(unlink(tf))
 
-  dll_info <- source_cpp(tf, clean = TRUE, quiet = TRUE)
+  dll_info <- cpp_source(tf, clean = TRUE, quiet = TRUE)
   on.exit(dyn.unload(dll_info[["path"]]), add = TRUE)
 
   expect_true(always_true())

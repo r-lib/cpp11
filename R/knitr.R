@@ -1,6 +1,6 @@
 eng_cpp11 <- function(options) {
   if (options$eval) {
-    source_cpp(code = options$code, env = knitr::knit_global(), clean = TRUE, quiet = FALSE)
+    cpp_source(code = options$code, env = knitr::knit_global(), clean = TRUE, quiet = FALSE)
   }
   # Change the engine to cpp so that code formatting works
   options$engine <- "cpp"

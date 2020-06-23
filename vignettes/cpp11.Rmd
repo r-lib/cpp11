@@ -49,7 +49,7 @@ For more advanced topics, the _Effective C++_ series by Scott Meyers is a popula
 * Section [intro](#intro) teaches you how to write C++ by converting simple R functions to their C++ equivalents.
   You'll learn how C++ differs from R, and what the key scalar, vector, and matrix classes are called.
 
-* Section [source_cpp](#source-cpp) shows you how to use `cpp11::source_cpp()` to load a C++ file from disk in the same way you use `source()` to load a file of R code.
+* Section [cpp_source](#cpp-source) shows you how to use `cpp11::cpp_source()` to load a C++ file from disk in the same way you use `source()` to load a file of R code.
 
 * Section [classes](#classes) discusses how to modify attributes from cpp11, and mentions some of the other important classes.
 
@@ -294,10 +294,10 @@ The C++ function avoids this overhead because it uses an intermediate scalar.
 600 / (5e-3 - 2e-3)
 ```
 
-### Using source_cpp {#source-cpp}
+### Using cpp_source {#cpp-source}
 
 So far, we've used inline C++ with `cpp_function()`.
-This makes presentation simpler, but for real problems, it's usually easier to use stand-alone C++ files and then source them into R using `source_cpp()`.
+This makes presentation simpler, but for real problems, it's usually easier to use stand-alone C++ files and then source them into R using `cpp_source()`.
 This lets you take advantage of text editor support for C++ files (e.g., syntax highlighting) as well as making it easier to identify the line numbers in compilation errors.
 
 Your stand-alone C++ file should have extension `.cpp`, and needs to start with:
@@ -316,7 +316,7 @@ And for each function that you want available within R, you need to prefix it wi
 If you're familiar with roxygen2, you might wonder how this relates to `@export`.
 `cpp11::export` controls whether a function is exported from C++ to R; `@export` controls whether a function is exported from a package and made available to the user.
 
-To compile the C++ code, use `source_cpp("path/to/file.cpp")`.
+To compile the C++ code, use `cpp_source("path/to/file.cpp")`.
 This will create the matching R functions and add them to your current session.
 Note that these functions can not be saved in a `.Rdata` file and reloaded in a later session; they must be recreated each time you restart R.
 
@@ -557,7 +557,7 @@ However, as we'll see in the following sections, things are not quite as straigh
 #### Integers
 With integers, missing values are stored as the smallest integer.
 If you don't do anything to them, they'll be preserved.
-But, since C++ doesn't know that the smallest integer has this special behaviour, if you do anything to it you're likely to get an incorrect value: for example, `eval_cpp('NA_INTEGER + 1')` gives -2147483647.
+But, since C++ doesn't know that the smallest integer has this special behaviour, if you do anything to it you're likely to get an incorrect value: for example, `cpp_eval('NA_INTEGER + 1')` gives -2147483647.
 
 So if you want to work with missing values in integers, either use a length 1 `integers` or be very careful with your code.
 
@@ -567,25 +567,25 @@ This is because R's NA is a special type of IEEE 754 floating point number NaN.
 So any logical expression that involves a NaN (or in C++, NAN) always evaluates as FALSE:
 
 ```{r}
-eval_cpp("NAN == 1")
-eval_cpp("NAN < 1")
-eval_cpp("NAN > 1")
-eval_cpp("NAN == NAN")
+cpp_eval("NAN == 1")
+cpp_eval("NAN < 1")
+cpp_eval("NAN > 1")
+cpp_eval("NAN == NAN")
 ```
-(Here I'm using `eval_cpp()` which allows you to see the result of running a single C++ expression, making it excellent for this sort of interactive experimentation.)
+(Here I'm using `cpp_eval()` which allows you to see the result of running a single C++ expression, making it excellent for this sort of interactive experimentation.)
 But be careful when combining them with Boolean values:
 
 ```{r}
-eval_cpp("NAN && TRUE")
-eval_cpp("NAN || FALSE")
+cpp_eval("NAN && TRUE")
+cpp_eval("NAN || FALSE")
 ```
 
 However, in numeric contexts NaNs will propagate NAs:
 ```{r}
-eval_cpp("NAN + 1")
-eval_cpp("NAN - 1")
-eval_cpp("NAN / 1")
-eval_cpp("NAN * 1")
+cpp_eval("NAN + 1")
+cpp_eval("NAN - 1")
+cpp_eval("NAN / 1")
+cpp_eval("NAN * 1")
 ```
 
 ### Strings
@@ -1089,7 +1089,7 @@ I was a little surprised that the C++ was so much faster, but it is because the 
 
 ## Using cpp11 in a package {#package}
 
-The same C++ code that is used with `source_cpp()` can also be bundled into a package.
+The same C++ code that is used with `cpp_source()` can also be bundled into a package.
 There are several benefits of moving code from a stand-alone C++ source file to a package:
 
 1. Your code can be made available to users without C++ development tools.
@@ -1106,10 +1106,10 @@ To add `cpp11` to an existing package, you put your C++ files in the `src/` dire
 
 The easiest way to set this up automatically is to call `usethis::use_cpp11()`.
 
-Before building the package, you'll need to run `cpp11::generate_exports()`.
-This function scans the C++ files for `cpp11::export` attributes and generates the code required to make the functions available in R.
-Re-run `cpp11:generate_exports()` whenever functions are added, removed, or have their signatures changed.
-This is done automatically by the pkgbuild package.
+Before building the package, you'll need to run `cpp11::cpp_generate_bindings()`.
+This function scans the C++ files for `[[cpp11::export]]` attributes and generates the binding code required to make the functions available in R.
+Re-run `cpp11::cpp_generate_bindings()` whenever functions are added, removed, or have their signatures changed.
+If you are using `devtools` to develop your package this is done automatically by the pkgbuild package.
 
 ## Learning more {#more}
 
