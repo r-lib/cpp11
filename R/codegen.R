@@ -9,7 +9,7 @@
 #' @export
 cpp_generate_bindings <- function(path = ".") {
   `%>%` <- dplyr::`%>%`
-  r_exports <- file.path(path, "R", "cpp11-bindings.cpp")
+  r_exports <- file.path(path, "R", "cpp11-bindings.R")
   cpp_bindings <- file.path(path, "src", "cpp11-bindings.cpp")
   unlink(c(r_exports, cpp_bindings))
 
