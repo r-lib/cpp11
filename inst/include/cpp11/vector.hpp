@@ -23,7 +23,7 @@ using namespace cpp11::literals;
 
 class type_error : public std::exception {
  public:
-  type_error(int expected, int actual) : expected_(expected), actual_(actual), str_("") {}
+  type_error(int expected, int actual) : expected_(expected), actual_(actual) {}
   virtual const char* what() const noexcept {
     snprintf(str_, 64, "Invalid input type, expected '%s' actual '%s'",
              Rf_type2char(expected_), Rf_type2char(actual_));
