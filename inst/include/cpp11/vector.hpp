@@ -19,6 +19,8 @@
 
 namespace cpp11 {
 
+using namespace cpp11::literals;
+
 class type_error : public std::exception {
  public:
   type_error(int expected, int actual) : expected_(expected), actual_(actual), str_("") {}
@@ -386,7 +388,7 @@ template <typename T>
 inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator--() {
   --pos_;
   if (data_->is_altrep() && pos_ > 0 && pos_ < block_start_) {
-    fill_buf(std::max(static_cast<R_xlen_t>(0), pos_ - 64));
+    fill_buf(std::max(0_xl, pos_ - 64));
   }
   return *this;
 }
@@ -406,7 +408,7 @@ inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator-=
     R_xlen_t i) {
   pos_ -= i;
   if (data_->is_altrep() && pos_ >= block_start_ + length_) {
-    fill_buf(std::max(static_cast<R_xlen_t>(0), pos_ - 64));
+    fill_buf(std::max(0_xl, pos_ - 64));
   }
   return *this;
 }

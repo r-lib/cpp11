@@ -34,7 +34,8 @@ context("data_frame-C++") {
   }
 
   test_that("data_frame::nrow works with 10x0 dfs") {
-    cpp11::writable::list x(static_cast<R_xlen_t>(0));
+    using namespace cpp11::literals;
+    cpp11::writable::list x(0_xl);
     x.attr(R_RowNamesSymbol) = {NA_INTEGER, -10};
 
     cpp11::data_frame df(x);

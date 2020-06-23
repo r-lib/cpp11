@@ -46,7 +46,7 @@ inline double* vector<double>::get_p(bool is_altrep, SEXP data) {
 
 template <>
 inline void vector<double>::const_iterator::fill_buf(R_xlen_t pos) {
-  length_ = std::min(static_cast<R_xlen_t>(64L), data_->size() - pos);
+  length_ = std::min(64_xl, data_->size() - pos);
   REAL_GET_REGION(data_->data_, pos, length_, buf_.data());
   block_start_ = pos;
 }
