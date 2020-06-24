@@ -12,10 +12,3 @@ eng_cpp11 <- function(options) {
   options$engine <- "cpp"
   knitr::engine_output(options, options$code, "")
 }
-
-# We need to set the cpp11 knitr engine when cpp11 is loaded.
-.onLoad <- function(libname, pkgname) {
-  if (requireNamespace("knitr", quietly = TRUE)) {
-    knitr::knit_engines$set(cpp11 = eng_cpp11)
-  }
-}
