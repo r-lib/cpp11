@@ -8,6 +8,7 @@ template <typename V, typename T>
 class matrix {
  private:
   V vector_;
+  int nrow_;
 
   class row {
    private:
@@ -20,19 +21,17 @@ class matrix {
   };
   friend row;
 
-  int nrow_;
-
  public:
   matrix(SEXP data) : vector_(data), nrow_(INTEGER_ELT(vector_.attr("dim"), 0)) {}
 
   template <typename V2, typename T2>
-  matrix(const cpp11::matrix<V2, T2>& rhs) : vector_(rhs) {}
+  matrix(const cpp11::matrix<V2, T2>& rhs) : vector_(rhs), nrow_(rhs.nrow()) {}
 
   matrix(int nrow, int ncol) : vector_(R_xlen_t(nrow * ncol)), nrow_(nrow) {
     vector_.attr("dim") = {nrow, ncol};
   }
 
-  int nrow() { return nrow_; }
+  int nrow() const { return nrow_; }
 
   int ncol() const { return size() / nrow_; }
 
