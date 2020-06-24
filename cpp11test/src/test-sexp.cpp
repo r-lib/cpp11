@@ -28,4 +28,13 @@ context("sexp-C++") {
 
     expect_true(Rf_inherits(out, "data.frame"));
   }
+
+  test_that("move constructor works") {
+    using namespace cpp11::literals;
+    cpp11::sexp x(Rf_ScalarReal(5.));
+    cpp11::sexp y(std::move(x));
+
+    expect_true(SEXP(x) == R_NilValue);
+    expect_true(REAL(y)[0] == 5.);
+  }
 }
