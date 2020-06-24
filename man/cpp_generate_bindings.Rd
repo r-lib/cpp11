@@ -17,3 +17,7 @@ Functions decorated with \verb{[[cpp11::export]]} in files ending in \code{.cc},
 \code{.cpp}, \code{.h} or \code{.hpp} will be wrapped in generated code which allows them to be
 called from R.
 }
+\details{
+In order to use \code{cpp_generate_bindings()} the \code{cli}, \code{decor}, \code{desc}, \code{glue},
+\code{tibble} and \code{vctrs} packages must also be installed.
+}

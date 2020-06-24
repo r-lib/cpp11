@@ -4,10 +4,14 @@
 #' `.cpp`, `.h` or `.hpp` will be wrapped in generated code which allows them to be
 #' called from R.
 #'
+#' In order to use `cpp_generate_bindings()` the `cli`, `decor`, `desc`, `glue`,
+#' `tibble` and `vctrs` packages must also be installed.
 #' @param path The path to the package root directory
 #' @return The paths to the generated R and C++ source files (in that order).
 #' @export
 cpp_generate_bindings <- function(path = ".") {
+  stop_unless_installed(c("cli", "decor", "desc", "glue", "tibble", "vctrs"))
+
   r_exports <- file.path(path, "R", "cpp11-bindings.R")
   cpp_bindings <- file.path(path, "src", "cpp11-bindings.cpp")
   unlink(c(r_exports, cpp_bindings))
