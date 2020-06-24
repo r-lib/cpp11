@@ -20,8 +20,6 @@ cpp_generate_bindings <- function(path = ".") {
     return(invisible(character()))
   }
 
-  inits <- get_init_functions(all_decorations)
-
   exports <- get_exported_functions(all_decorations, "cpp11")
 
   package <- desc::desc_get("Package", file = file.path(path, "DESCRIPTION"))
@@ -74,18 +72,13 @@ cpp_generate_bindings <- function(path = ".") {
       {call_entries}
       }}
 
-      {declarations}
-
       extern "C" void R_init_{package}(DllInfo* dll){{
         R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
         R_useDynamicSymbols(dll, FALSE);
-        {calls}
       }}
 
       ',
-      call_entries = glue::glue_collapse(call_entries, "\n"),
-      declarations = glue::glue_collapse(inits$declarations, "\n"),
-      calls = glue::glue_collapse(inits$calls, "\n  ")
+      call_entries = glue::glue_collapse(call_entries, "\n")
   ))
 
   cli::cli_alert_success("generated file {.file {basename(cpp_bindings)}}")
@@ -168,31 +161,6 @@ wrap_call <- function(name, return_type, args) {
   } else {
     unclass(glue::glue("  return cpp11::as_sexp({call});"))
   }
-}
-
-get_init_functions <- function(decorations) {
-  `%>%` <- dplyr::`%>%`
-  inits <- decorations %>% dplyr::filter(decoration == "cpp11::init")
-
-  if (nrow(inits) == 0) {
-    return(list(declarations = "", calls = ""))
-  }
-
-  inits <- inits %>%
-    dplyr::mutate(functions = purrr::map(context, decor::parse_cpp_function, is_attribute = TRUE)) %>%
-    { vctrs::vec_cbind(., vctrs::vec_rbind(!!!dplyr::pull(., functions))) } %>%
-    dplyr::select(-functions) %>%
-    dplyr::mutate(return_type = sub("\\[\\[cpp11::[[:alpha:]]+\\]\\][[:space:]]*", "", return_type))
-
-  declarations <- glue::glue_data(inits, "{return_type} {name}({param_type} {param_name});", param_type = purrr::map_chr(args, "type"), param_name = purrr::map_chr(args, "name"))
-  calls <- glue::glue_data(inits, "{name}({params});", params = purrr::map_chr(args, "name"))
-
-  cli::cli_alert_info(glue::glue("{n} functions decorated with [[cpp11::init]]", n = nrow(inits)))
-
-  list(
-    declarations = declarations,
-    calls = calls
-  )
 }
 
 get_call_entries <- function(path) {
