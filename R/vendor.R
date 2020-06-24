@@ -36,7 +36,14 @@ cpp_vendor <- function(path = ".") {
 
   cpp11_header <- sprintf("// cpp11 version: %s\n// vendored on: %s", cpp11_version, Sys.Date())
 
-  for (f in list.files(current, full.names = TRUE)) {
+  files <- list.files(current, full.names = TRUE)
+
+  writeLines(
+    c(cpp11_header, readLines(system.file("include", "cpp11.hpp", package = "cpp11"))),
+    file.path(dirname(new), "cpp11.hpp")
+  )
+
+  for (f in files) {
     writeLines(c(cpp11_header, readLines(f)), file.path(new, basename(f)))
   }
 
