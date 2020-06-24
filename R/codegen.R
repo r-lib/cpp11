@@ -25,7 +25,7 @@ cpp_generate_bindings <- function(path = ".") {
 
   exports <- get_exported_functions(all_decorations, "cpp11")
 
-  package <- desc::desc_get("Package")
+  package <- desc::desc_get("Package", file = file.path(path, "DESCRIPTION"))
 
   cpp_functions_definitions <- generate_cpp_functions(exports, package)
 
@@ -94,7 +94,7 @@ cpp_generate_bindings <- function(path = ".") {
   invisible(c(r_exports, cpp_bindings))
 }
 
-utils::globalVariables(c("name", "return_type", "line", "decoration", "context", ".", "functions"))
+utils::globalVariables(c("name", "return_type", "line", "decoration", "context", ".", "functions", "res"))
 
 get_exported_functions <- function(decorations, export_tag) {
   if (NROW(decorations) == 0) {
@@ -199,7 +199,6 @@ get_init_functions <- function(decorations) {
 
   inits <- inits %>%
     dplyr::mutate(functions = purrr::map(context, decor::parse_cpp_function, is_attribute = TRUE)) %>%
-    tidyr::unnest_longer() %>%
     { vctrs::vec_cbind(., vctrs::vec_rbind(!!!dplyr::pull(., functions))) } %>%
     dplyr::select(-functions) %>%
     dplyr::mutate(return_type = sub("\\[\\[cpp11::[[:alpha:]]+\\]\\][[:space:]]*", "", return_type))
