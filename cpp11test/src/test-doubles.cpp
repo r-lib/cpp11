@@ -5,7 +5,7 @@
 #include "cpp11/strings.hpp"
 
 context("doubles-C++") {
-  test_that("doubles::vector()") {
+  test_that("doubles::vector(SEXP)") {
     cpp11::doubles x(Rf_allocVector(REALSXP, 2));
     expect_true(x.size() == 2);
 
@@ -170,6 +170,13 @@ context("doubles-C++") {
     expect_true(y[0] == -1);
     expect_true(z[0] == -2);
 
+    UNPROTECT(1);
+  }
+  test_that("writable::doubles(SEXP, bool)") {
+    SEXP x = PROTECT(Rf_ScalarReal(5.));
+    cpp11::writable::doubles y(x, false);
+
+    expect_true(REAL(y)[0] == 5.);
     UNPROTECT(1);
   }
 
