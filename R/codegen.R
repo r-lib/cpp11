@@ -8,7 +8,6 @@
 #' @return The paths to the generated R and C++ source files (in that order).
 #' @export
 cpp_generate_bindings <- function(path = ".") {
-  `%>%` <- dplyr::`%>%`
   r_exports <- file.path(path, "R", "cpp11-bindings.R")
   cpp_bindings <- file.path(path, "src", "cpp11-bindings.cpp")
   unlink(c(r_exports, cpp_bindings))
@@ -44,12 +43,12 @@ cpp_generate_bindings <- function(path = ".") {
 
   call_entries <- get_call_entries(path)
 
-  cpp_functions_registration <- exports %>%
-    dplyr::select(name, return_type, args) %>%
-    purrr::pmap_chr(function(name, return_type, args){
-      glue::glue('    {{ "_cpp11_{name}", (DL_FUNC) &_{package}_{name}, {nrow(args)}}}, ')
-  }) %>%
-    glue::glue_collapse(sep  = "\n")
+  cpp_function_registration <- glue::glue_data(exports, '    {{
+    "_cpp11_{name}", (DL_FUNC) &_{package}_{name}, {n_args}}}, ',
+    n_args = viapply(exports$args, nrow)
+  )
+
+  cpp_function_registration <- glue::glue_collapse(cpp_function_registration, sep  = "\n")
 
   extra_includes <-  character()
   if (pkg_links_to_rcpp(path)) {
@@ -100,19 +99,13 @@ get_exported_functions <- function(decorations, export_tag) {
   if (NROW(decorations) == 0) {
     return(tibble::tibble(file = character(), line = integer(), decoration = character(), params = list(), context = list(), name = character(), return_type = character(), args = list()))
   }
-  `%>%` <- dplyr::`%>%`
 
-  out <- decorations %>%
-    dplyr::filter(decoration %in% paste0(export_tag, "::export")) %>%
-    # the three lines below can be expressed with rap()
-    # more concisely
-    # rap(            ~ decor:::parse_cpp_function(context))
-    dplyr::mutate(functions = purrr::map(context, decor::parse_cpp_function, is_attribute = TRUE)) %>%
-    { vctrs::vec_cbind(., vctrs::vec_rbind(!!!dplyr::pull(., functions))) } %>%
-    dplyr::select(-functions) %>%
-    dplyr::mutate(
-      decoration = sub("::export", "", decoration)
-    )
+  out <- decorations[decorations$decoration %in% paste0(export_tag, "::export"), ]
+  out$functions <- lapply(out$context, decor::parse_cpp_function, is_attribute = TRUE)
+  out <- vctrs::vec_cbind(out, vctrs::vec_rbind(!!!out$functions))
+
+  out <- out[!(names(out) %in% "functions")]
+  out$decoration <- sub("::export", "", out$decoration)
 
   cli::cli_alert_info(glue::glue("{n} functions decorated with [[{tags}::export]]", n = nrow(out), tags = paste0(export_tag, collapse = "|")))
 
@@ -120,64 +113,52 @@ get_exported_functions <- function(decorations, export_tag) {
 }
 
 generate_cpp_functions <- function(exports, package = "cpp11") {
-  `%>%` <- dplyr::`%>%`
+  exports <- exports[c("name", "return_type", "args", "file", "line", "decoration")]
+  exports$real_params <- vcapply(exports$args, glue_collapse_data, "{type} {name}")
+  exports$sexp_params <- vcapply(exports$args, glue_collapse_data, "SEXP {name}")
+  exports$calls <- mapply(wrap_call, exports$name, exports$return_type, exports$args, SIMPLIFY = TRUE)
+  exports$package <- package
 
-  exports %>%
-    dplyr::select(name, return_type, args, file, line, decoration) %>%
-    purrr::pmap_chr(function(name, return_type, args, file, line, decoration){
-      glue::glue('
-        // {basename(file)}
-        {return_type} {name}({real_params});
-        extern "C" SEXP _{package}_{name}({sexp_params}) {{
-          BEGIN_CPP11
-          {wrap_call(name, return_type, args)}
-          END_CPP11
-        }}
-        ',
-        sep = "\n",
-        real_params = glue_collapse_data(args, "{type} {name}"),
-        sexp_params = glue_collapse_data(args, "SEXP {name}")
-        #input_params = glue_collapse_data(args, "  {type} {name}({name}_sexp);", sep = "\n"),
-      )
-    }) %>%
-    glue::glue_collapse(sep = "\n") %>%
-    unclass()
+  out <- glue::glue_data(exports,
+    '
+    // {basename(file)}
+    {return_type} {name}({real_params});
+    extern "C" SEXP _{package}_{name}({sexp_params}) {{
+      BEGIN_CPP11
+      {calls}
+      END_CPP11
+    }}
+    '
+  )
+  out <- glue::glue_collapse(out, sep = "\n")
+  unclass(out)
 }
 
-generate_r_functions <- function(exports, package, use_package = FALSE) {
-  `%>%` <- dplyr::`%>%`
-
+generate_r_functions <- function(exports, package = "cpp11", use_package = FALSE) {
   if (use_package) {
     package_call <- glue::glue(', PACKAGE = "{package}"')
   } else {
     package_call <- ""
   }
 
-  exports %>%
-    dplyr::select(name, return_type, args) %>%
-    purrr::pmap_chr(function(name, return_type, args) {
-      params <- if (nrow(args)) {
-        paste0(", ", glue_collapse_data(args, "{name}"))
-      } else {
-        ""
-      }
-      call <- if(return_type == "void") {
-        glue::glue('invisible(.Call("_{package}_{name}"{params}{package_call}))')
-      } else {
-        glue::glue('.Call("_{package}_{name}"{params}{package_call})')
-      }
+  exports <- exports[c("name", "return_type", "args")]
+  exports$package <- package
+  exports$package_call <- package_call
+  exports$list_params <- vcapply(exports$args, glue_collapse_data, "{name}")
+  exports$params <- vcapply(exports$list_params, function(x) if (nzchar(x)) paste0(", ", x) else x)
+  is_void <- exports$return_type == "void"
+  exports$calls <- ifelse(is_void,
+    glue::glue_data(exports, 'invisible(.Call("_{package}_{name}"{params}{package_call}))'),
+    glue::glue_data(exports, '.Call("_{package}_{name}"{params}{package_call})')
+  )
 
-      glue::glue('
-        {name} <- function({list_params}) {{
-          {call}
-        }}
-
-        ',
-        list_params = glue_collapse_data(args, "{name}"),
-        sep = "\n"
-        ) }) %>%
-    glue::glue_collapse(sep = "\n") %>%
-    unclass()
+  out <- glue::glue_data(exports, '
+    {name} <- function({list_params}) {{
+      {calls}
+    }}
+    ')
+  out <- glue::glue_collapse(out, sep = "\n\n")
+  unclass(out)
 }
 
 wrap_call <- function(name, return_type, args) {

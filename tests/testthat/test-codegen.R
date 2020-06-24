@@ -155,7 +155,7 @@ describe("generate_cpp_functions", {
       context = list(),
       name = character(),
       return_type = character(),
-      args = list()
+      args = list(tibble::tibble(type = character(), name = character()))
     )
 
     expect_equal(generate_cpp_functions(funs), character())
@@ -506,7 +506,6 @@ describe("cpp_generate_bindings", {
 foo <- function() {
   .Call(\"_testPkg_foo\")
 }
-
 
 ")
     cpp_bindings <- file.path(p, "src", "cpp11-bindings.cpp")

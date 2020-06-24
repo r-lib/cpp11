@@ -16,3 +16,6 @@ glue_collapse_data <- function(data, ..., sep = ", ", last = "") {
 }
 
 `%||%` <- function(x, y) if (is.null(x)) y else x
+
+viapply <- function(x, f, ...) vapply(x, f, integer(1), ...)
+vcapply <- function(x, f, ...) vapply(x, f, character(1), ...)
