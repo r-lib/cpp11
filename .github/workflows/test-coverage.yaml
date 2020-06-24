@@ -47,6 +47,6 @@ jobs:
 
       - name: Test coverage
         run: |
-          source("coverage.R")
+          source("R/coverage.R")
           covr::codecov(coverage = cpp11_coverage())
         shell: Rscript {0}

@@ -16,7 +16,7 @@ script.R
 ^compile_commands\.json$
 ^cpp11test$
 ^codecov\.yml$
-^coverage\.R$
+^R/coverage\.R$
 ^book$
 ^vignettes/.*_cache$
 ^_pkgdown\.yml$
