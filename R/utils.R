@@ -14,3 +14,5 @@ glue_collapse_data <- function(data, ..., sep = ", ", last = "") {
   }
   unclass(res)
 }
+
+`%||%` <- function(x, y) if (is.null(x)) y else x
