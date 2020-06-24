@@ -69,7 +69,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     on.exit(unlink(dir, recursive = TRUE))
   }
 
-  r_functions <- generate_r_functions(exports, package = package)
+  r_functions <- generate_r_functions(exports, package = package, use_package = TRUE)
 
   makevars_content <- generate_makevars(includes)
 
