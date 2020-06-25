@@ -48,6 +48,10 @@ describe("get_call_entries", {
   })
 
   it("returns an empty string for packages with .Call entries and NAMESPACE files", {
+
+    # tools::package_native_routine_registration_skeleton is not available before R 3.4
+    skip_if(getRversion() < "3.4")
+
     pkg <- local_package()
     dir.create(file.path(pkg_path(pkg), "R"))
     writeLines('foo <- function() .Call("bar")', file.path(pkg_path(pkg), "R", "foo.R"))
@@ -492,6 +496,10 @@ describe("cpp_register", {
 
   })
   it("works with a package that registers a single c++ function", {
+
+    # tools::package_native_routine_registration_skeleton is not available before R 3.4
+    skip_if(getRversion() < "3.4")
+
     pkg <- local_package()
     p <- pkg_path(pkg)
     dir.create(file.path(p, "src"))
