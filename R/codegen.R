@@ -98,7 +98,7 @@ get_exported_functions <- function(decorations, export_tag) {
   }
 
   out <- decorations[decorations$decoration %in% paste0(export_tag, "::export"), ]
-  out$functions <- lapply(out$context, decor::parse_cpp_function, is_attribute = TRUE)
+  out$functions <- lapply(out$context, decor::cpp_decorations, is_attribute = TRUE)
   out <- vctrs::vec_cbind(out, vctrs::vec_rbind(!!!out$functions))
 
   out <- out[!(names(out) %in% "functions")]
