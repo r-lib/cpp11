@@ -152,4 +152,3 @@ rcpp_grow_ <- function(n_sxp) {
   .Call("_cpp11test_rcpp_grow_", n_sxp)
 }
 
-

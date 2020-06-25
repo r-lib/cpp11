@@ -12,7 +12,7 @@
 #endif
 // clang-format on
 
-[[cpp11::export]] SEXP rcpp_sum_dbl_for_(SEXP x_sxp) {
+[[cpp11::register]] SEXP rcpp_sum_dbl_for_(SEXP x_sxp) {
   Rcpp::NumericVector x(x_sxp);
   R_xlen_t n = x.size();
   double sum = 0.;
@@ -22,7 +22,7 @@
   return Rf_ScalarReal(sum);
 }
 
-[[cpp11::export]] SEXP rcpp_sum_dbl_foreach_(SEXP x_sxp) {
+[[cpp11::register]] SEXP rcpp_sum_dbl_foreach_(SEXP x_sxp) {
   Rcpp::NumericVector x(x_sxp);
   double sum = 0.;
   for (const auto& val : x) {
@@ -31,12 +31,12 @@
   return Rf_ScalarReal(sum);
 }
 
-[[cpp11::export]] SEXP rcpp_sum_dbl_accumulate_(SEXP x_sxp) {
+[[cpp11::register]] SEXP rcpp_sum_dbl_accumulate_(SEXP x_sxp) {
   Rcpp::NumericVector x(x_sxp);
   return Rf_ScalarReal(std::accumulate(x.cbegin(), x.cend(), 0.));
 }
 
-[[cpp11::export]] SEXP rcpp_grow_(SEXP n_sxp) {
+[[cpp11::register]] SEXP rcpp_grow_(SEXP n_sxp) {
   R_xlen_t n = REAL(n_sxp)[0];
   Rcpp::NumericVector x;
   R_xlen_t i = 0;

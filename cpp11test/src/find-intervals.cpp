@@ -6,7 +6,7 @@ using namespace cpp11;
 #include <algorithm>
 using namespace Rcpp;
 
-[[cpp11::export]] SEXP remove_altrep(SEXP x) {
+[[cpp11::register]] SEXP remove_altrep(SEXP x) {
   SEXP out = PROTECT(Rf_allocVector(REALSXP, Rf_xlength(x)));
   memcpy(REAL(out), REAL(x), Rf_xlength(x));
 
@@ -14,12 +14,12 @@ using namespace Rcpp;
   return out;
 }
 
-[[cpp11::export]] double upper_bound(doubles x, doubles breaks) {
+[[cpp11::register]] double upper_bound(doubles x, doubles breaks) {
   auto pos = std::upper_bound(breaks.begin(), breaks.end(), x[0]);
   return std::distance(breaks.begin(), pos);
 }
 
-[[cpp11::export]] integers findInterval2(doubles x, doubles breaks) {
+[[cpp11::register]] integers findInterval2(doubles x, doubles breaks) {
   writable::integers out(x.size());
   auto out_it = out.begin();
 
@@ -30,7 +30,7 @@ using namespace Rcpp;
   }
   return out;
 }
-[[cpp11::export]] integers findInterval2_5(doubles x, doubles breaks) {
+[[cpp11::register]] integers findInterval2_5(doubles x, doubles breaks) {
   writable::integers out(x.size());
   auto out_it = out.begin();
   auto bb = breaks.begin();
@@ -45,7 +45,7 @@ using namespace Rcpp;
 }
 
 // This version avoids the overhead of the cpp11 iterator types
-[[cpp11::export]] integers findInterval3(doubles x, doubles breaks) {
+[[cpp11::register]] integers findInterval3(doubles x, doubles breaks) {
   writable::integers out(x.size());
   auto out_it = out.begin();
   auto b = REAL(breaks);
@@ -60,7 +60,7 @@ using namespace Rcpp;
   return out;
 }
 
-[[cpp11::export]] IntegerVector findInterval4(NumericVector x, NumericVector breaks) {
+[[cpp11::register]] IntegerVector findInterval4(NumericVector x, NumericVector breaks) {
   IntegerVector out(x.size());
 
   NumericVector::iterator it, it_end, pos, b, e;

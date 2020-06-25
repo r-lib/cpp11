@@ -2,6 +2,6 @@
 
 export(cpp_eval)
 export(cpp_function)
-export(cpp_generate_bindings)
+export(cpp_register)
 export(cpp_source)
 export(cpp_vendor)

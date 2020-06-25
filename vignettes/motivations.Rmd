@@ -133,7 +133,7 @@ Each of the vector classes in cpp11 has a normal *read only* version that uses c
 ```{cpp11}
 #include "cpp11/doubles.hpp"
 
-[[cpp11::export]]
+[[cpp11::register]]
 cpp11::doubles times_two_cpp11(cpp11::writable::doubles x) {
   for (int i = 0; i < x.size(); ++i) {
     x[i] = x[i] * 2;
@@ -210,7 +210,7 @@ cpp11 uses these mechanisms extensively internally when calling the R C API, whi
 ### C++ safety
 
 In the inverse of C safety we also need to ensure that C++ exceptions do not reach the C call stack, as they will terminate R if that occurs.
-Like Rcpp, cpp11 automatically generates `try / catch` guards around exported functions to prevent this and also converts C++ exceptions into normal R errors.
+Like Rcpp, cpp11 automatically generates `try / catch` guards around registered functions to prevent this and also converts C++ exceptions into normal R errors.
 This is done without developer facing code changes.
 
 With both C and C++ sides of the coin covered we can safely use R's C API and C++ code together with C++ objects without leaking resources.
@@ -253,7 +253,7 @@ Whereas cpp11 objects preserve the ALTREP object.
 ```{cpp11}
 #include "cpp11/integers.hpp"
 
-[[cpp11::export]]
+[[cpp11::register]]
 cpp11::integers identity_cpp11(cpp11::integers x) {
   return x;
 }

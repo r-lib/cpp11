@@ -11,7 +11,7 @@ describe("eng_cpp11", {
 
   it("works when code is evaluated", {
     opts <- knitr::opts_chunk$get()
-    code <- "[[cpp11::export]] int foo() { return 0; }"
+    code <- "[[cpp11::register]] int foo() { return 0; }"
     opts <- utils::modifyList(opts, list(eval = TRUE, engine = "cpp11", code = code, quiet = TRUE))
 
     expect_equal(

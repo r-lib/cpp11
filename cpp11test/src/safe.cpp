@@ -2,7 +2,7 @@
 #include "cpp11/doubles.hpp"
 #include "cpp11/protect.hpp"
 
-[[cpp11::export]] SEXP cpp11_safe_(SEXP x_sxp) {
+[[cpp11::register]] SEXP cpp11_safe_(SEXP x_sxp) {
   SEXP err = R_NilValue;
   const size_t ERROR_SIZE = 2048;
   char buf[ERROR_SIZE] = "";

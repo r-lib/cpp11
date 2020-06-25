@@ -17,7 +17,7 @@
 #' cpp_source(
 #'   code = '#include "cpp11/integers.hpp"
 #'
-#'   [[cpp11::export]]
+#'   [[cpp11::register]]
 #'   int num_odd(cpp11::integers x) {
 #'     int total = 0;
 #'     for (int val : x) {
@@ -56,12 +56,12 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     all_decorations <- decor::cpp_decorations(dir, is_attribute = TRUE)
   )
   cli_suppress(
-    exports <- get_exported_functions(all_decorations, "cpp11")
+    funs <- get_registered_functions(all_decorations, "cpp11::register")
   )
-  cpp_functions_definitions <- generate_cpp_functions(exports, package = package)
+  cpp_functions_definitions <- generate_cpp_functions(funs, package = package)
 
-  exports_file <- file.path(dir, "src", "cpp11-exports.cpp")
-  writeLines(c('#include "cpp11/declarations.hpp"', "using namespace cpp11;", cpp_functions_definitions), exports_file)
+  cpp_path <- file.path(dir, "src", "cpp11.cpp")
+  writeLines(c('#include "cpp11/declarations.hpp"', "using namespace cpp11;", cpp_functions_definitions), cpp_path)
 
   includes <- generate_include_paths("cpp11")
 
@@ -69,20 +69,20 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     on.exit(unlink(dir, recursive = TRUE))
   }
 
-  r_functions <- generate_r_functions(exports, package = package, use_package = TRUE)
+  r_functions <- generate_r_functions(funs, package = package, use_package = TRUE)
 
   makevars_content <- generate_makevars(includes)
 
   writeLines(makevars_content, file.path(dir, "src", "Makevars"))
 
-  source_files <- normalizePath(c(file, exports_file), winslash = "/")
+  source_files <- normalizePath(c(file, cpp_path), winslash = "/")
   callr::rcmd("SHLIB", source_files, user_profile = TRUE, show = !quiet, wd = file.path(dir, "src"))
 
   shared_lib <- file.path(dir, "src", paste0(tools::file_path_sans_ext(basename(file)), .Platform$dynlib.ext))
 
-  r_exports <- file.path(dir, "R", "cpp11-exports.R")
-  writeLines(r_functions, r_exports)
-  source(r_exports, local = env)
+  r_path <- file.path(dir, "R", "cpp11.R")
+  writeLines(r_functions, r_path)
+  source(r_path, local = env)
 
   dyn.load(shared_lib, local = TRUE, now = TRUE)
 }
@@ -105,7 +105,7 @@ generate_makevars <- function(includes) {
 #' @rdname cpp_source
 #' @export
 cpp_function <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE) {
-  cpp_source(code = paste(c('#include "cpp11.hpp"', "using namespace cpp11;", "namespace writable = cpp11::writable;", "[[cpp11::export]]", code), collapse = "\n"), env = env, clean = clean, quiet = quiet)
+  cpp_source(code = paste(c('#include "cpp11.hpp"', "using namespace cpp11;", "namespace writable = cpp11::writable;", "[[cpp11::register]]", code), collapse = "\n"), env = env, clean = clean, quiet = quiet)
 }
 
 utils::globalVariables("f")
@@ -113,6 +113,6 @@ utils::globalVariables("f")
 #' @rdname cpp_source
 #' @export
 cpp_eval <- function(code) {
-  cpp_source(code = paste(c('#include "cpp11.hpp"', "using namespace cpp11;", "namespace writable = cpp11::writable;", "[[cpp11::export]]", "SEXP f() { return as_sexp(", code, ");", "}"), collapse = "\n"), env = environment())
+  cpp_source(code = paste(c('#include "cpp11.hpp"', "using namespace cpp11;", "namespace writable = cpp11::writable;", "[[cpp11::register]]", "SEXP f() { return as_sexp(", code, ");", "}"), collapse = "\n"), env = environment())
   f()
 }

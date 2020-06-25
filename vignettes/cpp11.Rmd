@@ -310,11 +310,11 @@ using namespace cpp11;
 And for each function that you want available within R, you need to prefix it with:
 
 ```cpp
-[[cpp11::export]]
+[[cpp11::register]]
 ```
 
 If you're familiar with roxygen2, you might wonder how this relates to `@export`.
-`cpp11::export` controls whether a function is exported from C++ to R; `@export` controls whether a function is exported from a package and made available to the user.
+`cpp11::register` registers a C++ function to be called from R. `@export` controls whether a function is exported from a package and made available to the user.
 
 To compile the C++ code, use `cpp_source("path/to/file.cpp")`.
 This will create the matching R functions and add them to your current session.
@@ -326,7 +326,7 @@ This example also illustrates a different kind of a `for` loop, a for-each loop.
 #include "cpp11/doubles.hpp"
 using namespace cpp11;
 
-[[cpp11::export]]
+[[cpp11::register]]
 double mean_cpp(doubles x) {
   int n = x.size();
   double total = 0;
@@ -357,7 +357,7 @@ This is easy to do in RMarkdown by using `{cpp11}` instead of `{r}` at the begin
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
-[[cpp11::export]]
+[[cpp11::register]]
 double f1(doubles x) {
   int n = x.size();
   double y = 0;
@@ -368,7 +368,7 @@ double f1(doubles x) {
   return y;
 }
 
-[[cpp11::export]]
+[[cpp11::register]]
 doubles f2(doubles x) {
   int n = x.size();
   writable::doubles out(n);
@@ -380,7 +380,7 @@ doubles f2(doubles x) {
   return out;
 }
 
-[[cpp11::export]]
+[[cpp11::register]]
 bool f3(logicals x) {
   int n = x.size();
 
@@ -392,7 +392,7 @@ bool f3(logicals x) {
   return false;
 }
 
-[[cpp11::export]]
+[[cpp11::register]]
 int f4(cpp11::function pred, list x) {
   int n = x.size();
 
@@ -445,7 +445,7 @@ Note the use of `Rf_inherits()` and the `stop()` to check that the object really
 #include "cpp11.hpp"
 using namespace cpp11;
 
-[[cpp11::export]]
+[[cpp11::register]]
 double mpe(list mod) {
   if (!Rf_inherits(mod, "lm")) {
     stop("Input must be a linear model");
@@ -478,7 +478,7 @@ This stands for S-Expression and is used as the type of all R Objects in the int
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
-[[cpp11::export]]
+[[cpp11::register]]
 sexp call_with_one(function f) {
   return f(1);
 }
@@ -515,7 +515,7 @@ This allows you to create an R vector from C++ scalar values:
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
-[[cpp11::export]]
+[[cpp11::register]]
 doubles attribs() {
   writable::doubles out = {1., 2., 3.};
   out.names() = {"a", "b", "c"};
@@ -538,7 +538,7 @@ Note that this kind of experimentation is a useful way to figure out what any op
 #include "cpp11.hpp"
 using namespace cpp11;
 
-[[cpp11::export]]
+[[cpp11::register]]
 list scalar_missings() {
   int int_s = NA_INTEGER;
   string chr_s = NA_STRING;
@@ -604,7 +604,7 @@ With vectors, you need to use a missing value specific to the type of vector, `N
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
-[[cpp11::export]]
+[[cpp11::register]]
 list missing_sampler() {
   return writable::list({
     writable::doubles({NA_REAL}),
@@ -655,7 +655,7 @@ For example we could re-write our sum function using iterators:
 #include "cpp11.hpp"
 using namespace cpp11;
 
-[[cpp11::export]]
+[[cpp11::register]]
 double sum2(doubles x) {
   double total = 0;
 
@@ -684,7 +684,7 @@ This code can be simplified still further through the use of a C++11 feature: ra
 #include "cpp11.hpp"
 using namespace cpp11;
 
-[[cpp11::export]]
+[[cpp11::register]]
 double sum3(doubles xs) {
   double total = 0;
 
@@ -705,7 +705,7 @@ To use `accumulate()` we need to include the `<numeric>` header.
 #include "cpp11.hpp"
 using namespace cpp11;
 
-[[cpp11::export]]
+[[cpp11::register]]
 double sum4(doubles x) {
   return std::accumulate(x.begin(), x.end(), 0.0);
 }
@@ -734,7 +734,7 @@ Read the code below and see if you can figure out how it works.
 #include "cpp11.hpp"
 using namespace cpp11;
 
-[[cpp11::export]] integers findInterval2(doubles x, doubles breaks) {
+[[cpp11::register]] integers findInterval2(doubles x, doubles breaks) {
   writable::integers out(x.size());
   auto out_it = out.begin();
 
@@ -800,7 +800,7 @@ It works by looping through the input vector `x` comparing each value to the pre
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
-[[cpp11::export]]
+[[cpp11::register]]
 list rle_cpp(doubles x) {
   std::vector<int> lengths;
   std::vector<double> values;
@@ -853,7 +853,7 @@ Note the use of `seen.insert(x[i]).second`.
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
-[[cpp11::export]]
+[[cpp11::register]]
 logicals duplicated_cpp(integers x) {
   std::unordered_set<int> seen;
   int n = x.size();
@@ -878,7 +878,7 @@ The following example shows how you could use a `map` to implement `table()` for
 #include "cpp11.hpp"
 using namespace cpp11;
 
-[[cpp11::export]]
+[[cpp11::register]]
 SEXP table_cpp(doubles x) {
   std::map<double, int> counts;
   int n = x.size();
@@ -950,7 +950,7 @@ This is relatively straightforward to convert to C++.  We:
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
-[[cpp11::export]] cpp11::doubles_matrix gibbs_cpp(int N, int thin) {
+[[cpp11::register]] cpp11::doubles_matrix gibbs_cpp(int N, int thin) {
   writable::doubles_matrix mat(N, 2);
   double x = 0, y = 0;
   for (int i = 0; i < N; i++) {
@@ -1039,7 +1039,7 @@ Or in C++:
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
-[[cpp11::export]]
+[[cpp11::register]]
 double vacc3a(double age, bool female, bool ily){
   double p = 0.25 + 0.3 * 1 / (1 - exp(0.04 * age)) + 0.1 * ily;
   p = p * (female ? 1.25 : 0.75);
@@ -1048,7 +1048,7 @@ double vacc3a(double age, bool female, bool ily){
   return p;
 }
 
-[[cpp11::export]]
+[[cpp11::register]]
 doubles vacc3(doubles age, logicals female,
                     logicals ily) {
   int n = age.size();
@@ -1107,7 +1107,7 @@ To add `cpp11` to an existing package, you put your C++ files in the `src/` dire
 The easiest way to set this up automatically is to call `usethis::use_cpp11()`.
 
 Before building the package, you'll need to run `cpp11::cpp_generate_bindings()`.
-This function scans the C++ files for `[[cpp11::export]]` attributes and generates the binding code required to make the functions available in R.
+This function scans the C++ files for `[[cpp11::register]]` attributes and generates the binding code required to make the functions available in R.
 Re-run `cpp11::cpp_generate_bindings()` whenever functions are added, removed, or have their signatures changed.
 If you are using `devtools` to develop your package this is done automatically by the pkgbuild package.
 

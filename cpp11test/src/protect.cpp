@@ -3,27 +3,27 @@
 
 #include "Rcpp.h"
 
-[[cpp11::export]] void protect_one_(SEXP x, int n) {
+[[cpp11::register]] void protect_one_(SEXP x, int n) {
   for (R_xlen_t i = 0; i < n; ++i) {
     PROTECT(x);
     UNPROTECT(1);
   }
 }
 
-[[cpp11::export]] void protect_one_sexp_(SEXP x, int n) {
+[[cpp11::register]] void protect_one_sexp_(SEXP x, int n) {
   for (R_xlen_t i = 0; i < n; ++i) {
     cpp11::sexp y(x);
   }
 }
 
-[[cpp11::export]] void protect_one_cpp11_(SEXP x, int n) {
+[[cpp11::register]] void protect_one_cpp11_(SEXP x, int n) {
   for (R_xlen_t i = 0; i < n; ++i) {
     SEXP p = cpp11::protect_sexp(x);
     cpp11::release_protect(p);
   }
 }
 
-[[cpp11::export]] void protect_one_preserve_(SEXP x, int n) {
+[[cpp11::register]] void protect_one_preserve_(SEXP x, int n) {
   for (R_xlen_t i = 0; i < n; ++i) {
     R_PreserveObject(x);
     R_ReleaseObject(x);
@@ -33,7 +33,7 @@
 // The internal protections here are actually uneeded, but it is a useful way to benchmark
 // them
 
-[[cpp11::export]] void protect_many_(int n) {
+[[cpp11::register]] void protect_many_(int n) {
   std::vector<SEXP> res;
   for (R_xlen_t i = 0; i < n; ++i) {
     res.push_back(PROTECT(Rf_ScalarInteger(n)));
@@ -46,7 +46,7 @@
   }
 }
 
-[[cpp11::export]] void protect_many_cpp11_(int n) {
+[[cpp11::register]] void protect_many_cpp11_(int n) {
   std::vector<SEXP> res;
   for (R_xlen_t i = 0; i < n; ++i) {
     res.push_back(cpp11::protect_sexp(Rf_ScalarInteger(n)));
@@ -59,7 +59,7 @@
   }
 }
 
-[[cpp11::export]] void protect_many_sexp_(int n) {
+[[cpp11::register]] void protect_many_sexp_(int n) {
   std::vector<cpp11::sexp> res;
   for (R_xlen_t i = 0; i < n; ++i) {
     res.push_back(Rf_ScalarInteger(n));
@@ -71,7 +71,7 @@
   }
 }
 
-[[cpp11::export]] void protect_many_preserve_(int n) {
+[[cpp11::register]] void protect_many_preserve_(int n) {
   std::vector<cpp11::sexp> res;
   for (R_xlen_t i = 0; i < n; ++i) {
     SEXP x = Rf_ScalarInteger(n);
@@ -86,7 +86,7 @@
   }
 }
 
-[[cpp11::export]] void protect_many_rcpp_(int n) {
+[[cpp11::register]] void protect_many_rcpp_(int n) {
   std::vector<Rcpp::RObject> res;
   for (R_xlen_t i = 0; i < n; ++i) {
     SEXP x = Rf_ScalarInteger(n);

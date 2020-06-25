@@ -3,7 +3,7 @@
 
 #include "Rcpp.h"
 
-[[cpp11::export]] void cpp11_release_(int n) {
+[[cpp11::register]] void cpp11_release_(int n) {
   std::vector<cpp11::sexp> x;
   int count = 0;
   while (count < n) {
@@ -17,7 +17,7 @@
   }
 }
 
-[[cpp11::export]] void rcpp_release_(int n) {
+[[cpp11::register]] void rcpp_release_(int n) {
   std::vector<Rcpp::RObject> x;
   int count = 0;
   while (count < n) {

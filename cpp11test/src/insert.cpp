@@ -1,6 +1,6 @@
 #include "cpp11/doubles.hpp"
 
-[[cpp11::export]] SEXP cpp11_insert_(SEXP num_sxp) {
+[[cpp11::register]] SEXP cpp11_insert_(SEXP num_sxp) {
   R_xlen_t num = INTEGER(num_sxp)[0];
 
   R_xlen_t i = 0;

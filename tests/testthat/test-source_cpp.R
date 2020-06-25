@@ -3,7 +3,7 @@ test_that("cpp_source works with the `code` parameter", {
     code = '
     #include "cpp11/integers.hpp"
 
-    [[cpp11::export]]
+    [[cpp11::register]]
     int num_odd(cpp11::integers x) {
       int total = 0;
       for (int val : x) {
@@ -22,7 +22,7 @@ test_that("cpp_source works with the `code` parameter", {
 test_that("cpp_source works with the `file` parameter", {
   tf <- tempfile(fileext = ".cpp")
   writeLines(
-    "[[cpp11::export]]
+    "[[cpp11::register]]
     bool always_true() {
       return true;
     }

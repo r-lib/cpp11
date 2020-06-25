@@ -15,7 +15,7 @@
 #' **you**. Bugfixes and new features in cpp11 will not be available for your
 #' code until you run `vector_cpp11()` again.
 #'
-#' @inheritParams cpp_generate_bindings
+#' @inheritParams cpp_register
 #' @return The file path to the vendored code (invisibly).
 #' @export
 cpp_vendor <- function(path = ".") {

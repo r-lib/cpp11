@@ -38,7 +38,7 @@ expression.
 cpp_source(
   code = '#include "cpp11/integers.hpp"
 
-  [[cpp11::export]]
+  [[cpp11::register]]
   int num_odd(cpp11::integers x) {
     int total = 0;
     for (int val : x) {

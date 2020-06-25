@@ -3,7 +3,7 @@
 #include "cpp11/doubles.hpp"
 using namespace cpp11;
 
-[[cpp11::export]] SEXP gibbs_cpp(int N, int thin) {
+[[cpp11::register]] SEXP gibbs_cpp(int N, int thin) {
   cpp11::writable::doubles_matrix mat(N, 2);
   double x = 0, y = 0;
   for (int i = 0; i < N; i++) {
@@ -18,7 +18,7 @@ using namespace cpp11;
   return mat;
 }
 
-[[cpp11::export]] cpp11::doubles_matrix gibbs_cpp2(int N, int thin) {
+[[cpp11::register]] cpp11::doubles_matrix gibbs_cpp2(int N, int thin) {
   cpp11::writable::doubles_matrix mat(N, 2);
   double x = 0, y = 0;
   for (int i = 0; i < N; i++) {
@@ -35,7 +35,7 @@ using namespace cpp11;
 #include <Rcpp.h>
 using namespace Rcpp;
 
-[[cpp11::export]] NumericMatrix gibbs_rcpp(int N, int thin) {
+[[cpp11::register]] NumericMatrix gibbs_rcpp(int N, int thin) {
   NumericMatrix mat(N, 2);
   double x = 0, y = 0;
 
@@ -51,7 +51,7 @@ using namespace Rcpp;
   return (mat);
 }
 
-[[cpp11::export]] NumericMatrix gibbs_rcpp2(int N, int thin) {
+[[cpp11::register]] NumericMatrix gibbs_rcpp2(int N, int thin) {
   NumericMatrix mat(N, 2);
   double x = 0, y = 0;
 

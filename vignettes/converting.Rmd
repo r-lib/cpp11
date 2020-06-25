@@ -110,7 +110,7 @@ knitr::kable(b_grow)
 ## Mechanics of converting a package from Rcpp
 
 1. Add cpp11 to `LinkingTo`
-1. Convert all instances of `// [[Rcpp::export]]` to `[[cpp11::export]]`
+1. Convert all instances of `// [[Rcpp::export]]` to `[[cpp11::register]]`
 1. Clean and recompile the package, e.g. `pkgbuild::clean_dll()` `pkgload::load_all()`
 1. Run tests `devtools::test()`
 1. Start converting function by function
