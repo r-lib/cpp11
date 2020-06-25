@@ -97,7 +97,7 @@ generate_include_paths <- function(packages) {
   for (i in seq_along(packages)) {
     path <- system.file(package = packages[[i]], "include")
     if (is_windows()) {
-      path <- shortPathName(path)
+      path <- shQuote(shortPathName(path))
     }
     out[[i]] <- paste0("-I", path)
   }
