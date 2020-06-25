@@ -87,7 +87,7 @@
 <p>To add cpp11 to an existing package, you put your C++ files in the src/ directory and add the following to your DESCRIPTION file.</p>
 <pre><code>LinkingTo: cpp11</code></pre>
 <p>The easiest way to set this up automatically is to call <code>usethis::use_cpp11()</code>.</p>
-<p>Then decorate C++ functions you want to expose to R with <code>[[cpp11::export]]</code>. <em>Note this is a <a href="https://en.cppreference.com/w/cpp/language/attributes">C++11 attribute</a>, not a comment like is used in Rcpp.</em></p>
+<p>Then decorate C++ functions you want to expose to R with <code>[[cpp11::register]]</code>. <em>Note this is a <a href="https://en.cppreference.com/w/cpp/language/attributes">C++11 attribute</a>, not a comment like is used in Rcpp.</em></p>
 <p>cpp11 has no hard dependencies and does not use a shared library, so it is straightforward and reliable to use in packages.</p>
 <p>Alternatively, you can <a href="https://cpp11.r-lib.org/articles/motivations.html#vendoring">vendor</a> the current installed version of cpp11 headers into your package with <code>cpp11::vendor_cpp11()</code>. This ensures the headers will remain unchanged until you explicitly update them.</p>
 </div>
