@@ -169,7 +169,7 @@ expression.</p>
 <span class='fu'>cpp_source</span>(
   code = <span class='st'>'#include "cpp11/integers.hpp"
 
-  [[cpp11::export]]
+  [[cpp11::register]]
   int num_odd(cpp11::integers x) {
     int total = 0;
     for (int val : x) {
@@ -181,7 +181,7 @@ expression.</p>
   }
   '</span>ode = '#include "cpp11/integers.hpp"
 
-  [[cpp11::export]]
+  [[cpp11::register]]
   int num_odd(cpp11::integers x) {
     int total = 0;
     for (int val : x) {

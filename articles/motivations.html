@@ -165,7 +165,7 @@
 <p>cpp11 strives to make its functions behave similarly to normal R functions, while preserving the speed of Rcpp when read only access is needed. Each of the vector classes in cpp11 has a normal <em>read only</em> version that uses copy-by-reference, and a <em>writable</em> version which uses copy-by-value.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1"></a><span class="pp">#include </span><span class="im">"cpp11/doubles.hpp"</span></span>
 <span id="cb8-2"><a href="#cb8-2"></a></span>
-<span id="cb8-3"><a href="#cb8-3"></a>[[<span class="at">cpp11</span>::<span class="at">export</span>]]</span>
+<span id="cb8-3"><a href="#cb8-3"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
 <span id="cb8-4"><a href="#cb8-4"></a>cpp11::doubles times_two_cpp11(cpp11::writable::doubles x) {</span>
 <span id="cb8-5"><a href="#cb8-5"></a>  <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; x.size(); ++i) {</span>
 <span id="cb8-6"><a href="#cb8-6"></a>    x[i] = x[i] * <span class="dv">2</span>;</span>
@@ -216,7 +216,7 @@
 <div id="c-safety-1" class="section level3">
 <h3 class="hasAnchor">
 <a href="#c-safety-1" class="anchor"></a>C++ safety</h3>
-<p>In the inverse of C safety we also need to ensure that C++ exceptions do not reach the C call stack, as they will terminate R if that occurs. Like Rcpp, cpp11 automatically generates <code>try / catch</code> guards around exported functions to prevent this and also converts C++ exceptions into normal R errors. This is done without developer facing code changes.</p>
+<p>In the inverse of C safety we also need to ensure that C++ exceptions do not reach the C call stack, as they will terminate R if that occurs. Like Rcpp, cpp11 automatically generates <code>try / catch</code> guards around registered functions to prevent this and also converts C++ exceptions into normal R errors. This is done without developer facing code changes.</p>
 <p>With both C and C++ sides of the coin covered we can safely use R’s C API and C++ code together with C++ objects without leaking resources.</p>
 </div>
 </div>
@@ -245,7 +245,7 @@
 <p>Whereas cpp11 objects preserve the ALTREP object.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb16-1"><a href="#cb16-1"></a><span class="pp">#include </span><span class="im">"cpp11/integers.hpp"</span></span>
 <span id="cb16-2"><a href="#cb16-2"></a></span>
-<span id="cb16-3"><a href="#cb16-3"></a>[[<span class="at">cpp11</span>::<span class="at">export</span>]]</span>
+<span id="cb16-3"><a href="#cb16-3"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
 <span id="cb16-4"><a href="#cb16-4"></a>cpp11::integers identity_cpp11(cpp11::integers x) {</span>
 <span id="cb16-5"><a href="#cb16-5"></a>  <span class="cf">return</span> x;</span>
 <span id="cb16-6"><a href="#cb16-6"></a>}</span></code></pre></div>

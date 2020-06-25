@@ -317,14 +317,14 @@
 <div class="sourceCode" id="cb13"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
 <span id="cb13-2"><a href="#cb13-2"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span></code></pre></div>
 <p>And for each function that you want available within R, you need to prefix it with:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb14-1"><a href="#cb14-1"></a>[[<span class="at">cpp11</span>::<span class="at">export</span>]]</span></code></pre></div>
-<p>If you’re familiar with roxygen2, you might wonder how this relates to <code>@export</code>. <code>cpp11::export</code> controls whether a function is exported from C++ to R; <code>@export</code> controls whether a function is exported from a package and made available to the user.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb14-1"><a href="#cb14-1"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span></code></pre></div>
+<p>If you’re familiar with roxygen2, you might wonder how this relates to <code>@export</code>. <code>cpp11::register</code> registers a C++ function to be called from R. <code>@export</code> controls whether a function is exported from a package and made available to the user.</p>
 <p>To compile the C++ code, use <code><a href="../reference/cpp_source.html">cpp_source("path/to/file.cpp")</a></code>. This will create the matching R functions and add them to your current session. Note that these functions can not be saved in a <code>.Rdata</code> file and reloaded in a later session; they must be recreated each time you restart R.</p>
 <p>This example also illustrates a different kind of a <code>for</code> loop, a for-each loop.</p>
 <pre class="cpp11"><code>#include "cpp11/doubles.hpp"
 using namespace cpp11;
 
-[[cpp11::export]]
+[[cpp11::register]]
 double mean_cpp(doubles x) {
   int n = x.size();
   double total = 0;
@@ -347,7 +347,7 @@ double mean_cpp(doubles x) {
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
-[[cpp11::export]]
+[[cpp11::register]]
 double f1(doubles x) {
   int n = x.size();
   double y = 0;
@@ -358,7 +358,7 @@ double f1(doubles x) {
   return y;
 }
 
-[[cpp11::export]]
+[[cpp11::register]]
 doubles f2(doubles x) {
   int n = x.size();
   writable::doubles out(n);
@@ -370,7 +370,7 @@ doubles f2(doubles x) {
   return out;
 }
 
-[[cpp11::export]]
+[[cpp11::register]]
 bool f3(logicals x) {
   int n = x.size();
 
@@ -382,7 +382,7 @@ bool f3(logicals x) {
   return false;
 }
 
-[[cpp11::export]]
+[[cpp11::register]]
 int f4(cpp11::function pred, list x) {
   int n = x.size();
 
@@ -421,7 +421,7 @@ int f4(cpp11::function pred, list x) {
 <pre class="cpp11"><code>#include "cpp11.hpp"
 using namespace cpp11;
 
-[[cpp11::export]]
+[[cpp11::register]]
 double mpe(list mod) {
   if (!Rf_inherits(mod, "lm")) {
     stop("Input must be a linear model");
@@ -448,7 +448,7 @@ double mpe(list mod) {
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
-[[cpp11::export]]
+[[cpp11::register]]
 sexp call_with_one(function f) {
   return f(1);
 }</code></pre>
@@ -471,7 +471,7 @@ sexp call_with_one(function f) {
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
-[[cpp11::export]]
+[[cpp11::register]]
 doubles attribs() {
   writable::doubles out = {1., 2., 3.};
   out.names() = {"a", "b", "c"};
@@ -492,7 +492,7 @@ doubles attribs() {
 <pre class="cpp11"><code>#include "cpp11.hpp"
 using namespace cpp11;
 
-[[cpp11::export]]
+[[cpp11::register]]
 list scalar_missings() {
   int int_s = NA_INTEGER;
   string chr_s = NA_STRING;
@@ -552,7 +552,7 @@ list scalar_missings() {
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
-[[cpp11::export]]
+[[cpp11::register]]
 list missing_sampler() {
   return writable::list({
     writable::doubles({NA_REAL}),
@@ -592,7 +592,7 @@ list missing_sampler() {
 <pre class="cpp11"><code>#include "cpp11.hpp"
 using namespace cpp11;
 
-[[cpp11::export]]
+[[cpp11::register]]
 double sum2(doubles x) {
   double total = 0;
 
@@ -611,7 +611,7 @@ double sum2(doubles x) {
 <pre class="cpp11"><code>#include "cpp11.hpp"
 using namespace cpp11;
 
-[[cpp11::export]]
+[[cpp11::register]]
 double sum3(doubles xs) {
   double total = 0;
 
@@ -625,7 +625,7 @@ double sum3(doubles xs) {
 #include "cpp11.hpp"
 using namespace cpp11;
 
-[[cpp11::export]]
+[[cpp11::register]]
 double sum4(doubles x) {
   return std::accumulate(x.begin(), x.end(), 0.0);
 }</code></pre>
@@ -638,7 +638,7 @@ double sum4(doubles x) {
 #include "cpp11.hpp"
 using namespace cpp11;
 
-[[cpp11::export]] integers findInterval2(doubles x, doubles breaks) {
+[[cpp11::register]] integers findInterval2(doubles x, doubles breaks) {
   writable::integers out(x.size());
   auto out_it = out.begin();
 
@@ -673,7 +673,7 @@ using namespace cpp11;
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
-[[cpp11::export]]
+[[cpp11::register]]
 list rle_cpp(doubles x) {
   std::vector&lt;int&gt; lengths;
   std::vector&lt;double&gt; values;
@@ -712,7 +712,7 @@ list rle_cpp(doubles x) {
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
-[[cpp11::export]]
+[[cpp11::register]]
 logicals duplicated_cpp(integers x) {
   std::unordered_set&lt;int&gt; seen;
   int n = x.size();
@@ -731,7 +731,7 @@ logicals duplicated_cpp(integers x) {
 #include "cpp11.hpp"
 using namespace cpp11;
 
-[[cpp11::export]]
+[[cpp11::register]]
 SEXP table_cpp(doubles x) {
   std::map&lt;double, int&gt; counts;
   int n = x.size();
@@ -791,7 +791,7 @@ SEXP table_cpp(doubles x) {
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
-[[cpp11::export]] cpp11::doubles_matrix gibbs_cpp(int N, int thin) {
+[[cpp11::register]] cpp11::doubles_matrix gibbs_cpp(int N, int thin) {
   writable::doubles_matrix mat(N, 2);
   double x = 0, y = 0;
   for (int i = 0; i &lt; N; i++) {
@@ -862,7 +862,7 @@ namespace writable = cpp11::writable;
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
-[[cpp11::export]]
+[[cpp11::register]]
 double vacc3a(double age, bool female, bool ily){
   double p = 0.25 + 0.3 * 1 / (1 - exp(0.04 * age)) + 0.1 * ily;
   p = p * (female ? 1.25 : 0.75);
@@ -871,7 +871,7 @@ double vacc3a(double age, bool female, bool ily){
   return p;
 }
 
-[[cpp11::export]]
+[[cpp11::register]]
 doubles vacc3(doubles age, logicals female,
                     logicals ily) {
   int n = age.size();
@@ -917,7 +917,7 @@ doubles vacc3(doubles age, logicals female,
 LinkingTo: cpp11
 ```</code></pre>
 <p>The easiest way to set this up automatically is to call <code>usethis::use_cpp11()</code>.</p>
-<p>Before building the package, you’ll need to run <code><a href="../reference/cpp_generate_bindings.html">cpp11::cpp_generate_bindings()</a></code>. This function scans the C++ files for <code>[[cpp11::export]]</code> attributes and generates the binding code required to make the functions available in R. Re-run <code><a href="../reference/cpp_generate_bindings.html">cpp11::cpp_generate_bindings()</a></code> whenever functions are added, removed, or have their signatures changed. If you are using <code>devtools</code> to develop your package this is done automatically by the pkgbuild package.</p>
+<p>Before building the package, you’ll need to run <code>cpp11::cpp_generate_bindings()</code>. This function scans the C++ files for <code>[[cpp11::register]]</code> attributes and generates the binding code required to make the functions available in R. Re-run <code>cpp11::cpp_generate_bindings()</code> whenever functions are added, removed, or have their signatures changed. If you are using <code>devtools</code> to develop your package this is done automatically by the pkgbuild package.</p>
 </div>
 <div id="more" class="section level2">
 <h2 class="hasAnchor">
