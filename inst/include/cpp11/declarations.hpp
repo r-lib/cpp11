@@ -3,7 +3,12 @@
 #include <cstring>
 #include <string>
 #include <vector>
+
+#ifndef CPP11_PARTIAL
 #include "cpp11.hpp"
+using namespace cpp11;
+namespace writable = cpp11::writable;
+#endif
 
 #include <R_ext/Rdynload.h>
 
@@ -13,9 +18,6 @@ T& unmove(T&& t) {
   return t;
 }
 }  // namespace cpp11
-
-using namespace cpp11;
-namespace writable = cpp11::writable;
 
 #ifdef HAS_UNWIND_PROTECT
 #define CPP11_UNWIND R_ContinueUnwind(err);
