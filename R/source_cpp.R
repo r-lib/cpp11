@@ -33,6 +33,8 @@
 #' }
 #' @export
 cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE) {
+  stop_unless_installed(c("brio", "callr", "cli", "decor", "desc", "glue", "tibble", "vctrs"))
+
   dir <- tempfile()
   dir.create(dir)
   dir.create(file.path(dir, "R"))
@@ -40,7 +42,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
 
   if (!is.null(code)) {
     file <- file.path(dir, "src", sprintf("code_%s.cpp", the$count))
-    writeLines(code, file)
+    brio::write_lines(code, file)
     the$count <- the$count + 1L
   } else {
     if (!any(tools::file_ext(file) %in% c("cpp", "cc"))) {
@@ -61,7 +63,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   cpp_functions_definitions <- generate_cpp_functions(funs, package = package)
 
   cpp_path <- file.path(dir, "src", "cpp11.cpp")
-  writeLines(c('#include "cpp11/declarations.hpp"', "using namespace cpp11;", cpp_functions_definitions), cpp_path)
+  brio::write_lines(c('#include "cpp11/declarations.hpp"', "using namespace cpp11;", cpp_functions_definitions), cpp_path)
 
   includes <- generate_include_paths("cpp11")
 
@@ -73,7 +75,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
 
   makevars_content <- generate_makevars(includes)
 
-  writeLines(makevars_content, file.path(dir, "src", "Makevars"))
+  brio::write_lines(makevars_content, file.path(dir, "src", "Makevars"))
 
   source_files <- normalizePath(c(file, cpp_path), winslash = "/")
   callr::rcmd("SHLIB", source_files, user_profile = TRUE, show = !quiet, wd = file.path(dir, "src"))
@@ -81,7 +83,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   shared_lib <- file.path(dir, "src", paste0(tools::file_path_sans_ext(basename(file)), .Platform$dynlib.ext))
 
   r_path <- file.path(dir, "R", "cpp11.R")
-  writeLines(r_functions, r_path)
+  brio::write_lines(r_functions, r_path)
   source(r_path, local = env)
 
   dyn.load(shared_lib, local = TRUE, now = TRUE)
@@ -93,7 +95,11 @@ the$count <- 0L
 generate_include_paths <- function(packages) {
   out <- character(length(packages))
   for (i in seq_along(packages)) {
-    out[[i]] <- paste0("-I", system.file(package = packages[[i]], "include"))
+    path <- system.file(package = packages[[i]], "include")
+    if (is_windows()) {
+      path <- shortPathName(path)
+    }
+    out[[i]] <- paste0("-I", path)
   }
   out
 }

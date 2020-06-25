@@ -43,3 +43,7 @@ stop_unless_installed <- function(pkgs) {
     stop(msg, call. = FALSE)
   }
 }
+
+is_windows <- function() {
+  .Platform$OS.type == "windows"
+}

@@ -21,6 +21,7 @@ SystemRequirements: C++11
 RoxygenNote: 7.1.0.9000
 Suggests:
     bench,
+    brio,
     cli,
     callr,
     covr,
