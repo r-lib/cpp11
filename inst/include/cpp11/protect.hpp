@@ -54,7 +54,7 @@ inline void print_protect() {
 }
 
 inline void release_existing_protections() {
-#if !defined(HAS_UNWIND_PROTECT) && !defined(CPP_USE_PRESREVE_OBJECT)
+#if !defined(HAS_UNWIND_PROTECT) && !defined(CPP11_USE_PRESERVE_OBJECT)
   SEXP first = CDR(protect_list);
   if (first != R_NilValue) {
     SETCAR(first, R_NilValue);
