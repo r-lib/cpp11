@@ -31,3 +31,12 @@ describe("glue_collapse_data", {
     )
   })
 })
+
+describe("stop_unless_installed", {
+  mockery::stub(stop_unless_installed, "requireNamespace", FALSE)
+
+  expect_error(
+    stop_unless_installed("foo"),
+    "The foo package\\(s\\) are required for this functionality"
+  )
+})

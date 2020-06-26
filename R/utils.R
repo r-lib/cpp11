@@ -31,7 +31,7 @@ stop_unless_installed <- function(pkgs) {
       paste(pkgs[!has_pkg], collapse = ", ")
     )
 
-    if (interactive()) {
+    if (is_interactive()) {
       ans <- readline(paste(c(msg, "Would you like to install them? (Y/N) "), collapse = "\n"))
       if (tolower(ans) == "y") {
         utils::install.packages(pkgs[!has_pkg])
@@ -46,4 +46,24 @@ stop_unless_installed <- function(pkgs) {
 
 is_windows <- function() {
   .Platform$OS.type == "windows"
+}
+
+# This is basically the same as rlang::is_interactive(), which we can't really
+# use for stop_if_not_installed(), because rlang itself could be one of the
+# input pkgs.
+is_interactive <- function() {
+    opt <- getOption("rlang_interactive", NULL)
+    if (!is.null(opt)) {
+        return(opt)
+    }
+    if (isTRUE(getOption("knitr.in.progress"))) {
+        return(FALSE)
+    }
+    if (isTRUE(getOption("rstudio.notebook.executing"))) {
+        return(FALSE)
+    }
+    if (identical(Sys.getenv("TESTTHAT"), "true")) {
+        return(FALSE)
+    }
+    interactive()
 }
