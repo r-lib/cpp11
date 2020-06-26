@@ -1,5 +1,6 @@
 #pragma once
 
+#include <csetjmp>
 #include <exception>    // for exception
 #include "cpp11/R.hpp"  // for SEXP, SEXPREC, R_MakeUnwindCont, R_Preser...
 
@@ -93,13 +94,13 @@ inline void release_protect(SEXP protect) {
 
 namespace internal {
 struct unwind_data_t {
-  SEXP token;
+  std::jmp_buf jmpbuf;
 };
 
 inline void maybe_jump(void* unwind_data, Rboolean jump) {
   if (jump) {
     unwind_data_t* data = static_cast<unwind_data_t*>(unwind_data);
-    throw unwind_exception(data->token);
+    longjmp(data->jmpbuf, 1);
   }
 }
 
@@ -131,7 +132,11 @@ inline SEXP init_unwind_continuation() {
 template <typename Fun>
 SEXP unwind_protect_sexp(Fun code) {
   static SEXP token = init_unwind_continuation();
-  internal::unwind_data_t unwind_data = {token};
+  internal::unwind_data_t unwind_data;
+
+  if (setjmp(unwind_data.jmpbuf)) {
+    throw unwind_exception(token);
+  }
   SEXP res = R_UnwindProtect(&internal::unwind_protect_unwrap_sexp<Fun>, &code,
                              internal::maybe_jump, &unwind_data, token);
 
@@ -141,7 +146,12 @@ SEXP unwind_protect_sexp(Fun code) {
 template <typename Fun>
 void unwind_protect(Fun code) {
   static SEXP token = init_unwind_continuation();
-  internal::unwind_data_t unwind_data = {token};
+  internal::unwind_data_t unwind_data;
+
+  if (setjmp(unwind_data.jmpbuf)) {
+    throw unwind_exception(token);
+  }
+
   R_UnwindProtect(&internal::unwind_protect_unwrap_void<Fun>, &code, internal::maybe_jump,
                   &unwind_data, token);
 }
