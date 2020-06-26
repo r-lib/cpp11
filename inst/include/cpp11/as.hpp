@@ -36,8 +36,8 @@ using is_integral_value = typename std::enable_if<
 
 // https://stackoverflow.com/a/1521682/2055486
 //
-inline bool is_convertable_without_loss_to_integer(long double value) {
-  long double int_part;
+inline bool is_convertable_without_loss_to_integer(double value) {
+  double int_part;
   return std::modf(value, &int_part) == 0.0;
 }
 
