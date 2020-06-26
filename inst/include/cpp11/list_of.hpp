@@ -23,6 +23,7 @@ template <typename T>
 class list_of : public writable::list {
  public:
   list_of(const list& data) : writable::list(data) {}
+  list_of(R_xlen_t n) : writable::list(n) {}
 
 #ifdef LONG_VECTOR_SUPPORT
   T operator[](int pos) { return operator[](static_cast<R_xlen_t>(pos)); }
