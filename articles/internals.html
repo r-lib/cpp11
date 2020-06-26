@@ -92,9 +92,8 @@
 <div id="running-tests" class="section level2">
 <h2 class="hasAnchor">
 <a href="#running-tests" class="anchor"></a>Running tests</h2>
-<p>All of the tests in both packages can be run by using <code>devtools::test()</code> from the cpp11 root directory. However it is sometimes more convenient to set your working directory to the <code>cpp11test</code> root. In order to calculate code coverage you need to source <a href="https://github.com/r-lib/cpp11/blob/master/coverage.R">coverage.R</a>, then run <code>cpp11_coverage()</code>, e.g. to generate a local coverage report.</p>
+<p>All of the tests in both packages can be run by using <code>devtools::test()</code> from the cpp11 root directory. However it is sometimes more convenient to set your working directory to the <code>cpp11test</code> root. In order to calculate code coverage you need to call <code>cpp11_coverage()</code>, e.g. to generate a local coverage report you could use the following.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/source.html">source</a></span>(<span class="st">"coverage.R"</span>)
 <span class="kw">covr</span>::<span class="fu"><a href="http://covr.r-lib.org/reference/report.html">report</a></span>(<span class="fu">cpp11_coverage</span>())
 </pre></div>
 </div>
