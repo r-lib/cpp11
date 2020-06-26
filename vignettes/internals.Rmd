@@ -29,10 +29,9 @@ In addition there are some regular R tests in [cpp11test/tests/testthat/](https:
 
 All of the tests in both packages can be run by using `devtools::test()` from the cpp11 root directory.
 However it is sometimes more convenient to set your working directory to the `cpp11test` root.
-In order to calculate code coverage you need to source [coverage.R](https://github.com/r-lib/cpp11/blob/master/coverage.R), then run `cpp11_coverage()`, e.g. to generate a local coverage report.
+In order to calculate code coverage you need to call `cpp11_coverage()`, e.g. to generate a local coverage report you could use the following.
 
 ```r
-source("coverage.R")
 covr::report(cpp11_coverage())
 ```
 
