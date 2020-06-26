@@ -97,6 +97,8 @@ struct unwind_data_t {
   std::jmp_buf jmpbuf;
 };
 
+// We need to first jump back into the C++ stacks because you can't safely throw
+// exceptions from C stack frames.
 inline void maybe_jump(void* unwind_data, Rboolean jump) {
   if (jump) {
     unwind_data_t* data = static_cast<unwind_data_t*>(unwind_data);
@@ -156,8 +158,8 @@ void unwind_protect(Fun code) {
                   &unwind_data, token);
 }
 #else
-// Dont' do anything if we dont' have unwind protect. This will leak C++ resources,
-// including those
+// Don't do anything if we don't have unwind protect. This will leak C++ resources,
+// including those held by cpp11 objects, but the other alternatives are also not great.
 template <typename Fun>
 SEXP unwind_protect_sexp(Fun code) {
   return code();
