@@ -8,7 +8,9 @@
 context("environment-C++") {
   test_that("environment works") {
     auto new_env = cpp11::package("base")["new.env"];
-    cpp11::environment x(new_env());
+    SEXP x_sxp = PROTECT(new_env());
+
+    cpp11::environment x(x_sxp);
 
     expect_true(x.size() == 0);
 
@@ -27,5 +29,9 @@ context("environment-C++") {
     x.remove("foo");
     expect_true(x.size() == 0);
     expect_true(x["foo"] == R_UnboundValue);
+
+    expect_true(static_cast<SEXP>(x) == x_sxp);
+
+    UNPROTECT(1);
   }
 }
