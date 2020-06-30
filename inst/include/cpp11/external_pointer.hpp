@@ -66,23 +66,23 @@ class external_pointer {
 
   operator SEXP() const noexcept { return data_; }
 
-  T* get() const noexcept {
-    T* addr = static_cast<T*>(R_ExternalPtrAddr(data_));
+  pointer get() const noexcept {
+    pointer addr = static_cast<T*>(R_ExternalPtrAddr(data_));
     if (addr == nullptr) {
       return nullptr;
     }
-    return static_cast<T*>(addr);
+    return addr;
   }
 
-  operator T*() noexcept { return get(); }
+  typename std::add_lvalue_reference<T>::type operator*() noexcept { return *get(); }
 
-  T* operator->() const noexcept { return get(); }
+  pointer operator->() const noexcept { return get(); }
 
   pointer release() noexcept {
     if (get() == nullptr) {
       return nullptr;
     }
-    T* ptr = get();
+    pointer ptr = get();
     R_ClearExternalPtr(data_);
 
     return ptr;

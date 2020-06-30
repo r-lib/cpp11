@@ -550,3 +550,50 @@ extern \"C\" void R_init_testPkg(DllInfo* dll){
 ")
   })
 })
+
+describe("generate_init_functions", {
+  it("returns an empty list if there no functions", {
+    funs <- tibble::tibble(
+      file = character(),
+      line = integer(),
+      decoration = character(),
+      params = list(),
+      context = list(),
+      name = character(),
+      return_type = character(),
+      args = list(tibble::tibble(type = character(), name = character()))
+    )
+
+    expect_equal(generate_init_functions(funs), list(declarations = "", calls = ""))
+  })
+
+  it("returns the declaration and call for a single init function", {
+    funs <- tibble::tibble(
+      file = "foo.cpp",
+      line = 1L,
+      decoration = "cpp11",
+      params = list(NA),
+      context = list(NA_character_),
+      name = "foo",
+      return_type = "void",
+      args = list(tibble::tibble(type = "DllInfo*", name = "dll"))
+    )
+
+    expect_equal(generate_init_functions(funs), list(declarations = "\nvoid foo(DllInfo* dll);", calls = "\n  foo(dll);"))
+  })
+
+  it("returns the declaration and call for a multiple init functions", {
+    funs <- tibble::tibble(
+      file = c("foo.cpp", "bar.cpp"),
+      line = c(1L, 3L),
+      decoration = c("cpp11", "cpp11"),
+      params = list(NA, NA),
+      context = list(NA_character_, NA_character_),
+      name = c("foo", "bar"),
+      return_type = c("void", "void"),
+      args = list(tibble::tibble(type = "DllInfo*", name = "dll"), tibble::tibble(type = "DllInfo*", name = "dll"))
+    )
+
+    expect_equal(generate_init_functions(funs), list(declarations = "\nvoid foo(DllInfo* dll);\nvoid bar(DllInfo* dll);\n", calls = "\n  foo(dll);\n  bar(dll);"))
+  })
+})

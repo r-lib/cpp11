@@ -30,6 +30,8 @@ cpp_register <- function(path = ".") {
 
   cpp_functions_definitions <- generate_cpp_functions(funs, package)
 
+  init <- generate_init_functions(get_registered_functions(all_decorations, "cpp11::init"))
+
   r_functions <- generate_r_functions(funs, package)
 
   dir.create(dirname(r_path), recursive = TRUE, showWarnings = FALSE)
@@ -78,10 +80,10 @@ cpp_register <- function(path = ".") {
       extern "C" {{
       {call_entries}
       }}
-
+      {init$declarations}
       extern "C" void R_init_{package}(DllInfo* dll){{
         R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
-        R_useDynamicSymbols(dll, FALSE);
+        R_useDynamicSymbols(dll, FALSE);{init$calls}
       }}
 
       ',
@@ -132,6 +134,36 @@ generate_cpp_functions <- function(funs, package = "cpp11") {
   )
   out <- glue::glue_collapse(out, sep = "\n")
   unclass(out)
+}
+
+generate_init_functions <- function(funs) {
+  if (nrow(funs) == 0) {
+    return(list(declarations = "", calls = ""))
+  }
+
+  funs <- funs[c("name", "return_type", "args", "file", "line", "decoration")]
+  funs$declaration_params <- vcapply(funs$args, glue_collapse_data, "{type} {name}")
+  funs$call_params <- vcapply(funs$args, `[[`, "name")
+
+  declarations <- glue::glue_data(funs,
+    '
+    {return_type} {name}({declaration_params});
+    '
+  )
+
+  declarations <- paste0("\n", glue::glue_collapse(declarations, "\n"), "\n")
+
+  calls <- glue::glue_data(funs,
+    '
+      {name}({call_params});
+    '
+  )
+  calls <- paste0("\n", glue::glue_collapse(calls, "\n"));
+
+  list(
+    declarations = declarations,
+    calls = calls
+  )
 }
 
 generate_r_functions <- function(funs, package = "cpp11", use_package = FALSE) {

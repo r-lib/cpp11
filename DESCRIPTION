@@ -48,3 +48,4 @@ Remotes:
 VignetteBuilder: knitr
 URL: https://github.com/r-lib/cpp11
 BugReports: https://github.com/r-lib/cpp11/issues
+Config/testthat/edition: 3
