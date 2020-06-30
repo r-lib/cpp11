@@ -24,6 +24,10 @@ class string {
     return res;
   }
 
+  bool operator==(const string& rhs) const { return data_.data() == rhs.data_.data(); }
+
+  bool operator==(const SEXP& rhs) const { return data_.data() == rhs; }
+
   bool operator==(const char* rhs) const {
     return static_cast<std::string>(*this) == rhs;
   }
