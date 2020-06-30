@@ -8,6 +8,10 @@
 #include "R_ext/Utils.h"  // for R_CheckUserInterrupt
 #include "Rversion.h"     // for R_VERSION, R_Version
 
+#if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
+#define HAS_UNWIND_PROTECT
+#endif
+
 namespace cpp11 {
 class unwind_exception : public std::exception {
  public:
@@ -85,10 +89,6 @@ inline void release_protect(SEXP protect) {
     SETCAR(after, before);
   }
 }
-
-#if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
-#define HAS_UNWIND_PROTECT
-#endif
 
 #ifdef HAS_UNWIND_PROTECT
 
