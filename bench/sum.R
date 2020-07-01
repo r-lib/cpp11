@@ -1,4 +1,4 @@
-pkgload::load_all()
+pkgload::load_all("../cpp11test")
 
 cases <- expand.grid(
   len = 3e6,
@@ -23,9 +23,9 @@ bench::press(
     seq_real <- function(x) as.numeric(seq_len(x))
     funs <- c("normal" = rnorm, "altrep" = seq_real)
     x <- funs[[vector]](len)
-    fun_name <- sprintf("cpp11_sum_vec_%s_", method)
+    fun_name <- get(sprintf("sum_dbl_%s_", method))
     bench::mark(
-      .Call(fun_name, x)
+      fun_name(x)
     )
   }
 )
