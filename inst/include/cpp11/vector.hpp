@@ -833,4 +833,29 @@ is_vector_of_strings<C, T> as_cpp(SEXP from) {
   return res;
 }
 
+template <typename T>
+bool operator==(const vector<T>& lhs, const vector<T>& rhs) {
+  if (lhs.size() != rhs.size()) {
+    return false;
+  }
+
+  auto lhs_it = lhs.begin();
+  auto rhs_it = rhs.begin();
+
+  auto end = lhs.end();
+  while (lhs_it != end) {
+    if (!(*lhs_it == *rhs_it)) {
+      return false;
+    }
+    ++lhs_it;
+    ++rhs_it;
+  }
+  return true;
+}
+
+template <typename T>
+bool operator!=(const vector<T>& lhs, const vector<T>& rhs) {
+  return !(lhs == rhs);
+}
+
 }  // namespace cpp11

@@ -322,4 +322,33 @@ context("doubles-C++") {
     expect_true(y_nms[0] == "a");
     expect_true(y_nms[1] == "b");
   }
+
+  test_that("comparison operator works") {
+    using namespace cpp11;
+    cpp11::doubles base(Rf_allocVector(REALSXP, 2));
+    cpp11::doubles same_values(Rf_allocVector(REALSXP, 2));
+    cpp11::doubles diff_length(Rf_allocVector(REALSXP, 1));
+    cpp11::doubles diff_values(Rf_allocVector(REALSXP, 2));
+
+    REAL(base)[0] = 1;
+    REAL(base)[1] = 2;
+
+    REAL(same_values)[0] = 1;
+    REAL(same_values)[1] = 2;
+
+    REAL(diff_length)[0] = 1;
+
+    REAL(diff_values)[0] = 1;
+    REAL(diff_values)[1] = 3;
+
+    expect_true(base == base);
+    expect_true(base == same_values);
+    expect_true(!(base == diff_length));
+    expect_true(!(base == diff_values));
+
+    expect_true(!(base != base));
+    expect_true(!(base != same_values));
+    expect_true(base != diff_length);
+    expect_true(base != diff_values);
+  }
 }
