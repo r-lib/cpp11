@@ -162,7 +162,7 @@
 <span class="kw">x</span>
 <span class="co">#&gt; [1] 2 4 6</span>
 </pre></div>
-<p>cpp11 strives to make its functions behave similarly to normal R functions, while preserving the speed of Rcpp when read only access is needed. Each of the vector classes in cpp11 has a normal <em>read only</em> version that uses copy-by-reference, and a <em>writable</em> version which uses copy-by-value.</p>
+<p>cpp11 strives to make its functions behave similarly to normal R functions, while preserving the speed of Rcpp when read only access is needed. Each of the r_vector classes in cpp11 has a normal <em>read only</em> version that uses copy-by-reference, and a <em>writable</em> version which uses copy-by-value.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1"></a><span class="pp">#include </span><span class="im">"cpp11/doubles.hpp"</span></span>
 <span id="cb8-2"><a href="#cb8-2"></a></span>
 <span id="cb8-3"><a href="#cb8-3"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
@@ -464,7 +464,7 @@
 <h2 class="hasAnchor">
 <a href="#simpler-implementation" class="anchor"></a>Simpler implementation</h2>
 <p>Rcpp is very ambitious, with a number of advanced features, including <a href="https://cran.r-project.org/package=Rcpp/vignettes/Rcpp-modules.pdf">modules</a>, <a href="https://cran.r-project.org/package=Rcpp/vignettes/Rcpp-sugar.pdf">sugar</a> and extensive support for <a href="https://CRAN.R-project.org/package=Rcpp/vignettes/Rcpp-attributes.pdf">attributes</a>. While these are useful features, many R packages do not use one or any of these advanced features. In addition the code needed to support these features is complex and can be challenging to maintain.</p>
-<p>cpp11 takes a more limited scope, providing only the set of vector wrappers for R vector types, coercion methods to and from C++ and the limited attributes necessary to support use in R packages.</p>
+<p>cpp11 takes a more limited scope, providing only the set of r_vector wrappers for R vector types, coercion methods to and from C++ and the limited attributes necessary to support use in R packages.</p>
 <p>This limited scope allows the implementation to be much simpler, the headers in Rcpp 1.0.4 have 74,658 lines of code (excluding blank or commented lines) in 379 files. Some headers in Rcpp are automatically generated, removing these still gives you 25,249 lines of code in 357 files. In contrast the headers in cpp11 contain only 1,734 lines of code in 19 files.</p>
 <p>This reduction in complexity should make cpp11 an easier project to maintain and ensure correctness, particularly around interactions with the R garbage collector.</p>
 <p>TODO: mention rchk compatibility here?</p>

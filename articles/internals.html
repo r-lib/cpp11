@@ -105,15 +105,15 @@
 <li>All source files are named with a <code>.cpp</code> extension.</li>
 <li>Public header files should be put in <code>inst/include/cpp11</code>
 </li>
-<li>Read only vector classes and free functions should be put in the <code>cpp11</code> namespace.</li>
-<li>Writable vector class should be put in the <code>cpp11::writable</code> namespace.</li>
+<li>Read only r_vector classes and free functions should be put in the <code>cpp11</code> namespace.</li>
+<li>Writable r_vector class should be put in the <code>cpp11::writable</code> namespace.</li>
 <li>Private objects should be put in the <code>cpp11::internal</code> namespace.</li>
 </ul>
 </div>
 <div id="vector-classes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#vector-classes" class="anchor"></a>Vector classes</h2>
-<p>All of the basic vector classes are class templates, the base template is defined in <a href="https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/vector.hpp">cpp11/vector.hpp</a> The template parameter is the type of <strong>value</strong> the particular R vector stores, e.g. <code>double</code> for <code>cpp11::doubles</code>. This differs from Rcpp, whose first template parameter is the R API type, e.g. <code>REALSXP</code> the vector stores.</p>
+<p>All of the basic r_vector classes are class templates, the base template is defined in <a href="https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/vector.hpp">cpp11/vector.hpp</a> The template parameter is the type of <strong>value</strong> the particular R vector stores, e.g. <code>double</code> for <code>cpp11::doubles</code>. This differs from Rcpp, whose first template parameter is the R API type, e.g. <code>REALSXP</code> the vector stores.</p>
 <p>The file first has the class declarations, then definitions further down in the file. Specializations for the various types are in separate files, e.g. <a href="https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/double.hpp">cpp11/doubles.hpp</a></p>
 </div>
 <div id="coercion-functions" class="section level2">
@@ -147,7 +147,7 @@
 <h3 class="hasAnchor">
 <a href="#unwind-protect" class="anchor"></a>Unwind Protect</h3>
 <p>In R 3.5+ cpp11 uses <code>R_UnwindProtect</code> to protect (most) calls to the R API that could fail. These are usually those that allocate memory, though in truth most R API functions could error along some paths. Using <code>R_UnwindProtect</code> when an error happens first a C++ exception is thrown and is caught by the try catch block defined in the <code>BEGIN_CPP11</code> macro in <a href="https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/declarations.hpp">cpp11/declarations.hpp</a> This allows any C++ destructors to run, freeing resources held by C++ objects. Then after the try catch block the R error unwinding is continued by <code>R_ContinueUnwind()</code></p>
-<p>In R versions prior to 3.5 <code>R_UnwindProtect()</code> is not available. Unfortunately the options to emulate it are not ideal. 1. <code>R_TopLevelExec()</code> works to avoid the C long jump, but because the code is always run in a top level context any errors or messages thrown cannot be caught by <code><a href="https://rdrr.io/r/base/conditions.html">tryCatch()</a></code> or similar blocks. 2. <code>R_TryCatch()</code> is not available prior to R 3.4, and also has a bug (fixed in R 3.5) 3. Calling the R <code><a href="https://rdrr.io/r/base/conditions.html">tryCatch()</a></code> function which contains an expression that then runs a C function which runs the C++ code would be an option, but implementing this is convoluted and it would impact performance, perhaps severely. 4. Have <code>cpp11::unwind_protect()</code> be a no-op, this would mean any resources held by C++ objects would leak, including cpp11::vector / cpp11::sexp objects.</p>
+<p>In R versions prior to 3.5 <code>R_UnwindProtect()</code> is not available. Unfortunately the options to emulate it are not ideal. 1. <code>R_TopLevelExec()</code> works to avoid the C long jump, but because the code is always run in a top level context any errors or messages thrown cannot be caught by <code><a href="https://rdrr.io/r/base/conditions.html">tryCatch()</a></code> or similar blocks. 2. <code>R_TryCatch()</code> is not available prior to R 3.4, and also has a bug (fixed in R 3.5) 3. Calling the R <code><a href="https://rdrr.io/r/base/conditions.html">tryCatch()</a></code> function which contains an expression that then runs a C function which runs the C++ code would be an option, but implementing this is convoluted and it would impact performance, perhaps severely. 4. Have <code>cpp11::unwind_protect()</code> be a no-op, this would mean any resources held by C++ objects would leak, including cpp11::r_vector / cpp11::sexp objects.</p>
 <p>Because 1. Causes behavior changes and test failures it was ruled out. 2. was also ruled out since we want to support R 3.3. 3. was ruled out partially because the implementation would be somewhat tricky and more because performance would suffer greatly. Therefore 4. is what we now do in cpp11. We somewhat mitigate the scope of leaks by calling <code>release_existing_protections()</code> at the start of any wrapped cpp11 function. This function releases any existing protected nodes, so any R object leaks should only last until the next cpp11 call.</p>
 </div>
 </div>
