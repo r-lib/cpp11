@@ -5,14 +5,14 @@
 #include "cpp11/strings.hpp"
 
 context("doubles-C++") {
-  test_that("doubles::vector(SEXP)") {
+  test_that("doubles::r_vector(SEXP)") {
     cpp11::doubles x(Rf_allocVector(REALSXP, 2));
     expect_true(x.size() == 2);
 
     expect_error(cpp11::doubles(Rf_allocVector(INTSXP, 2)));
   }
 
-  test_that("doubles::vector::const_iterator()") {
+  test_that("doubles::r_vector::const_iterator()") {
     cpp11::doubles x(Rf_allocVector(REALSXP, 100));
     REAL(x)[0] = 1;
     REAL(x)[1] = 2;

@@ -41,18 +41,18 @@ class named_arg;
 
 namespace writable {
 template <typename T>
-class vector;
+class r_vector;
 }  // namespace writable
 
 // Declarations
 template <typename T>
-class vector {
+class r_vector {
  public:
-  vector() = default;
+  r_vector() = default;
 
-  vector(const SEXP data);
+  r_vector(const SEXP data);
 
-  vector(const SEXP data, bool is_altrep);
+  r_vector(const SEXP data, bool is_altrep);
 
 #ifdef LONG_VECTOR_SUPPORT
   T operator[](const int pos) const;
@@ -64,7 +64,7 @@ class vector {
 
   bool contains(const string& name) const;
 
-  vector& operator=(const vector& rhs) {
+  r_vector& operator=(const r_vector& rhs) {
     SEXP old_protect = protect_;
 
     data_ = rhs.data_;
@@ -78,7 +78,7 @@ class vector {
     return *this;
   };
 
-  vector(const vector& rhs) {
+  r_vector(const r_vector& rhs) {
     SEXP old_protect = protect_;
 
     data_ = rhs.data_;
@@ -103,19 +103,19 @@ class vector {
   SEXP data() const;
 
   sexp attr(const char* name) const {
-    return SEXP(attribute_proxy<vector<T>>(*this, name));
+    return SEXP(attribute_proxy<r_vector<T>>(*this, name));
   }
 
   sexp attr(const std::string& name) const {
-    return SEXP(attribute_proxy<vector<T>>(*this, name.c_str()));
+    return SEXP(attribute_proxy<r_vector<T>>(*this, name.c_str()));
   }
 
-  sexp attr(SEXP name) const { return SEXP(attribute_proxy<vector<T>>(*this, name)); }
+  sexp attr(SEXP name) const { return SEXP(attribute_proxy<r_vector<T>>(*this, name)); }
 
-  vector<string> names() const {
-    SEXP nms = SEXP(attribute_proxy<vector<T>>(*this, R_NamesSymbol));
+  r_vector<string> names() const {
+    SEXP nms = SEXP(attribute_proxy<r_vector<T>>(*this, R_NamesSymbol));
     if (nms == R_NilValue) {
-      return vector<string>();
+      return r_vector<string>();
     }
 
     return nms;
@@ -129,7 +129,7 @@ class vector {
     using reference = T&;
     using iterator_category = std::random_access_iterator_tag;
 
-    const_iterator(const vector* data, R_xlen_t pos);
+    const_iterator(const r_vector* data, R_xlen_t pos);
 
     inline const_iterator& operator+(R_xlen_t pos);
     inline ptrdiff_t operator-(const const_iterator& other) const;
@@ -145,10 +145,10 @@ class vector {
 
     inline T operator*();
 
-    friend class writable::vector<T>::iterator;
+    friend class writable::r_vector<T>::iterator;
 
    private:
-    const vector* data_;
+    const r_vector* data_;
     void fill_buf(R_xlen_t pos);
 
     R_xlen_t pos_;
@@ -172,7 +172,7 @@ class vector {
 
   const_iterator find(const string& name) const;
 
-  ~vector() { release_protect(protect_); }
+  ~r_vector() { release_protect(protect_); }
 
  private:
   SEXP data_ = R_NilValue;
@@ -185,7 +185,7 @@ class vector {
 
   static SEXP valid_type(SEXP data);
 
-  friend class writable::vector<T>;
+  friend class writable::r_vector<T>;
 };
 
 namespace writable {
@@ -193,18 +193,18 @@ namespace writable {
 template <typename T>
 using has_begin_fun = std::decay<decltype(*begin(std::declval<T>()))>;
 
-/// Double vectors, read write access to new or copied vectors
+/// Read/write access to new or copied r_vectors
 template <typename T>
-class vector : public cpp11::vector<T> {
+class r_vector : public cpp11::r_vector<T> {
  private:
   SEXP protect_ = R_NilValue;
 
   // These are necessary because type names are not directly accessible in
   // template inheritance
-  using cpp11::vector<T>::data_;
-  using cpp11::vector<T>::data_p_;
-  using cpp11::vector<T>::is_altrep_;
-  using cpp11::vector<T>::length_;
+  using cpp11::r_vector<T>::data_;
+  using cpp11::r_vector<T>::data_p_;
+  using cpp11::r_vector<T>::is_altrep_;
+  using cpp11::r_vector<T>::length_;
 
   R_xlen_t capacity_ = 0;
 
@@ -230,14 +230,14 @@ class vector : public cpp11::vector<T> {
   typedef proxy* pointer;
   typedef proxy& reference;
 
-  class iterator : public cpp11::vector<T>::const_iterator {
+  class iterator : public cpp11::r_vector<T>::const_iterator {
    private:
-    const vector& data_;
-    using cpp11::vector<T>::const_iterator::block_start_;
-    using cpp11::vector<T>::const_iterator::pos_;
-    using cpp11::vector<T>::const_iterator::buf_;
-    using cpp11::vector<T>::const_iterator::length_;
-    using cpp11::vector<T>::const_iterator::fill_buf;
+    const r_vector& data_;
+    using cpp11::r_vector<T>::const_iterator::block_start_;
+    using cpp11::r_vector<T>::const_iterator::pos_;
+    using cpp11::r_vector<T>::const_iterator::buf_;
+    using cpp11::r_vector<T>::const_iterator::length_;
+    using cpp11::r_vector<T>::const_iterator::fill_buf;
 
    public:
     using difference_type = ptrdiff_t;
@@ -246,43 +246,43 @@ class vector : public cpp11::vector<T> {
     using reference = proxy&;
     using iterator_category = std::forward_iterator_tag;
 
-    iterator(const vector& data, R_xlen_t pos);
+    iterator(const r_vector& data, R_xlen_t pos);
 
     inline iterator& operator++();
 
     inline proxy operator*();
 
-    using cpp11::vector<T>::const_iterator::operator!=;
+    using cpp11::r_vector<T>::const_iterator::operator!=;
 
     inline iterator& operator+(R_xlen_t rhs);
   };
 
-  vector() = default;
-  vector(const SEXP& data);
-  vector(SEXP&& data);
-  vector(const SEXP& data, bool is_altrep);
-  vector(SEXP&& data, bool is_altrep);
-  vector(std::initializer_list<T> il);
-  vector(std::initializer_list<named_arg> il);
-  vector(std::initializer_list<const char*> il);
+  r_vector() = default;
+  r_vector(const SEXP& data);
+  r_vector(SEXP&& data);
+  r_vector(const SEXP& data, bool is_altrep);
+  r_vector(SEXP&& data, bool is_altrep);
+  r_vector(std::initializer_list<T> il);
+  r_vector(std::initializer_list<named_arg> il);
+  r_vector(std::initializer_list<const char*> il);
 
   template <typename Iter>
-  vector(Iter first, Iter last);
+  r_vector(Iter first, Iter last);
 
   template <typename V, typename W = has_begin_fun<V>>
-  vector(const V& obj);
+  r_vector(const V& obj);
 
-  vector(const R_xlen_t size);
+  r_vector(const R_xlen_t size);
 
-  ~vector();
+  ~r_vector();
 
-  vector(const vector& rhs);
-  vector(vector&& rhs);
+  r_vector(const r_vector& rhs);
+  r_vector(r_vector&& rhs);
 
-  vector(const cpp11::vector<T>& rhs);
+  r_vector(const cpp11::r_vector<T>& rhs);
 
-  vector& operator=(const vector& rhs);
-  vector& operator=(vector&& rhs);
+  r_vector& operator=(const r_vector& rhs);
+  r_vector& operator=(r_vector&& rhs);
 
 #ifdef LONG_VECTOR_SUPPORT
   proxy operator[](const int pos) const;
@@ -306,25 +306,25 @@ class vector : public cpp11::vector<T> {
   iterator begin() const;
   iterator end() const;
 
-  using cpp11::vector<T>::cbegin;
-  using cpp11::vector<T>::cend;
+  using cpp11::r_vector<T>::cbegin;
+  using cpp11::r_vector<T>::cend;
 
   iterator find(const string& name) const;
 
-  attribute_proxy<vector<T>> attr(const char* name) const {
-    return attribute_proxy<vector<T>>(*this, name);
+  attribute_proxy<r_vector<T>> attr(const char* name) const {
+    return attribute_proxy<r_vector<T>>(*this, name);
   }
 
-  attribute_proxy<vector<T>> attr(const std::string& name) const {
-    return attribute_proxy<vector<T>>(*this, name.c_str());
+  attribute_proxy<r_vector<T>> attr(const std::string& name) const {
+    return attribute_proxy<r_vector<T>>(*this, name.c_str());
   }
 
-  attribute_proxy<vector<T>> attr(SEXP name) const {
-    return attribute_proxy<vector<T>>(*this, name);
+  attribute_proxy<r_vector<T>> attr(SEXP name) const {
+    return attribute_proxy<r_vector<T>>(*this, name);
   }
 
-  attribute_proxy<vector<T>> names() const {
-    return attribute_proxy<vector<T>>(*this, R_NamesSymbol);
+  attribute_proxy<r_vector<T>> names() const {
+    return attribute_proxy<r_vector<T>>(*this, R_NamesSymbol);
   }
 
   operator SEXP() const;
@@ -334,7 +334,7 @@ class vector : public cpp11::vector<T> {
 // Implementations below
 
 template <typename T>
-inline vector<T>::vector(const SEXP data)
+inline r_vector<T>::r_vector(const SEXP data)
     : data_(valid_type(data)),
       protect_(protect_sexp(data_)),
       is_altrep_(ALTREP(data)),
@@ -342,7 +342,7 @@ inline vector<T>::vector(const SEXP data)
       length_(Rf_xlength(data)) {}
 
 template <typename T>
-inline vector<T>::vector(const SEXP data, bool is_altrep)
+inline r_vector<T>::r_vector(const SEXP data, bool is_altrep)
     : data_(valid_type(data)),
       protect_(protect_sexp(data_)),
       is_altrep_(is_altrep),
@@ -350,54 +350,54 @@ inline vector<T>::vector(const SEXP data, bool is_altrep)
       length_(Rf_xlength(data)) {}
 
 template <typename T>
-inline bool vector<T>::is_altrep() const {
+inline bool r_vector<T>::is_altrep() const {
   return is_altrep_;
 }
 
 template <typename T>
-inline R_xlen_t vector<T>::size() const {
+inline R_xlen_t r_vector<T>::size() const {
   return length_;
 }
 
 template <typename T>
-inline vector<T>::operator SEXP() const {
+inline r_vector<T>::operator SEXP() const {
   return data_;
 }
 
 template <typename T>
-inline vector<T>::operator sexp() const {
+inline r_vector<T>::operator sexp() const {
   return data_;
 }
 
 /// Provide access to the underlying data, mainly for interface
 /// compatibility with std::vector
 template <typename T>
-inline SEXP vector<T>::data() const {
+inline SEXP r_vector<T>::data() const {
   return data_;
 }
 
 template <typename T>
-inline typename vector<T>::const_iterator vector<T>::begin() const {
+inline typename r_vector<T>::const_iterator r_vector<T>::begin() const {
   return const_iterator(this, 0);
 }
 
 template <typename T>
-inline typename vector<T>::const_iterator vector<T>::end() const {
+inline typename r_vector<T>::const_iterator r_vector<T>::end() const {
   return const_iterator(this, length_);
 }
 
 template <typename T>
-inline typename vector<T>::const_iterator vector<T>::cbegin() const {
+inline typename r_vector<T>::const_iterator r_vector<T>::cbegin() const {
   return const_iterator(this, 0);
 }
 
 template <typename T>
-inline typename vector<T>::const_iterator vector<T>::cend() const {
+inline typename r_vector<T>::const_iterator r_vector<T>::cend() const {
   return const_iterator(this, length_);
 }
 
 template <typename T>
-vector<T>::const_iterator::const_iterator(const vector* data, R_xlen_t pos)
+r_vector<T>::const_iterator::const_iterator(const r_vector* data, R_xlen_t pos)
     : data_(data), pos_(pos), buf_() {
   if (data_->is_altrep()) {
     fill_buf(pos);
@@ -405,7 +405,7 @@ vector<T>::const_iterator::const_iterator(const vector* data, R_xlen_t pos)
 }
 
 template <typename T>
-inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator++() {
+inline typename r_vector<T>::const_iterator& r_vector<T>::const_iterator::operator++() {
   ++pos_;
   if (data_->is_altrep() && pos_ >= block_start_ + length_) {
     fill_buf(pos_);
@@ -414,7 +414,7 @@ inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator++
 }
 
 template <typename T>
-inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator--() {
+inline typename r_vector<T>::const_iterator& r_vector<T>::const_iterator::operator--() {
   --pos_;
   if (data_->is_altrep() && pos_ > 0 && pos_ < block_start_) {
     fill_buf(std::max(0_xl, pos_ - 64));
@@ -423,7 +423,7 @@ inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator--
 }
 
 template <typename T>
-inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator+=(
+inline typename r_vector<T>::const_iterator& r_vector<T>::const_iterator::operator+=(
     R_xlen_t i) {
   pos_ += i;
   if (data_->is_altrep() && pos_ >= block_start_ + length_) {
@@ -433,7 +433,7 @@ inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator+=
 }
 
 template <typename T>
-inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator-=(
+inline typename r_vector<T>::const_iterator& r_vector<T>::const_iterator::operator-=(
     R_xlen_t i) {
   pos_ -= i;
   if (data_->is_altrep() && pos_ >= block_start_ + length_) {
@@ -443,25 +443,25 @@ inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator-=
 }
 
 template <typename T>
-inline bool vector<T>::const_iterator::operator!=(
-    const vector<T>::const_iterator& other) const {
+inline bool r_vector<T>::const_iterator::operator!=(
+    const r_vector<T>::const_iterator& other) const {
   return pos_ != other.pos_;
 }
 
 template <typename T>
-inline bool vector<T>::const_iterator::operator==(
-    const vector<T>::const_iterator& other) const {
+inline bool r_vector<T>::const_iterator::operator==(
+    const r_vector<T>::const_iterator& other) const {
   return pos_ == other.pos_;
 }
 
 template <typename T>
-inline ptrdiff_t vector<T>::const_iterator::operator-(
-    const vector<T>::const_iterator& other) const {
+inline ptrdiff_t r_vector<T>::const_iterator::operator-(
+    const r_vector<T>::const_iterator& other) const {
   return pos_ - other.pos_;
 }
 
 template <typename T>
-inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator+(
+inline typename r_vector<T>::const_iterator& r_vector<T>::const_iterator::operator+(
     R_xlen_t rhs) {
   pos_ += rhs;
   if (data_->is_altrep() && pos_ >= block_start_ + length_) {
@@ -471,7 +471,7 @@ inline typename vector<T>::const_iterator& vector<T>::const_iterator::operator+(
 }
 
 template <typename T>
-inline T cpp11::vector<T>::operator[](const string& name) const {
+inline T cpp11::r_vector<T>::operator[](const string& name) const {
   SEXP names = this->names();
   R_xlen_t size = Rf_xlength(names);
 
@@ -482,11 +482,11 @@ inline T cpp11::vector<T>::operator[](const string& name) const {
     }
   }
 
-  throw std::out_of_range("vector");
+  throw std::out_of_range("r_vector");
 }
 
 template <typename T>
-inline bool cpp11::vector<T>::contains(const string& name) const {
+inline bool cpp11::r_vector<T>::contains(const string& name) const {
   SEXP names = this->names();
   R_xlen_t size = Rf_xlength(names);
 
@@ -501,7 +501,7 @@ inline bool cpp11::vector<T>::contains(const string& name) const {
 }
 
 template <typename T>
-inline typename cpp11::vector<T>::const_iterator cpp11::vector<T>::find(
+inline typename cpp11::r_vector<T>::const_iterator cpp11::r_vector<T>::find(
     const string& name) const {
   SEXP names = this->names();
   R_xlen_t size = Rf_xlength(names);
@@ -517,7 +517,7 @@ inline typename cpp11::vector<T>::const_iterator cpp11::vector<T>::find(
 }
 
 template <typename T>
-inline T vector<T>::const_iterator::operator*() {
+inline T r_vector<T>::const_iterator::operator*() {
   if (data_->is_altrep()) {
     return buf_[pos_ - block_start_];
   } else {
@@ -527,7 +527,7 @@ inline T vector<T>::const_iterator::operator*() {
 
 #ifdef LONG_VECTOR_SUPPORT
 template <typename T>
-inline T vector<T>::operator[](const int pos) const {
+inline T r_vector<T>::operator[](const int pos) const {
   return operator[](static_cast<R_xlen_t>(pos));
 }
 #endif
@@ -535,11 +535,11 @@ inline T vector<T>::operator[](const int pos) const {
 namespace writable {
 
 template <typename T>
-vector<T>::proxy::proxy(SEXP data, const R_xlen_t index, T* const p, bool is_altrep)
+r_vector<T>::proxy::proxy(SEXP data, const R_xlen_t index, T* const p, bool is_altrep)
     : data_(data), index_(index), p_(p), is_altrep_(is_altrep) {}
 
 template <typename T>
-inline typename vector<T>::proxy vector<T>::iterator::operator*() {
+inline typename r_vector<T>::proxy r_vector<T>::iterator::operator*() {
   if (data_.is_altrep()) {
     return proxy(data_.data(), pos_, &buf_[pos_ - block_start_], true);
   } else {
@@ -549,11 +549,11 @@ inline typename vector<T>::proxy vector<T>::iterator::operator*() {
 }
 
 template <typename T>
-vector<T>::iterator::iterator(const vector& data, R_xlen_t pos)
-    : vector<T>::const_iterator(&data, pos), data_(data) {}
+r_vector<T>::iterator::iterator(const r_vector& data, R_xlen_t pos)
+    : r_vector<T>::const_iterator(&data, pos), data_(data) {}
 
 template <typename T>
-inline typename vector<T>::iterator& vector<T>::iterator::operator++() {
+inline typename r_vector<T>::iterator& r_vector<T>::iterator::operator++() {
   ++pos_;
   if (data_.is_altrep() && pos_ >= block_start_ + length_) {
     fill_buf(pos_);
@@ -562,7 +562,7 @@ inline typename vector<T>::iterator& vector<T>::iterator::operator++() {
 }
 
 template <typename T>
-inline typename vector<T>::iterator& vector<T>::iterator::operator+(R_xlen_t rhs) {
+inline typename r_vector<T>::iterator& r_vector<T>::iterator::operator+(R_xlen_t rhs) {
   pos_ += rhs;
   if (data_.is_altrep() && pos_ >= block_start_ + length_) {
     fill_buf(pos_);
@@ -571,40 +571,40 @@ inline typename vector<T>::iterator& vector<T>::iterator::operator+(R_xlen_t rhs
 }
 
 template <typename T>
-inline typename vector<T>::iterator vector<T>::begin() const {
+inline typename r_vector<T>::iterator r_vector<T>::begin() const {
   return iterator(*this, 0);
 }
 
 template <typename T>
-inline typename vector<T>::iterator vector<T>::end() const {
+inline typename r_vector<T>::iterator r_vector<T>::end() const {
   return iterator(*this, length_);
 }
 
 template <typename T>
-inline vector<T>::vector(const SEXP& data)
-    : cpp11::vector<T>(safe[Rf_shallow_duplicate](data)),
+inline r_vector<T>::r_vector(const SEXP& data)
+    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](data)),
       protect_(protect_sexp(data_)),
       capacity_(length_) {}
 
 template <typename T>
-inline vector<T>::vector(const SEXP& data, bool is_altrep)
-    : cpp11::vector<T>(safe[Rf_shallow_duplicate](data), is_altrep),
+inline r_vector<T>::r_vector(const SEXP& data, bool is_altrep)
+    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](data), is_altrep),
       protect_(protect_sexp(data_)),
       capacity_(length_) {}
 
 template <typename T>
-inline vector<T>::vector(SEXP&& data)
-    : cpp11::vector<T>(data), protect_(protect_sexp(data_)), capacity_(length_) {}
+inline r_vector<T>::r_vector(SEXP&& data)
+    : cpp11::r_vector<T>(data), protect_(protect_sexp(data_)), capacity_(length_) {}
 
 template <typename T>
-inline vector<T>::vector(SEXP&& data, bool is_altrep)
-    : cpp11::vector<T>(data, is_altrep),
+inline r_vector<T>::r_vector(SEXP&& data, bool is_altrep)
+    : cpp11::r_vector<T>(data, is_altrep),
       protect_(protect_sexp(data_)),
       capacity_(length_) {}
 
 template <typename T>
 template <typename Iter>
-inline vector<T>::vector(Iter first, Iter last) : vector() {
+inline r_vector<T>::r_vector(Iter first, Iter last) : r_vector() {
   reserve(last - first);
   while (first != last) {
     push_back(*first);
@@ -614,7 +614,7 @@ inline vector<T>::vector(Iter first, Iter last) : vector() {
 
 template <typename T>
 template <typename V, typename W>
-inline vector<T>::vector(const V& obj) : vector() {
+inline r_vector<T>::r_vector(const V& obj) : r_vector() {
   auto first = obj.begin();
   auto last = obj.end();
   reserve(last - first);
@@ -625,24 +625,24 @@ inline vector<T>::vector(const V& obj) : vector() {
 }
 
 template <typename T>
-inline vector<T>::vector(R_xlen_t size) : vector() {
+inline r_vector<T>::r_vector(R_xlen_t size) : r_vector() {
   resize(size);
 }
 
 template <typename T>
-inline vector<T>::~vector() {
+inline r_vector<T>::~r_vector() {
   release_protect(protect_);
 }
 
 #ifdef LONG_VECTOR_SUPPORT
 template <typename T>
-inline typename vector<T>::proxy vector<T>::operator[](const int pos) const {
+inline typename r_vector<T>::proxy r_vector<T>::operator[](const int pos) const {
   return operator[](static_cast<R_xlen_t>(pos));
 }
 #endif
 
 template <typename T>
-inline typename vector<T>::proxy vector<T>::operator[](const R_xlen_t pos) const {
+inline typename r_vector<T>::proxy r_vector<T>::operator[](const R_xlen_t pos) const {
   if (is_altrep_) {
     return {data_, pos, nullptr, true};
   }
@@ -650,7 +650,7 @@ inline typename vector<T>::proxy vector<T>::operator[](const R_xlen_t pos) const
 }
 
 template <typename T>
-inline typename vector<T>::proxy vector<T>::operator[](const string& name) const {
+inline typename r_vector<T>::proxy r_vector<T>::operator[](const string& name) const {
   SEXP names = this->names();
   R_xlen_t size = Rf_xlength(names);
 
@@ -661,11 +661,11 @@ inline typename vector<T>::proxy vector<T>::operator[](const string& name) const
     }
   }
 
-  throw std::out_of_range("vector");
+  throw std::out_of_range("r_vector");
 }
 
 template <typename T>
-inline typename vector<T>::iterator vector<T>::find(const string& name) const {
+inline typename r_vector<T>::iterator r_vector<T>::find(const string& name) const {
   SEXP names = this->names();
   R_xlen_t size = Rf_xlength(names);
 
@@ -680,14 +680,14 @@ inline typename vector<T>::iterator vector<T>::find(const string& name) const {
 }
 
 template <typename T>
-inline vector<T>::vector(const vector<T>& rhs)
-    : cpp11::vector<T>(safe[Rf_shallow_duplicate](rhs.data_)),
+inline r_vector<T>::r_vector(const r_vector<T>& rhs)
+    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs.data_)),
       protect_(protect_sexp(data_)),
       capacity_(rhs.capacity_) {}
 
 template <typename T>
-inline vector<T>::vector(vector<T>&& rhs)
-    : cpp11::vector<T>(rhs.data_),
+inline r_vector<T>::r_vector(r_vector<T>&& rhs)
+    : cpp11::r_vector<T>(rhs.data_),
       protect_(protect_sexp(data_)),
       capacity_(rhs.capacity_) {
   rhs.data_ = R_NilValue;
@@ -695,20 +695,20 @@ inline vector<T>::vector(vector<T>&& rhs)
 }
 
 template <typename T>
-inline vector<T>::vector(const cpp11::vector<T>& rhs)
-    : cpp11::vector<T>(safe[Rf_shallow_duplicate](rhs.data_)),
+inline r_vector<T>::r_vector(const cpp11::r_vector<T>& rhs)
+    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs.data_)),
       protect_(protect_sexp(data_)),
       capacity_(rhs.length_) {}
 
 // We don't release the old object until the end in case we throw an exception
 // during the duplicate.
 template <typename T>
-inline vector<T>& vector<T>::operator=(const vector<T>& rhs) {
+inline r_vector<T>& r_vector<T>::operator=(const r_vector<T>& rhs) {
   if (data_ == rhs.data_) {
     return *this;
   }
 
-  cpp11::vector<T>::operator=(rhs);
+  cpp11::r_vector<T>::operator=(rhs);
 
   auto old_protect = protect_;
 
@@ -723,12 +723,12 @@ inline vector<T>& vector<T>::operator=(const vector<T>& rhs) {
 }
 
 template <typename T>
-inline vector<T>& vector<T>::operator=(vector<T>&& rhs) {
+inline r_vector<T>& r_vector<T>::operator=(r_vector<T>&& rhs) {
   if (data_ == rhs.data_) {
     return *this;
   }
 
-  cpp11::vector<T>::operator=(rhs);
+  cpp11::r_vector<T>::operator=(rhs);
 
   SEXP old_protect = protect_;
 
@@ -746,18 +746,18 @@ inline vector<T>& vector<T>::operator=(vector<T>&& rhs) {
 }
 
 template <typename T>
-inline void vector<T>::pop_back() {
+inline void r_vector<T>::pop_back() {
   --length_;
 }
 
 template <typename T>
-inline void vector<T>::resize(R_xlen_t count) {
+inline void r_vector<T>::resize(R_xlen_t count) {
   reserve(count);
   length_ = count;
 }
 
 template <typename T>
-inline typename vector<T>::iterator vector<T>::insert(R_xlen_t pos, T value) {
+inline typename r_vector<T>::iterator r_vector<T>::insert(R_xlen_t pos, T value) {
   push_back(value);
 
   R_xlen_t i = length_ - 1;
@@ -771,7 +771,7 @@ inline typename vector<T>::iterator vector<T>::insert(R_xlen_t pos, T value) {
 }
 
 template <typename T>
-inline typename vector<T>::iterator vector<T>::erase(R_xlen_t pos) {
+inline typename r_vector<T>::iterator r_vector<T>::erase(R_xlen_t pos) {
   R_xlen_t i = pos;
   while (i < length_ - 1) {
     operator[](i) = (T) operator[](i + 1);
@@ -783,12 +783,12 @@ inline typename vector<T>::iterator vector<T>::erase(R_xlen_t pos) {
 }
 
 template <typename T>
-inline void vector<T>::clear() {
+inline void r_vector<T>::clear() {
   length_ = 0;
 }
 
 template <typename T>
-inline vector<T>::operator SEXP() const {
+inline r_vector<T>::operator SEXP() const {
   if (length_ < capacity_) {
     SETLENGTH(data_, length_);
   }
@@ -809,7 +809,7 @@ using is_container_but_not_sexp_or_string = typename std::enable_if<
 template <typename C, typename T = typename std::decay<C>::type::value_type>
 // typename T = typename C::value_type>
 is_container_but_not_sexp_or_string<C, T> as_cpp(SEXP from) {
-  auto obj = cpp11::vector<T>(from);
+  auto obj = cpp11::r_vector<T>(from);
   return {obj.begin(), obj.end()};
 }
 
@@ -822,7 +822,7 @@ using is_vector_of_strings = typename std::enable_if<
 template <typename C, typename T = typename std::decay<C>::type::value_type>
 // typename T = typename C::value_type>
 is_vector_of_strings<C, T> as_cpp(SEXP from) {
-  auto obj = cpp11::vector<cpp11::string>(from);
+  auto obj = cpp11::r_vector<cpp11::string>(from);
   typename std::decay<C>::type res;
   auto it = obj.begin();
   while (it != obj.end()) {
@@ -834,7 +834,7 @@ is_vector_of_strings<C, T> as_cpp(SEXP from) {
 }
 
 template <typename T>
-bool operator==(const vector<T>& lhs, const vector<T>& rhs) {
+bool operator==(const r_vector<T>& lhs, const r_vector<T>& rhs) {
   if (lhs.size() != rhs.size()) {
     return false;
   }
@@ -854,7 +854,7 @@ bool operator==(const vector<T>& lhs, const vector<T>& rhs) {
 }
 
 template <typename T>
-bool operator!=(const vector<T>& lhs, const vector<T>& rhs) {
+bool operator!=(const r_vector<T>& lhs, const r_vector<T>& rhs) {
   return !(lhs == rhs);
 }
 

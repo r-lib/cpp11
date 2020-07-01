@@ -1,7 +1,7 @@
 #pragma once
 
 #include "cpp11/integers.hpp"
-#include "cpp11/vector.hpp"
+#include "cpp11/r_vector.hpp"
 
 namespace cpp11 {
 template <typename V, typename T>
@@ -49,7 +49,7 @@ class matrix {
 
   sexp attr(SEXP name) const { return SEXP(vector_.attr(name)); }
 
-  vector<string> names() const { return SEXP(vector_.names()); }
+  r_vector<string> names() const { return SEXP(vector_.names()); }
 
   row operator[](const int pos) { return {*this, pos}; }
 
@@ -58,16 +58,16 @@ class matrix {
   // operator cpp11::matrix<V, T>() { return SEXP(); }
 };
 
-using doubles_matrix = matrix<vector<double>, double>;
-using integers_matrix = matrix<vector<int>, int>;
-using logicals_matrix = matrix<vector<Rboolean>, Rboolean>;
-using strings_matrix = matrix<vector<string>, string>;
+using doubles_matrix = matrix<r_vector<double>, double>;
+using integers_matrix = matrix<r_vector<int>, int>;
+using logicals_matrix = matrix<r_vector<Rboolean>, Rboolean>;
+using strings_matrix = matrix<r_vector<string>, string>;
 
 namespace writable {
-using doubles_matrix = matrix<vector<double>, vector<double>::proxy>;
-using integers_matrix = matrix<vector<int>, vector<int>::proxy>;
-using logicals_matrix = matrix<vector<Rboolean>, vector<Rboolean>::proxy>;
-using strings_matrix = matrix<vector<string>, vector<string>::proxy>;
+using doubles_matrix = matrix<r_vector<double>, r_vector<double>::proxy>;
+using integers_matrix = matrix<r_vector<int>, r_vector<int>::proxy>;
+using logicals_matrix = matrix<r_vector<Rboolean>, r_vector<Rboolean>::proxy>;
+using strings_matrix = matrix<r_vector<string>, r_vector<string>::proxy>;
 }  // namespace writable
 
 // TODO: Add tests for Matrix class

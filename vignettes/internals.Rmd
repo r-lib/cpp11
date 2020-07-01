@@ -40,13 +40,13 @@ covr::report(cpp11_coverage())
 - All header files are named with a `.hpp` extension.
 - All source files are named with a `.cpp` extension.
 - Public header files should be put in `inst/include/cpp11`
-- Read only vector classes and free functions should be put in the `cpp11` namespace.
-- Writable vector class should be put in the `cpp11::writable` namespace.
+- Read only r_vector classes and free functions should be put in the `cpp11` namespace.
+- Writable r_vector class should be put in the `cpp11::writable` namespace.
 - Private objects should be put in the `cpp11::internal` namespace.
 
 ## Vector classes
 
-All of the basic vector classes are class templates, the base template is defined in [cpp11/vector.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/vector.hpp)
+All of the basic r_vector classes are class templates, the base template is defined in [cpp11/vector.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/vector.hpp)
 The template parameter is the type of **value** the particular R vector stores, e.g. `double` for `cpp11::doubles`.
 This differs from Rcpp, whose first template parameter is the R API type, e.g. `REALSXP` the vector stores.
 
@@ -101,7 +101,7 @@ Unfortunately the options to emulate it are not ideal.
 1. `R_TopLevelExec()` works to avoid the C long jump, but because the code is always run in a top level context any errors or messages thrown cannot be caught by `tryCatch()` or similar blocks.
 2. `R_TryCatch()` is not available prior to R 3.4, and also has a bug (fixed in R 3.5)
 3. Calling the R `tryCatch()` function which contains an expression that then runs a C function which runs the C++ code would be an option, but implementing this is convoluted and it would impact performance, perhaps severely.
-4. Have `cpp11::unwind_protect()` be a no-op, this would mean any resources held by C++ objects would leak, including cpp11::vector / cpp11::sexp objects.
+4. Have `cpp11::unwind_protect()` be a no-op, this would mean any resources held by C++ objects would leak, including cpp11::r_vector / cpp11::sexp objects.
 
 Because 1. Causes behavior changes and test failures it was ruled out.
 2. was also ruled out since we want to support R 3.3.

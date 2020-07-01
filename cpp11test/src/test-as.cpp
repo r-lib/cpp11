@@ -333,7 +333,7 @@ context("as_cpp-C++") {
     UNPROTECT(3);
   }
 
-  test_that("as_sexp(vector<int>)") {
+  test_that("as_sexp(r_vector<int>)") {
     SEXP i1 = PROTECT(cpp11::as_sexp(std::vector<int>({1, 2, 3})));
 
     expect_true(Rf_isInteger(i1));
@@ -345,7 +345,7 @@ context("as_cpp-C++") {
     UNPROTECT(1);
   }
 
-  test_that("as_sexp(vector<floating_point>)") {
+  test_that("as_sexp(r_vector<floating_point>)") {
     SEXP r1 = PROTECT(cpp11::as_sexp(std::vector<double>({0.1, 0.2, 0.3})));
 
     expect_true(Rf_isReal(r1));
@@ -357,7 +357,7 @@ context("as_cpp-C++") {
     UNPROTECT(1);
   }
 
-  test_that("as_sexp(vector<floating_point>)") {
+  test_that("as_sexp(r_vector<floating_point>)") {
     SEXP l1 = PROTECT(cpp11::as_sexp(std::vector<bool>({true, false, true})));
 
     expect_true(Rf_isLogical(l1));
@@ -369,7 +369,7 @@ context("as_cpp-C++") {
     UNPROTECT(1);
   }
 
-  test_that("as_sexp(vector<std::string>)") {
+  test_that("as_sexp(r_vector<std::string>)") {
     SEXP s1 = PROTECT(cpp11::as_sexp(std::vector<std::string>({"foo", "bar", "baz"})));
 
     expect_true(Rf_isString(s1));
@@ -381,7 +381,7 @@ context("as_cpp-C++") {
     UNPROTECT(1);
   }
 
-  test_that("as_sexp(vector<cpp11::string>)") {
+  test_that("as_sexp(r_vector<cpp11::string>)") {
     SEXP s1 = PROTECT(cpp11::as_sexp(std::vector<cpp11::string>({"foo", "bar", "baz"})));
 
     expect_true(Rf_isString(s1));

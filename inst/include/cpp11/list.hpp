@@ -7,14 +7,14 @@
 #include "cpp11/named_arg.hpp"  // for named_arg
 #include "cpp11/protect.hpp"    // for protect, protect::function, safe
 #include "cpp11/sexp.hpp"       // for sexp
-#include "cpp11/vector.hpp"     // for vector, vector<>::proxy, vector<>::...
+#include "cpp11/r_vector.hpp"     // for vector, vector<>::proxy, vector<>::...
 
 // Specializations for list
 
 namespace cpp11 {
 
 template <>
-inline SEXP vector<SEXP>::valid_type(SEXP data) {
+inline SEXP r_vector<SEXP>::valid_type(SEXP data) {
   if (TYPEOF(data) != VECSXP) {
     throw type_error(VECSXP, TYPEOF(data));
   }
@@ -22,12 +22,12 @@ inline SEXP vector<SEXP>::valid_type(SEXP data) {
 }
 
 template <>
-inline SEXP vector<SEXP>::operator[](const R_xlen_t pos) const {
+inline SEXP r_vector<SEXP>::operator[](const R_xlen_t pos) const {
   return VECTOR_ELT(data_, pos);
 }
 
 template <>
-inline SEXP vector<SEXP>::operator[](const string& name) const {
+inline SEXP r_vector<SEXP>::operator[](const string& name) const {
   SEXP names = this->names();
   R_xlen_t size = Rf_xlength(names);
 
@@ -41,7 +41,7 @@ inline SEXP vector<SEXP>::operator[](const string& name) const {
 }
 
 template <>
-inline SEXP vector<SEXP>::at(const R_xlen_t pos) const {
+inline SEXP r_vector<SEXP>::at(const R_xlen_t pos) const {
   if (pos < 0 || pos >= length_) {
     throw std::out_of_range("doubles");
   }
@@ -49,33 +49,33 @@ inline SEXP vector<SEXP>::at(const R_xlen_t pos) const {
 }
 
 template <>
-inline SEXP* vector<SEXP>::get_p(bool, SEXP) {
+inline SEXP* r_vector<SEXP>::get_p(bool, SEXP) {
   return nullptr;
 }
 
 template <>
-inline void vector<SEXP>::const_iterator::fill_buf(R_xlen_t) {
+inline void r_vector<SEXP>::const_iterator::fill_buf(R_xlen_t) {
   return;
 }
 
-typedef vector<SEXP> list;
+typedef r_vector<SEXP> list;
 
 namespace writable {
 
 template <>
-inline typename vector<SEXP>::proxy& vector<SEXP>::proxy::operator=(SEXP rhs) {
+inline typename r_vector<SEXP>::proxy& r_vector<SEXP>::proxy::operator=(SEXP rhs) {
   SET_VECTOR_ELT(data_, index_, rhs);
   return *this;
 }
 
 template <>
-inline vector<SEXP>::proxy::operator SEXP() const {
+inline r_vector<SEXP>::proxy::operator SEXP() const {
   return VECTOR_ELT(data_, index_);
 }
 
 template <>
-inline vector<SEXP>::vector(std::initializer_list<SEXP> il)
-    : cpp11::vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())), capacity_(il.size()) {
+inline r_vector<SEXP>::r_vector(std::initializer_list<SEXP> il)
+    : cpp11::r_vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())), capacity_(il.size()) {
   protect_ = protect_sexp(data_);
   auto it = il.begin();
   for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
@@ -84,8 +84,8 @@ inline vector<SEXP>::vector(std::initializer_list<SEXP> il)
 }
 
 template <>
-inline vector<SEXP>::vector(std::initializer_list<named_arg> il)
-    : cpp11::vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())), capacity_(il.size()) {
+inline r_vector<SEXP>::r_vector(std::initializer_list<named_arg> il)
+    : cpp11::r_vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())), capacity_(il.size()) {
   try {
     unwind_protect([&] {
       protect_ = protect_sexp(data_);
@@ -104,7 +104,7 @@ inline vector<SEXP>::vector(std::initializer_list<named_arg> il)
 }
 
 template <>
-inline void vector<SEXP>::reserve(R_xlen_t new_capacity) {
+inline void r_vector<SEXP>::reserve(R_xlen_t new_capacity) {
   data_ = data_ == R_NilValue ? safe[Rf_allocVector](VECSXP, new_capacity)
                               : safe[Rf_xlengthgets](data_, new_capacity);
 
@@ -116,7 +116,7 @@ inline void vector<SEXP>::reserve(R_xlen_t new_capacity) {
 }
 
 template <>
-inline void vector<SEXP>::push_back(SEXP value) {
+inline void r_vector<SEXP>::push_back(SEXP value) {
   while (length_ >= capacity_) {
     reserve(capacity_ == 0 ? 1 : capacity_ *= 2);
   }
@@ -124,7 +124,7 @@ inline void vector<SEXP>::push_back(SEXP value) {
   ++length_;
 }
 
-typedef vector<SEXP> list;
+typedef r_vector<SEXP> list;
 
 }  // namespace writable
 

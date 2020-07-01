@@ -20,4 +20,4 @@
 #include "cpp11/sexp.hpp"
 #include "cpp11/string.hpp"
 #include "cpp11/strings.hpp"
-#include "cpp11/vector.hpp"
+#include "cpp11/r_vector.hpp"

@@ -785,7 +785,7 @@ cpp11 knows how to convert from many STL data structures to their R equivalents,
 ### Vectors {#vectors-stl}
 
 An STL vector is very similar to an R vector, except that it grows efficiently.
-This makes vectors appropriate to use when you don't know in advance how big the output will be.
+This makes STL vectors appropriate to use when you don't know in advance how big the output will be.
 Vectors are templated, which means that you need to specify the type of object the vector will contain when you create it: `vector<int>`, `vector<bool>`, `vector<double>`, `vector<string>`.
 You can access individual elements of a vector using the standard `[]` notation, and you can add a new element to the end of the vector using `.push_back()`.
 If you have some idea in advance how big the vector will be, you can use `.reserve()` to allocate sufficient storage.

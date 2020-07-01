@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <memory>
 #include "cpp11/sexp.hpp"
-#include "cpp11/vector.hpp"
+#include "cpp11/r_vector.hpp"
 
 namespace cpp11 {
 
