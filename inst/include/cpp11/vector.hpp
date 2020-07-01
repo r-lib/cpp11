@@ -64,7 +64,31 @@ class vector {
 
   bool contains(const string& name) const;
 
-  vector& operator=(const vector& rhs) = default;
+  vector& operator=(const vector& rhs) {
+    SEXP old_protect = protect_;
+
+    data_ = rhs.data_;
+    protect_ = protect_sexp(data_);
+    is_altrep_ = rhs.is_altrep_;
+    data_p_ = rhs.data_p_;
+    length_ = rhs.length_;
+
+    release_protect(old_protect);
+
+    return *this;
+  };
+
+  vector(const vector& rhs) {
+    SEXP old_protect = protect_;
+
+    data_ = rhs.data_;
+    protect_ = protect_sexp(data_);
+    is_altrep_ = rhs.is_altrep_;
+    data_p_ = rhs.data_p_;
+    length_ = rhs.length_;
+
+    release_protect(old_protect);
+  };
 
   bool is_altrep() const;
 
@@ -148,8 +172,11 @@ class vector {
 
   const_iterator find(const string& name) const;
 
+  ~vector() { release_protect(protect_); }
+
  private:
   SEXP data_ = R_NilValue;
+  SEXP protect_ = R_NilValue;
   bool is_altrep_ = false;
   T* data_p_ = nullptr;
   R_xlen_t length_ = 0;
@@ -309,6 +336,7 @@ class vector : public cpp11::vector<T> {
 template <typename T>
 inline vector<T>::vector(const SEXP data)
     : data_(valid_type(data)),
+      protect_(protect_sexp(data_)),
       is_altrep_(ALTREP(data)),
       data_p_(get_p(ALTREP(data), data)),
       length_(Rf_xlength(data)) {}
@@ -316,6 +344,7 @@ inline vector<T>::vector(const SEXP data)
 template <typename T>
 inline vector<T>::vector(const SEXP data, bool is_altrep)
     : data_(valid_type(data)),
+      protect_(protect_sexp(data_)),
       is_altrep_(is_altrep),
       data_p_(get_p(is_altrep, data)),
       length_(Rf_xlength(data)) {}
