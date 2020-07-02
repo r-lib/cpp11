@@ -51,4 +51,5 @@ inline SEXP as_sexp(T from) {
   return as_sexp({static_cast<std::string>(from)});
 }
 
+inline bool is_na(const string& x) { return x == NA_STRING; }
 }  // namespace cpp11

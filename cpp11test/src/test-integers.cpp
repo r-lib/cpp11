@@ -156,4 +156,12 @@ context("integers-C++") {
     UNPROTECT(1);
   }
 #endif
+
+  test_that("is_na(integer)") {
+    int x = 0;
+    expect_true(!cpp11::is_na(x));
+
+    int y = NA_INTEGER;
+    expect_true(cpp11::is_na(y));
+  }
 }

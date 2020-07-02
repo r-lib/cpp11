@@ -7,7 +7,7 @@
 #include "cpp11/as.hpp"         // for as_sexp
 #include "cpp11/named_arg.hpp"  // for named_arg
 #include "cpp11/protect.hpp"    // for INTEGER_ELT, protect_sexp, Rf_a...
-#include "cpp11/r_vector.hpp"     // for vector, vector<>::proxy, vector<>::...
+#include "cpp11/r_vector.hpp"   // for vector, vector<>::proxy, vector<>::...
 
 // Specializations for integers
 
@@ -99,7 +99,8 @@ inline void r_vector<int>::reserve(R_xlen_t new_capacity) {
 
 template <>
 inline r_vector<int>::r_vector(std::initializer_list<named_arg> il)
-    : cpp11::r_vector<int>(safe[Rf_allocVector](INTSXP, il.size())), capacity_(il.size()) {
+    : cpp11::r_vector<int>(safe[Rf_allocVector](INTSXP, il.size())),
+      capacity_(il.size()) {
   try {
     unwind_protect([&] {
       protect_ = protect_sexp(data_);
@@ -135,4 +136,5 @@ typedef r_vector<int> integers;
 
 }  // namespace writable
 
+inline bool is_na(int x) { return x == NA_INTEGER; }
 }  // namespace cpp11

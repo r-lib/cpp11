@@ -7,7 +7,7 @@
 #include "cpp11/R.hpp"
 #include "cpp11/named_arg.hpp"  // for named_arg
 #include "cpp11/protect.hpp"    // for protect_sexp, Rf_allocVector
-#include "cpp11/r_vector.hpp"     // for vector, vector<>::proxy, vector<>::...
+#include "cpp11/r_vector.hpp"   // for vector, vector<>::proxy, vector<>::...
 
 // Specializations for logicals
 
@@ -135,4 +135,5 @@ typedef r_vector<Rboolean> logicals;
 
 }  // namespace writable
 
+inline bool is_na(Rboolean x) { return x == NA_LOGICAL; }
 }  // namespace cpp11

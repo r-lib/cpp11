@@ -126,6 +126,13 @@ context("logicals-C++") {
 
     UNPROTECT(1);
   }
+  test_that("is_na(Rboolean)") {
+    Rboolean x = TRUE;
+    expect_true(!cpp11::is_na(x));
+
+    Rboolean y = NA_LOGICAL;
+    expect_true(cpp11::is_na(y));
+  }
 
   // test_that("writable::logicals(ALTREP_SEXP)") {
   // SEXP x = PROTECT(R_compact_intrange(1, 5));

@@ -351,4 +351,11 @@ context("doubles-C++") {
     expect_true(base != diff_length);
     expect_true(base != diff_values);
   }
+  test_that("is_na(double)") {
+    double x = 0.;
+    expect_true(!cpp11::is_na(x));
+
+    double y = NA_REAL;
+    expect_true(cpp11::is_na(y));
+  }
 }

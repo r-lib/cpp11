@@ -7,7 +7,7 @@
 #include "cpp11/as.hpp"         // for as_sexp
 #include "cpp11/named_arg.hpp"  // for named_arg
 #include "cpp11/protect.hpp"    // for SEXP, SEXPREC, REAL_ELT, R_Preserve...
-#include "cpp11/r_vector.hpp"     // for vector, vector<>::proxy, vector<>::...
+#include "cpp11/r_vector.hpp"   // for vector, vector<>::proxy, vector<>::...
 // Specializations for doubles
 
 namespace cpp11 {
@@ -130,4 +130,5 @@ typedef r_vector<double> doubles;
 
 }  // namespace writable
 
+inline bool is_na(double x) { return ISNA(x); }
 }  // namespace cpp11
