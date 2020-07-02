@@ -9,11 +9,11 @@
 
 namespace cpp11 {
 
-class string {
+class r_string {
  public:
-  string() = default;
-  string(SEXP data) : data_(data) {}
-  string(const char* data) : data_(safe[Rf_mkCharCE](data, CE_UTF8)) {}
+  r_string() = default;
+  r_string(SEXP data) : data_(data) {}
+  r_string(const char* data) : data_(safe[Rf_mkCharCE](data, CE_UTF8)) {}
 
   operator SEXP() const { return data_; }
   operator std::string() const {
@@ -27,7 +27,7 @@ class string {
     return res;
   }
 
-  bool operator==(const string& rhs) const { return data_.data() == rhs.data_.data(); }
+  bool operator==(const r_string& rhs) const { return data_.data() == rhs.data_.data(); }
 
   bool operator==(const SEXP& rhs) const { return data_.data() == rhs; }
 
@@ -41,11 +41,11 @@ class string {
   sexp data_ = R_NilValue;
 };  // namespace cpp11
 
-/* This will translate the string to UTF-8, but I think that is actually the
+/* This will translate the r_string to UTF-8, but I think that is actually the
  * right thing to do */
 template <typename T>
 using is_convertible_to_cpp11_string =
-    typename std::enable_if<std::is_convertible<T, cpp11::string>::value &&
+    typename std::enable_if<std::is_convertible<T, cpp11::r_string>::value &&
                                 !std::is_convertible<T, const char*>::value,
                             T>::type;
 
@@ -54,5 +54,5 @@ inline SEXP as_sexp(T from) {
   return as_sexp({static_cast<std::string>(from)});
 }
 
-inline bool is_na(const string& x) { return x == NA_STRING; }
+inline bool is_na(const r_string& x) { return x == NA_STRING; }
 }  // namespace cpp11

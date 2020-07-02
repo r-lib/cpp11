@@ -82,7 +82,7 @@ context("data_frame-C++") {
 
     df.attr("foo") = "bar";
 
-    cpp11::string foo = cpp11::strings(df.attr("foo"))[0];
+    cpp11::r_string foo = cpp11::strings(df.attr("foo"))[0];
     expect_true(foo == "bar");
 
     df.names() = {"a", "b"};

@@ -316,7 +316,7 @@ context("as_cpp-C++") {
   test_that("as_sexp(stringish)") {
     SEXP s1 = PROTECT(cpp11::as_sexp("foo"));
     SEXP s2 = PROTECT(cpp11::as_sexp(std::string("foo")));
-    SEXP s3 = PROTECT(cpp11::as_sexp(cpp11::string("foo")));
+    SEXP s3 = PROTECT(cpp11::as_sexp(cpp11::r_string("foo")));
 
     expect_true(Rf_isString(s1));
     expect_true(Rf_xlength(s1) == 1);
@@ -381,8 +381,8 @@ context("as_cpp-C++") {
     UNPROTECT(1);
   }
 
-  test_that("as_sexp(r_vector<cpp11::string>)") {
-    SEXP s1 = PROTECT(cpp11::as_sexp(std::vector<cpp11::string>({"foo", "bar", "baz"})));
+  test_that("as_sexp(r_vector<cpp11::r_string>)") {
+    SEXP s1 = PROTECT(cpp11::as_sexp(std::vector<cpp11::r_string>({"foo", "bar", "baz"})));
 
     expect_true(Rf_isString(s1));
     expect_true(Rf_xlength(s1) == 3);

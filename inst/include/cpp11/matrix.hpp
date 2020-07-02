@@ -49,7 +49,7 @@ class matrix {
 
   sexp attr(SEXP name) const { return SEXP(vector_.attr(name)); }
 
-  r_vector<string> names() const { return SEXP(vector_.names()); }
+  r_vector<r_string> names() const { return SEXP(vector_.names()); }
 
   row operator[](const int pos) { return {*this, pos}; }
 
@@ -61,13 +61,13 @@ class matrix {
 using doubles_matrix = matrix<r_vector<double>, double>;
 using integers_matrix = matrix<r_vector<int>, int>;
 using logicals_matrix = matrix<r_vector<Rboolean>, Rboolean>;
-using strings_matrix = matrix<r_vector<string>, string>;
+using strings_matrix = matrix<r_vector<r_string>, r_string>;
 
 namespace writable {
 using doubles_matrix = matrix<r_vector<double>, r_vector<double>::proxy>;
 using integers_matrix = matrix<r_vector<int>, r_vector<int>::proxy>;
 using logicals_matrix = matrix<r_vector<Rboolean>, r_vector<Rboolean>::proxy>;
-using strings_matrix = matrix<r_vector<string>, r_vector<string>::proxy>;
+using strings_matrix = matrix<r_vector<r_string>, r_vector<r_string>::proxy>;
 }  // namespace writable
 
 // TODO: Add tests for Matrix class

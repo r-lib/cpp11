@@ -18,6 +18,6 @@
 #include "cpp11/protect.hpp"
 #include "cpp11/raws.hpp"
 #include "cpp11/sexp.hpp"
-#include "cpp11/string.hpp"
+#include "cpp11/r_string.hpp"
 #include "cpp11/strings.hpp"
 #include "cpp11/r_vector.hpp"

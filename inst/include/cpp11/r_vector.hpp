@@ -5,7 +5,7 @@
 #include <cstdio>            // for snprintf, size_t
 #include <exception>         // for exception
 #include <initializer_list>  // for initializer_list
-#include <iosfwd>            // for string
+#include <iosfwd>            // for r_string
 #include <iterator>          // for forward_iterator_tag
 #include <stdexcept>         // for out_of_range
 #include <string>            // for basic_string
@@ -15,7 +15,7 @@
 #include "cpp11/attribute_proxy.hpp"
 #include "cpp11/named_arg.hpp"
 #include "cpp11/protect.hpp"  // for protect, safe, protect::function
-#include "cpp11/string.hpp"   // for string
+#include "cpp11/r_string.hpp"   // for string
 
 namespace cpp11 {
 
@@ -58,11 +58,11 @@ class r_vector {
   T operator[](const int pos) const;
 #endif
   T operator[](const R_xlen_t pos) const;
-  T operator[](const string& name) const;
+  T operator[](const r_string& name) const;
 
   T at(const R_xlen_t pos) const;
 
-  bool contains(const string& name) const;
+  bool contains(const r_string& name) const;
 
   r_vector& operator=(const r_vector& rhs) {
     SEXP old_protect = protect_;
@@ -112,10 +112,10 @@ class r_vector {
 
   sexp attr(SEXP name) const { return SEXP(attribute_proxy<r_vector<T>>(*this, name)); }
 
-  r_vector<string> names() const {
+  r_vector<r_string> names() const {
     SEXP nms = SEXP(attribute_proxy<r_vector<T>>(*this, R_NamesSymbol));
     if (nms == R_NilValue) {
-      return r_vector<string>();
+      return r_vector<r_string>();
     }
 
     return nms;
@@ -170,7 +170,7 @@ class r_vector {
   const_iterator cbegin() const;
   const_iterator cend() const;
 
-  const_iterator find(const string& name) const;
+  const_iterator find(const r_string& name) const;
 
   ~r_vector() { release_protect(protect_); }
 
@@ -288,7 +288,7 @@ class r_vector : public cpp11::r_vector<T> {
   proxy operator[](const int pos) const;
 #endif
   proxy operator[](const R_xlen_t pos) const;
-  proxy operator[](const string& name) const;
+  proxy operator[](const r_string& name) const;
 
   void push_back(T value);
   void push_back(const named_arg& value);
@@ -309,7 +309,7 @@ class r_vector : public cpp11::r_vector<T> {
   using cpp11::r_vector<T>::cbegin;
   using cpp11::r_vector<T>::cend;
 
-  iterator find(const string& name) const;
+  iterator find(const r_string& name) const;
 
   attribute_proxy<r_vector<T>> attr(const char* name) const {
     return attribute_proxy<r_vector<T>>(*this, name);
@@ -471,7 +471,7 @@ inline typename r_vector<T>::const_iterator& r_vector<T>::const_iterator::operat
 }
 
 template <typename T>
-inline T cpp11::r_vector<T>::operator[](const string& name) const {
+inline T cpp11::r_vector<T>::operator[](const r_string& name) const {
   SEXP names = this->names();
   R_xlen_t size = Rf_xlength(names);
 
@@ -486,7 +486,7 @@ inline T cpp11::r_vector<T>::operator[](const string& name) const {
 }
 
 template <typename T>
-inline bool cpp11::r_vector<T>::contains(const string& name) const {
+inline bool cpp11::r_vector<T>::contains(const r_string& name) const {
   SEXP names = this->names();
   R_xlen_t size = Rf_xlength(names);
 
@@ -502,7 +502,7 @@ inline bool cpp11::r_vector<T>::contains(const string& name) const {
 
 template <typename T>
 inline typename cpp11::r_vector<T>::const_iterator cpp11::r_vector<T>::find(
-    const string& name) const {
+    const r_string& name) const {
   SEXP names = this->names();
   R_xlen_t size = Rf_xlength(names);
 
@@ -650,7 +650,7 @@ inline typename r_vector<T>::proxy r_vector<T>::operator[](const R_xlen_t pos) c
 }
 
 template <typename T>
-inline typename r_vector<T>::proxy r_vector<T>::operator[](const string& name) const {
+inline typename r_vector<T>::proxy r_vector<T>::operator[](const r_string& name) const {
   SEXP names = this->names();
   R_xlen_t size = Rf_xlength(names);
 
@@ -665,7 +665,7 @@ inline typename r_vector<T>::proxy r_vector<T>::operator[](const string& name) c
 }
 
 template <typename T>
-inline typename r_vector<T>::iterator r_vector<T>::find(const string& name) const {
+inline typename r_vector<T>::iterator r_vector<T>::find(const r_string& name) const {
   SEXP names = this->names();
   R_xlen_t size = Rf_xlength(names);
 
@@ -822,11 +822,11 @@ using is_vector_of_strings = typename std::enable_if<
 template <typename C, typename T = typename std::decay<C>::type::value_type>
 // typename T = typename C::value_type>
 is_vector_of_strings<C, T> as_cpp(SEXP from) {
-  auto obj = cpp11::r_vector<cpp11::string>(from);
+  auto obj = cpp11::r_vector<cpp11::r_string>(from);
   typename std::decay<C>::type res;
   auto it = obj.begin();
   while (it != obj.end()) {
-    string s = *it;
+    r_string s = *it;
     res.emplace_back(static_cast<std::string>(s));
     ++it;
   }
