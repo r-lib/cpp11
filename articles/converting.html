@@ -347,6 +347,8 @@
 <ol style="list-style-type: decimal">
 <li>Add cpp11 to <code>LinkingTo</code>
 </li>
+<li>Add C++11 to <code>SystemRequirements</code>
+</li>
 <li>Convert all instances of <code>// [[Rcpp::export]]</code> to <code>[[cpp11::register]]</code>
 </li>
 <li>Clean and recompile the package, e.g. <code><a href="https://rdrr.io/pkg/pkgbuild/man/clean_dll.html">pkgbuild::clean_dll()</a></code> <code><a href="https://rdrr.io/pkg/pkgload/man/load_all.html">pkgload::load_all()</a></code>

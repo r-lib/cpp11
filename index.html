@@ -85,7 +85,8 @@
 <h2 class="hasAnchor">
 <a href="#using-cpp11-in-a-package" class="anchor"></a>Using cpp11 in a package</h2>
 <p>To add cpp11 to an existing package, you put your C++ files in the src/ directory and add the following to your DESCRIPTION file.</p>
-<pre><code>LinkingTo: cpp11</code></pre>
+<pre><code>LinkingTo: cpp11
+SystemRequirements: C++11</code></pre>
 <p>The easiest way to set this up automatically is to call <code>usethis::use_cpp11()</code>.</p>
 <p>Then decorate C++ functions you want to expose to R with <code>[[cpp11::register]]</code>. <em>Note this is a <a href="https://en.cppreference.com/w/cpp/language/attributes">C++11 attribute</a>, not a comment like is used in Rcpp.</em></p>
 <p>cpp11 has no hard dependencies and does not use a shared library, so it is straightforward and reliable to use in packages.</p>
