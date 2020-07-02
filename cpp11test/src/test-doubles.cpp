@@ -358,6 +358,43 @@ context("doubles-C++") {
     double y = NA_REAL;
     expect_true(cpp11::is_na(y));
   }
+
+  test_that("doubles operator[] and at") {
+    cpp11::doubles x(Rf_allocVector(REALSXP, 2));
+    REAL(x)[0] = 1;
+    REAL(x)[1] = 2;
+
+    int i0 = 0;
+    R_xlen_t x0 = 0;
+    size_t s0 = 0;
+
+    expect_true(x[i0] == 1);
+    expect_true(x[x0] == 1);
+    expect_true(x[s0] == 1);
+
+    expect_true(x.at(i0) == 1);
+    expect_true(x.at(x0) == 1);
+    expect_true(x.at(s0) == 1);
+  }
+
+  test_that("writable::doubles operator[] and at") {
+    cpp11::writable::doubles x(Rf_allocVector(REALSXP, 2));
+    REAL(x)[0] = 1;
+    REAL(x)[1] = 2;
+
+    int i0 = 0;
+    R_xlen_t x0 = 0;
+    size_t s0 = 0;
+
+    expect_true(x[i0] == 1);
+    expect_true(x[x0] == 1);
+    expect_true(x[s0] == 1);
+
+    expect_true(x.at(i0) == 1);
+    expect_true(x.at(x0) == 1);
+    expect_true(x.at(s0) == 1);
+  }
+
   test_that("writable::doubles compound assignments") {
     cpp11::writable::doubles x(Rf_allocVector(REALSXP, 1));
     REAL(x)[0] = 1;

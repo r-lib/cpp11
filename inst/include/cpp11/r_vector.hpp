@@ -48,6 +48,12 @@ class r_vector;
 template <typename T>
 class r_vector {
  public:
+  typedef ptrdiff_t difference_type;
+  typedef size_t size_type;
+  typedef T value_type;
+  typedef T* pointer;
+  typedef T& reference;
+
   r_vector() = default;
 
   r_vector(const SEXP data);
@@ -56,11 +62,15 @@ class r_vector {
 
 #ifdef LONG_VECTOR_SUPPORT
   const T operator[](const int pos) const;
+  const T at(const int pos) const;
 #endif
   const T operator[](const R_xlen_t pos) const;
+  const T operator[](const size_type pos) const;
   const T operator[](const r_string& name) const;
 
   const T at(const R_xlen_t pos) const;
+  const T at(const size_type pos) const;
+  const T at(const r_string& name) const;
 
   bool contains(const r_string& name) const;
 
@@ -158,12 +168,6 @@ class r_vector {
   };
 
  public:
-  typedef ptrdiff_t difference_type;
-  typedef size_t size_type;
-  typedef T value_type;
-  typedef T* pointer;
-  typedef T& reference;
-
   const_iterator begin() const;
   const_iterator end() const;
 
@@ -298,8 +302,12 @@ class r_vector : public cpp11::r_vector<T> {
   proxy at(const int pos) const;
 #endif
   proxy operator[](const R_xlen_t pos) const;
+  proxy operator[](const size_type pos) const;
   proxy operator[](const r_string& name) const;
+
   proxy at(const R_xlen_t pos) const;
+  proxy at(const size_type pos) const;
+  proxy at(const r_string& name) const;
 
   void push_back(T value);
   void push_back(const named_arg& value);
@@ -491,6 +499,11 @@ inline const T cpp11::r_vector<T>::at(R_xlen_t pos) const {
 }
 
 template <typename T>
+inline const T cpp11::r_vector<T>::at(size_type pos) const {
+  return at(static_cast<R_xlen_t>(pos));
+}
+
+template <typename T>
 inline const T cpp11::r_vector<T>::operator[](const r_string& name) const {
   SEXP names = this->names();
   R_xlen_t size = Rf_xlength(names);
@@ -550,7 +563,17 @@ template <typename T>
 inline const T r_vector<T>::operator[](const int pos) const {
   return operator[](static_cast<R_xlen_t>(pos));
 }
+
+template <typename T>
+inline const T r_vector<T>::at(const int pos) const {
+  return at(static_cast<R_xlen_t>(pos));
+}
 #endif
+
+template <typename T>
+inline const T r_vector<T>::operator[](size_type pos) const {
+  return operator[](static_cast<R_xlen_t>(pos));
+}
 
 namespace writable {
 
@@ -675,11 +698,21 @@ inline typename r_vector<T>::proxy r_vector<T>::operator[](const R_xlen_t pos) c
 }
 
 template <typename T>
+inline typename r_vector<T>::proxy r_vector<T>::operator[](size_type pos) const {
+  return operator[](static_cast<R_xlen_t>(pos));
+}
+
+template <typename T>
 inline typename r_vector<T>::proxy r_vector<T>::at(const R_xlen_t pos) const {
   if (pos < 0 || pos >= length_) {
     throw std::out_of_range("r_vector");
   }
   return operator[](static_cast<R_xlen_t>(pos));
+}
+
+template <typename T>
+inline typename r_vector<T>::proxy r_vector<T>::at(size_type pos) const {
+  return at(static_cast<R_xlen_t>(pos));
 }
 
 template <typename T>
@@ -695,6 +728,11 @@ inline typename r_vector<T>::proxy r_vector<T>::operator[](const r_string& name)
   }
 
   throw std::out_of_range("r_vector");
+}
+
+template <typename T>
+inline typename r_vector<T>::proxy r_vector<T>::at(const r_string& name) const {
+  return operator[](name);
 }
 
 template <typename T>
