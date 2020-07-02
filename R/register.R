@@ -7,9 +7,10 @@
 #' In order to use `cpp_register()` the `cli`, `decor`, `desc`, `glue`,
 #' `tibble` and `vctrs` packages must also be installed.
 #' @param path The path to the package root directory
+#' @param quiet If `TRUE` suppresses output from this function
 #' @return The paths to the generated R and C++ source files (in that order).
 #' @export
-cpp_register <- function(path = ".") {
+cpp_register <- function(path = ".", quiet = FALSE) {
   stop_unless_installed(c("brio", "cli", "decor", "desc", "glue", "tibble", "vctrs"))
 
   r_path <- file.path(path, "R", "cpp11.R")
@@ -24,13 +25,13 @@ cpp_register <- function(path = ".") {
     return(invisible(character()))
   }
 
-  funs <- get_registered_functions(all_decorations, "cpp11::register")
+  funs <- get_registered_functions(all_decorations, "cpp11::register", quiet)
 
   package <- desc::desc_get("Package", file = file.path(path, "DESCRIPTION"))
 
   cpp_functions_definitions <- generate_cpp_functions(funs, package)
 
-  init <- generate_init_functions(get_registered_functions(all_decorations, "cpp11::init"))
+  init <- generate_init_functions(get_registered_functions(all_decorations, "cpp11::init", quiet))
 
   r_functions <- generate_r_functions(funs, package)
 
@@ -42,7 +43,9 @@ cpp_register <- function(path = ".") {
       {r_functions}
       '
   ))
-  cli::cli_alert_success("generated file {.file {basename(r_path)}}")
+  if (!quiet) {
+    cli::cli_alert_success("generated file {.file {basename(r_path)}}")
+  }
 
   call_entries <- get_call_entries(path)
 
@@ -88,14 +91,16 @@ cpp_register <- function(path = ".") {
       call_entries = glue::glue_collapse(call_entries, "\n")
   ))
 
-  cli::cli_alert_success("generated file {.file {basename(cpp_path)}}")
+  if (!quiet) {
+    cli::cli_alert_success("generated file {.file {basename(cpp_path)}}")
+  }
 
   invisible(c(r_path, cpp_path))
 }
 
 utils::globalVariables(c("name", "return_type", "line", "decoration", "context", ".", "functions", "res"))
 
-get_registered_functions <- function(decorations, tag) {
+get_registered_functions <- function(decorations, tag, quiet = FALSE) {
   if (NROW(decorations) == 0) {
     return(tibble::tibble(file = character(), line = integer(), decoration = character(), params = list(), context = list(), name = character(), return_type = character(), args = list()))
   }
@@ -107,7 +112,9 @@ get_registered_functions <- function(decorations, tag) {
   out <- out[!(names(out) %in% "functions")]
   out$decoration <- sub("::[[:alpha:]]+", "", out$decoration)
 
-  cli::cli_alert_info(glue::glue("{n} functions decorated with [[{tag}]]", n = nrow(out)))
+  if (!quiet) {
+    cli::cli_alert_info(glue::glue("{n} functions decorated with [[{tag}]]", n = nrow(out)))
+  }
 
   out
 }

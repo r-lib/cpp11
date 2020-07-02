@@ -4,10 +4,12 @@
 \alias{cpp_register}
 \title{Generates wrappers for registered C++ functions}
 \usage{
-cpp_register(path = ".")
+cpp_register(path = ".", quiet = FALSE)
 }
 \arguments{
 \item{path}{The path to the package root directory}
+
+\item{quiet}{If \code{TRUE} suppresses output from this function}
 }
 \value{
 The paths to the generated R and C++ source files (in that order).
