@@ -391,6 +391,11 @@
 <span id="cb3-3"><a href="#cb3-3"></a>cpp11::function as_tibble = cpp11::package(<span class="st">"tibble"</span>)[<span class="st">"as_tibble"</span>];</span>
 <span id="cb3-4"><a href="#cb3-4"></a><span class="cf">return</span> as_tibble(x, <span class="st">".rows"_nm</span> = num_rows, <span class="st">".name_repair"_nm</span> = name_repair);</span></code></pre></div>
 </div>
+<div id="r-api-includes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#r-api-includes" class="anchor"></a>R API includes</h2>
+<p>cpp11 defines a compatible but different version of the Rboolean enum. This means that you must ensure that at least one cpp11 header is included <em>before</em> any R headers. One easy way to ensure this is to replace <code>#include &lt;Rinternals.h&gt;</code> with <code>#include &lt;cpp11/R.hpp&gt;</code>.</p>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
