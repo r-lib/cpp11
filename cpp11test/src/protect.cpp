@@ -32,6 +32,18 @@
 
 // The internal protections here are actually uneeded, but it is a useful way to benchmark
 // them
+//
+// clang-format off
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wunused-variable"
+#endif
+
+#ifdef __GNUC__
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-variable"
+#endif
+// clang-format on
 
 [[cpp11::register]] void protect_many_(int n) {
   std::vector<SEXP> res;
