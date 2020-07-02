@@ -17,10 +17,13 @@ class string {
 
   operator SEXP() const { return data_; }
   operator std::string() const {
-    void* vmax = vmaxget();
     std::string res;
-    unwind_protect([&] { res = Rf_translateCharUTF8(data_); });
+    res.reserve(size());
+
+    void* vmax = vmaxget();
+    unwind_protect([&] { res.assign(Rf_translateCharUTF8(data_)); });
     vmaxset(vmax);
+
     return res;
   }
 
