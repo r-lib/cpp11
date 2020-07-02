@@ -395,6 +395,34 @@ context("doubles-C++") {
     expect_true(x.at(s0) == 1);
   }
 
+  test_that("operator[] and at with names") {
+    using namespace cpp11::literals;
+    cpp11::writable::doubles x({"a"_nm = 1., "b"_nm = 2.});
+    cpp11::doubles y(x);
+
+    expect_true(x["a"] == 1);
+    expect_true(x["b"] == 2);
+    expect_error(x["c"] == 2);
+
+    expect_true(y["a"] == 1);
+    expect_true(y["b"] == 2);
+    expect_error(y["c"] == 2);
+  }
+
+  test_that("doubles::find") {
+    using namespace cpp11::literals;
+    cpp11::writable::doubles x({"a"_nm = 1., "b"_nm = 2.});
+    cpp11::doubles y(x);
+
+    expect_true(x.find("a") == x.begin());
+    expect_true(x.find("b") == x.begin() + 1);
+    expect_true(x.find("c") == x.end());
+
+    expect_true(y.find("a") == y.begin());
+    expect_true(y.find("b") == y.begin() + 1);
+    expect_true(y.find("c") == y.end());
+  }
+
   test_that("writable::doubles compound assignments") {
     cpp11::writable::doubles x(Rf_allocVector(REALSXP, 1));
     REAL(x)[0] = 1;
