@@ -14,6 +14,7 @@ To add cpp11 to an existing package, you put your C++ files in the src/ director
 
 ```
 LinkingTo: cpp11
+SystemRequirements: C++11
 ```
 
 The easiest way to set this up automatically is to call `usethis::use_cpp11()`.
