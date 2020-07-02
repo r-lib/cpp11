@@ -8,7 +8,7 @@
 #include "cpp11/R.hpp"          // for RAW, protect_sexp, SEXP, SEXPREC
 #include "cpp11/named_arg.hpp"  // for named_arg
 #include "cpp11/protect.hpp"    // for unwind_protect, protect, protect::f...
-#include "cpp11/r_vector.hpp"     // for vector, vector<>::proxy, vector<>::...
+#include "cpp11/r_vector.hpp"   // for vector, vector<>::proxy, vector<>::...
 
 // Specializations for raws
 
@@ -23,16 +23,7 @@ inline SEXP r_vector<uint8_t>::valid_type(SEXP data) {
 }
 
 template <>
-inline uint8_t r_vector<uint8_t>::operator[](const R_xlen_t pos) const {
-  // NOPROTECT: likely too costly to unwind protect every elt
-  return is_altrep_ ? RAW_ELT(data_, pos) : data_p_[pos];
-}
-
-template <>
-inline uint8_t r_vector<uint8_t>::at(const R_xlen_t pos) const {
-  if (pos < 0 || pos >= length_) {
-    throw std::out_of_range("raws");
-  }
+inline const uint8_t r_vector<uint8_t>::operator[](const R_xlen_t pos) const {
   // NOPROTECT: likely too costly to unwind protect every elt
   return is_altrep_ ? RAW_ELT(data_, pos) : data_p_[pos];
 }
@@ -60,7 +51,8 @@ typedef r_vector<uint8_t> raws;
 namespace writable {
 
 template <>
-inline typename r_vector<uint8_t>::proxy& r_vector<uint8_t>::proxy::operator=(uint8_t rhs) {
+inline typename r_vector<uint8_t>::proxy& r_vector<uint8_t>::proxy::operator=(
+    uint8_t rhs) {
   if (is_altrep_) {
     // NOPROTECT: likely too costly to unwind protect every set elt
     RAW(data_)[index_] = rhs;

@@ -21,16 +21,7 @@ inline SEXP r_vector<double>::valid_type(SEXP data) {
 }
 
 template <>
-inline double r_vector<double>::operator[](const R_xlen_t pos) const {
-  // NOPROTECT: likely too costly to unwind protect every elt
-  return is_altrep_ ? REAL_ELT(data_, pos) : data_p_[pos];
-}
-
-template <>
-inline double r_vector<double>::at(const R_xlen_t pos) const {
-  if (pos < 0 || pos >= length_) {
-    throw std::out_of_range("doubles");
-  }
+inline const double r_vector<double>::operator[](const R_xlen_t pos) const {
   // NOPROTECT: likely too costly to unwind protect every elt
   return is_altrep_ ? REAL_ELT(data_, pos) : data_p_[pos];
 }

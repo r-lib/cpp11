@@ -152,6 +152,20 @@ context("strings-C++") {
     UNPROTECT(1);
   }
 
+  // test_that("strings::operator=() and strings::at() do not compile") {
+  // cpp11::strings x(Rf_mkChar("foo"));
+
+  // x[0] = "bar";
+  // x.at(0) = "bar";
+  //}
+
+  test_that("strings::operator=() and strings::at() do compile") {
+    cpp11::writable::strings x(Rf_mkChar("foo"));
+
+    x[0] = "bar";
+    x.at(0) = "bar";
+  }
+
   // test_that("writable::strings(ALTREP_SEXP)") {
   // SEXP x = PROTECT(R_compact_uint8_trange(1, 5));
   //// Need to find (or create) an altrep class that implements duplicate.

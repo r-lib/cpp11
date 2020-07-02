@@ -6,8 +6,8 @@
 #include "cpp11/R.hpp"          // for SEXP, SEXPREC, protect_sexp
 #include "cpp11/named_arg.hpp"  // for named_arg
 #include "cpp11/protect.hpp"    // for protect, protect::function, safe
+#include "cpp11/r_vector.hpp"   // for vector, vector<>::proxy, vector<>::...
 #include "cpp11/sexp.hpp"       // for sexp
-#include "cpp11/r_vector.hpp"     // for vector, vector<>::proxy, vector<>::...
 
 // Specializations for list
 
@@ -22,12 +22,12 @@ inline SEXP r_vector<SEXP>::valid_type(SEXP data) {
 }
 
 template <>
-inline SEXP r_vector<SEXP>::operator[](const R_xlen_t pos) const {
+inline const SEXP r_vector<SEXP>::operator[](const R_xlen_t pos) const {
   return VECTOR_ELT(data_, pos);
 }
 
 template <>
-inline SEXP r_vector<SEXP>::operator[](const r_string& name) const {
+inline const SEXP r_vector<SEXP>::operator[](const r_string& name) const {
   SEXP names = this->names();
   R_xlen_t size = Rf_xlength(names);
 
@@ -38,14 +38,6 @@ inline SEXP r_vector<SEXP>::operator[](const r_string& name) const {
     }
   }
   return R_NilValue;
-}
-
-template <>
-inline SEXP r_vector<SEXP>::at(const R_xlen_t pos) const {
-  if (pos < 0 || pos >= length_) {
-    throw std::out_of_range("doubles");
-  }
-  return VECTOR_ELT(data_, pos);
 }
 
 template <>
@@ -75,7 +67,8 @@ inline r_vector<SEXP>::proxy::operator SEXP() const {
 
 template <>
 inline r_vector<SEXP>::r_vector(std::initializer_list<SEXP> il)
-    : cpp11::r_vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())), capacity_(il.size()) {
+    : cpp11::r_vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())),
+      capacity_(il.size()) {
   protect_ = protect_sexp(data_);
   auto it = il.begin();
   for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
@@ -85,7 +78,8 @@ inline r_vector<SEXP>::r_vector(std::initializer_list<SEXP> il)
 
 template <>
 inline r_vector<SEXP>::r_vector(std::initializer_list<named_arg> il)
-    : cpp11::r_vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())), capacity_(il.size()) {
+    : cpp11::r_vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())),
+      capacity_(il.size()) {
   try {
     unwind_protect([&] {
       protect_ = protect_sexp(data_);
