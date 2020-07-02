@@ -549,6 +549,23 @@ extern \"C\" void R_init_testPkg(DllInfo* dll){
 
 ")
   })
+
+  it("can be run without messages", {
+    pkg <- local_package()
+    p <- pkg_path(pkg)
+    dir.create(file.path(p, "src"))
+    file.copy(test_path("single.cpp"), file.path(p, "src", "single.cpp"))
+    expect_silent(cpp_register(p, quiet = TRUE))
+  })
+
+
+  it("can be run with messages, by default", {
+    pkg <- local_package()
+    p <- pkg_path(pkg)
+    dir.create(file.path(p, "src"))
+    file.copy(test_path("single.cpp"), file.path(p, "src", "single.cpp"))
+    expect_message(cpp_register(p), "1 functions decorated with [[cpp11::register]]", fixed = TRUE)
+  })
 })
 
 describe("generate_init_functions", {
