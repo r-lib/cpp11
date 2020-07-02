@@ -151,4 +151,3 @@ sum_dbl_accumulate_ <- function(x) {
 sum_dbl_accumulate2_ <- function(x_sxp) {
   .Call("_cpp11test_sum_dbl_accumulate2_", x_sxp)
 }
-

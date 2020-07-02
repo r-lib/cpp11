@@ -514,7 +514,6 @@ describe("cpp_register", {
 foo <- function() {
   .Call(\"_testPkg_foo\")
 }
-
 ")
     cpp_bindings <- file.path(p, "src", "cpp11.cpp")
     expect_true(file.exists(cpp_bindings))
@@ -546,7 +545,6 @@ extern \"C\" void R_init_testPkg(DllInfo* dll){
   R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
 }
-
 ")
   })
 })
