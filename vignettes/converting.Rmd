@@ -148,3 +148,9 @@ using namespace cpp11::literals; // so we can use ""_nm syntax
 cpp11::function as_tibble = cpp11::package("tibble")["as_tibble"];
 return as_tibble(x, ".rows"_nm = num_rows, ".name_repair"_nm = name_repair);
 ```
+
+## R API includes
+
+cpp11 defines a compatible but different version of the Rboolean enum.
+This means that you must ensure that at least one cpp11 header is included _before_ any R headers.
+One easy way to ensure this is to replace `#include <Rinternals.h>` with `#include <cpp11/R.hpp>`.
