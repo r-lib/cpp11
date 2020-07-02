@@ -55,7 +55,7 @@ typedef r_vector<SEXP> list;
 namespace writable {
 
 template <>
-inline typename r_vector<SEXP>::proxy& r_vector<SEXP>::proxy::operator=(SEXP rhs) {
+inline typename r_vector<SEXP>::proxy& r_vector<SEXP>::proxy::operator=(const SEXP& rhs) {
   SET_VECTOR_ELT(data_, index_, rhs);
   return *this;
 }

@@ -48,7 +48,7 @@ namespace writable {
 
 template <>
 inline typename r_vector<Rboolean>::proxy& r_vector<Rboolean>::proxy::operator=(
-    Rboolean rhs) {
+    const Rboolean& rhs) {
   if (is_altrep_) {
     SET_LOGICAL_ELT(data_, index_, rhs);
   } else {

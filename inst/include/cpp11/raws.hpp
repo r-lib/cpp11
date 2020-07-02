@@ -52,7 +52,7 @@ namespace writable {
 
 template <>
 inline typename r_vector<uint8_t>::proxy& r_vector<uint8_t>::proxy::operator=(
-    uint8_t rhs) {
+    const uint8_t& rhs) {
   if (is_altrep_) {
     // NOPROTECT: likely too costly to unwind protect every set elt
     RAW(data_)[index_] = rhs;

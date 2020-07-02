@@ -47,7 +47,8 @@ typedef r_vector<double> doubles;
 namespace writable {
 
 template <>
-inline typename r_vector<double>::proxy& r_vector<double>::proxy::operator=(double rhs) {
+inline typename r_vector<double>::proxy& r_vector<double>::proxy::operator=(
+    const double& rhs) {
   if (is_altrep_) {
     // NOPROTECT: likely too costly to unwind protect every set elt
     SET_REAL_ELT(data_, index_, rhs);

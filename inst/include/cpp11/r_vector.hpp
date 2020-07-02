@@ -219,7 +219,16 @@ class r_vector : public cpp11::r_vector<T> {
    public:
     proxy(SEXP data, const R_xlen_t index, T* const p, bool is_altrep);
 
-    proxy& operator=(T rhs);
+    proxy& operator=(const T& rhs);
+    proxy& operator+=(const T& rhs);
+    proxy& operator-=(const T& rhs);
+    proxy& operator*=(const T& rhs);
+    proxy& operator/=(const T& rhs);
+    proxy& operator++(int);
+    proxy& operator--(int);
+
+    void operator++();
+    void operator--();
 
     operator T() const;
   };
@@ -817,6 +826,52 @@ inline r_vector<T>::operator SEXP() const {
     SETLENGTH(data_, length_);
   }
   return data_;
+}
+
+template <typename T>
+inline typename r_vector<T>::proxy& r_vector<T>::proxy::operator+=(const T& rhs) {
+  operator=(static_cast<T>(*this) + rhs);
+  return *this;
+}
+
+template <typename T>
+inline typename r_vector<T>::proxy& r_vector<T>::proxy::operator-=(const T& rhs) {
+  operator=(static_cast<T>(*this) - rhs);
+  return *this;
+}
+
+template <typename T>
+inline typename r_vector<T>::proxy& r_vector<T>::proxy::operator*=(const T& rhs) {
+  operator=(static_cast<T>(*this) * rhs);
+  return *this;
+}
+
+template <typename T>
+inline typename r_vector<T>::proxy& r_vector<T>::proxy::operator/=(const T& rhs) {
+  operator=(static_cast<T>(*this) / rhs);
+  return *this;
+}
+
+template <typename T>
+inline typename r_vector<T>::proxy& r_vector<T>::proxy::operator++(int) {
+  operator=(static_cast<T>(*this) + 1);
+  return *this;
+}
+
+template <typename T>
+inline typename r_vector<T>::proxy& r_vector<T>::proxy::operator--(int) {
+  operator=(static_cast<T>(*this) - 1);
+  return *this;
+}
+
+template <typename T>
+inline void r_vector<T>::proxy::operator--() {
+  operator=(static_cast<T>(*this) - 1);
+}
+
+template <typename T>
+inline void r_vector<T>::proxy::operator++() {
+  operator=(static_cast<T>(*this) + 1);
 }
 
 }  // namespace writable
