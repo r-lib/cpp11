@@ -19,3 +19,7 @@ glue_str <- function(...) {
 read_file <- function(x) {
   readChar(x, file.size(x))
 }
+
+expect_error_free <- function(..., regexp = NA) {
+  expect_error(..., regexp = regexp)
+}

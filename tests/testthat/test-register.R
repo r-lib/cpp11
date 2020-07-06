@@ -604,6 +604,15 @@ extern \"C\" void R_init_testPkg(DllInfo* dll){
       )
     )
   })
+
+  it("does not error if no files have registered functions", {
+    pkg <- local_package()
+    p <- pkg_path(pkg)
+    dir.create(file.path(p, "src"))
+    writeLines("int foo(int x) { return x; }", file.path(p, "src", "foo.cpp"))
+
+    expect_error_free(cpp_register(p))
+  })
 })
 
 describe("generate_init_functions", {
