@@ -72,6 +72,7 @@ using namespace Rcpp;
 
   int i = 0;
   for (auto& row : x) {
+    sums[i] = 0.;
     for (auto&& val : row) {
       if (cpp11::is_na(val)) {
         sums[i] = NA_REAL;
