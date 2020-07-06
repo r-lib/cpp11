@@ -115,8 +115,10 @@ get_registered_functions <- function(decorations, tag, quiet = FALSE) {
   out <- out[!(names(out) %in% "functions")]
   out$decoration <- sub("::[[:alpha:]]+", "", out$decoration)
 
-  if (!quiet) {
-    cli::cli_alert_info(glue::glue("{n} functions decorated with [[{tag}]]", n = nrow(out)))
+  n <- nrow(out)
+
+  if (!quiet && n > 0) {
+    cli::cli_alert_info(glue::glue("{n} functions decorated with [[{tag}]]"))
   }
 
   out
