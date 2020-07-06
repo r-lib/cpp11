@@ -154,3 +154,10 @@ return as_tibble(x, ".rows"_nm = num_rows, ".name_repair"_nm = name_repair);
 cpp11 defines a compatible but different version of the Rboolean enum.
 This means that you must ensure that at least one cpp11 header is included _before_ any R headers.
 One easy way to ensure this is to replace `#include <Rinternals.h>` with `#include <cpp11/R.hpp>`.
+
+## Random Number behavior
+
+Rcpp unconditionally includes calls to `GetRNGstate()` and `PutRNGstate()` before each wrapped function. 
+This ensures that if any C++ code calls the R API functions `unif_rand()`, `norm_rand()`, `exp_rand()` or `R_unif_index()` the random seed state is set accordingly.
+cpp11 does _not_ do this, so you must include the calls to `GetRNGstate()` and `PutRNGstate()` _yourself_ if you use any of those functions in your C++ code.
+See [R-exts 6.3 - Random number generation](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Random-numbers) for details on these functions.
