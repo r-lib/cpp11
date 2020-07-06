@@ -43,8 +43,7 @@ Suggests:
     xml2,
     rmarkdown
 Remotes:
-  r-lib/pkgbuild@cpp11,
-  jimhester/decor
+  r-lib/pkgbuild
 VignetteBuilder: knitr
 URL: https://github.com/r-lib/cpp11
 BugReports: https://github.com/r-lib/cpp11/issues
