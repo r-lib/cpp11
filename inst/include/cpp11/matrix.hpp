@@ -10,6 +10,7 @@ class matrix {
   V vector_;
   int nrow_;
 
+ public:
   class row {
    private:
     matrix& parent_;
@@ -18,6 +19,35 @@ class matrix {
    public:
     row(matrix& parent, R_xlen_t row) : parent_(parent), row_(row) {}
     T operator[](const int pos) { return parent_.vector_[row_ + (pos * parent_.nrow_)]; }
+
+    class iterator {
+     private:
+      row& row_;
+      int pos_;
+
+     public:
+      iterator(row& row, R_xlen_t pos) : row_(row), pos_(pos) {}
+      iterator begin() const { return row_.parent_.vector_iterator(&this, 0); }
+      iterator end() const { return iterator(&this, row_.size()); }
+      inline iterator& operator++() {
+        ++pos_;
+        return *this;
+      }
+      bool operator!=(const iterator& rhs) {
+        return !(pos_ == rhs.pos_ && row_.row_ == rhs.row_.row_);
+      }
+      T operator*() const { return row_[pos_]; };
+    };
+
+    iterator begin() { return iterator(*this, 0); }
+    iterator end() { return iterator(*this, size()); }
+    R_xlen_t size() const { return parent_.vector_.size() / parent_.nrow_; }
+    bool operator!=(const row& rhs) { return row_ != rhs.row_; }
+    row& operator++() {
+      ++row_;
+      return *this;
+    }
+    row& operator*() { return *this; }
   };
   friend row;
 
@@ -55,7 +85,8 @@ class matrix {
 
   T operator()(int row, int col) { return vector_[row + (col * nrow_)]; }
 
-  // operator cpp11::matrix<V, T>() { return SEXP(); }
+  row begin() { return {*this, 0}; }
+  row end() { return {*this, nrow_}; }
 };
 
 using doubles_matrix = matrix<r_vector<double>, double>;
@@ -71,5 +102,4 @@ using strings_matrix = matrix<r_vector<r_string>, r_vector<r_string>::proxy>;
 }  // namespace writable
 
 // TODO: Add tests for Matrix class
-
 };  // namespace cpp11

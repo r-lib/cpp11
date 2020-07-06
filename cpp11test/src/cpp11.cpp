@@ -103,6 +103,13 @@ extern "C" SEXP _cpp11test_gibbs_rcpp2(SEXP N, SEXP thin) {
     return cpp11::as_sexp(gibbs_rcpp2(cpp11::unmove(cpp11::as_cpp<int>(N)), cpp11::unmove(cpp11::as_cpp<int>(thin))));
   END_CPP11
 }
+// matrix.cpp
+cpp11::doubles row_sums(cpp11::doubles_matrix x);
+extern "C" SEXP _cpp11test_row_sums(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(row_sums(cpp11::unmove(cpp11::as_cpp<cpp11::doubles_matrix>(x))));
+  END_CPP11
+}
 // protect.cpp
 void protect_one_(SEXP x, int n);
 extern "C" SEXP _cpp11test_protect_one_(SEXP x, SEXP n) {
@@ -314,6 +321,7 @@ extern SEXP _cpp11test_rcpp_sum_dbl_accumulate_(SEXP);
 extern SEXP _cpp11test_rcpp_sum_dbl_for_(SEXP);
 extern SEXP _cpp11test_rcpp_sum_dbl_foreach_(SEXP);
 extern SEXP _cpp11test_remove_altrep(SEXP);
+extern SEXP _cpp11test_row_sums(SEXP);
 extern SEXP _cpp11test_sum_dbl_accumulate_(SEXP);
 extern SEXP _cpp11test_sum_dbl_accumulate2_(SEXP);
 extern SEXP _cpp11test_sum_dbl_for_(SEXP);
@@ -355,6 +363,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_rcpp_sum_dbl_for_",        (DL_FUNC) &_cpp11test_rcpp_sum_dbl_for_,        1},
     {"_cpp11test_rcpp_sum_dbl_foreach_",    (DL_FUNC) &_cpp11test_rcpp_sum_dbl_foreach_,    1},
     {"_cpp11test_remove_altrep",            (DL_FUNC) &_cpp11test_remove_altrep,            1},
+    {"_cpp11test_row_sums",                 (DL_FUNC) &_cpp11test_row_sums,                 1},
     {"_cpp11test_sum_dbl_accumulate_",      (DL_FUNC) &_cpp11test_sum_dbl_accumulate_,      1},
     {"_cpp11test_sum_dbl_accumulate2_",     (DL_FUNC) &_cpp11test_sum_dbl_accumulate2_,     1},
     {"_cpp11test_sum_dbl_for_",             (DL_FUNC) &_cpp11test_sum_dbl_for_,             1},

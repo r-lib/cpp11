@@ -66,3 +66,21 @@ using namespace Rcpp;
 
   return (mat);
 }
+
+[[cpp11::register]] cpp11::doubles row_sums(cpp11::doubles_matrix x) {
+  cpp11::writable::doubles sums(x.nrow());
+
+  int i = 0;
+  for (auto& row : x) {
+    for (auto&& val : row) {
+      if (cpp11::is_na(val)) {
+        sums[i] = NA_REAL;
+        break;
+      }
+      sums[i] += val;
+    }
+    ++i;
+  }
+
+  return sums;
+}
