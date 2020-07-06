@@ -26,15 +26,17 @@ class attribute_proxy {
 
   template <typename C>
   attribute_proxy& operator=(C rhs) {
-    // NOPROTECT: Rf_setAttrib with a SYMSXP does not allocate
-    Rf_setAttrib(parent_.data(), symbol_, as_sexp(rhs));
+    SEXP value = PROTECT(as_sexp(rhs));
+    Rf_setAttrib(parent_.data(), symbol_, value);
+    UNPROTECT(1);
     return *this;
   }
 
   template <typename C>
   attribute_proxy& operator=(std::initializer_list<C> rhs) {
-    // NOPROTECT: Rf_setAttrib with a SYMSXP does not allocate
-    Rf_setAttrib(parent_.data(), symbol_, as_sexp(rhs));
+    SEXP value = PROTECT(as_sexp(rhs));
+    Rf_setAttrib(parent_.data(), symbol_, value);
+    UNPROTECT(1);
     return *this;
   }
 
