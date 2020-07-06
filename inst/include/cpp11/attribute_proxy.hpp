@@ -19,6 +19,9 @@ class attribute_proxy {
   attribute_proxy(const T& parent, const char* index)
       : parent_(parent), symbol_(safe[Rf_install](index)) {}
 
+  attribute_proxy(const T& parent, const std::string& index)
+      : parent_(parent), symbol_(safe[Rf_install](index.c_str())) {}
+
   attribute_proxy(const T& parent, SEXP index) : parent_(parent), symbol_(index) {}
 
   template <typename C>

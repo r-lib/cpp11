@@ -16,6 +16,8 @@ class list_of : public list {
   T operator[](R_xlen_t pos) { return list::operator[](pos); }
 
   T operator[](const char* pos) { return list::operator[](pos); }
+
+  T operator[](const std::string& pos) { return list::operator[](pos.c_str()); }
 };
 
 namespace writable {
@@ -35,6 +37,10 @@ class list_of : public writable::list {
 
   T operator[](const char* pos) {
     return static_cast<SEXP>(writable::list::operator[](pos));
+  }
+
+  T operator[](const std::string& pos) {
+    return static_cast<SEXP>(writable::list::operator[](pos.c_str()));
   }
 };
 }  // namespace writable

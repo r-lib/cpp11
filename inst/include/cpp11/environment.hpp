@@ -39,12 +39,15 @@ class environment {
   environment(SEXP env) : env_(env) {}
   proxy operator[](SEXP name) const { return {env_, name}; }
   proxy operator[](const char* name) const { return operator[](safe[Rf_install](name)); }
+  proxy operator[](const std::string& name) const { return operator[](name.c_str()); }
 
   bool exists(SEXP name) const {
     SEXP res = safe[Rf_findVarInFrame3](env_, name, FALSE);
     return res != R_UnboundValue;
   }
   bool exists(const char* name) const { return exists(safe[Rf_install](name)); }
+
+  bool exists(const std::string& name) const { return exists(name.c_str()); }
 
   void remove(SEXP name) {
 #ifdef HAS_REMOVE_VAR_FROM_FRAME

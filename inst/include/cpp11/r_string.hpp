@@ -14,6 +14,7 @@ class r_string {
   r_string() = default;
   r_string(SEXP data) : data_(data) {}
   r_string(const char* data) : data_(safe[Rf_mkCharCE](data, CE_UTF8)) {}
+  r_string(const std::string& data) : data_(safe[Rf_mkCharCE](data.c_str(), CE_UTF8)) {}
 
   operator SEXP() const { return data_; }
   operator std::string() const {
@@ -32,6 +33,10 @@ class r_string {
   bool operator==(const SEXP& rhs) const { return data_.data() == rhs; }
 
   bool operator==(const char* rhs) const {
+    return static_cast<std::string>(*this) == rhs;
+  }
+
+  bool operator==(const std::string& rhs) const {
     return static_cast<std::string>(*this) == rhs;
   }
 

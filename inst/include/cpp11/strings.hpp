@@ -115,6 +115,10 @@ inline r_vector<r_string>::r_vector(std::initializer_list<const char*> il)
     : cpp11::r_vector<r_string>(as_sexp(il)), capacity_(il.size()) {}
 
 template <>
+inline r_vector<r_string>::r_vector(std::initializer_list<std::string> il)
+    : cpp11::r_vector<r_string>(as_sexp(il)), capacity_(il.size()) {}
+
+template <>
 inline r_vector<r_string>::r_vector(std::initializer_list<named_arg> il)
     : cpp11::r_vector<r_string>(safe[Rf_allocVector](STRSXP, il.size())),
       capacity_(il.size()) {

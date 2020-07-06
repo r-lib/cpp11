@@ -278,6 +278,7 @@ class r_vector : public cpp11::r_vector<T> {
   r_vector(std::initializer_list<T> il);
   r_vector(std::initializer_list<named_arg> il);
   r_vector(std::initializer_list<const char*> il);
+  r_vector(std::initializer_list<std::string> il);
 
   template <typename Iter>
   r_vector(Iter first, Iter last);

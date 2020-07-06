@@ -8,6 +8,8 @@
 #include "R_ext/Utils.h"  // for R_CheckUserInterrupt
 #include "Rversion.h"     // for R_VERSION, R_Version
 
+#include <string>
+
 #if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
 #define HAS_UNWIND_PROTECT
 #endif
@@ -198,8 +200,18 @@ void stop(const char* fmt, Args... args) {
 }
 
 template <typename... Args>
+void stop(const std::string& fmt, Args... args) {
+  unwind_protect([&] { Rf_error(fmt.c_str(), args...); });
+}
+
+template <typename... Args>
 void warning(const char* fmt, Args... args) {
   unwind_protect([&] { Rf_warning(fmt, args...); });
+}
+
+template <typename... Args>
+void warning(const std::string& fmt, Args... args) {
+  unwind_protect([&] { Rf_warning(fmt.c_str(), args...); });
 }
 
 }  // namespace cpp11

@@ -51,9 +51,11 @@ class function {
 class package {
  public:
   package(const char* name) : data_(get_namespace(name)) {}
+  package(const std::string& name) : data_(get_namespace(name.c_str())) {}
   function operator[](const char* name) {
     return safe[Rf_findFun](safe[Rf_install](name), data_);
   }
+  function operator[](const std::string& name) { return operator[](name.c_str()); }
 
  private:
   static SEXP get_namespace(const char* name) {
