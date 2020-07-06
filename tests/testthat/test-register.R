@@ -564,6 +564,46 @@ extern \"C\" void R_init_testPkg(DllInfo* dll){
     file.copy(test_path("single.cpp"), file.path(p, "src", "single.cpp"))
     expect_message(cpp_register(p), "1 functions decorated with [[cpp11::register]]", fixed = TRUE)
   })
+
+  it("includes pkg_types.h if included in src", {
+    pkg <- local_package()
+    p <- pkg_path(pkg)
+    dir.create(file.path(p, "src"))
+    file.copy(test_path("single.cpp"), file.path(p, "src", "single.cpp"))
+    writeLines("#include <sstream>", file.path(p, "src", "testPkg_types.h"))
+    cpp_register(p)
+
+    expect_true(
+      any(
+        grepl(
+          pattern = '#include "testPkg_types.h"',
+          x = readLines(file.path(p, "src", "cpp11.cpp")),
+          fixed = TRUE
+        )
+      )
+    )
+  })
+
+  it("includes pkg_types.h if included in inst/include", {
+    pkg <- local_package()
+    p <- pkg_path(pkg)
+    dir.create(file.path(p, "src"))
+    file.copy(test_path("single.cpp"), file.path(p, "src", "single.cpp"))
+
+    dir.create(file.path(p, "inst", "include"), recursive = TRUE)
+    writeLines("#include <sstream>", file.path(p, "inst", "include", "testPkg_types.h"))
+    cpp_register(p)
+
+    expect_true(
+      any(
+        grepl(
+          pattern = '#include "testPkg_types.h"',
+          x = readLines(file.path(p, "src", "cpp11.cpp")),
+          fixed = TRUE
+        )
+      )
+    )
+  })
 })
 
 describe("generate_init_functions", {

@@ -61,10 +61,13 @@ cpp_register <- function(path = ".", quiet = FALSE) {
     extra_includes <- c(extra_includes, "#include <cpp11/R.hpp>", "#include <Rcpp.h>", "using namespace Rcpp;")
   }
 
-  pkg_types <- file.path(path, "src", paste0(package, "_types.h"))
-  if (file.exists(pkg_types)) {
+  pkg_types <- c(
+    file.path(path, "src", paste0(package, "_types.h")),
+    file.path(path, "inst", "include", paste0(package, "_types.h"))
+  )
+  if (any(file.exists(pkg_types))) {
     extra_includes <- c(
-      sprintf('#include "%s"', basename(pkg_types)),
+      sprintf('#include "%s"', basename(pkg_types[[1]])),
       extra_includes
     )
   }
