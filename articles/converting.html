@@ -396,6 +396,11 @@
 <a href="#r-api-includes" class="anchor"></a>R API includes</h2>
 <p>cpp11 defines a compatible but different version of the Rboolean enum. This means that you must ensure that at least one cpp11 header is included <em>before</em> any R headers. One easy way to ensure this is to replace <code>#include &lt;Rinternals.h&gt;</code> with <code>#include &lt;cpp11/R.hpp&gt;</code>.</p>
 </div>
+<div id="random-number-behavior" class="section level2">
+<h2 class="hasAnchor">
+<a href="#random-number-behavior" class="anchor"></a>Random Number behavior</h2>
+<p>Rcpp unconditionally includes calls to <code>GetRNGstate()</code> and <code>PutRNGstate()</code> before each wrapped function. This ensures that if any C++ code calls the R API functions <code>unif_rand()</code>, <code>norm_rand()</code>, <code>exp_rand()</code> or <code>R_unif_index()</code> the random seed state is set accordingly. cpp11 does <em>not</em> do this, so you must include the calls to <code>GetRNGstate()</code> and <code>PutRNGstate()</code> <em>yourself</em> if you use any of those functions in your C++ code. See <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Random-numbers">R-exts 6.3 - Random number generation</a> for details on these functions.</p>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
