@@ -2,8 +2,8 @@
 
 #include <cstddef>
 #include <memory>
-#include "cpp11/sexp.hpp"
 #include "cpp11/r_vector.hpp"
+#include "cpp11/sexp.hpp"
 
 namespace cpp11 {
 
@@ -74,9 +74,21 @@ class external_pointer {
     return addr;
   }
 
-  typename std::add_lvalue_reference<T>::type operator*() noexcept { return *get(); }
+  typename std::add_lvalue_reference<T>::type operator*() {
+    pointer addr = get();
+    if (addr == nullptr) {
+      throw std::bad_weak_ptr();
+    }
+    return *get();
+  }
 
-  pointer operator->() const noexcept { return get(); }
+  pointer operator->() const {
+    pointer addr = get();
+    if (addr == nullptr) {
+      throw std::bad_weak_ptr();
+    }
+    return get();
+  }
 
   pointer release() noexcept {
     if (get() == nullptr) {
