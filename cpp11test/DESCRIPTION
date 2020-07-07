@@ -15,6 +15,7 @@ Encoding: UTF-8
 LinkingTo: Rcpp, cpp11, testthat
 Suggests:
     testthat,
+    pkgload,
     xml2
 LazyData: true
 Roxygen: list(markdown = TRUE)

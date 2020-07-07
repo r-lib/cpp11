@@ -32,8 +32,6 @@ Suggests:
     knitr,
     lobstr,
     mockery,
-    pkgbuild,
-    pkgload,
     scales,
     testthat,
     tibble,
@@ -42,8 +40,6 @@ Suggests:
     withr,
     xml2,
     rmarkdown
-Remotes:
-  r-lib/pkgbuild
 VignetteBuilder: knitr
 URL: https://github.com/r-lib/cpp11
 BugReports: https://github.com/r-lib/cpp11/issues
