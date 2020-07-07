@@ -50,12 +50,14 @@ class environment {
   bool exists(const std::string& name) const { return exists(name.c_str()); }
 
   void remove(SEXP name) {
+    PROTECT(name);
 #ifdef HAS_REMOVE_VAR_FROM_FRAME
     R_removeVarFromFrame(name, env_);
 #else
     auto remove = package("base")["remove"];
     remove(name, "envir"_nm = env_);
 #endif
+    UNPROTECT(1);
   }
 
   void remove(const char* name) { remove(safe[Rf_install](name)); }

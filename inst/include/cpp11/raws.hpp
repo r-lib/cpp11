@@ -91,7 +91,7 @@ inline r_vector<uint8_t>::r_vector(std::initializer_list<named_arg> il)
     unwind_protect([&] {
       protect_ = protect_sexp(data_);
       attr("names") = Rf_allocVector(STRSXP, capacity_);
-      SEXP names = attr("names");
+      sexp names(attr("names"));
       auto it = il.begin();
       for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
         data_p_[i] = cpp11::raws(it->value())[0];

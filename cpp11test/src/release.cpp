@@ -18,10 +18,11 @@
 }
 
 [[cpp11::register]] void rcpp_release_(int n) {
+#ifdef CPP11_BENCH
   std::vector<Rcpp::RObject> x;
   int count = 0;
   while (count < n) {
-    x.push_back(Rf_ScalarInteger(count));
+    x.push_back(Rcpp::RObject(Rf_ScalarInteger(count)));
     ++count;
   }
   count = 0;
@@ -29,4 +30,5 @@
     x.pop_back();
     ++count;
   }
+#endif
 }

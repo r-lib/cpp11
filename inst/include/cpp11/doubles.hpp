@@ -80,7 +80,7 @@ inline r_vector<double>::r_vector(std::initializer_list<named_arg> il)
     unwind_protect([&] {
       protect_ = protect_sexp(data_);
       Rf_setAttrib(data_, R_NamesSymbol, Rf_allocVector(STRSXP, capacity_));
-      SEXP names(Rf_getAttrib(data_, R_NamesSymbol));
+      sexp names(Rf_getAttrib(data_, R_NamesSymbol));
       auto it = il.begin();
       for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
         data_p_[i] = doubles(it->value())[0];

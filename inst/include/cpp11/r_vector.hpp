@@ -56,9 +56,9 @@ class r_vector {
 
   r_vector() = default;
 
-  r_vector(const SEXP data);
+  r_vector(SEXP data);
 
-  r_vector(const SEXP data, bool is_altrep);
+  r_vector(SEXP data, bool is_altrep);
 
 #ifdef LONG_VECTOR_SUPPORT
   const T operator[](const int pos) const;
@@ -356,7 +356,7 @@ class r_vector : public cpp11::r_vector<T> {
 template <typename T>
 inline r_vector<T>::r_vector(const SEXP data)
     : data_(valid_type(data)),
-      protect_(protect_sexp(data_)),
+      protect_(protect_sexp(data)),
       is_altrep_(ALTREP(data)),
       data_p_(get_p(ALTREP(data), data)),
       length_(Rf_xlength(data)) {}
@@ -364,7 +364,7 @@ inline r_vector<T>::r_vector(const SEXP data)
 template <typename T>
 inline r_vector<T>::r_vector(const SEXP data, bool is_altrep)
     : data_(valid_type(data)),
-      protect_(protect_sexp(data_)),
+      protect_(protect_sexp(data)),
       is_altrep_(is_altrep),
       data_p_(get_p(is_altrep, data)),
       length_(Rf_xlength(data)) {}
@@ -718,16 +718,18 @@ inline typename r_vector<T>::proxy r_vector<T>::at(size_type pos) const {
 
 template <typename T>
 inline typename r_vector<T>::proxy r_vector<T>::operator[](const r_string& name) const {
-  SEXP names = this->names();
+  SEXP names = PROTECT(this->names());
   R_xlen_t size = Rf_xlength(names);
 
   for (R_xlen_t pos = 0; pos < size; ++pos) {
     auto cur = Rf_translateCharUTF8(STRING_ELT(names, pos));
     if (name == cur) {
+      UNPROTECT(1);
       return operator[](pos);
     }
   }
 
+  UNPROTECT(1);
   throw std::out_of_range("r_vector");
 }
 
@@ -738,16 +740,18 @@ inline typename r_vector<T>::proxy r_vector<T>::at(const r_string& name) const {
 
 template <typename T>
 inline typename r_vector<T>::iterator r_vector<T>::find(const r_string& name) const {
-  SEXP names = this->names();
+  SEXP names = PROTECT(this->names());
   R_xlen_t size = Rf_xlength(names);
 
   for (R_xlen_t pos = 0; pos < size; ++pos) {
     auto cur = Rf_translateCharUTF8(STRING_ELT(names, pos));
     if (name == cur) {
+      UNPROTECT(1);
       return begin() + pos;
     }
   }
 
+  UNPROTECT(1);
   return end();
 }
 

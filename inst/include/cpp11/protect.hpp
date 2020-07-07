@@ -22,7 +22,9 @@ class unwind_exception : public std::exception {
 };
 
 static SEXP preserve(SEXP obj) {
+  PROTECT(obj);
   R_PreserveObject(obj);
+  UNPROTECT(1);
   return obj;
 }
 

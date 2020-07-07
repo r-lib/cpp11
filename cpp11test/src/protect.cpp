@@ -46,6 +46,7 @@
 // clang-format on
 
 [[cpp11::register]] void protect_many_(int n) {
+#ifdef CPP11_BENCH
   std::vector<SEXP> res;
   for (R_xlen_t i = 0; i < n; ++i) {
     res.push_back(PROTECT(Rf_ScalarInteger(n)));
@@ -56,6 +57,7 @@
     UNPROTECT(1);
     res.pop_back();
   }
+#endif
 }
 
 [[cpp11::register]] void protect_many_cpp11_(int n) {
@@ -99,14 +101,15 @@
 }
 
 [[cpp11::register]] void protect_many_rcpp_(int n) {
+#ifdef CPP11_BENCH
   std::vector<Rcpp::RObject> res;
   for (R_xlen_t i = 0; i < n; ++i) {
-    SEXP x = Rf_ScalarInteger(n);
-    res.push_back(x);
+    res.push_back(Rcpp::RObject(Rf_ScalarInteger(n)));
   }
 
   for (R_xlen_t i = n - 1; i >= 0; --i) {
     SEXP x = res[i];
     res.pop_back();
   }
+#endif
 }

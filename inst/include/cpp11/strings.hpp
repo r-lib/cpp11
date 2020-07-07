@@ -64,7 +64,7 @@ inline bool operator==(const r_vector<r_string>::proxy& lhs, r_string rhs) {
   return static_cast<r_string>(lhs).operator==(static_cast<std::string>(rhs).c_str());
 }
 
-inline SEXP alloc_or_copy(const SEXP& data) {
+inline SEXP alloc_or_copy(const SEXP data) {
   switch (TYPEOF(data)) {
     case CHARSXP:
       return cpp11::r_vector<r_string>(safe[Rf_allocVector](STRSXP, 1));
@@ -75,7 +75,7 @@ inline SEXP alloc_or_copy(const SEXP& data) {
   }
 }
 
-inline SEXP alloc_if_charsxp(const SEXP& data) {
+inline SEXP alloc_if_charsxp(const SEXP data) {
   switch (TYPEOF(data)) {
     case CHARSXP:
       return cpp11::r_vector<r_string>(safe[Rf_allocVector](STRSXP, 1));
@@ -126,7 +126,7 @@ inline r_vector<r_string>::r_vector(std::initializer_list<named_arg> il)
     unwind_protect([&] {
       protect_ = protect_sexp(data_);
       attr("names") = Rf_allocVector(STRSXP, capacity_);
-      SEXP names = attr("names");
+      sexp names(attr("names"));
       auto it = il.begin();
       for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
         SET_STRING_ELT(data_, i, strings(it->value())[0]);
