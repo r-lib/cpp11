@@ -1,11 +1,10 @@
 #pragma once
 
-#include <stddef.h>          // for size_t
-#include <initializer_list>  // for initializer_list
-#include <string>            // for basic_string
-#include "cpp11/R.hpp"       // for protect_sexp, REAL_ELT, SEXP, SEX...
-#include "cpp11/attribute_proxy.hpp"
-#include "cpp11/protect.hpp"  // for unwind_exception
+#include <stddef.h>                   // for size_t
+#include <string>                     // for string, basic_string
+#include "cpp11/R.hpp"                // for SEXP, SEXPREC, REAL_ELT, R_NilV...
+#include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
+#include "cpp11/protect.hpp"          // for protect_sexp, release_protect
 
 namespace cpp11 {
 

@@ -1,9 +1,10 @@
 #pragma once
 
-#include <initializer_list>  // for initializer_list
-#include "cpp11/R.hpp"
-#include "cpp11/as.hpp"  // for as_sexp, is_vector_of_strings
-#include "cpp11/protect.hpp"
+#include <initializer_list>   // for initializer_list
+#include <string>             // for string, basic_string
+#include "cpp11/R.hpp"        // for SEXP, SEXPREC, Rf_install, PROTECT, Rf_...
+#include "cpp11/as.hpp"       // for as_sexp
+#include "cpp11/protect.hpp"  // for protect, safe, protect::function
 
 namespace cpp11 {
 

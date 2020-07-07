@@ -1,9 +1,11 @@
 #pragma once
 
-#include "cpp11/as.hpp"
-#include "cpp11/sexp.hpp"  // for sexp
-
-#include "Rversion.h"
+#include <string>             // for string, basic_string
+#include "Rversion.h"         // for R_VERSION, R_Version
+#include "cpp11/R.hpp"        // for SEXP, SEXPREC, Rf_install, Rf_findVarIn...
+#include "cpp11/as.hpp"       // for as_sexp
+#include "cpp11/protect.hpp"  // for protect, protect::function, safe, unwin...
+#include "cpp11/sexp.hpp"     // for sexp
 
 #if R_VERSION >= R_Version(4, 0, 0)
 #define HAS_REMOVE_VAR_FROM_FRAME

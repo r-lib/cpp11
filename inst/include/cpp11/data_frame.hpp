@@ -1,15 +1,23 @@
 #pragma once
 
-#include "cpp11/attribute_proxy.hpp"
-#include "cpp11/list.hpp"
+#include <cstdlib>                    // for abs
+#include <initializer_list>           // for initializer_list
+#include <string>                     // for string, basic_string
+#include <utility>                    // for move
+#include "R_ext/Arith.h"              // for NA_INTEGER
+#include "cpp11/R.hpp"                // for Rf_xlength, SEXP, SEXPREC, INTEGER
+#include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
+#include "cpp11/list.hpp"             // for list, r_vector<>::r_vector, r_v...
+#include "cpp11/r_vector.hpp"         // for r_vector
 
 #include <cstdlib>
 
 namespace cpp11 {
 
+class named_arg;
 namespace writable {
 class data_frame;
-}
+}  // namespace writable
 
 class data_frame : public list {
   using list::list;

@@ -1,7 +1,10 @@
 #pragma once
 
-#include "cpp11/integers.hpp"
-#include "cpp11/r_vector.hpp"
+#include <string>              // for string
+#include "cpp11/R.hpp"         // for SEXP, SEXPREC, R_xlen_t, Rboolean, INT...
+#include "cpp11/r_string.hpp"  // for r_string
+#include "cpp11/r_vector.hpp"  // for r_vector
+#include "cpp11/sexp.hpp"      // for sexp
 
 namespace cpp11 {
 template <typename V, typename T>

@@ -1,21 +1,21 @@
 #pragma once
 
-#include <stddef.h>          // for ptrdiff_t
-#include <array>             // for array
-#include <cstdio>            // for snprintf, size_t
-#include <exception>         // for exception
-#include <initializer_list>  // for initializer_list
-#include <iosfwd>            // for r_string
-#include <iterator>          // for forward_iterator_tag
-#include <stdexcept>         // for out_of_range
-#include <string>            // for basic_string
-#include <type_traits>       // for is_same, enable_if, is_constructible
-#include "cpp11/R.hpp"       // for SEXP, SEXPREC, R_xlen_t, Rf_xlength
-#include "cpp11/as.hpp"      // for as_sexp, is_vector_of_strings
-#include "cpp11/attribute_proxy.hpp"
-#include "cpp11/named_arg.hpp"
-#include "cpp11/protect.hpp"   // for protect, safe, protect::function
-#include "cpp11/r_string.hpp"  // for string
+#include <stddef.h>                   // for ptrdiff_t, size_t
+#include <algorithm>                  // for max
+#include <array>                      // for array
+#include <cstdio>                     // for snprintf
+#include <exception>                  // for exception
+#include <initializer_list>           // for initializer_list
+#include <iterator>                   // for forward_iterator_tag, random_ac...
+#include <stdexcept>                  // for out_of_range
+#include <string>                     // for string, basic_string
+#include <type_traits>                // for decay, is_same, enable_if, is_c...
+#include <utility>                    // for declval
+#include "cpp11/R.hpp"                // for R_xlen_t, SEXP, SEXPREC, Rf_xle...
+#include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
+#include "cpp11/protect.hpp"          // for protect_sexp, release_protect
+#include "cpp11/r_string.hpp"         // for r_string
+#include "cpp11/sexp.hpp"             // for sexp
 
 namespace cpp11 {
 

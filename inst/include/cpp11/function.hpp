@@ -1,9 +1,12 @@
 #pragma once
 
 #include <string.h>             // for strcmp
-#include <type_traits>          // for forward
+#include <string>               // for string, basic_string
+#include <utility>              // for forward
+#include "cpp11/R.hpp"          // for SEXP, SEXPREC, CDR, Rf_install, SETCAR
+#include "cpp11/as.hpp"         // for as_sexp
 #include "cpp11/named_arg.hpp"  // for named_arg
-#include "cpp11/protect.hpp"    // for SEXP, SEXPREC, protect, protect::fu...
+#include "cpp11/protect.hpp"    // for protect, protect::function, safe
 #include "cpp11/sexp.hpp"       // for sexp
 
 namespace cpp11 {

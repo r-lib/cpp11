@@ -1,14 +1,14 @@
 #pragma once
 
-#include <csetjmp>
-#include <exception>    // for exception
-#include "cpp11/R.hpp"  // for SEXP, SEXPREC, R_MakeUnwindCont, R_Preser...
+#include "cpp11/R.hpp"  // for SEXP, SEXPREC, CDR, R_NilValue, CAR, R_Pres...
 
-#include "R_ext/Error.h"  // for Rf_error
+#include <csetjmp>        // for longjmp, setjmp, jmp_buf
+#include <exception>      // for exception
+#include <string>         // for string, basic_string
+#include "R_ext/Error.h"  // for Rf_error, Rf_warning
+#include "R_ext/Print.h"  // for REprintf
 #include "R_ext/Utils.h"  // for R_CheckUserInterrupt
 #include "Rversion.h"     // for R_VERSION, R_Version
-
-#include <string>
 
 #if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
 #define HAS_UNWIND_PROTECT

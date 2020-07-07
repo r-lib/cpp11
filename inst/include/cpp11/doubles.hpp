@@ -3,11 +3,13 @@
 #include <algorithm>            // for min
 #include <array>                // for array
 #include <initializer_list>     // for initializer_list
-#include <stdexcept>            // for out_of_range
+#include "R_ext/Arith.h"        // for ISNA
+#include "cpp11/R.hpp"          // for SEXP, SEXPREC, Rf_allocVector, REAL
 #include "cpp11/as.hpp"         // for as_sexp
 #include "cpp11/named_arg.hpp"  // for named_arg
 #include "cpp11/protect.hpp"    // for SEXP, SEXPREC, REAL_ELT, R_Preserve...
 #include "cpp11/r_vector.hpp"   // for vector, vector<>::proxy, vector<>::...
+#include "cpp11/sexp.hpp"       // for sexp
 // Specializations for doubles
 
 namespace cpp11 {

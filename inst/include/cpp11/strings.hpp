@@ -1,14 +1,15 @@
 #pragma once
 
-#include <initializer_list>     // for initializer_list
-#include <stdexcept>            // for out_of_range
-#include <string>               // for basic_string
-#include "cpp11/R.hpp"          // for SET_STRING_ELT, SEXP, SEXPREC, R_Pr...
-#include "cpp11/as.hpp"         // for as_sexp
-#include "cpp11/named_arg.hpp"  // for named_arg
-#include "cpp11/protect.hpp"    // for unwind_protect, protect, protect::f...
-#include "cpp11/r_string.hpp"   // for string
-#include "cpp11/r_vector.hpp"   // for vector, vector<>::proxy, vector<>::...
+#include <initializer_list>           // for initializer_list
+#include <string>                     // for string, basic_string
+#include "cpp11/R.hpp"                // for SEXP, TYPEOF, SEXPREC, SET_STRI...
+#include "cpp11/as.hpp"               // for as_sexp
+#include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
+#include "cpp11/named_arg.hpp"        // for named_arg
+#include "cpp11/protect.hpp"          // for protect_sexp, unwind_protect
+#include "cpp11/r_string.hpp"         // for r_string
+#include "cpp11/r_vector.hpp"         // for r_vector, r_vector<>::proxy
+#include "cpp11/sexp.hpp"             // for sexp
 
 // Specializations for strings
 

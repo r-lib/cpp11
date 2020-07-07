@@ -1,13 +1,14 @@
 #pragma once
 
-#include <algorithm>         // for min
-#include <array>             // for array
-#include <initializer_list>  // for initializer_list
-#include <stdexcept>         // for out_of_range
-#include "cpp11/R.hpp"
-#include "cpp11/named_arg.hpp"  // for named_arg
-#include "cpp11/protect.hpp"    // for protect_sexp, Rf_allocVector
-#include "cpp11/r_vector.hpp"   // for vector, vector<>::proxy, vector<>::...
+#include <algorithm>                  // for min
+#include <array>                      // for array
+#include <initializer_list>           // for initializer_list
+#include "cpp11/R.hpp"                // for Rboolean, SEXP, SEXPREC, Rf_all...
+#include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
+#include "cpp11/named_arg.hpp"        // for named_arg
+#include "cpp11/protect.hpp"          // for protect_sexp, release_protect
+#include "cpp11/r_vector.hpp"         // for r_vector, r_vector<>::proxy
+#include "cpp11/sexp.hpp"             // for sexp
 
 // Specializations for logicals
 
