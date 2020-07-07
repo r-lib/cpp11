@@ -36,6 +36,7 @@ inline SEXP protect_sexp(SEXP obj) {
   R_PreserveObject(obj);
   return obj;
 #endif
+  PROTECT(obj);
 
   // Add a new cell that points to the previous end.
   SEXP cell = PROTECT(Rf_cons(protect_list, CDR(protect_list)));
@@ -46,7 +47,7 @@ inline SEXP protect_sexp(SEXP obj) {
     SETCAR(CDR(cell), cell);
   }
 
-  UNPROTECT(1);
+  UNPROTECT(2);
 
   return cell;
 }
