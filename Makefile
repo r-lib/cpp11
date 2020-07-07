@@ -1,6 +1,6 @@
 all:
 	@echo "make: Entering directory 'cpp11test/src'"
-	tools/compile-demangle
+	@Rscript -e 'devtools::load_all("cpp11test")'
 	@echo "make: Leaving directory 'cpp11test/src'"
 
 test: all
