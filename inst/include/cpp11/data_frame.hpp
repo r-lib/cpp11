@@ -3,6 +3,8 @@
 #include "cpp11/attribute_proxy.hpp"
 #include "cpp11/list.hpp"
 
+#include <cstdlib>
+
 namespace cpp11 {
 
 namespace writable {
