@@ -40,11 +40,6 @@ jobs:
           remotes::install_github("r-lib/covr")
         shell: Rscript {0}
 
-      - name: Setup coverage
-        run: |
-          mkdir ~/.R
-          echo 'CX11FLAGS+=-O0 --coverage\nLDFLAGS+=--coverage' >> ~/.R/Makevars
-
       - name: Test coverage
         run: |
           source("R/coverage.R")
