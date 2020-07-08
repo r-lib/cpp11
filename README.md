@@ -3,6 +3,8 @@
 <!-- badges: start -->
 [![R build status](https://github.com/r-lib/cpp11/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/cpp11/actions)
 [![codecov](https://codecov.io/gh/r-lib/cpp11/branch/master/graph/badge.svg?token=EEWYoCYxQ2)](https://codecov.io/gh/r-lib/cpp11)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![CRAN status](https://www.r-pkg.org/badges/version/cpp11)](https://CRAN.R-project.org/package=cpp11)
 <!-- badges: end -->
 
 cpp11 is a header-only R package that helps R package developers handle R objects with C++ code.
@@ -59,6 +61,10 @@ See [vignette("converting")](https://cpp11.r-lib.org/articles/converting.html) i
 ## Internals
 
 See [vignette("internals")](https://cpp11.r-lib.org/articles/internals.html) for details on the cpp11 implementation or if you would like to contribute to cpp11.
+
+## Code of Conduct
+
+Please note that the cpp11 project is released with a [Contributor Code of Conduct](https://cpp11.r-lib.org/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
 
 ## Thanks
 
