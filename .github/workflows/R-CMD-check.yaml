@@ -12,7 +12,7 @@ jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }}) ${{ matrix.config.custom }}
 
     strategy:
       fail-fast: false
@@ -22,6 +22,7 @@ jobs:
           - {os: windows-latest, r: 'release'}
           - {os: windows-latest, r: '3.6'}
           - {os: ubuntu-16.04,   r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest"}
+          - {os: ubuntu-16.04,   r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest", custom: 'no-cpp11test'}
           - {os: ubuntu-16.04,   r: 'oldrel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest"}
           - {os: ubuntu-16.04,   r: '3.5', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest"}
           - {os: ubuntu-16.04,   r: '3.4', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest"}
@@ -77,8 +78,13 @@ jobs:
       - name: Install dependencies
         run: |
           remotes::install_local(dependencies = TRUE, force = TRUE)
-          remotes::install_local("cpp11test", dependencies = TRUE, INSTALL_opts = "--install-tests", force = TRUE)
           remotes::install_cran("rcmdcheck")
+        shell: Rscript {0}
+
+      - name: Install cpp11test
+        if: matrix.config.custom != 'no-cpp11test'
+        run: |
+          remotes::install_local("cpp11test", dependencies = TRUE, INSTALL_opts = "--install-tests", force = TRUE)
         shell: Rscript {0}
 
       - name: Session info
