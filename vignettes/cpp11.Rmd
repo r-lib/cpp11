@@ -541,7 +541,7 @@ using namespace cpp11;
 [[cpp11::register]]
 list scalar_missings() {
   int int_s = NA_INTEGER;
-  string chr_s = NA_STRING;
+  r_string chr_s = NA_STRING;
   bool lgl_s = NA_LOGICAL;
   double num_s = NA_REAL;
   return writable::list({as_sexp(int_s), as_sexp(chr_s), as_sexp(lgl_s), as_sexp(num_s)});
