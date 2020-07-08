@@ -7,6 +7,17 @@ authors:
 development:
   mode: auto
 
+reference:
+  - title: Registering C++ functions
+    contents:
+      - cpp_register
+  - title: Compiling C++ code interactively
+    contents:
+      - cpp_source
+  - title: Vendoring cpp11
+    contents:
+      - cpp_vendor
+
 navbar:
   type: default
   left:
