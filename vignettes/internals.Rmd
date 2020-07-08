@@ -20,15 +20,15 @@ The development repository for cpp11 is <https://github.com/r-lib/cpp11>.
 
 cpp11 is a header only library, so all source code exposed to users lives in [inst/include](https://github.com/r-lib/cpp11/tree/master/inst/include).
 R code used to register functions and for `cpp11::cpp_source()` is in [R/](https://github.com/r-lib/cpp11/tree/master/R).
-Tests for _only_ the code in [R/] is in [tests/testthat/](https://github.com/r-lib/cpp11/tree/master/tests/testthat)
-The rest of the code is in a separate [cpp11test/](https://github.com/r-lib/cpp11/tree/master/cpp11test) package.
+Tests for _only_ the code in `R/` is in [tests/testthat/](https://github.com/r-lib/cpp11/tree/master/tests/testthat)
+The rest of the code is in a separate [cpp11test/](https://github.com/r-lib/cpp11/tree/master/cpp11test) package included in the source tree.
 Inside [cpp11test/src](https://github.com/r-lib/cpp11/tree/master/cpp11test/src) the files that start with `test-` are C++ tests using the [Catch](https://testthat.r-lib.org/reference/use_catch.html) support in testthat.
 In addition there are some regular R tests in [cpp11test/tests/testthat/](https://github.com/r-lib/cpp11/tree/master/cpp11test/tests/testthat).
 
 ## Running tests
 
 All of the tests in both packages can be run by using `devtools::test()` from the cpp11 root directory.
-However it is sometimes more convenient to set your working directory to the `cpp11test` root.
+However it is sometimes more convenient to set your working directory to the `cpp11test` root to run only those tests.
 In order to calculate code coverage you need to call `cpp11_coverage()`, e.g. to generate a local coverage report you could use the following.
 
 ```r
@@ -42,16 +42,16 @@ covr::report(cpp11_coverage())
 - Public header files should be put in `inst/include/cpp11`
 - Read only r_vector classes and free functions should be put in the `cpp11` namespace.
 - Writable r_vector class should be put in the `cpp11::writable` namespace.
-- Private objects should be put in the `cpp11::internal` namespace.
+- Private classes and functions should be put in the `cpp11::internal` namespace.
 
 ## Vector classes
 
 All of the basic r_vector classes are class templates, the base template is defined in [cpp11/r_vector.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/r_vector.hpp)
 The template parameter is the type of **value** the particular R vector stores, e.g. `double` for `cpp11::doubles`.
-This differs from Rcpp, whose first template parameter is the R API type, e.g. `REALSXP` the vector stores.
+This differs from Rcpp, whose first template parameter is the R vector type, e.g. `REALSXP`.
 
-The file first has the class declarations, then definitions further down in the file.
-Specializations for the various types are in separate files, e.g. [cpp11/doubles.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/doubles.hpp)
+The file first has the class declarations, then function definitions further down in the file.
+Specializations for the various types are in separate files, e.g. [cpp11/doubles.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/doubles.hpp), [cpp11/integers.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/integers.hpp)
 
 ## Coercion functions
 
@@ -62,11 +62,11 @@ There are two different coercion functions
 
 The various methods for both functions are defined in [cpp11/as.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/as.hpp)
 
-This is definitely the most complex part of the cpp11 code, which extensive use of [template metaprogramming](https://en.wikipedia.org/wiki/Template_metaprogramming).
+This is definitely the most complex part of the cpp11 code, with extensive use of [template metaprogramming](https://en.wikipedia.org/wiki/Template_metaprogramming).
 In particular the [substitution failure is not an error (SFINAE)](https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error) technique is used to control overloading of the functions.
 If we could use C++20 a lot of this code would be made simpler with [Concepts](https://en.cppreference.com/w/cpp/language/constraints), but alas.
 
-The most common C++ types are included in the test suite and should work without issues, as more exotic types are used in real projects issues may arise.
+The most common C++ types are included in the test suite and should work without issues, as more exotic types are used in real projects additional issues may arise.
 
 Some useful links on SFINAE
 
@@ -86,26 +86,31 @@ Calling `release_protect()` on this returned token will release the protection b
 
 This scheme scales in O(1) time to release or insert an object vs O(N) or worse time with `R_PreserveObject()` / `R_ReleaseObject()`.
 
-These functions are defined in protect.hpp.
+These functions are defined in [protect.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/protect.hpp)
 
 ### Unwind Protect
 
 In R 3.5+ cpp11 uses `R_UnwindProtect` to protect (most) calls to the R API that could fail.
 These are usually those that allocate memory, though in truth most R API functions could error along some paths.
-Using `R_UnwindProtect` when an error happens first a C++ exception is thrown and is caught by the try catch block defined in the `BEGIN_CPP11` macro in [cpp11/declarations.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/declarations.hpp)
-This allows any C++ destructors to run, freeing resources held by C++ objects.
-Then after the try catch block the R error unwinding is continued by `R_ContinueUnwind()`
+If an error happends under `R_UnwindProtect` cpp11 will throw a C++ exception.
+This exception is caught by the try catch block defined in the `BEGIN_CPP11` macro in [cpp11/declarations.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/declarations.hpp).
+The exception will cause any C++ destructors to run, freeing any resources held by C++ objects.
+After the try catch block exits the R error unwinding is then continued by `R_ContinueUnwind()` and a normal R error results.
 
 In R versions prior to 3.5 `R_UnwindProtect()` is not available.
 Unfortunately the options to emulate it are not ideal.
-1. `R_TopLevelExec()` works to avoid the C long jump, but because the code is always run in a top level context any errors or messages thrown cannot be caught by `tryCatch()` or similar blocks.
-2. `R_TryCatch()` is not available prior to R 3.4, and also has a bug (fixed in R 3.5)
-3. Calling the R `tryCatch()` function which contains an expression that then runs a C function which runs the C++ code would be an option, but implementing this is convoluted and it would impact performance, perhaps severely.
-4. Have `cpp11::unwind_protect()` be a no-op, this would mean any resources held by C++ objects would leak, including cpp11::r_vector / cpp11::sexp objects.
 
-Because 1. Causes behavior changes and test failures it was ruled out.
-2. was also ruled out since we want to support R 3.3.
-3. was ruled out partially because the implementation would be somewhat tricky and more because performance would suffer greatly.
-Therefore 4. is what we now do in cpp11.
-We somewhat mitigate the scope of leaks by calling `release_existing_protections()` at the start of any wrapped cpp11 function.
+1. Using `R_TopLevelExec()` works to avoid the C long jump, but because the code is always run in a top level context any errors or messages thrown cannot be caught by `tryCatch()` or similar techniques.
+2. Using `R_TryCatch()` is not available prior to R 3.4, and also has a serious bug in R 3.4 (fixed in R 3.5).
+3. Calling the R level `tryCatch()` function which contains an expression that runs a C function which then runs the C++ code would be an option, but implementing this is convoluted and it would impact performance, perhaps severely.
+4. Have `cpp11::unwind_protect()` be a no-op for these versions. This means any resources held by C++ objects would leak, including cpp11::r_vector / cpp11::sexp objects.
+
+None of these options is perfect, here are some pros and cons for each.
+
+1. Causes behavior changes and test failures, so it was ruled out.
+2. Was also ruled out since we want to support back to R 3.3.
+3. Was ruled out partially because the implementation would be somewhat tricky and more because performance would suffer greatly.
+4. is what we now do in cpp11.
+
+We somewhat mitigate the scope of R object leaks by calling `release_existing_protections()` at the start of any wrapped cpp11 function.
 This function releases any existing protected nodes, so any R object leaks should only last until the next cpp11 call.
