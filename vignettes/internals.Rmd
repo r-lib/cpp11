@@ -46,12 +46,12 @@ covr::report(cpp11_coverage())
 
 ## Vector classes
 
-All of the basic r_vector classes are class templates, the base template is defined in [cpp11/vector.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/vector.hpp)
+All of the basic r_vector classes are class templates, the base template is defined in [cpp11/r_vector.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/r_vector.hpp)
 The template parameter is the type of **value** the particular R vector stores, e.g. `double` for `cpp11::doubles`.
 This differs from Rcpp, whose first template parameter is the R API type, e.g. `REALSXP` the vector stores.
 
 The file first has the class declarations, then definitions further down in the file.
-Specializations for the various types are in separate files, e.g. [cpp11/doubles.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/double.hpp)
+Specializations for the various types are in separate files, e.g. [cpp11/doubles.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/doubles.hpp)
 
 ## Coercion functions
 

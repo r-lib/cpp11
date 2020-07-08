@@ -8,8 +8,8 @@
 \description{
 Provides a header only, C++11 interface to R's C interface.
   Compared to other approaches 'cpp11' strives to be safe against long jumps
-  from the C API as well as C++ exceptions, conform to Rs normal semantics and
-  supports interaction with 'ALTREP' vectors.
+  from the C API as well as C++ exceptions, conform to normal R function
+  semantics and supports interaction with 'ALTREP' vectors.
 }
 \seealso{
 Useful links:
