@@ -28,3 +28,16 @@ If you choose to vendor the headers you should \emph{remove} \code{LinkingTo: cp
 \strong{you}. Bugfixes and new features in cpp11 will not be available for your
 code until you run \code{vector_cpp11()} again.
 }
+\examples{
+# create a new directory
+dir <- tempfile()
+dir.create(dir)
+
+# vendor the cpp11 headers into the directory
+cpp_vendor(dir)
+
+list.files(file.path(dir, "inst", "include", "cpp11"))
+
+# cleanup
+unlink(dir, recursive = TRUE)
+}

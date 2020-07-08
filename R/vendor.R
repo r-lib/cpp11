@@ -18,6 +18,18 @@
 #' @inheritParams cpp_register
 #' @return The file path to the vendored code (invisibly).
 #' @export
+#' @examples
+#' # create a new directory
+#' dir <- tempfile()
+#' dir.create(dir)
+#'
+#' # vendor the cpp11 headers into the directory
+#' cpp_vendor(dir)
+#'
+#' list.files(file.path(dir, "inst", "include", "cpp11"))
+#'
+#' # cleanup
+#' unlink(dir, recursive = TRUE)
 cpp_vendor <- function(path = ".") {
   new <- file.path(path, "inst", "include", "cpp11")
 
