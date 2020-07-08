@@ -6,7 +6,6 @@ script.R
 ^.covrignore$
 ^.clang-format$
 ^LICENSE\.md$
-^bench$
 ^Doxyfile$
 ^.*\.Rproj$
 ^\.Rproj\.user$

@@ -643,7 +643,7 @@ describe("generate_init_functions", {
       args = list(tibble::tibble(type = "DllInfo*", name = "dll"))
     )
 
-    expect_equal(generate_init_functions(funs), list(declarations = "\nvoid foo(DllInfo* dll);", calls = "\n  foo(dll);"))
+    expect_equal(generate_init_functions(funs), list(declarations = "\nvoid foo(DllInfo* dll);\n", calls = "\n  foo(dll);"))
   })
 
   it("returns the declaration and call for a multiple init functions", {
