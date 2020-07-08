@@ -205,12 +205,23 @@
 <p>The default classes, e.g. <code>cpp11::doubles</code> are <em>read-only</em> classes that do not permit modification. If you want to modify the data you need to use the classes in the <code>cpp11::writable</code> namespace, e.g. <code>cpp11::writable::doubles</code>.</p>
 <p>In addition use the <code>writable</code> variants if you need to create a new R vector entirely in C++.</p>
 </div>
+<div id="calling-r-functions-from-c" class="section level2">
+<h2 class="hasAnchor">
+<a href="#calling-r-functions-from-c" class="anchor"></a>Calling R functions from C++</h2>
+<p>Calling R functions from C++ is similar to using Rcpp.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1"></a>Rcpp::Function as_tibble(<span class="st">"as_tibble"</span>, Rcpp::Environment::namespace_env(<span class="st">"tibble"</span>));</span>
+<span id="cb1-2"><a href="#cb1-2"></a>as_tibble(x, Rcpp::Named(<span class="st">".rows"</span>, num_rows), Rcpp::Named(<span class="st">".name_repair"</span>, name_repair));</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11::literals; <span class="co">// so we can use ""_nm syntax</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">auto</span> as_tibble = cpp11::package(<span class="st">"tibble"</span>)[<span class="st">"as_tibble"</span>];</span>
+<span id="cb2-4"><a href="#cb2-4"></a>as_tibble(x, <span class="st">".rows"_nm</span> = num_rows, <span class="st">".name_repair"_nm</span> = name_repair);</span></code></pre></div>
+</div>
 <div id="appending-behavior" class="section level2">
 <h2 class="hasAnchor">
 <a href="#appending-behavior" class="anchor"></a>Appending behavior</h2>
 <p>One major difference in Rcpp and cpp11 is how vectors are grown. Rcpp vectors have a <code>push_back()</code> method, but unlike <code>std::vector()</code> no additional space is reserved when pushing. This makes calling <code>push_back()</code> repeatably very expensive, as the entire vector has to be copied each call.</p>
 <p>In contrast <code>cpp11</code> vectors grow efficiently, reserving extra space. Because of this you can do ~10,000,000 vector appends with cpp11 in approximately the same amount of time that Rcpp does 10,000, as this benchmark demonstrates.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
+<div class="sourceCode" id="cb3"><pre class="downlit">
 <span class="kw">grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span>(len = <span class="fl">10</span> <span class="op">^</span> (<span class="fl">0</span><span class="op">:</span><span class="fl">7</span>), pkg = <span class="st">"cpp11"</span>, stringsAsFactors = <span class="fl">FALSE</span>)
 <span class="kw">grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(
   <span class="kw">grid</span>,
@@ -344,6 +355,11 @@
 </tbody>
 </table>
 </div>
+<div id="random-number-behavior" class="section level2">
+<h2 class="hasAnchor">
+<a href="#random-number-behavior" class="anchor"></a>Random Number behavior</h2>
+<p>Rcpp unconditionally includes calls to <code>GetRNGstate()</code> and <code>PutRNGstate()</code> before each wrapped function. This ensures that if any C++ code calls the R API functions <code>unif_rand()</code>, <code>norm_rand()</code>, <code>exp_rand()</code> or <code>R_unif_index()</code> the random seed state is set accordingly. cpp11 does <em>not</em> do this, so you must include the calls to <code>GetRNGstate()</code> and <code>PutRNGstate()</code> <em>yourself</em> if you use any of those functions in your C++ code. See <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Random-numbers">R-exts 6.3 - Random number generation</a> for details on these functions.</p>
+</div>
 <div id="mechanics-of-converting-a-package-from-rcpp" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mechanics-of-converting-a-package-from-rcpp" class="anchor"></a>Mechanics of converting a package from Rcpp</h2>
@@ -362,47 +378,37 @@
 <ul>
 <li>Remember you can usually inter-convert between cpp11 and Rcpp classes by going through <code>SEXP</code> if needed.</li>
 <li>Converting the code a bit at a time (and regularly running your tests) is the best way to do the conversion correctly and make progress</li>
+<li>Doing a separate commit after converting each file (or possibly each function) can make finding any regressions with <a href="https://youtu.be/KKeucpfAuuA">git bisect</a> much easier in the future.</li>
 </ul>
 </li>
 </ol>
 </div>
-<div id="include-order" class="section level2">
+<div id="common-issues-when-converting" class="section level2">
 <h2 class="hasAnchor">
-<a href="#include-order" class="anchor"></a>Include order</h2>
+<a href="#common-issues-when-converting" class="anchor"></a>Common issues when converting</h2>
+<div id="include-order" class="section level3">
+<h3 class="hasAnchor">
+<a href="#include-order" class="anchor"></a>Include order</h3>
 <p>Due to cpp11 redefining the Rboolean enum any cpp11 header needs to come <em>before</em> any Rcpp or Rinternals.h include. Errors like</p>
 <blockquote>
 <p>error: redefinition of enumerator ‘FALSE’</p>
 </blockquote>
 <p>Indicate this is a problem and can be resolved by ensuring the cpp11 headers are included first.</p>
 </div>
-<div id="stl-includes" class="section level2">
-<h2 class="hasAnchor">
-<a href="#stl-includes" class="anchor"></a>STL includes</h2>
+<div id="stl-includes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#stl-includes" class="anchor"></a>STL includes</h3>
 <p>Rcpp.h includes a number of STL headers automatically, notably <code>&lt;string&gt;</code> and <code>&lt;vector&gt;</code>, however the cpp11 headers generally do not. If you have errors like</p>
 <blockquote>
 <p>error: no type named ‘string’ in namespace ‘std’</p>
 </blockquote>
 <p>You will need to include the appropriate STL header, in this case <code>&lt;string&gt;</code>.</p>
 </div>
-<div id="calling-r-from-c" class="section level2">
-<h2 class="hasAnchor">
-<a href="#calling-r-from-c" class="anchor"></a>Calling R from C++</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1"></a>Rcpp::Function as_tibble(<span class="st">"as_tibble"</span>, Rcpp::Environment::namespace_env(<span class="st">"tibble"</span>));</span>
-<span id="cb2-2"><a href="#cb2-2"></a>as_tibble(x, Rcpp::Named(<span class="st">".rows"</span>, num_rows), Rcpp::Named(<span class="st">".name_repair"</span>, name_repair));</span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11::literals; <span class="co">// so we can use ""_nm syntax</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a></span>
-<span id="cb3-3"><a href="#cb3-3"></a>cpp11::function as_tibble = cpp11::package(<span class="st">"tibble"</span>)[<span class="st">"as_tibble"</span>];</span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="cf">return</span> as_tibble(x, <span class="st">".rows"_nm</span> = num_rows, <span class="st">".name_repair"_nm</span> = name_repair);</span></code></pre></div>
-</div>
-<div id="r-api-includes" class="section level2">
-<h2 class="hasAnchor">
-<a href="#r-api-includes" class="anchor"></a>R API includes</h2>
+<div id="r-api-includes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#r-api-includes" class="anchor"></a>R API includes</h3>
 <p>cpp11 defines a compatible but different version of the Rboolean enum. This means that you must ensure that at least one cpp11 header is included <em>before</em> any R headers. One easy way to ensure this is to replace <code>#include &lt;Rinternals.h&gt;</code> with <code>#include &lt;cpp11/R.hpp&gt;</code>.</p>
 </div>
-<div id="random-number-behavior" class="section level2">
-<h2 class="hasAnchor">
-<a href="#random-number-behavior" class="anchor"></a>Random Number behavior</h2>
-<p>Rcpp unconditionally includes calls to <code>GetRNGstate()</code> and <code>PutRNGstate()</code> before each wrapped function. This ensures that if any C++ code calls the R API functions <code>unif_rand()</code>, <code>norm_rand()</code>, <code>exp_rand()</code> or <code>R_unif_index()</code> the random seed state is set accordingly. cpp11 does <em>not</em> do this, so you must include the calls to <code>GetRNGstate()</code> and <code>PutRNGstate()</code> <em>yourself</em> if you use any of those functions in your C++ code. See <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Random-numbers">R-exts 6.3 - Random number generation</a> for details on these functions.</p>
 </div>
   </div>
 

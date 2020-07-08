@@ -90,7 +90,6 @@
 <p>To add cpp11 to an existing package, you put your C++ files in the src/ directory and add the following to your DESCRIPTION file.</p>
 <pre><code>LinkingTo: cpp11
 SystemRequirements: C++11</code></pre>
-<p>The easiest way to set this up automatically is to call <code>usethis::use_cpp11()</code>.</p>
 <p>Then decorate C++ functions you want to expose to R with <code>[[cpp11::register]]</code>. <em>Note this is a <a href="https://en.cppreference.com/w/cpp/language/attributes">C++11 attribute</a>, not a comment like is used in Rcpp.</em></p>
 <p>cpp11 has no hard dependencies and does not use a shared library, so it is straightforward and reliable to use in packages.</p>
 <p>Alternatively, you can <a href="https://cpp11.r-lib.org/articles/motivations.html#vendoring">vendor</a> the current installed version of cpp11 headers into your package with <code>cpp11::vendor_cpp11()</code>. This ensures the headers will remain unchanged until you explicitly update them.</p>
@@ -132,6 +131,11 @@ SystemRequirements: C++11</code></pre>
 <a href="#internals" class="anchor"></a>Internals</h2>
 <p>See <a href="https://cpp11.r-lib.org/articles/internals.html">vignette(“internals”)</a> for details on the cpp11 implementation or if you would like to contribute to cpp11.</p>
 </div>
+<div id="code-of-conduct" class="section level2">
+<h2 class="hasAnchor">
+<a href="#code-of-conduct" class="anchor"></a>Code of Conduct</h2>
+<p>Please note that the cpp11 project is released with a <a href="https://cpp11.r-lib.org/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
+</div>
 <div id="thanks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#thanks" class="anchor"></a>Thanks</h2>
@@ -157,6 +161,13 @@ SystemRequirements: C++11</code></pre>
 <li><small><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
+<div class="community">
+<h2>Community</h2>
+<ul class="list-unstyled">
+<li><a href="CONTRIBUTING.html">Contributing guide</a></li>
+<li><a href="CODE_OF_CONDUCT.html">Code of conduct</a></li>
+</ul>
+</div>
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
@@ -172,6 +183,8 @@ SystemRequirements: C++11</code></pre>
 <ul class="list-unstyled">
 <li><a href="https://github.com/r-lib/cpp11/actions"><img src="https://github.com/r-lib/cpp11/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 <li><a href="https://codecov.io/gh/r-lib/cpp11"><img src="https://codecov.io/gh/r-lib/cpp11/branch/master/graph/badge.svg?token=EEWYoCYxQ2" alt="codecov"></a></li>
+<li><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://CRAN.R-project.org/package=cpp11"><img src="https://www.r-pkg.org/badges/version/cpp11" alt="CRAN status"></a></li>
 </ul>
 </div>
 </div>
