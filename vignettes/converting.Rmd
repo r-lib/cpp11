@@ -12,7 +12,6 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-library(cpp11test)
 
 should_run_benchmarks <- function(x) {
   get("requireNamespace")("cpp11test") && asNamespace("cpp11test")$should_run_benchmarks()

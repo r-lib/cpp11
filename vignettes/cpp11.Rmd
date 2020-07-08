@@ -69,7 +69,6 @@ We'll use [cpp11](https://github.com/r-lib/cpp11) to call C++ from R:
 
 ```{r setup}
 library(cpp11)
-library(Rcpp)
 ```
 
 You'll also need a working C++ compiler.
