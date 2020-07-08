@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -119,7 +119,6 @@
 <p>We’ll use <a href="https://github.com/r-lib/cpp11">cpp11</a> to call C++ from R:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/r-lib/cpp11">cpp11</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="http://www.rcpp.org">Rcpp</a></span>)
 </pre></div>
 <p>You’ll also need a working C++ compiler. To get it:</p>
 <ul>
@@ -143,7 +142,12 @@
 }')
 <span class="co"># add works like a regular R function</span>
 <span class="kw">add</span>
+<span class="co">#&gt; function (x, y, z) </span>
+<span class="co">#&gt; {</span>
+<span class="co">#&gt;     .Call("_code_0_add", x, y, z, PACKAGE = "code_0")</span>
+<span class="co">#&gt; }</span>
 <span class="fu">add</span>(<span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>)
+<span class="co">#&gt; [1] 6</span>
 </pre></div>
 <p>When you run the avove code, cpp11 will compile the C++ code and construct an R function that connects to the compiled C++ function. There’s a lot going on underneath the hood but cpp11 takes care of all the details so you don’t need to worry about them.</p>
 <p>The following sections will teach you the basics by translating simple R functions to their C++ equivalents. We’ll start simple with a function that has no inputs and a scalar output, and then make it progressively more complicated:</p>
@@ -266,6 +270,12 @@
   <span class="fu">sum_cpp</span>(<span class="kw">x</span>),
   <span class="fu">sum_r</span>(<span class="kw">x</span>)
 )[<span class="fl">1</span><span class="op">:</span><span class="fl">6</span>]
+<span class="co">#&gt; # A tibble: 3 x 6</span>
+<span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span>
+<span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 sum(x)       1.47µs   1.75µs   552138.        0B      0  </span>
+<span class="co">#&gt; 2 sum_cpp(x)   5.71µs   6.26µs   152421.        0B     15.2</span>
+<span class="co">#&gt; 3 sum_r(x)    30.41µs  32.91µs    30096.    3.96MB      0</span>
 </pre></div>
 </div>
 <div id="vector-input-vector-output" class="section level3">
@@ -309,6 +319,11 @@
   <span class="fu">pdist_r</span>(<span class="fl">0.5</span>, <span class="kw">y</span>),
   <span class="fu">pdist_cpp</span>(<span class="fl">0.5</span>, <span class="kw">y</span>)
 )[<span class="fl">1</span><span class="op">:</span><span class="fl">6</span>]
+<span class="co">#&gt; # A tibble: 2 x 6</span>
+<span class="co">#&gt;   expression             min   median `itr/sec` mem_alloc `gc/sec`</span>
+<span class="co">#&gt;   &lt;bch:expr&gt;        &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 pdist_r(0.5, y)     6.45ms   6.85ms      142.    7.63MB     71.2</span>
+<span class="co">#&gt; 2 pdist_cpp(0.5, y)   6.05ms   6.57ms      142.   15.26MB    199.</span>
 </pre></div>
 <p>On my computer, it takes around 5 ms with a 1 million element <code>y</code> vector. The C++ function is about 2.5 times faster, ~2 ms, but assuming it took you 10 minutes to write the C++ function, you’d need to run it ~200,000 times to make rewriting worthwhile. The reason why the C++ function is faster is subtle, and relates to memory management. The R version needs to create an intermediate vector the same length as y (<code>x - ys</code>), and allocating memory is an expensive operation. The C++ function avoids this overhead because it uses an intermediate scalar.</p>
 </div>
@@ -324,18 +339,18 @@
 <p>If you’re familiar with roxygen2, you might wonder how this relates to <code>@export</code>. <code>cpp11::register</code> registers a C++ function to be called from R. <code>@export</code> controls whether a function is exported from a package and made available to the user.</p>
 <p>To compile the C++ code, use <code><a href="../reference/cpp_source.html">cpp_source("path/to/file.cpp")</a></code>. This will create the matching R functions and add them to your current session. Note that these functions can not be saved in a <code>.Rdata</code> file and reloaded in a later session; they must be recreated each time you restart R.</p>
 <p>This example also illustrates a different kind of a <code>for</code> loop, a for-each loop.</p>
-<pre class="cpp11"><code>#include "cpp11/doubles.hpp"
-using namespace cpp11;
-
-[[cpp11::register]]
-double mean_cpp(doubles x) {
-  int n = x.size();
-  double total = 0;
-  for(double value : x) {
-    total += value;
-  }
-  return total / n;
-}</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1"></a><span class="pp">#include </span><span class="im">"cpp11/doubles.hpp"</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span>
+<span id="cb15-3"><a href="#cb15-3"></a></span>
+<span id="cb15-4"><a href="#cb15-4"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb15-5"><a href="#cb15-5"></a><span class="dt">double</span> mean_cpp(doubles x) {</span>
+<span id="cb15-6"><a href="#cb15-6"></a>  <span class="dt">int</span> n = x.size();</span>
+<span id="cb15-7"><a href="#cb15-7"></a>  <span class="dt">double</span> total = <span class="dv">0</span>;</span>
+<span id="cb15-8"><a href="#cb15-8"></a>  <span class="cf">for</span>(<span class="dt">double</span> value : x) {</span>
+<span id="cb15-9"><a href="#cb15-9"></a>    total += value;</span>
+<span id="cb15-10"><a href="#cb15-10"></a>  }</span>
+<span id="cb15-11"><a href="#cb15-11"></a>  <span class="cf">return</span> total / n;</span>
+<span id="cb15-12"><a href="#cb15-12"></a>}</span></code></pre></div>
 <p>NB: if you run this code, you’ll notice that <code>mean_cpp()</code> is faster than the built-in <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code>. This is because it trades numerical accuracy for speed.</p>
 <p>For the remainder of this vignette C++ code will be presented stand-alone rather than wrapped in a call to <code>cpp_function</code>. If you want to try compiling and/or modifying the examples you should paste them into a C++ source file that includes the elements described above. This is easy to do in RMarkdown by using <code>{cpp11}</code> instead of <code>{r}</code> at the beginning of your code blocks.</p>
 </div>
@@ -345,58 +360,58 @@ double mean_cpp(doubles x) {
 <ol style="list-style-type: decimal">
 <li>With the basics of C++ in hand, it’s now a great time to practice by reading and writing some simple C++ functions. For each of the following functions, read the code and figure out what the corresponding base R function is. You might not understand every part of the code yet, but you should be able to figure out the basics of what the function does.</li>
 </ol>
-<pre class="cpp11"><code>#include "cpp11.hpp"
-
-using namespace cpp11;
-namespace writable = cpp11::writable;
-
-[[cpp11::register]]
-double f1(doubles x) {
-  int n = x.size();
-  double y = 0;
-
-  for(int i = 0; i &lt; n; ++i) {
-    y += x[i] / n;
-  }
-  return y;
-}
-
-[[cpp11::register]]
-doubles f2(doubles x) {
-  int n = x.size();
-  writable::doubles out(n);
-
-  out[0] = x[0];
-  for(int i = 1; i &lt; n; ++i) {
-    out[i] = out[i - 1] + x[i];
-  }
-  return out;
-}
-
-[[cpp11::register]]
-bool f3(logicals x) {
-  int n = x.size();
-
-  for(int i = 0; i &lt; n; ++i) {
-    if (x[i]) {
-      return true;
-    }
-  }
-  return false;
-}
-
-[[cpp11::register]]
-int f4(cpp11::function pred, list x) {
-  int n = x.size();
-
-  for(int i = 0; i &lt; n; ++i) {
-    logicals res(pred(x[i]));
-    if (res[0]) {
-      return i + 1;
-    }
-  }
-  return 0;
-}</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb16-1"><a href="#cb16-1"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a></span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span>
+<span id="cb16-4"><a href="#cb16-4"></a><span class="kw">namespace</span> writable = cpp11::writable;</span>
+<span id="cb16-5"><a href="#cb16-5"></a></span>
+<span id="cb16-6"><a href="#cb16-6"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb16-7"><a href="#cb16-7"></a><span class="dt">double</span> f1(doubles x) {</span>
+<span id="cb16-8"><a href="#cb16-8"></a>  <span class="dt">int</span> n = x.size();</span>
+<span id="cb16-9"><a href="#cb16-9"></a>  <span class="dt">double</span> y = <span class="dv">0</span>;</span>
+<span id="cb16-10"><a href="#cb16-10"></a></span>
+<span id="cb16-11"><a href="#cb16-11"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; n; ++i) {</span>
+<span id="cb16-12"><a href="#cb16-12"></a>    y += x[i] / n;</span>
+<span id="cb16-13"><a href="#cb16-13"></a>  }</span>
+<span id="cb16-14"><a href="#cb16-14"></a>  <span class="cf">return</span> y;</span>
+<span id="cb16-15"><a href="#cb16-15"></a>}</span>
+<span id="cb16-16"><a href="#cb16-16"></a></span>
+<span id="cb16-17"><a href="#cb16-17"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb16-18"><a href="#cb16-18"></a>doubles f2(doubles x) {</span>
+<span id="cb16-19"><a href="#cb16-19"></a>  <span class="dt">int</span> n = x.size();</span>
+<span id="cb16-20"><a href="#cb16-20"></a>  writable::doubles out(n);</span>
+<span id="cb16-21"><a href="#cb16-21"></a></span>
+<span id="cb16-22"><a href="#cb16-22"></a>  out[<span class="dv">0</span>] = x[<span class="dv">0</span>];</span>
+<span id="cb16-23"><a href="#cb16-23"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>; i &lt; n; ++i) {</span>
+<span id="cb16-24"><a href="#cb16-24"></a>    out[i] = out[i - <span class="dv">1</span>] + x[i];</span>
+<span id="cb16-25"><a href="#cb16-25"></a>  }</span>
+<span id="cb16-26"><a href="#cb16-26"></a>  <span class="cf">return</span> out;</span>
+<span id="cb16-27"><a href="#cb16-27"></a>}</span>
+<span id="cb16-28"><a href="#cb16-28"></a></span>
+<span id="cb16-29"><a href="#cb16-29"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb16-30"><a href="#cb16-30"></a><span class="dt">bool</span> f3(logicals x) {</span>
+<span id="cb16-31"><a href="#cb16-31"></a>  <span class="dt">int</span> n = x.size();</span>
+<span id="cb16-32"><a href="#cb16-32"></a></span>
+<span id="cb16-33"><a href="#cb16-33"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; n; ++i) {</span>
+<span id="cb16-34"><a href="#cb16-34"></a>    <span class="cf">if</span> (x[i]) {</span>
+<span id="cb16-35"><a href="#cb16-35"></a>      <span class="cf">return</span> <span class="kw">true</span>;</span>
+<span id="cb16-36"><a href="#cb16-36"></a>    }</span>
+<span id="cb16-37"><a href="#cb16-37"></a>  }</span>
+<span id="cb16-38"><a href="#cb16-38"></a>  <span class="cf">return</span> <span class="kw">false</span>;</span>
+<span id="cb16-39"><a href="#cb16-39"></a>}</span>
+<span id="cb16-40"><a href="#cb16-40"></a></span>
+<span id="cb16-41"><a href="#cb16-41"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb16-42"><a href="#cb16-42"></a><span class="dt">int</span> f4(cpp11::function pred, list x) {</span>
+<span id="cb16-43"><a href="#cb16-43"></a>  <span class="dt">int</span> n = x.size();</span>
+<span id="cb16-44"><a href="#cb16-44"></a></span>
+<span id="cb16-45"><a href="#cb16-45"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; n; ++i) {</span>
+<span id="cb16-46"><a href="#cb16-46"></a>    logicals res(pred(x[i]));</span>
+<span id="cb16-47"><a href="#cb16-47"></a>    <span class="cf">if</span> (res[<span class="dv">0</span>]) {</span>
+<span id="cb16-48"><a href="#cb16-48"></a>      <span class="cf">return</span> i + <span class="dv">1</span>;</span>
+<span id="cb16-49"><a href="#cb16-49"></a>    }</span>
+<span id="cb16-50"><a href="#cb16-50"></a>  }</span>
+<span id="cb16-51"><a href="#cb16-51"></a>  <span class="cf">return</span> <span class="dv">0</span>;</span>
+<span id="cb16-52"><a href="#cb16-52"></a>}</span></code></pre></div>
 <ol style="list-style-type: decimal">
 <li>
 <p>To practice your function writing skills, convert the following functions into C++. For now, assume the inputs have no missing values.</p>
@@ -421,43 +436,46 @@ int f4(cpp11::function pred, list x) {
 <p>cpp11 also provides <code>list</code> and <code>data_frame</code> classes, but they are more useful for output than input. This is because lists and data frames can contain arbitrary classes but C++ needs to know their classes in advance. If the list has known structure (e.g., it’s an S3 object), you can extract the components and manually convert them to their C++ equivalents with <code>as_cpp()</code>. For example, the object created by <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code>, the function that fits a linear model, is a list whose components are always of the same type.</p>
 <p>The following code illustrates how you might extract the mean percentage error (<code>mpe()</code>) of a linear model. This isn’t a good example of when to use C++, because it’s so easily implemented in R, but it shows how to work with an important S3 class. Note the use of <code>Rf_inherits()</code> and the <code><a href="https://rdrr.io/r/base/stop.html">stop()</a></code> to check that the object really is a linear model.</p>
 <!-- FIXME: needs better motivation -->
-<pre class="cpp11"><code>#include "cpp11.hpp"
-using namespace cpp11;
-
-[[cpp11::register]]
-double mpe(list mod) {
-  if (!Rf_inherits(mod, "lm")) {
-    stop("Input must be a linear model");
-  }
-  doubles resid(mod["residuals"]);
-  doubles fitted(mod["fitted.values"]);
-  int n = resid.size();
-  double err = 0;
-  for(int i = 0; i &lt; n; ++i) {
-    err += resid[i] / (fitted[i] + resid[i]);
-  }
-  return err / n;
-}</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb17-1"><a href="#cb17-1"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span>
+<span id="cb17-3"><a href="#cb17-3"></a></span>
+<span id="cb17-4"><a href="#cb17-4"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb17-5"><a href="#cb17-5"></a><span class="dt">double</span> mpe(list mod) {</span>
+<span id="cb17-6"><a href="#cb17-6"></a>  <span class="cf">if</span> (!Rf_inherits(mod, <span class="st">"lm"</span>)) {</span>
+<span id="cb17-7"><a href="#cb17-7"></a>    stop(<span class="st">"Input must be a linear model"</span>);</span>
+<span id="cb17-8"><a href="#cb17-8"></a>  }</span>
+<span id="cb17-9"><a href="#cb17-9"></a>  doubles resid(mod[<span class="st">"residuals"</span>]);</span>
+<span id="cb17-10"><a href="#cb17-10"></a>  doubles fitted(mod[<span class="st">"fitted.values"</span>]);</span>
+<span id="cb17-11"><a href="#cb17-11"></a>  <span class="dt">int</span> n = resid.size();</span>
+<span id="cb17-12"><a href="#cb17-12"></a>  <span class="dt">double</span> err = <span class="dv">0</span>;</span>
+<span id="cb17-13"><a href="#cb17-13"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; n; ++i) {</span>
+<span id="cb17-14"><a href="#cb17-14"></a>    err += resid[i] / (fitted[i] + resid[i]);</span>
+<span id="cb17-15"><a href="#cb17-15"></a>  }</span>
+<span id="cb17-16"><a href="#cb17-16"></a>  <span class="cf">return</span> err / n;</span>
+<span id="cb17-17"><a href="#cb17-17"></a>}</span></code></pre></div>
 <div class="sourceCode" id="cb18"><pre class="downlit">
 <span class="kw">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(<span class="kw">mpg</span> <span class="op">~</span> <span class="kw">wt</span>, data = <span class="kw">mtcars</span>)
 <span class="fu">mpe</span>(<span class="kw">mod</span>)
+<span class="co">#&gt; [1] -0.01541615</span>
 </pre></div>
 </div>
 <div id="functions-cpp11" class="section level3">
 <h3 class="hasAnchor">
 <a href="#functions-cpp11" class="anchor"></a>Functions</h3>
 <p>You can put R functions in an object of type <code>function</code>. This makes calling an R function from C++ straightforward. The only challenge is that we don’t know what type of output the function will return, so we use the catchall type <code>sexp</code>. This stands for S-Expression and is used as the type of all R Objects in the internal C code.</p>
-<pre class="cpp11"><code>#include "cpp11.hpp"
-using namespace cpp11;
-namespace writable = cpp11::writable;
-
-[[cpp11::register]]
-sexp call_with_one(function f) {
-  return f(1);
-}</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb19-1"><a href="#cb19-1"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span>
+<span id="cb19-3"><a href="#cb19-3"></a><span class="kw">namespace</span> writable = cpp11::writable;</span>
+<span id="cb19-4"><a href="#cb19-4"></a></span>
+<span id="cb19-5"><a href="#cb19-5"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb19-6"><a href="#cb19-6"></a>sexp call_with_one(function f) {</span>
+<span id="cb19-7"><a href="#cb19-7"></a>  <span class="cf">return</span> f(<span class="dv">1</span>);</span>
+<span id="cb19-8"><a href="#cb19-8"></a>}</span></code></pre></div>
 <div class="sourceCode" id="cb20"><pre class="downlit">
 <span class="fu">call_with_one</span>(<span class="fu">function</span>(<span class="kw">x</span>) <span class="kw">x</span> <span class="op">+</span> <span class="fl">1</span>)
+<span class="co">#&gt; [1] 2</span>
 <span class="fu">call_with_one</span>(<span class="kw">paste</span>)
+<span class="co">#&gt; [1] "1"</span>
 </pre></div>
 <p>Calling R functions with positional arguments is obvious:</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb21-1"><a href="#cb21-1"></a>f(<span class="st">"y"</span>, <span class="dv">1</span>);</span></code></pre></div>
@@ -470,18 +488,18 @@ sexp call_with_one(function f) {
 <h3 class="hasAnchor">
 <a href="#attributes" class="anchor"></a>Attributes</h3>
 <p>All R objects have attributes, which can be queried and modified with <code>.attr()</code>. cpp11 also provides <code>.names()</code> as an alias for the <code>names</code> attribute. The following code snippet illustrates these methods. Note the use of <code>{}</code> <a href="https://en.cppreference.com/w/cpp/utility/initializer_list">initializer list</a> syntax. This allows you to create an R vector from C++ scalar values:</p>
-<pre class="cpp11"><code>#include "cpp11.hpp"
-using namespace cpp11;
-namespace writable = cpp11::writable;
-
-[[cpp11::register]]
-doubles attribs() {
-  writable::doubles out = {1., 2., 3.};
-  out.names() = {"a", "b", "c"};
-  out.attr("my-attr") = "my-value";
-  out.attr("class") = "my-class";
-  return out;
-}</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb23-1"><a href="#cb23-1"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span>
+<span id="cb23-3"><a href="#cb23-3"></a><span class="kw">namespace</span> writable = cpp11::writable;</span>
+<span id="cb23-4"><a href="#cb23-4"></a></span>
+<span id="cb23-5"><a href="#cb23-5"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb23-6"><a href="#cb23-6"></a>doubles attribs() {</span>
+<span id="cb23-7"><a href="#cb23-7"></a>  writable::doubles out = {<span class="fl">1.</span>, <span class="fl">2.</span>, <span class="fl">3.</span>};</span>
+<span id="cb23-8"><a href="#cb23-8"></a>  out.names() = {<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>};</span>
+<span id="cb23-9"><a href="#cb23-9"></a>  out.attr(<span class="st">"my-attr"</span>) = <span class="st">"my-value"</span>;</span>
+<span id="cb23-10"><a href="#cb23-10"></a>  out.attr(<span class="st">"class"</span>) = <span class="st">"my-class"</span>;</span>
+<span id="cb23-11"><a href="#cb23-11"></a>  <span class="cf">return</span> out;</span>
+<span id="cb23-12"><a href="#cb23-12"></a>}</span></code></pre></div>
 </div>
 </div>
 <div id="na" class="section level2">
@@ -492,19 +510,24 @@ doubles attribs() {
 <h3 class="hasAnchor">
 <a href="#scalars" class="anchor"></a>Scalars</h3>
 <p>The following code explores what happens when you take one of R’s missing values, coerce it into a scalar, and then coerce back to an R vector. Note that this kind of experimentation is a useful way to figure out what any operation does.</p>
-<pre class="cpp11"><code>#include "cpp11.hpp"
-using namespace cpp11;
-
-[[cpp11::register]]
-list scalar_missings() {
-  int int_s = NA_INTEGER;
-  string chr_s = NA_STRING;
-  bool lgl_s = NA_LOGICAL;
-  double num_s = NA_REAL;
-  return writable::list({as_sexp(int_s), as_sexp(chr_s), as_sexp(lgl_s), as_sexp(num_s)});
-}</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb24-1"><a href="#cb24-1"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
+<span id="cb24-2"><a href="#cb24-2"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span>
+<span id="cb24-3"><a href="#cb24-3"></a></span>
+<span id="cb24-4"><a href="#cb24-4"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb24-5"><a href="#cb24-5"></a>list scalar_missings() {</span>
+<span id="cb24-6"><a href="#cb24-6"></a>  <span class="dt">int</span> int_s = NA_INTEGER;</span>
+<span id="cb24-7"><a href="#cb24-7"></a>  r_string chr_s = NA_STRING;</span>
+<span id="cb24-8"><a href="#cb24-8"></a>  <span class="dt">bool</span> lgl_s = NA_LOGICAL;</span>
+<span id="cb24-9"><a href="#cb24-9"></a>  <span class="dt">double</span> num_s = NA_REAL;</span>
+<span id="cb24-10"><a href="#cb24-10"></a>  <span class="cf">return</span> writable::list({as_sexp(int_s), as_sexp(chr_s), as_sexp(lgl_s), as_sexp(num_s)});</span>
+<span id="cb24-11"><a href="#cb24-11"></a>}</span></code></pre></div>
 <div class="sourceCode" id="cb25"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="fu">scalar_missings</span>())
+<span class="co">#&gt; List of 4</span>
+<span class="co">#&gt;  $ : int NA</span>
+<span class="co">#&gt;  $ : chr "NA"</span>
+<span class="co">#&gt;  $ : logi TRUE</span>
+<span class="co">#&gt;  $ : num NA</span>
 </pre></div>
 <p>With the exception of <code>bool</code>, things look pretty good here: all of the missing values have been preserved. However, as we’ll see in the following sections, things are not quite as straightforward as they seem.</p>
 <div id="integers" class="section level4">
@@ -519,21 +542,31 @@ list scalar_missings() {
 <p>With doubles, you may be able to get away with ignoring missing values and working with NaNs (not a number). This is because R’s NA is a special type of IEEE 754 floating point number NaN. So any logical expression that involves a NaN (or in C++, NAN) always evaluates as FALSE:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit">
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span>(<span class="st">"NAN == 1"</span>)
+<span class="co">#&gt; [1] FALSE</span>
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span>(<span class="st">"NAN &lt; 1"</span>)
+<span class="co">#&gt; [1] FALSE</span>
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span>(<span class="st">"NAN &gt; 1"</span>)
+<span class="co">#&gt; [1] FALSE</span>
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span>(<span class="st">"NAN == NAN"</span>)
+<span class="co">#&gt; [1] FALSE</span>
 </pre></div>
 <p>(Here I’m using <code><a href="../reference/cpp_source.html">cpp_eval()</a></code> which allows you to see the result of running a single C++ expression, making it excellent for this sort of interactive experimentation.) But be careful when combining them with Boolean values:</p>
 <div class="sourceCode" id="cb27"><pre class="downlit">
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span>(<span class="st">"NAN &amp;&amp; TRUE"</span>)
+<span class="co">#&gt; [1] TRUE</span>
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span>(<span class="st">"NAN || FALSE"</span>)
+<span class="co">#&gt; [1] TRUE</span>
 </pre></div>
 <p>However, in numeric contexts NaNs will propagate NAs:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit">
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span>(<span class="st">"NAN + 1"</span>)
+<span class="co">#&gt; [1] NaN</span>
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span>(<span class="st">"NAN - 1"</span>)
+<span class="co">#&gt; [1] NaN</span>
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span>(<span class="st">"NAN / 1"</span>)
+<span class="co">#&gt; [1] NaN</span>
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span>(<span class="st">"NAN * 1"</span>)
+<span class="co">#&gt; [1] NaN</span>
 </pre></div>
 </div>
 </div>
@@ -551,21 +584,26 @@ list scalar_missings() {
 <h3 class="hasAnchor">
 <a href="#vectors-cpp11" class="anchor"></a>Vectors</h3>
 <p>With vectors, you need to use a missing value specific to the type of vector, <code>NA_REAL</code>, <code>NA_INTEGER</code>, <code>NA_LOGICAL</code>, <code>NA_STRING</code>:</p>
-<pre class="cpp11"><code>#include "cpp11.hpp"
-using namespace cpp11;
-namespace writable = cpp11::writable;
-
-[[cpp11::register]]
-list missing_sampler() {
-  return writable::list({
-    writable::doubles({NA_REAL}),
-    writable::integers({NA_INTEGER}),
-    writable::logicals({NA_LOGICAL}),
-    writable::strings({NA_STRING})
-  });
-}</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb29-1"><a href="#cb29-1"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
+<span id="cb29-2"><a href="#cb29-2"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span>
+<span id="cb29-3"><a href="#cb29-3"></a><span class="kw">namespace</span> writable = cpp11::writable;</span>
+<span id="cb29-4"><a href="#cb29-4"></a></span>
+<span id="cb29-5"><a href="#cb29-5"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb29-6"><a href="#cb29-6"></a>list missing_sampler() {</span>
+<span id="cb29-7"><a href="#cb29-7"></a>  <span class="cf">return</span> writable::list({</span>
+<span id="cb29-8"><a href="#cb29-8"></a>    writable::doubles({NA_REAL}),</span>
+<span id="cb29-9"><a href="#cb29-9"></a>    writable::integers({NA_INTEGER}),</span>
+<span id="cb29-10"><a href="#cb29-10"></a>    writable::logicals({NA_LOGICAL}),</span>
+<span id="cb29-11"><a href="#cb29-11"></a>    writable::strings({NA_STRING})</span>
+<span id="cb29-12"><a href="#cb29-12"></a>  });</span>
+<span id="cb29-13"><a href="#cb29-13"></a>}</span></code></pre></div>
 <div class="sourceCode" id="cb30"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="fu">missing_sampler</span>())
+<span class="co">#&gt; List of 4</span>
+<span class="co">#&gt;  $ : num NA</span>
+<span class="co">#&gt;  $ : int NA</span>
+<span class="co">#&gt;  $ : logi NA</span>
+<span class="co">#&gt;  $ : chr NA</span>
 </pre></div>
 </div>
 <div id="exercises-1" class="section level3">
@@ -592,18 +630,18 @@ list missing_sampler() {
 <li>Compare with <code><a href="https://rdrr.io/r/base/Comparison.html">==</a></code>.</li>
 </ol>
 <p>For example we could re-write our sum function using iterators:</p>
-<pre class="cpp11"><code>#include "cpp11.hpp"
-using namespace cpp11;
-
-[[cpp11::register]]
-double sum2(doubles x) {
-  double total = 0;
-
-  for(auto it = x.begin(); it != x.end(); ++it) {
-    total += *it;
-  }
-  return total;
-}</code></pre>
+<div class="sourceCode" id="cb31"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb31-1"><a href="#cb31-1"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
+<span id="cb31-2"><a href="#cb31-2"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span>
+<span id="cb31-3"><a href="#cb31-3"></a></span>
+<span id="cb31-4"><a href="#cb31-4"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb31-5"><a href="#cb31-5"></a><span class="dt">double</span> sum2(doubles x) {</span>
+<span id="cb31-6"><a href="#cb31-6"></a>  <span class="dt">double</span> total = <span class="dv">0</span>;</span>
+<span id="cb31-7"><a href="#cb31-7"></a></span>
+<span id="cb31-8"><a href="#cb31-8"></a>  <span class="cf">for</span>(<span class="kw">auto</span> it = x.begin(); it != x.end(); ++it) {</span>
+<span id="cb31-9"><a href="#cb31-9"></a>    total += *it;</span>
+<span id="cb31-10"><a href="#cb31-10"></a>  }</span>
+<span id="cb31-11"><a href="#cb31-11"></a>  <span class="cf">return</span> total;</span>
+<span id="cb31-12"><a href="#cb31-12"></a>}</span></code></pre></div>
 <p>The main changes are in the for loop:</p>
 <ul>
 <li><p>We start at <code>x.begin()</code> and loop until we get to <code>x.end()</code>. A small optimization is to store the value of the end iterator so we don’t need to look it up each time. This only saves about 2 ns per iteration, so it’s only important when the calculations in the loop are very simple.</p></li>
@@ -611,47 +649,47 @@ double sum2(doubles x) {
 <li><p>Notice we use <code>auto</code> rather than giving the type of the iterator.</p></li>
 </ul>
 <p>This code can be simplified still further through the use of a C++11 feature: range-based for loops.</p>
-<pre class="cpp11"><code>#include "cpp11.hpp"
-using namespace cpp11;
-
-[[cpp11::register]]
-double sum3(doubles xs) {
-  double total = 0;
-
-  for(auto x : xs) {
-    total += x;
-  }
-  return total;
-}</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb32-1"><a href="#cb32-1"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
+<span id="cb32-2"><a href="#cb32-2"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span>
+<span id="cb32-3"><a href="#cb32-3"></a></span>
+<span id="cb32-4"><a href="#cb32-4"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb32-5"><a href="#cb32-5"></a><span class="dt">double</span> sum3(doubles xs) {</span>
+<span id="cb32-6"><a href="#cb32-6"></a>  <span class="dt">double</span> total = <span class="dv">0</span>;</span>
+<span id="cb32-7"><a href="#cb32-7"></a></span>
+<span id="cb32-8"><a href="#cb32-8"></a>  <span class="cf">for</span>(<span class="kw">auto</span> x : xs) {</span>
+<span id="cb32-9"><a href="#cb32-9"></a>    total += x;</span>
+<span id="cb32-10"><a href="#cb32-10"></a>  }</span>
+<span id="cb32-11"><a href="#cb32-11"></a>  <span class="cf">return</span> total;</span>
+<span id="cb32-12"><a href="#cb32-12"></a>}</span></code></pre></div>
 <p>Iterators also allow us to use the C++ equivalents of the apply family of functions. For example, we could again rewrite <code><a href="https://rdrr.io/r/base/sum.html">sum()</a></code> to use the <code>accumulate()</code> function, which takes a starting and an ending iterator, and adds up all the values in the vector. The third argument to <code>accumulate</code> gives the initial value: it’s particularly important because this also determines the data type that <code>accumulate</code> uses (so we use <code>0.0</code> and not <code>0</code> so that <code>accumulate</code> uses a <code>double</code>, not an <code>int</code>.). To use <code>accumulate()</code> we need to include the <code>&lt;numeric&gt;</code> header.</p>
-<pre class="cpp11"><code>#include &lt;numeric&gt;
-#include "cpp11.hpp"
-using namespace cpp11;
-
-[[cpp11::register]]
-double sum4(doubles x) {
-  return std::accumulate(x.begin(), x.end(), 0.0);
-}</code></pre>
+<div class="sourceCode" id="cb33"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb33-1"><a href="#cb33-1"></a><span class="pp">#include </span><span class="im">&lt;numeric&gt;</span></span>
+<span id="cb33-2"><a href="#cb33-2"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
+<span id="cb33-3"><a href="#cb33-3"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span>
+<span id="cb33-4"><a href="#cb33-4"></a></span>
+<span id="cb33-5"><a href="#cb33-5"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb33-6"><a href="#cb33-6"></a><span class="dt">double</span> sum4(doubles x) {</span>
+<span id="cb33-7"><a href="#cb33-7"></a>  <span class="cf">return</span> <span class="bu">std::</span>accumulate(x.begin(), x.end(), <span class="fl">0.0</span>);</span>
+<span id="cb33-8"><a href="#cb33-8"></a>}</span></code></pre></div>
 </div>
 <div id="algorithms" class="section level3">
 <h3 class="hasAnchor">
 <a href="#algorithms" class="anchor"></a>Algorithms</h3>
 <p>The <code>&lt;algorithm&gt;</code> header provides a large number of algorithms that work with iterators. A good reference is available at <a href="https://en.cppreference.com/w/cpp/algorithm" class="uri">https://en.cppreference.com/w/cpp/algorithm</a>. For example, we could write a basic cpp11 version of <code><a href="https://rdrr.io/r/base/findInterval.html">findInterval()</a></code> that takes two arguments, a vector of values and a vector of breaks, and locates the bin that each x falls into. This shows off a few more advanced iterator features. Read the code below and see if you can figure out how it works.</p>
-<pre class="cpp11"><code>#include &lt;algorithm&gt;
-#include "cpp11.hpp"
-using namespace cpp11;
-
-[[cpp11::register]] integers findInterval2(doubles x, doubles breaks) {
-  writable::integers out(x.size());
-  auto out_it = out.begin();
-
-  for (auto&amp;&amp; val : x) {
-    auto pos = std::upper_bound(breaks.begin(), breaks.end(), val);
-    *out_it = std::distance(breaks.begin(), pos);
-    ++out_it;
-  }
-  return out;
-}</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb34-1"><a href="#cb34-1"></a><span class="pp">#include </span><span class="im">&lt;algorithm&gt;</span></span>
+<span id="cb34-2"><a href="#cb34-2"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
+<span id="cb34-3"><a href="#cb34-3"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span>
+<span id="cb34-4"><a href="#cb34-4"></a></span>
+<span id="cb34-5"><a href="#cb34-5"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]] integers findInterval2(doubles x, doubles breaks) {</span>
+<span id="cb34-6"><a href="#cb34-6"></a>  writable::integers out(x.size());</span>
+<span id="cb34-7"><a href="#cb34-7"></a>  <span class="kw">auto</span> out_it = out.begin();</span>
+<span id="cb34-8"><a href="#cb34-8"></a></span>
+<span id="cb34-9"><a href="#cb34-9"></a>  <span class="cf">for</span> (<span class="kw">auto</span>&amp;&amp; val : x) {</span>
+<span id="cb34-10"><a href="#cb34-10"></a>    <span class="kw">auto</span> pos = <span class="bu">std::</span>upper_bound(breaks.begin(), breaks.end(), val);</span>
+<span id="cb34-11"><a href="#cb34-11"></a>    *out_it = <span class="bu">std::</span>distance(breaks.begin(), pos);</span>
+<span id="cb34-12"><a href="#cb34-12"></a>    ++out_it;</span>
+<span id="cb34-13"><a href="#cb34-13"></a>  }</span>
+<span id="cb34-14"><a href="#cb34-14"></a>  <span class="cf">return</span> out;</span>
+<span id="cb34-15"><a href="#cb34-15"></a>}</span></code></pre></div>
 <p>The key points are:</p>
 <ul>
 <li><p>We step through two iterators (input and output) simultaneously.</p></li>
@@ -671,37 +709,37 @@ using namespace cpp11;
 <a href="#vectors-stl" class="anchor"></a>Vectors</h3>
 <p>An STL vector is very similar to an R vector, except that it grows efficiently. This makes STL vectors appropriate to use when you don’t know in advance how big the output will be. Vectors are templated, which means that you need to specify the type of object the vector will contain when you create it: <code>vector&lt;int&gt;</code>, <code>vector&lt;bool&gt;</code>, <code>vector&lt;double&gt;</code>, <code>vector&lt;string&gt;</code>. You can access individual elements of a vector using the standard <code>[]</code> notation, and you can add a new element to the end of the vector using <code>.push_back()</code>. If you have some idea in advance how big the vector will be, you can use <code>.reserve()</code> to allocate sufficient storage.</p>
 <p>The following code implements run length encoding (<code><a href="https://rdrr.io/r/base/rle.html">rle()</a></code>). It produces two vectors of output: a vector of values, and a vector <code>lengths</code> giving how many times each element is repeated. It works by looping through the input vector <code>x</code> comparing each value to the previous: if it’s the same, then it increments the last value in <code>lengths</code>; if it’s different, it adds the value to the end of <code>values</code>, and sets the corresponding length to 1.</p>
-<pre class="cpp11"><code>#include "cpp11.hpp"
-#include &lt;vector&gt;
-using namespace cpp11;
-namespace writable = cpp11::writable;
-
-[[cpp11::register]]
-list rle_cpp(doubles x) {
-  std::vector&lt;int&gt; lengths;
-  std::vector&lt;double&gt; values;
-
-  // Initialise first value
-  int i = 0;
-  double prev = x[0];
-  values.push_back(prev);
-  lengths.push_back(1);
-
-  for(auto it = x.begin() + 1; it != x.end(); ++it) {
-    if (prev == *it) {
-      lengths[i]++;
-    } else {
-      values.push_back(*it);
-      lengths.push_back(1);
-      i++;
-      prev = *it;
-    }
-  }
-  return writable::list({
-    "lengths"_nm = lengths,
-    "values"_nm = values
-  });
-}</code></pre>
+<div class="sourceCode" id="cb35"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb35-1"><a href="#cb35-1"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
+<span id="cb35-2"><a href="#cb35-2"></a><span class="pp">#include </span><span class="im">&lt;vector&gt;</span></span>
+<span id="cb35-3"><a href="#cb35-3"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span>
+<span id="cb35-4"><a href="#cb35-4"></a><span class="kw">namespace</span> writable = cpp11::writable;</span>
+<span id="cb35-5"><a href="#cb35-5"></a></span>
+<span id="cb35-6"><a href="#cb35-6"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb35-7"><a href="#cb35-7"></a>list rle_cpp(doubles x) {</span>
+<span id="cb35-8"><a href="#cb35-8"></a>  <span class="bu">std::</span>vector&lt;<span class="dt">int</span>&gt; lengths;</span>
+<span id="cb35-9"><a href="#cb35-9"></a>  <span class="bu">std::</span>vector&lt;<span class="dt">double</span>&gt; values;</span>
+<span id="cb35-10"><a href="#cb35-10"></a></span>
+<span id="cb35-11"><a href="#cb35-11"></a>  <span class="co">// Initialise first value</span></span>
+<span id="cb35-12"><a href="#cb35-12"></a>  <span class="dt">int</span> i = <span class="dv">0</span>;</span>
+<span id="cb35-13"><a href="#cb35-13"></a>  <span class="dt">double</span> prev = x[<span class="dv">0</span>];</span>
+<span id="cb35-14"><a href="#cb35-14"></a>  values.push_back(prev);</span>
+<span id="cb35-15"><a href="#cb35-15"></a>  lengths.push_back(<span class="dv">1</span>);</span>
+<span id="cb35-16"><a href="#cb35-16"></a></span>
+<span id="cb35-17"><a href="#cb35-17"></a>  <span class="cf">for</span>(<span class="kw">auto</span> it = x.begin() + <span class="dv">1</span>; it != x.end(); ++it) {</span>
+<span id="cb35-18"><a href="#cb35-18"></a>    <span class="cf">if</span> (prev == *it) {</span>
+<span id="cb35-19"><a href="#cb35-19"></a>      lengths[i]++;</span>
+<span id="cb35-20"><a href="#cb35-20"></a>    } <span class="cf">else</span> {</span>
+<span id="cb35-21"><a href="#cb35-21"></a>      values.push_back(*it);</span>
+<span id="cb35-22"><a href="#cb35-22"></a>      lengths.push_back(<span class="dv">1</span>);</span>
+<span id="cb35-23"><a href="#cb35-23"></a>      i++;</span>
+<span id="cb35-24"><a href="#cb35-24"></a>      prev = *it;</span>
+<span id="cb35-25"><a href="#cb35-25"></a>    }</span>
+<span id="cb35-26"><a href="#cb35-26"></a>  }</span>
+<span id="cb35-27"><a href="#cb35-27"></a>  <span class="cf">return</span> writable::list({</span>
+<span id="cb35-28"><a href="#cb35-28"></a>    <span class="st">"lengths"_nm</span> = lengths,</span>
+<span id="cb35-29"><a href="#cb35-29"></a>    <span class="st">"values"_nm</span> = values</span>
+<span id="cb35-30"><a href="#cb35-30"></a>  });</span>
+<span id="cb35-31"><a href="#cb35-31"></a>}</span></code></pre></div>
 <p>(An alternative implementation would be to replace <code>i</code> with the iterator <code>lengths.rbegin()</code> which always points to the last element of the vector. You might want to try implementing that.)</p>
 <p>Other methods of a vector are described at <a href="https://en.cppreference.com/w/cpp/container/vector" class="uri">https://en.cppreference.com/w/cpp/container/vector</a>.</p>
 </div>
@@ -710,39 +748,39 @@ list rle_cpp(doubles x) {
 <a href="#sets" class="anchor"></a>Sets</h3>
 <p>Sets maintain a unique set of values, and can efficiently tell if you’ve seen a value before. They are useful for problems that involve duplicates or unique values (like <code>unique</code>, <code>duplicated</code>, or <code>in</code>). C++ provides both ordered (<code>std::set</code>) and unordered sets (<code>std::unordered_set</code>), depending on whether or not order matters for you. Unordered sets can somtimes be much faster (because they use a hash table internally rather than a tree). Often even if you need an ordered set, you could consider using an unordered set and then sorting the output. Benchmarking with your expected dataset is the best way to determine which is fastest for your data. Like vectors, sets are templated, so you need to request the appropriate type of set for your purpose: <code>unordered_set&lt;int&gt;</code>, <code>unordered_set&lt;bool&gt;</code>, etc. More details are available at <a href="https://en.cppreference.com/w/cpp/container/set" class="uri">https://en.cppreference.com/w/cpp/container/set</a> and <a href="https://en.cppreference.com/w/cpp/container/unordered_set" class="uri">https://en.cppreference.com/w/cpp/container/unordered_set</a>.</p>
 <p>The following function uses an unordered set to implement an equivalent to <code><a href="https://rdrr.io/r/base/duplicated.html">duplicated()</a></code> for integer vectors. Note the use of <code>seen.insert(x[i]).second</code>. <code>insert()</code> returns a pair, the <code>.first</code> value is an iterator that points to element and the <code>.second</code> value is a Boolean that’s true if the value was a new addition to the set.</p>
-<pre class="cpp11"><code>#include &lt;unordered_set&gt;
-#include "cpp11.hpp"
-using namespace cpp11;
-namespace writable = cpp11::writable;
-
-[[cpp11::register]]
-logicals duplicated_cpp(integers x) {
-  std::unordered_set&lt;int&gt; seen;
-  int n = x.size();
-  writable::logicals out(n);
-  for (int i = 0; i &lt; n; ++i) {
-    out[i] = static_cast&lt;Rboolean&gt;(!seen.insert(x[i]).second);
-  }
-  return out;
-}</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb36-1"><a href="#cb36-1"></a><span class="pp">#include </span><span class="im">&lt;unordered_set&gt;</span></span>
+<span id="cb36-2"><a href="#cb36-2"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
+<span id="cb36-3"><a href="#cb36-3"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span>
+<span id="cb36-4"><a href="#cb36-4"></a><span class="kw">namespace</span> writable = cpp11::writable;</span>
+<span id="cb36-5"><a href="#cb36-5"></a></span>
+<span id="cb36-6"><a href="#cb36-6"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb36-7"><a href="#cb36-7"></a>logicals duplicated_cpp(integers x) {</span>
+<span id="cb36-8"><a href="#cb36-8"></a>  <span class="bu">std::</span>unordered_set&lt;<span class="dt">int</span>&gt; seen;</span>
+<span id="cb36-9"><a href="#cb36-9"></a>  <span class="dt">int</span> n = x.size();</span>
+<span id="cb36-10"><a href="#cb36-10"></a>  writable::logicals out(n);</span>
+<span id="cb36-11"><a href="#cb36-11"></a>  <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; n; ++i) {</span>
+<span id="cb36-12"><a href="#cb36-12"></a>    out[i] = <span class="kw">static_cast</span>&lt;Rboolean&gt;(!seen.insert(x[i]).second);</span>
+<span id="cb36-13"><a href="#cb36-13"></a>  }</span>
+<span id="cb36-14"><a href="#cb36-14"></a>  <span class="cf">return</span> out;</span>
+<span id="cb36-15"><a href="#cb36-15"></a>}</span></code></pre></div>
 </div>
 <div id="map" class="section level3">
 <h3 class="hasAnchor">
 <a href="#map" class="anchor"></a>Map</h3>
 <p>A map is similar to a set, but instead of storing presence or absence, it can store additional data. It’s useful for functions like <code><a href="https://rdrr.io/r/base/table.html">table()</a></code> or <code><a href="https://rdrr.io/r/base/match.html">match()</a></code> that need to look up a value. As with sets, there are ordered (<code>std::map</code>) and unordered (<code>std::unordered_map</code>) versions. Since maps have a value and a key, you need to specify both types when initialising a map: <code>map&lt;double, int&gt;</code>, <code>unordered_map&lt;int, double&gt;</code>, and so on. The following example shows how you could use a <code>map</code> to implement <code><a href="https://rdrr.io/r/base/table.html">table()</a></code> for numeric vectors:</p>
-<pre class="cpp11"><code>#include &lt;map&gt;
-#include "cpp11.hpp"
-using namespace cpp11;
-
-[[cpp11::register]]
-SEXP table_cpp(doubles x) {
-  std::map&lt;double, int&gt; counts;
-  int n = x.size();
-  for (int i = 0; i &lt; n; i++) {
-    counts[x[i]]++;
-  }
-  return as_sexp(counts);
-}</code></pre>
+<div class="sourceCode" id="cb37"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb37-1"><a href="#cb37-1"></a><span class="pp">#include </span><span class="im">&lt;map&gt;</span></span>
+<span id="cb37-2"><a href="#cb37-2"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
+<span id="cb37-3"><a href="#cb37-3"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span>
+<span id="cb37-4"><a href="#cb37-4"></a></span>
+<span id="cb37-5"><a href="#cb37-5"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb37-6"><a href="#cb37-6"></a>SEXP table_cpp(doubles x) {</span>
+<span id="cb37-7"><a href="#cb37-7"></a>  <span class="bu">std::</span>map&lt;<span class="dt">double</span>, <span class="dt">int</span>&gt; counts;</span>
+<span id="cb37-8"><a href="#cb37-8"></a>  <span class="dt">int</span> n = x.size();</span>
+<span id="cb37-9"><a href="#cb37-9"></a>  <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; n; i++) {</span>
+<span id="cb37-10"><a href="#cb37-10"></a>    counts[x[i]]++;</span>
+<span id="cb37-11"><a href="#cb37-11"></a>  }</span>
+<span id="cb37-12"><a href="#cb37-12"></a>  <span class="cf">return</span> as_sexp(counts);</span>
+<span id="cb37-13"><a href="#cb37-13"></a>}</span></code></pre></div>
 </div>
 <div id="exercises-2" class="section level3">
 <h3 class="hasAnchor">
@@ -788,25 +826,25 @@ SEXP table_cpp(doubles x) {
 <li><p>Use <code>(</code> instead of <code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> to index into the matrix.</p></li>
 <li><p>Include “Rmath.h” and call the functions with <code>Rf_</code>.</p></li>
 </ul>
-<pre class="cpp11"><code>#include "cpp11/matrix.hpp"
-#include "cpp11/doubles.hpp"
-#include "Rmath.h"
-using namespace cpp11;
-namespace writable = cpp11::writable;
-
-[[cpp11::register]] cpp11::doubles_matrix gibbs_cpp(int N, int thin) {
-  writable::doubles_matrix mat(N, 2);
-  double x = 0, y = 0;
-  for (int i = 0; i &lt; N; i++) {
-    for (int j = 0; j &lt; thin; j++) {
-      x = Rf_rgamma(3., 1. / double(y * y + 4));
-      y = Rf_rnorm(1. / (x + 1.), 1. / sqrt(2. * (x + 1.)));
-    }
-    mat(i, 0) = x;
-    mat(i, 1) = y;
-  }
-  return mat;
-}</code></pre>
+<div class="sourceCode" id="cb39"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb39-1"><a href="#cb39-1"></a><span class="pp">#include </span><span class="im">"cpp11/matrix.hpp"</span></span>
+<span id="cb39-2"><a href="#cb39-2"></a><span class="pp">#include </span><span class="im">"cpp11/doubles.hpp"</span></span>
+<span id="cb39-3"><a href="#cb39-3"></a><span class="pp">#include </span><span class="im">"Rmath.h"</span></span>
+<span id="cb39-4"><a href="#cb39-4"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span>
+<span id="cb39-5"><a href="#cb39-5"></a><span class="kw">namespace</span> writable = cpp11::writable;</span>
+<span id="cb39-6"><a href="#cb39-6"></a></span>
+<span id="cb39-7"><a href="#cb39-7"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]] cpp11::doubles_matrix gibbs_cpp(<span class="dt">int</span> N, <span class="dt">int</span> thin) {</span>
+<span id="cb39-8"><a href="#cb39-8"></a>  writable::doubles_matrix mat(N, <span class="dv">2</span>);</span>
+<span id="cb39-9"><a href="#cb39-9"></a>  <span class="dt">double</span> x = <span class="dv">0</span>, y = <span class="dv">0</span>;</span>
+<span id="cb39-10"><a href="#cb39-10"></a>  <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; N; i++) {</span>
+<span id="cb39-11"><a href="#cb39-11"></a>    <span class="cf">for</span> (<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; thin; j++) {</span>
+<span id="cb39-12"><a href="#cb39-12"></a>      x = Rf_rgamma(<span class="fl">3.</span>, <span class="fl">1.</span> / <span class="dt">double</span>(y * y + <span class="dv">4</span>));</span>
+<span id="cb39-13"><a href="#cb39-13"></a>      y = Rf_rnorm(<span class="fl">1.</span> / (x + <span class="fl">1.</span>), <span class="fl">1.</span> / sqrt(<span class="fl">2.</span> * (x + <span class="fl">1.</span>)));</span>
+<span id="cb39-14"><a href="#cb39-14"></a>    }</span>
+<span id="cb39-15"><a href="#cb39-15"></a>    mat(i, <span class="dv">0</span>) = x;</span>
+<span id="cb39-16"><a href="#cb39-16"></a>    mat(i, <span class="dv">1</span>) = y;</span>
+<span id="cb39-17"><a href="#cb39-17"></a>  }</span>
+<span id="cb39-18"><a href="#cb39-18"></a>  <span class="cf">return</span> mat;</span>
+<span id="cb39-19"><a href="#cb39-19"></a>}</span></code></pre></div>
 <p>Benchmarking the two implementations yields a significant speedup for running the loops in C++:</p>
 <div class="sourceCode" id="cb40"><pre class="downlit">
 <span class="kw">bench</span>::<span class="fu"><a href="https://rdrr.io/pkg/bench/man/mark.html">mark</a></span>(
@@ -821,6 +859,11 @@ namespace writable = cpp11::writable;
   check = <span class="fl">TRUE</span>,
   relative = <span class="fl">TRUE</span>
 )
+<span class="co">#&gt; # A tibble: 2 x 6</span>
+<span class="co">#&gt;   expression   min median `itr/sec` mem_alloc `gc/sec`</span>
+<span class="co">#&gt;   &lt;bch:expr&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 r           35.3   43.8       1       1314.      Inf</span>
+<span class="co">#&gt; 2 cpp          1      1        45.2        1       NaN</span>
 </pre></div>
 </div>
 <div id="r-vectorisation-versus-c-vectorisation" class="section level3">
@@ -861,29 +904,29 @@ namespace writable = cpp11::writable;
 </pre></div>
 <p>(If you’ve worked R a lot you might recognise some potential bottlenecks in this code: <code>ifelse</code>, <code>pmin</code>, and <code>pmax</code> are known to be slow, and could be replaced with <code>p * 0.75 + p * 0.5 * female</code>, <code>p[p &lt; 0] &lt;- 0</code>, <code>p[p &gt; 1] &lt;- 1</code>. You might want to try timing those variations.)</p>
 <p>Or in C++:</p>
-<pre class="cpp11"><code>#include "cpp11.hpp"
-using namespace cpp11;
-namespace writable = cpp11::writable;
-
-[[cpp11::register]]
-double vacc3a(double age, bool female, bool ily){
-  double p = 0.25 + 0.3 * 1 / (1 - exp(0.04 * age)) + 0.1 * ily;
-  p = p * (female ? 1.25 : 0.75);
-  p = std::max(p, 0.0);
-  p = std::min(p, 1.0);
-  return p;
-}
-
-[[cpp11::register]]
-doubles vacc3(doubles age, logicals female,
-                    logicals ily) {
-  int n = age.size();
-  writable::doubles out(n);
-  for(int i = 0; i &lt; n; ++i) {
-    out[i] = vacc3a(age[i], female[i], ily[i]);
-  }
-  return out;
-}</code></pre>
+<div class="sourceCode" id="cb44"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb44-1"><a href="#cb44-1"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
+<span id="cb44-2"><a href="#cb44-2"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11;</span>
+<span id="cb44-3"><a href="#cb44-3"></a><span class="kw">namespace</span> writable = cpp11::writable;</span>
+<span id="cb44-4"><a href="#cb44-4"></a></span>
+<span id="cb44-5"><a href="#cb44-5"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb44-6"><a href="#cb44-6"></a><span class="dt">double</span> vacc3a(<span class="dt">double</span> age, <span class="dt">bool</span> female, <span class="dt">bool</span> ily){</span>
+<span id="cb44-7"><a href="#cb44-7"></a>  <span class="dt">double</span> p = <span class="fl">0.25</span> + <span class="fl">0.3</span> * <span class="dv">1</span> / (<span class="dv">1</span> - exp(<span class="fl">0.04</span> * age)) + <span class="fl">0.1</span> * ily;</span>
+<span id="cb44-8"><a href="#cb44-8"></a>  p = p * (female ? <span class="fl">1.25</span> : <span class="fl">0.75</span>);</span>
+<span id="cb44-9"><a href="#cb44-9"></a>  p = <span class="bu">std::</span>max(p, <span class="fl">0.0</span>);</span>
+<span id="cb44-10"><a href="#cb44-10"></a>  p = <span class="bu">std::</span>min(p, <span class="fl">1.0</span>);</span>
+<span id="cb44-11"><a href="#cb44-11"></a>  <span class="cf">return</span> p;</span>
+<span id="cb44-12"><a href="#cb44-12"></a>}</span>
+<span id="cb44-13"><a href="#cb44-13"></a></span>
+<span id="cb44-14"><a href="#cb44-14"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb44-15"><a href="#cb44-15"></a>doubles vacc3(doubles age, logicals female,</span>
+<span id="cb44-16"><a href="#cb44-16"></a>                    logicals ily) {</span>
+<span id="cb44-17"><a href="#cb44-17"></a>  <span class="dt">int</span> n = age.size();</span>
+<span id="cb44-18"><a href="#cb44-18"></a>  writable::doubles out(n);</span>
+<span id="cb44-19"><a href="#cb44-19"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; n; ++i) {</span>
+<span id="cb44-20"><a href="#cb44-20"></a>    out[i] = vacc3a(age[i], female[i], ily[i]);</span>
+<span id="cb44-21"><a href="#cb44-21"></a>  }</span>
+<span id="cb44-22"><a href="#cb44-22"></a>  <span class="cf">return</span> out;</span>
+<span id="cb44-23"><a href="#cb44-23"></a>}</span></code></pre></div>
 <p>We next generate some sample data, and check that all three versions return the same values:</p>
 <div class="sourceCode" id="cb45"><pre class="downlit">
 <span class="kw">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span>
@@ -902,6 +945,12 @@ doubles vacc3(doubles age, logicals female,
   vacc2 = <span class="fu">vacc2</span>(<span class="kw">age</span>, <span class="kw">female</span>, <span class="kw">ily</span>),
   vacc3 = <span class="fu">vacc3</span>(<span class="kw">age</span>, <span class="kw">female</span>, <span class="kw">ily</span>)
 )
+<span class="co">#&gt; # A tibble: 3 x 6</span>
+<span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span>
+<span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 vacc1        2.55ms   2.72ms      362.    7.86KB     22.4</span>
+<span class="co">#&gt; 2 vacc2       76.31µs  85.33µs    10536.  148.85KB     11.1</span>
+<span class="co">#&gt; 3 vacc3       25.76µs  27.94µs    34543.   21.89KB     10.4</span>
 </pre></div>
 <p>Not surprisingly, our original approach with loops is very slow. Vectorising in R gives a huge speedup, and we can eke out even more performance (about ten times) with the C++ loop. I was a little surprised that the C++ was so much faster, but it is because the R version has to create 11 vectors to store intermediate results, where the C++ code only needs to create 1.</p>
 </div>
