@@ -113,8 +113,8 @@
 <div id="vector-classes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#vector-classes" class="anchor"></a>Vector classes</h2>
-<p>All of the basic r_vector classes are class templates, the base template is defined in <a href="https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/vector.hpp">cpp11/vector.hpp</a> The template parameter is the type of <strong>value</strong> the particular R vector stores, e.g. <code>double</code> for <code>cpp11::doubles</code>. This differs from Rcpp, whose first template parameter is the R API type, e.g. <code>REALSXP</code> the vector stores.</p>
-<p>The file first has the class declarations, then definitions further down in the file. Specializations for the various types are in separate files, e.g. <a href="https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/double.hpp">cpp11/doubles.hpp</a></p>
+<p>All of the basic r_vector classes are class templates, the base template is defined in <a href="https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/r_vector.hpp">cpp11/r_vector.hpp</a> The template parameter is the type of <strong>value</strong> the particular R vector stores, e.g. <code>double</code> for <code>cpp11::doubles</code>. This differs from Rcpp, whose first template parameter is the R API type, e.g. <code>REALSXP</code> the vector stores.</p>
+<p>The file first has the class declarations, then definitions further down in the file. Specializations for the various types are in separate files, e.g. <a href="https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/doubles.hpp">cpp11/doubles.hpp</a></p>
 </div>
 <div id="coercion-functions" class="section level2">
 <h2 class="hasAnchor">
