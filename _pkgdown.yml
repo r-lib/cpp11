@@ -20,3 +20,5 @@ navbar:
       href: articles/converting.html
     - text: Internals
       href: articles/internals.html
+    - text: Reference
+      href: reference/index.html
