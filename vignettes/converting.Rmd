@@ -62,6 +62,23 @@ If you want to modify the data you need to use the classes in the `cpp11::writab
 
 In addition use the `writable` variants if you need to create a new R vector entirely in C++.
 
+## Calling R functions from C++
+
+Calling R functions from C++ is similar to using Rcpp.
+
+```c++
+Rcpp::Function as_tibble("as_tibble", Rcpp::Environment::namespace_env("tibble"));
+as_tibble(x, Rcpp::Named(".rows", num_rows), Rcpp::Named(".name_repair", name_repair));
+```
+
+```c++
+using namespace cpp11::literals; // so we can use ""_nm syntax
+
+auto as_tibble = cpp11::package("tibble")["as_tibble"];
+as_tibble(x, ".rows"_nm = num_rows, ".name_repair"_nm = name_repair);
+```
+
+
 ## Appending behavior
 
 One major difference in Rcpp and cpp11 is how vectors are grown.
@@ -108,6 +125,13 @@ ggplot(b_grow, aes(x = len, y = min, color = pkg)) +
 knitr::kable(b_grow)
 ```
 
+## Random Number behavior
+
+Rcpp unconditionally includes calls to `GetRNGstate()` and `PutRNGstate()` before each wrapped function. 
+This ensures that if any C++ code calls the R API functions `unif_rand()`, `norm_rand()`, `exp_rand()` or `R_unif_index()` the random seed state is set accordingly.
+cpp11 does _not_ do this, so you must include the calls to `GetRNGstate()` and `PutRNGstate()` _yourself_ if you use any of those functions in your C++ code.
+See [R-exts 6.3 - Random number generation](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Random-numbers) for details on these functions.
+
 ## Mechanics of converting a package from Rcpp
 
 1. Add cpp11 to `LinkingTo`
@@ -118,8 +142,11 @@ knitr::kable(b_grow)
 1. Start converting function by function
    - Remember you can usually inter-convert between cpp11 and Rcpp classes by going through `SEXP` if needed.
    - Converting the code a bit at a time (and regularly running your tests) is the best way to do the conversion correctly and make progress
+   - Doing a separate commit after converting each file (or possibly each function) can make finding any regressions with [git bisect](https://youtu.be/KKeucpfAuuA) much easier in the future.
 
-## Include order
+## Common issues when converting
+
+### Include order
 
 Due to cpp11 redefining the Rboolean enum any cpp11 header needs to come _before_ any Rcpp or Rinternals.h include. Errors like
 
@@ -127,7 +154,7 @@ Due to cpp11 redefining the Rboolean enum any cpp11 header needs to come _before
 
 Indicate this is a problem and can be resolved by ensuring the cpp11 headers are included first.
 
-## STL includes
+### STL includes
 
 Rcpp.h includes a number of STL headers automatically, notably `<string>` and `<vector>`, however the cpp11 headers generally do not. If you have errors like
 
@@ -135,29 +162,8 @@ Rcpp.h includes a number of STL headers automatically, notably `<string>` and `<
 
 You will need to include the appropriate STL header, in this case `<string>`.
 
-## Calling R from C++
-
-```c++
-Rcpp::Function as_tibble("as_tibble", Rcpp::Environment::namespace_env("tibble"));
-as_tibble(x, Rcpp::Named(".rows", num_rows), Rcpp::Named(".name_repair", name_repair));
-```
-
-```c++
-using namespace cpp11::literals; // so we can use ""_nm syntax
-
-cpp11::function as_tibble = cpp11::package("tibble")["as_tibble"];
-return as_tibble(x, ".rows"_nm = num_rows, ".name_repair"_nm = name_repair);
-```
-
-## R API includes
+### R API includes
 
 cpp11 defines a compatible but different version of the Rboolean enum.
 This means that you must ensure that at least one cpp11 header is included _before_ any R headers.
 One easy way to ensure this is to replace `#include <Rinternals.h>` with `#include <cpp11/R.hpp>`.
-
-## Random Number behavior
-
-Rcpp unconditionally includes calls to `GetRNGstate()` and `PutRNGstate()` before each wrapped function. 
-This ensures that if any C++ code calls the R API functions `unif_rand()`, `norm_rand()`, `exp_rand()` or `R_unif_index()` the random seed state is set accordingly.
-cpp11 does _not_ do this, so you must include the calls to `GetRNGstate()` and `PutRNGstate()` _yourself_ if you use any of those functions in your C++ code.
-See [R-exts 6.3 - Random number generation](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Random-numbers) for details on these functions.
