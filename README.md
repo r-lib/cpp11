@@ -17,8 +17,6 @@ LinkingTo: cpp11
 SystemRequirements: C++11
 ```
 
-The easiest way to set this up automatically is to call `usethis::use_cpp11()`.
-
 Then decorate C++ functions you want to expose to R with `[[cpp11::register]]`. 
 *Note this is a [C++11 attribute](https://en.cppreference.com/w/cpp/language/attributes), not a comment like is used in Rcpp.*
 
