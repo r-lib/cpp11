@@ -10,7 +10,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = as.logical(Sys.getenv("CPP11_EVAL", "false"))
 )
 
 print_cpp <- function(filename) {
