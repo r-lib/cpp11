@@ -1,4 +1,5 @@
 test_that("cpp_source works with the `code` parameter", {
+  skip_on_os("solaris")
   dll_info <- cpp_source(
     code = '
     #include "cpp11/integers.hpp"
@@ -20,6 +21,7 @@ test_that("cpp_source works with the `code` parameter", {
 })
 
 test_that("cpp_source works with the `file` parameter", {
+  skip_on_os("solaris")
   tf <- tempfile(fileext = ".cpp")
   writeLines(
     "[[cpp11::register]]
