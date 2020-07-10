@@ -270,12 +270,19 @@
   <span class="fu">sum_cpp</span>(<span class="kw">x</span>),
   <span class="fu">sum_r</span>(<span class="kw">x</span>)
 )[<span class="fl">1</span><span class="op">:</span><span class="fl">6</span>]
+<span class="co">#&gt; Warning: `...` is not empty.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; We detected these problematic arguments:</span>
+<span class="co">#&gt; * `needs_dots`</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; These dots only exist to allow future extensions and should be empty.</span>
+<span class="co">#&gt; Did you misspecify an argument?</span>
 <span class="co">#&gt; # A tibble: 3 x 6</span>
 <span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 sum(x)       1.47µs   1.75µs   552138.        0B      0  </span>
-<span class="co">#&gt; 2 sum_cpp(x)   5.71µs   6.26µs   152421.        0B     15.2</span>
-<span class="co">#&gt; 3 sum_r(x)    30.41µs  32.91µs    30096.    3.96MB      0</span>
+<span class="co">#&gt; 1 sum(x)       1.48µs   1.67µs   573686.        0B      0  </span>
+<span class="co">#&gt; 2 sum_cpp(x)    6.5µs   6.93µs   137928.        0B     13.8</span>
+<span class="co">#&gt; 3 sum_r(x)       32µs  33.23µs    29455.    3.96MB      0</span>
 </pre></div>
 </div>
 <div id="vector-input-vector-output" class="section level3">
@@ -319,11 +326,18 @@
   <span class="fu">pdist_r</span>(<span class="fl">0.5</span>, <span class="kw">y</span>),
   <span class="fu">pdist_cpp</span>(<span class="fl">0.5</span>, <span class="kw">y</span>)
 )[<span class="fl">1</span><span class="op">:</span><span class="fl">6</span>]
+<span class="co">#&gt; Warning: `...` is not empty.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; We detected these problematic arguments:</span>
+<span class="co">#&gt; * `needs_dots`</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; These dots only exist to allow future extensions and should be empty.</span>
+<span class="co">#&gt; Did you misspecify an argument?</span>
 <span class="co">#&gt; # A tibble: 2 x 6</span>
 <span class="co">#&gt;   expression             min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt;        &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 pdist_r(0.5, y)     6.45ms   6.85ms      142.    7.63MB     71.2</span>
-<span class="co">#&gt; 2 pdist_cpp(0.5, y)   6.05ms   6.57ms      142.   15.26MB    199.</span>
+<span class="co">#&gt; 1 pdist_r(0.5, y)     6.54ms   6.96ms      140.    7.63MB     66.4</span>
+<span class="co">#&gt; 2 pdist_cpp(0.5, y)   6.25ms   6.58ms      137.   15.26MB    284.</span>
 </pre></div>
 <p>On my computer, it takes around 5 ms with a 1 million element <code>y</code> vector. The C++ function is about 2.5 times faster, ~2 ms, but assuming it took you 10 minutes to write the C++ function, you’d need to run it ~200,000 times to make rewriting worthwhile. The reason why the C++ function is faster is subtle, and relates to memory management. The R version needs to create an intermediate vector the same length as y (<code>x - ys</code>), and allocating memory is an expensive operation. The C++ function avoids this overhead because it uses an intermediate scalar.</p>
 </div>
@@ -859,11 +873,18 @@
   check = <span class="fl">TRUE</span>,
   relative = <span class="fl">TRUE</span>
 )
+<span class="co">#&gt; Warning: `...` is not empty.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; We detected these problematic arguments:</span>
+<span class="co">#&gt; * `needs_dots`</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; These dots only exist to allow future extensions and should be empty.</span>
+<span class="co">#&gt; Did you misspecify an argument?</span>
 <span class="co">#&gt; # A tibble: 2 x 6</span>
 <span class="co">#&gt;   expression   min median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 r           35.3   43.8       1       1314.      Inf</span>
-<span class="co">#&gt; 2 cpp          1      1        45.2        1       NaN</span>
+<span class="co">#&gt; 1 r           35.9   36.5       1       1314.      Inf</span>
+<span class="co">#&gt; 2 cpp          1      1        38.4        1       NaN</span>
 </pre></div>
 </div>
 <div id="r-vectorisation-versus-c-vectorisation" class="section level3">
@@ -945,12 +966,19 @@
   vacc2 = <span class="fu">vacc2</span>(<span class="kw">age</span>, <span class="kw">female</span>, <span class="kw">ily</span>),
   vacc3 = <span class="fu">vacc3</span>(<span class="kw">age</span>, <span class="kw">female</span>, <span class="kw">ily</span>)
 )
+<span class="co">#&gt; Warning: `...` is not empty.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; We detected these problematic arguments:</span>
+<span class="co">#&gt; * `needs_dots`</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; These dots only exist to allow future extensions and should be empty.</span>
+<span class="co">#&gt; Did you misspecify an argument?</span>
 <span class="co">#&gt; # A tibble: 3 x 6</span>
 <span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 vacc1        2.55ms   2.72ms      362.    7.86KB     22.4</span>
-<span class="co">#&gt; 2 vacc2       76.31µs  85.33µs    10536.  148.85KB     11.1</span>
-<span class="co">#&gt; 3 vacc3       25.76µs  27.94µs    34543.   21.89KB     10.4</span>
+<span class="co">#&gt; 1 vacc1        2.67ms   2.78ms      354.    7.86KB     22.8</span>
+<span class="co">#&gt; 2 vacc2       77.66µs  85.81µs    10628.  148.85KB     20.3</span>
+<span class="co">#&gt; 3 vacc3       26.66µs     28µs    35182.   21.89KB     10.6</span>
 </pre></div>
 <p>Not surprisingly, our original approach with loops is very slow. Vectorising in R gives a huge speedup, and we can eke out even more performance (about ten times) with the C++ loop. I was a little surprised that the C++ was so much faster, but it is because the R version has to create 11 vectors to store intermediate results, where the C++ code only needs to create 1.</p>
 </div>
