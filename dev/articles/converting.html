@@ -206,6 +206,12 @@
 <p>The default classes, e.g. <code>cpp11::doubles</code> are <em>read-only</em> classes that do not permit modification. If you want to modify the data you need to use the classes in the <code>cpp11::writable</code> namespace, e.g. <code>cpp11::writable::doubles</code>.</p>
 <p>In addition use the <code>writable</code> variants if you need to create a new R vector entirely in C++.</p>
 </div>
+<div id="fewer-implicit-conversions" class="section level2">
+<h2 class="hasAnchor">
+<a href="#fewer-implicit-conversions" class="anchor"></a>Fewer implicit conversions</h2>
+<p>Rcpp also allows very flexible implicit conversions, e.g. if you pass a <code>REALSXP</code> to a function that takes a <code>Rcpp::IntegerVector()</code> it is implicitly converted to a <code>INTSXP</code>. These conversions are nice for usability, but require (implicit) duplication of the data, with the associated runtime costs.</p>
+<p>cpp11 throws an error in these cases. If you want the implicit coercions you can add a call to <code><a href="https://rdrr.io/r/base/integer.html">as.integer()</a></code> or <code><a href="https://rdrr.io/r/base/double.html">as.double()</a></code> as appropriate from R when you call the function.</p>
+</div>
 <div id="calling-r-functions-from-c" class="section level2">
 <h2 class="hasAnchor">
 <a href="#calling-r-functions-from-c" class="anchor"></a>Calling R functions from C++</h2>
