@@ -1,4 +1,5 @@
 #include <testthat.h>
+#include "cpp11/sexp.hpp"
 #include "cpp11/strings.hpp"
 
 context("strings-C++") {
@@ -174,30 +175,21 @@ context("strings-C++") {
     expect_true(x[0] == y);
   }
 
-  // test_that("writable::strings(ALTREP_SEXP)") {
-  // SEXP x = PROTECT(R_compact_uint8_trange(1, 5));
-  //// Need to find (or create) an altrep class that implements duplicate.
+  test_that("conversion to SEXP with missing values") {
+    cpp11::sexp x1 = cpp11::r_string(NA_STRING);
+    expect_true(static_cast<SEXP>(x1) == NA_STRING);
 
-  // cpp11::writable::strings y(x);
-  // y[0] = -1;
+    cpp11::sexp x2 = cpp11::writable::strings(NA_STRING);
+    expect_true(Rf_xlength(x2) == 1);
+    expect_true(STRING_ELT(x2, 0) == NA_STRING);
 
-  // expect_true(x != y.data());
+    cpp11::sexp x3 = cpp11::writable::strings({NA_STRING});
+    expect_true(Rf_xlength(x3) == 1);
+    expect_true(STRING_ELT(x3, 0) == NA_STRING);
 
-  // expect_true(raw_ELT(x, 0) == 1);
-  // expect_true(y[0] == -1);
-
-  // cpp11::writable::strings z(y);
-  // z[0] = -2;
-
-  // expect_true(z.data() != y.data());
-
-  // expect_true(raw_ELT(x, 0) == 1);
-  // expect_true(y[0] == -1);
-  // expect_true(z[0] == -2);
-
-  // z.push_back(6);
-  // expect_true(z[5] == 6);
-
-  // UNPROTECT(1);
-  //}
+    cpp11::sexp x4 = cpp11::writable::strings({NA_STRING, "text"});
+    expect_true(Rf_xlength(x4) == 2);
+    expect_true(STRING_ELT(x4, 0) == NA_STRING);
+    expect_true(strcmp(CHAR(STRING_ELT(x4, 1)), "text") == 0);
+  }
 }

@@ -17,6 +17,7 @@ class r_string {
   r_string(const std::string& data) : data_(safe[Rf_mkCharCE](data.c_str(), CE_UTF8)) {}
 
   operator SEXP() const { return data_; }
+  operator sexp() const { return data_; }
   operator std::string() const {
     std::string res;
     res.reserve(size());
@@ -46,17 +47,48 @@ class r_string {
   sexp data_ = R_NilValue;
 };  // namespace cpp11
 
-/* This will translate the r_string to UTF-8, but I think that is actually the
- * right thing to do */
 template <typename T>
 using is_convertible_to_cpp11_string =
     typename std::enable_if<std::is_convertible<T, cpp11::r_string>::value &&
                                 !std::is_convertible<T, const char*>::value,
                             T>::type;
 
+/* This will translate the r_string to UTF-8, but I think that is actually the
+ * right thing to do */
 template <typename T, is_convertible_to_cpp11_string<T>* = nullptr>
 inline SEXP as_sexp(T from) {
-  return as_sexp({static_cast<std::string>(from)});
+  r_string str(from);
+  sexp res;
+  unwind_protect([&] {
+    res = Rf_allocVector(STRSXP, 1);
+
+    if (str == NA_STRING) {
+      SET_STRING_ELT(res, 0, str);
+    } else {
+      SET_STRING_ELT(res, 0, Rf_mkCharCE(Rf_translateCharUTF8(str), CE_UTF8));
+    }
+  });
+
+  return res;
+}
+
+template <>
+inline SEXP as_sexp(std::initializer_list<r_string> il) {
+  R_xlen_t size = il.size();
+
+  sexp data;
+  unwind_protect([&] {
+    data = Rf_allocVector(STRSXP, size);
+    auto it = il.begin();
+    for (R_xlen_t i = 0; i < size; ++i, ++it) {
+      if (*it == NA_STRING) {
+        SET_STRING_ELT(data, i, *it);
+      } else {
+        SET_STRING_ELT(data, i, Rf_mkCharCE(Rf_translateCharUTF8(*it), CE_UTF8));
+      }
+    }
+  });
+  return data;
 }
 
 inline bool is_na(const r_string& x) { return x == NA_STRING; }
