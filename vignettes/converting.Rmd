@@ -61,6 +61,13 @@ If you want to modify the data you need to use the classes in the `cpp11::writab
 
 In addition use the `writable` variants if you need to create a new R vector entirely in C++.
 
+## Fewer implicit conversions
+
+Rcpp also allows very flexible implicit conversions, e.g. if you pass a `REALSXP` to a function that takes a `Rcpp::IntegerVector()` it is implicitly converted to a `INTSXP`.
+These conversions are nice for usability, but require (implicit) duplication of the data, with the associated runtime costs.
+
+cpp11 throws an error in these cases. If you want the implicit coercions you can add a call to `as.integer()` or `as.double()` as appropriate from R when you call the function.
+
 ## Calling R functions from C++
 
 Calling R functions from C++ is similar to using Rcpp.
