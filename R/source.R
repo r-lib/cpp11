@@ -111,14 +111,34 @@ generate_makevars <- function(includes) {
 #' @rdname cpp_source
 #' @export
 cpp_function <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE) {
-  cpp_source(code = paste(c('#include "cpp11.hpp"', "using namespace cpp11;", "namespace writable = cpp11::writable;", "[[cpp11::register]]", code), collapse = "\n"), env = env, clean = clean, quiet = quiet)
+  cpp_source(code = paste(c('#include "cpp11.hpp"',
+        "using namespace cpp11;",
+        "namespace writable = cpp11::writable;",
+        "[[cpp11::register]]",
+        code),
+      collapse = "\n"),
+    env = env,
+    clean = clean,
+    quiet = quiet
+  )
 }
 
 utils::globalVariables("f")
 
 #' @rdname cpp_source
 #' @export
-cpp_eval <- function(code) {
-  cpp_source(code = paste(c('#include "cpp11.hpp"', "using namespace cpp11;", "namespace writable = cpp11::writable;", "[[cpp11::register]]", "SEXP f() { return as_sexp(", code, ");", "}"), collapse = "\n"), env = environment())
+cpp_eval <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE) {
+  cpp_source(code = paste(c('#include "cpp11.hpp"',
+        "using namespace cpp11;",
+        "namespace writable = cpp11::writable;",
+        "[[cpp11::register]]",
+        "SEXP f() { return as_sexp(",
+        code,
+        ");",
+        "}"),
+      collapse = "\n"),
+    env = env,
+    clean = clean,
+    quiet = quiet)
   f()
 }

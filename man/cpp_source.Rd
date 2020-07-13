@@ -10,7 +10,7 @@ cpp_source(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE)
 
 cpp_function(code, env = parent.frame(), clean = TRUE, quiet = TRUE)
 
-cpp_eval(code)
+cpp_eval(code, env = parent.frame(), clean = TRUE, quiet = TRUE)
 }
 \arguments{
 \item{file}{A file containing C++ code to compile}
