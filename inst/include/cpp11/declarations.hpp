@@ -33,17 +33,20 @@ T& unmove(T&& t) {
   char buf[ERROR_SIZE] = "";             \
   cpp11::release_existing_protections(); \
   try {
-#define END_CPP11                           \
-  }                                         \
-  catch (cpp11::unwind_exception & e) {     \
-    err = e.token;                          \
-  }                                         \
-  catch (std::exception & e) {              \
-    strncpy(buf, e.what(), ERROR_SIZE - 1); \
-  }                                         \
-  if (buf[0] != '\0') {                     \
-    Rf_error("%s", buf);                    \
-  } else if (err != R_NilValue) {           \
-    CPP11_UNWIND                            \
-  }                                         \
+#define END_CPP11                                              \
+  }                                                            \
+  catch (cpp11::unwind_exception & e) {                        \
+    err = e.token;                                             \
+  }                                                            \
+  catch (std::exception & e) {                                 \
+    strncpy(buf, e.what(), ERROR_SIZE - 1);                    \
+  }                                                            \
+  catch (...) {                                                \
+    strncpy(buf, "C++ error (unknown cause)", ERROR_SIZE - 1); \
+  }                                                            \
+  if (buf[0] != '\0') {                                        \
+    Rf_error("%s", buf);                                       \
+  } else if (err != R_NilValue) {                              \
+    CPP11_UNWIND                                               \
+  }                                                            \
   return R_NilValue;
