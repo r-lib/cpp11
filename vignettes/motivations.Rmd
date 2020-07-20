@@ -451,13 +451,13 @@ library(ggplot2)
 ggplot(b_release, aes(x = len, y = min / len, color = pkg)) +
   geom_point() +
   geom_line() +
-  bench::scale_y_bench_time() +
-  scale_x_log10(
-    breaks = scales::trans_breaks("log10", function(x) 10^x),
-    labels = scales::trans_format("log10", scales::math_format(10^.x))
-  ) +
-  theme(panel.grid.minor = element_blank()) +
-  labs(title = "log-log plot number of objects vs time to create a release a single object", x = NULL, y = NULL)
+  bench::scale_y_bench_time(base = NULL) +
+  scale_x_continuous(labels = scales::comma)+
+  labs(
+    tite = "cpp11 uses constant time protection",
+    x = "Number of protected objects",
+    y = "Average time to release protection on one object"
+  )
 ```
 
 This plot shows the average time to protect and release a given object is essentially constant for cpp11.
