@@ -55,6 +55,10 @@ is_integral<T> as_cpp(SEXP from) {
         return value;
       }
     }
+  } else if (Rf_isLogical(from)) {
+    if (Rf_xlength(from) == 1) {
+      return LOGICAL_ELT(from, 0);
+    }
   }
 
   stop("Expected single integer value");
