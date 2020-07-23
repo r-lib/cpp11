@@ -111,19 +111,6 @@ inline void maybe_jump(void* unwind_data, Rboolean jump) {
   }
 }
 
-template <typename Fun>
-inline SEXP unwind_protect_unwrap_sexp(void* data) {
-  Fun* callback = (Fun*)data;
-  return (*callback)();
-}
-
-template <typename Fun>
-SEXP unwind_protect_unwrap_void(void* data) {
-  Fun* callback = (Fun*)data;
-  (*callback)();
-  return R_NilValue;
-}
-
 }  // namespace internal
 
 inline SEXP init_unwind_continuation() {
@@ -144,10 +131,13 @@ SEXP unwind_protect_sexp(Fun code) {
   if (setjmp(unwind_data.jmpbuf)) {
     throw unwind_exception(token);
   }
-  SEXP res = R_UnwindProtect(&internal::unwind_protect_unwrap_sexp<Fun>, &code,
-                             internal::maybe_jump, &unwind_data, token);
 
-  return res;
+  return R_UnwindProtect(
+      [](void* data) -> SEXP {
+        Fun* callback = (Fun*)data;
+        return (*callback)();
+      },
+      &code, internal::maybe_jump, &unwind_data, token);
 }
 
 template <typename Fun>
@@ -159,8 +149,12 @@ void unwind_protect(Fun code) {
     throw unwind_exception(token);
   }
 
-  R_UnwindProtect(&internal::unwind_protect_unwrap_void<Fun>, &code, internal::maybe_jump,
-                  &unwind_data, token);
+  (void)R_UnwindProtect(
+      [](void* data) -> SEXP {
+        Fun* callback = (Fun*)data;
+        return R_NilValue;
+      },
+      &code, internal::maybe_jump, &unwind_data, token);
 }
 #else
 // Don't do anything if we don't have unwind protect. This will leak C++ resources,
@@ -179,13 +173,23 @@ void unwind_protect(Fun code) {
 struct protect {
   template <typename F>
   struct function;
-  template <typename R, typename... A>
-  struct function<R(A...)> {
-    constexpr R operator()(A... a) const {
+
+  template <typename... A>
+  struct function<void(A...)> {
+    constexpr void operator()(A... a) const {
+      unwind_protect([&] { ptr_(a...); });
+    }
+    void (*ptr_)(A...);
+  };
+
+  template <typename... A>
+  struct function<SEXP(A...)> {
+    constexpr SEXP operator()(A... a) const {
       return unwind_protect_sexp([&] { return ptr_(a...); });
     }
-    R (*ptr_)(A...);
+    SEXP (*ptr_)(A...);
   };
+
   template <typename R, typename... A>
   constexpr function<R(A...)> operator[](R (&raw)(A...)) const {
     return {&raw};
@@ -193,28 +197,26 @@ struct protect {
 };
 constexpr struct protect safe = {};
 
-inline void check_user_interrupt() {
-  unwind_protect([&] { R_CheckUserInterrupt(); });
-}
+inline void check_user_interrupt() { safe[R_CheckUserInterrupt](); }
 
 template <typename... Args>
 void stop(const char* fmt, Args... args) {
-  unwind_protect([&] { Rf_error(fmt, args...); });
+  safe[Rf_error](fmt, args...);
 }
 
 template <typename... Args>
 void stop(const std::string& fmt, Args... args) {
-  unwind_protect([&] { Rf_error(fmt.c_str(), args...); });
+  safe[Rf_error](fmt.c_str(), args...);
 }
 
 template <typename... Args>
 void warning(const char* fmt, Args... args) {
-  unwind_protect([&] { Rf_warning(fmt, args...); });
+  safe[Rf_warning](fmt, args...);
 }
 
 template <typename... Args>
 void warning(const std::string& fmt, Args... args) {
-  unwind_protect([&] { Rf_warning(fmt.c_str(), args...); });
+  safe[Rf_warning](fmt.c_str(), args...);
 }
 
 }  // namespace cpp11
