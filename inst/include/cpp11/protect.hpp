@@ -198,13 +198,15 @@ inline void check_user_interrupt() {
 }
 
 template <typename... Args>
-void stop(const char* fmt, Args... args) {
+void stop [[noreturn]](const char* fmt, Args... args) {
   unwind_protect([&] { Rf_error(fmt, args...); });
+  throw;
 }
 
 template <typename... Args>
-void stop(const std::string& fmt, Args... args) {
+void stop [[noreturn]](const std::string& fmt, Args... args) {
   unwind_protect([&] { Rf_error(fmt.c_str(), args...); });
+  throw;
 }
 
 template <typename... Args>
