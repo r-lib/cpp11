@@ -18,7 +18,7 @@ using is_constructible_from_sexp =
 
 template <typename T>
 is_constructible_from_sexp<T> as_cpp(SEXP from) {
-  return from;
+  return T(from);
 }
 
 template <typename T>
