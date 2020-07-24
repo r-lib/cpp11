@@ -51,7 +51,8 @@ typedef r_vector<int> integers;
 namespace writable {
 
 template <>
-inline typename r_vector<int>::proxy& r_vector<int>::proxy::operator=(const int& rhs) {
+template <>
+inline typename r_vector<int>::proxy& r_vector<int>::proxy::operator=<int>(const int& rhs) {
   if (is_altrep_) {
     // NOPROTECT: likely too costly to unwind protect every set elt
     SET_INTEGER_ELT(data_, index_, rhs);
