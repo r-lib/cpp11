@@ -16,6 +16,9 @@ class r_string {
   r_string(const char* data) : data_(safe[Rf_mkCharCE](data, CE_UTF8)) {}
   r_string(const std::string& data) : data_(safe[Rf_mkCharCE](data.c_str(), CE_UTF8)) {}
 
+  template <int N>
+  r_string(char data [N]) : data_(safe[Rf_mkCharLenCE](data, N, CE_UTF8)) {}
+
   operator SEXP() const { return data_; }
   operator sexp() const { return data_; }
   operator std::string() const {
