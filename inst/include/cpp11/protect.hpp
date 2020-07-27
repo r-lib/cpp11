@@ -140,7 +140,14 @@ SEXP unwind_protect_sexp(Fun code) {
       &code, internal::maybe_jump, &unwind_data, token);
 }
 
-template <typename Fun>
+template <typename Fun, typename = typename std::enable_if<
+                            std::is_same<decltype(code()), SEXP>::value>::type>
+SEXP unwind_protect(Fun code) {
+  return unwind_protect_sexp(code);
+}
+
+template <typename Fun, typename = typename std::enable_if<
+                            std::is_same<decltype(code()), void>::value>::type>
 void unwind_protect(Fun code) {
   static SEXP token = init_unwind_continuation();
   internal::unwind_data_t unwind_data;
@@ -152,6 +159,7 @@ void unwind_protect(Fun code) {
   (void)R_UnwindProtect(
       [](void* data) -> SEXP {
         Fun* callback = (Fun*)data;
+        (*callback)();
         return R_NilValue;
       },
       &code, internal::maybe_jump, &unwind_data, token);
@@ -164,6 +172,12 @@ SEXP unwind_protect_sexp(Fun code) {
   return code();
 }
 
+template <typename Fun, typename = typename std::enable_if<
+                            std::is_same<decltype(code()), SEXP>::value>::type>
+SEXP unwind_protect(Fun code) {
+  return unwind_protect_sexp(code);
+}
+
 template <typename Fun>
 void unwind_protect(Fun code) {
   code();
@@ -172,26 +186,16 @@ void unwind_protect(Fun code) {
 
 struct protect {
   template <typename F>
-  struct function;
-
-  template <typename... A>
-  struct function<void(A...)> {
-    constexpr void operator()(A... a) const {
-      unwind_protect([&] { ptr_(a...); });
+  struct function {
+    template <typename... A>
+    auto operator()(A... a) const -> decltype(ptr_(a...)) {
+      return unwind_protect([&] { ptr_(a...); });
     }
-    void (*ptr_)(A...);
+    F* ptr_;
   };
 
-  template <typename... A>
-  struct function<SEXP(A...)> {
-    constexpr SEXP operator()(A... a) const {
-      return unwind_protect_sexp([&] { return ptr_(a...); });
-    }
-    SEXP (*ptr_)(A...);
-  };
-
-  template <typename R, typename... A>
-  constexpr function<R(A...)> operator[](R (&raw)(A...)) const {
+  template <typename F>
+  function<F> operator[](F* raw) const {
     return {&raw};
   }
 };
