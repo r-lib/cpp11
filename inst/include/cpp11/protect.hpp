@@ -140,14 +140,14 @@ SEXP unwind_protect_sexp(Fun code) {
       &code, internal::maybe_jump, &unwind_data, token);
 }
 
-template <typename Fun, typename = typename std::enable_if<
-                            std::is_same<decltype(code()), SEXP>::value>::type>
+template <typename Fun, typename = typename std::enable_if<std::is_same<
+                            decltype(std::declval<Fun>()()), SEXP>::value>::type>
 SEXP unwind_protect(Fun code) {
   return unwind_protect_sexp(code);
 }
 
-template <typename Fun, typename = typename std::enable_if<
-                            std::is_same<decltype(code()), void>::value>::type>
+template <typename Fun, typename = typename std::enable_if<std::is_same<
+                            decltype(std::declval<Fun>()()), void>::value>::type>
 void unwind_protect(Fun code) {
   static SEXP token = init_unwind_continuation();
   internal::unwind_data_t unwind_data;
@@ -189,14 +189,14 @@ struct protect {
   struct function {
     template <typename... A>
     auto operator()(A... a) const -> decltype(std::declval<F*>()(a...)) {
-      return unwind_protect([&] { ptr_(a...); });
+      return unwind_protect([&] { return ptr_(a...); });
     }
     F* ptr_;
   };
 
   template <typename F>
-  function<F> operator[](F* raw) const {
-    return {&raw};
+  constexpr function<F> operator[](F* raw) const {
+    return {raw};
   }
 };
 constexpr struct protect safe = {};
