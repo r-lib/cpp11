@@ -188,7 +188,7 @@ struct protect {
   template <typename F>
   struct function {
     template <typename... A>
-    auto operator()(A... a) const -> decltype(ptr_(a...)) {
+    auto operator()(A... a) const -> decltype(std::declval<F*>()(a...)) {
       return unwind_protect([&] { ptr_(a...); });
     }
     F* ptr_;
