@@ -200,13 +200,13 @@ inline void check_user_interrupt() {
 template <typename... Args>
 void stop [[noreturn]](const char* fmt, Args... args) {
   unwind_protect([&] { Rf_error(fmt, args...); });
-  throw;
+  throw std::runtime_error("stop()");
 }
 
 template <typename... Args>
 void stop [[noreturn]](const std::string& fmt, Args... args) {
   unwind_protect([&] { Rf_error(fmt.c_str(), args...); });
-  throw;
+  throw std::runtime_error("stop()");
 }
 
 template <typename... Args>
