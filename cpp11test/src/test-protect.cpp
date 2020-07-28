@@ -4,7 +4,7 @@
 #ifdef HAS_UNWIND_PROTECT
 context("unwind_protect-C++") {
   test_that("unwind_protect works if there is no error") {
-    SEXP out = PROTECT(cpp11::unwind_protect_sexp([&] {
+    SEXP out = PROTECT(cpp11::unwind_protect([&] {
       out = PROTECT(Rf_allocVector(REALSXP, 1));
       REAL(out)[0] = 1;
       UNPROTECT(1);
@@ -18,7 +18,7 @@ context("unwind_protect-C++") {
   }
   test_that("unwind_protect throws a C++ exception if there is an R error") {
     SEXP out;
-    expect_error_as(cpp11::unwind_protect_sexp([&] {
+    expect_error_as(cpp11::unwind_protect([&] {
                       out = PROTECT(Rf_allocVector(REALSXP, -1));
                       REAL(out)[0] = 1;
                       UNPROTECT(1);

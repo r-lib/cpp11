@@ -119,12 +119,12 @@ inline SEXP init_unwind_continuation() {
   return res;
 }
 
-/// Unwind Protection from C longjmp's, like those used in R error
-/// handling
-/// @param Fun A lamdba function
-/// @param code The code to which needs to be protected
-template <typename Fun>
-SEXP unwind_protect_sexp(Fun code) {
+/// Unwind Protection from C longjmp's, like those used in R error handling
+///
+/// @param code The code to which needs to be protected, as a nullary callable
+template <typename Fun, typename = typename std::enable_if<std::is_same<
+                            decltype(std::declval<Fun>()()), SEXP>::value>::type>
+SEXP unwind_protect(Fun code) {
   static SEXP token = init_unwind_continuation();
   internal::unwind_data_t unwind_data;
 
@@ -138,12 +138,6 @@ SEXP unwind_protect_sexp(Fun code) {
         return (*callback)();
       },
       &code, internal::maybe_jump, &unwind_data, token);
-}
-
-template <typename Fun, typename = typename std::enable_if<std::is_same<
-                            decltype(std::declval<Fun>()()), SEXP>::value>::type>
-SEXP unwind_protect(Fun code) {
-  return unwind_protect_sexp(code);
 }
 
 template <typename Fun, typename = typename std::enable_if<std::is_same<
@@ -167,15 +161,10 @@ void unwind_protect(Fun code) {
 #else
 // Don't do anything if we don't have unwind protect. This will leak C++ resources,
 // including those held by cpp11 objects, but the other alternatives are also not great.
-template <typename Fun>
-SEXP unwind_protect_sexp(Fun code) {
-  return code();
-}
-
 template <typename Fun, typename = typename std::enable_if<std::is_same<
                             decltype(std::declval<Fun>()()), SEXP>::value>::type>
 SEXP unwind_protect(Fun code) {
-  return unwind_protect_sexp(code);
+  return code();
 }
 
 template <typename Fun, typename = typename std::enable_if<std::is_same<
