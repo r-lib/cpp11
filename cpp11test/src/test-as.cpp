@@ -55,6 +55,26 @@ context("as_cpp-C++") {
     UNPROTECT(1);
   }
 
+  test_that("as_cpp<integer>(NA)") {
+    SEXP r = PROTECT(Rf_allocVector(REALSXP, 1));
+    SEXP i = PROTECT(Rf_allocVector(INTSXP, 1));
+    SEXP l = PROTECT(Rf_allocVector(LGLSXP, 1));
+    REAL(r)[0] = NA_REAL;
+    INTEGER(i)[0] = NA_INTEGER;
+    LOGICAL(l)[0] = NA_LOGICAL;
+
+    auto x1 = cpp11::as_cpp<int>(r);
+    expect_true(x1 == NA_INTEGER);
+
+    auto x2 = cpp11::as_cpp<int>(i);
+    expect_true(x2 == NA_INTEGER);
+
+    auto x3 = cpp11::as_cpp<int>(l);
+    expect_true(x3 == NA_INTEGER);
+
+    UNPROTECT(3);
+  }
+
   test_that("as_cpp<double>(REALSXP)") {
     SEXP r = PROTECT(Rf_allocVector(REALSXP, 1));
     REAL(r)[0] = 1.2;
@@ -83,6 +103,26 @@ context("as_cpp-C++") {
     expect_true(x3 == 1.);
 
     UNPROTECT(1);
+  }
+
+  test_that("as_cpp<double>(NA)") {
+    SEXP r = PROTECT(Rf_allocVector(REALSXP, 1));
+    SEXP i = PROTECT(Rf_allocVector(INTSXP, 1));
+    SEXP l = PROTECT(Rf_allocVector(LGLSXP, 1));
+    REAL(r)[0] = NA_REAL;
+    INTEGER(i)[0] = NA_INTEGER;
+    LOGICAL(l)[0] = NA_LOGICAL;
+
+    auto x1 = cpp11::as_cpp<double>(r);
+    expect_true(ISNA(x1));
+
+    auto x2 = cpp11::as_cpp<double>(i);
+    expect_true(ISNA(x2));
+
+    auto x3 = cpp11::as_cpp<double>(l);
+    expect_true(ISNA(x3));
+
+    UNPROTECT(3);
   }
 
   test_that("as_cpp<bool>()") {
@@ -382,7 +422,8 @@ context("as_cpp-C++") {
   }
 
   test_that("as_sexp(r_vector<cpp11::r_string>)") {
-    SEXP s1 = PROTECT(cpp11::as_sexp(std::vector<cpp11::r_string>({"foo", "bar", "baz"})));
+    SEXP s1 =
+        PROTECT(cpp11::as_sexp(std::vector<cpp11::r_string>({"foo", "bar", "baz"})));
 
     expect_true(Rf_isString(s1));
     expect_true(Rf_xlength(s1) == 3);

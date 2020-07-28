@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* `cpp11::as_cpp<int>()` and `cpp11::as_cpp<double>()` now implicitly coerce between all 3 types of single NA values (#53).
+
 * The `END_CPP` macro now includes a `catch(...)` block to catch all C++ exceptions that do not inherit from `std::exception` (#47).
 
 * Improve consistency of inserting NA values in r_string objects (#45)
