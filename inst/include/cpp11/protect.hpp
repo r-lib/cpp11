@@ -200,6 +200,7 @@ inline void check_user_interrupt() {
 template <typename... Args>
 void stop [[noreturn]](const char* fmt, Args... args) {
   unwind_protect([&] { Rf_error(fmt, args...); });
+  // Compiler hint to allow [[noreturn]] attribute; this is never executed since Rf_error will longjmp
   throw std::runtime_error("stop()");
 }
 
