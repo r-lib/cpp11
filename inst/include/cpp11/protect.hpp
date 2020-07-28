@@ -9,6 +9,7 @@
 #include "R_ext/Print.h"  // for REprintf
 #include "R_ext/Utils.h"  // for R_CheckUserInterrupt
 #include "Rversion.h"     // for R_VERSION, R_Version
+#include <stdexcept>      // for std::runtime_error
 
 #if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
 #define HAS_UNWIND_PROTECT
@@ -194,13 +195,17 @@ constexpr struct protect safe = {};
 inline void check_user_interrupt() { safe[R_CheckUserInterrupt](); }
 
 template <typename... Args>
-void stop(const char* fmt, Args... args) {
-  safe[Rf_error](fmt, args...);
+void stop [[noreturn]](const char* fmt, Args... args) {
+  unwind_protect([&] { Rf_error(fmt, args...); });
+  // Compiler hint to allow [[noreturn]] attribute; this is never executed since Rf_error will longjmp
+  throw std::runtime_error("stop()");
 }
 
 template <typename... Args>
-void stop(const std::string& fmt, Args... args) {
-  safe[Rf_error](fmt.c_str(), args...);
+void stop [[noreturn]](const std::string& fmt, Args... args) {
+  unwind_protect([&] { Rf_error(fmt.c_str(), args...); });
+  // Compiler hint to allow [[noreturn]] attribute; this is never executed since Rf_error will longjmp
+  throw std::runtime_error("stop()");
 }
 
 template <typename... Args>
