@@ -1,4 +1,5 @@
 #include <testthat.h>
+#include <cstring>
 #include "cpp11/sexp.hpp"
 #include "cpp11/strings.hpp"
 
