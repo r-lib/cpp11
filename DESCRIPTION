@@ -10,6 +10,9 @@ Authors@R:
       person(given = "Romain",
              family = "François",
              role = "ctb"),
+      person(given = "Benjamin",
+             family = "Kietzman",
+             role = "ctb"),
       person(given = "RStudio",
              role = c("cph", "fnd")))
 Description: Provides a header only, C++11 interface to R's C
