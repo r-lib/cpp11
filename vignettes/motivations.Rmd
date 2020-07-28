@@ -225,7 +225,7 @@ One example of the use of altrep is the `:` operator.
 Prior to R 3.5 `:` generated a full vector for the entire sequence. e.g. `1:1000` would require 1000 individual values.
 As of R 3.5 this sequence is instead represented by an ALTREP vector, so *none* of the values actually exist in memory.
 Instead each time R access a particular value in the sequence that value is computed on-the-fly.
-This safes memory and excution time, and allows users to use sequences which
+This saves memory and excution time, and allows users to use sequences which
 would otherwise be too big to fit in memory.
 
 ```{r, R.options = list(max.print = 20)}
