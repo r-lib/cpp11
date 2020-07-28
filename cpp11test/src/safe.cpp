@@ -12,7 +12,7 @@
     // Rf_error("R error"); // This will not call dtors
     // throw std::runtime_error("C++ error");
     // cpp11::unwind_protect([&]() { Rf_error("R error"); });
-    SEXP out = cpp11::unwind_protect_sexp([&]() { return Rf_allocVector(REALSXP, 1); });
+    SEXP out = cpp11::unwind_protect([&] { return Rf_allocVector(REALSXP, 1); });
 
     return out;
   }
