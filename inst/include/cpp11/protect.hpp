@@ -172,13 +172,14 @@ SEXP unwind_protect_sexp(Fun code) {
   return code();
 }
 
-template <typename Fun, typename = typename std::enable_if<
-                            std::is_same<decltype(code()), SEXP>::value>::type>
+template <typename Fun, typename = typename std::enable_if<std::is_same<
+                            decltype(std::declval<Fun>()()), SEXP>::value>::type>
 SEXP unwind_protect(Fun code) {
   return unwind_protect_sexp(code);
 }
 
-template <typename Fun>
+template <typename Fun, typename = typename std::enable_if<std::is_same<
+                            decltype(std::declval<Fun>()()), void>::value>::type>
 void unwind_protect(Fun code) {
   code();
 }
