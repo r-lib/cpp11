@@ -7,6 +7,9 @@ Authors@R:
              role = c("aut", "cre"),
              email = "jim.hester@rstudio.com",
              comment = c(ORCID = "0000-0002-2739-7082")),
+      person(given = "Romain",
+             family = "François",
+             role = "ctb"),
       person(given = "RStudio",
              role = c("cph", "fnd")))
 Description: Provides a header only, C++11 interface to R's C interface.
