@@ -18,7 +18,7 @@ using is_constructible_from_sexp =
 
 template <typename T>
 is_constructible_from_sexp<T> as_cpp(SEXP from) {
-  return from;
+  return T(from);
 }
 
 template <typename T>
@@ -50,9 +50,18 @@ is_integral<T> as_cpp(SEXP from) {
     }
   } else if (Rf_isReal(from)) {
     if (Rf_xlength(from) == 1) {
+      if (ISNA(REAL_ELT(from, 0))) {
+        return NA_INTEGER;
+      }
       double value = REAL_ELT(from, 0);
       if (is_convertable_without_loss_to_integer(value)) {
         return value;
+      }
+    }
+  } else if (Rf_isLogical(from)) {
+    if (Rf_xlength(from) == 1) {
+      if (LOGICAL_ELT(from, 0) == NA_LOGICAL) {
+        return NA_INTEGER;
       }
     }
   }
@@ -90,12 +99,25 @@ is_floating_point_value<T> as_cpp(SEXP from) {
       return REAL_ELT(from, 0);
     }
   }
-  // All integers can be coerced to doubles, so we just convert them.
+  // All 32 bit integers can be coerced to doubles, so we just convert them.
   if (Rf_isInteger(from)) {
     if (Rf_xlength(from) == 1) {
+      if (INTEGER_ELT(from, 0) == NA_INTEGER) {
+        return NA_REAL;
+      }
       return INTEGER_ELT(from, 0);
     }
   }
+
+  // Also allow NA values
+  if (Rf_isLogical(from)) {
+    if (Rf_xlength(from) == 1) {
+      if (LOGICAL_ELT(from, 0) == NA_LOGICAL) {
+        return NA_REAL;
+      }
+    }
+  }
+
   stop("Expected single double value");
 
   return T();

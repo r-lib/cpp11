@@ -49,7 +49,8 @@ typedef r_vector<r_string> strings;
 namespace writable {
 
 template <>
-inline typename r_vector<r_string>::proxy& r_vector<r_string>::proxy::operator=(
+template <>
+inline typename r_vector<r_string>::proxy& r_vector<r_string>::proxy::operator=<r_string>(
     const r_string& rhs) {
   unwind_protect([&] { SET_STRING_ELT(data_, index_, rhs); });
   return *this;

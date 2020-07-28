@@ -7,40 +7,47 @@ Authors@R:
              role = c("aut", "cre"),
              email = "jim.hester@rstudio.com",
              comment = c(ORCID = "0000-0002-2739-7082")),
+      person(given = "Romain",
+             family = "François",
+             role = "ctb"),
+      person(given = "Benjamin",
+             family = "Kietzman",
+             role = "ctb"),
       person(given = "RStudio",
              role = c("cph", "fnd")))
-Description: Provides a header only, C++11 interface to R's C interface.
-  Compared to other approaches 'cpp11' strives to be safe against long jumps
-  from the C API as well as C++ exceptions, conform to normal R function
-  semantics and supports interaction with 'ALTREP' vectors.
+Description: Provides a header only, C++11 interface to R's C
+    interface.  Compared to other approaches 'cpp11' strives to be safe
+    against long jumps from the C API as well as C++ exceptions, conform
+    to normal R function semantics and supports interaction with 'ALTREP'
+    vectors.
 License: MIT + file LICENSE
-Encoding: UTF-8
-LazyData: true
-Roxygen: list(markdown = TRUE)
-SystemRequirements: C++11
-RoxygenNote: 7.1.1
+URL: https://github.com/r-lib/cpp11
+BugReports: https://github.com/r-lib/cpp11/issues
 Suggests:
     bench,
     brio,
-    cli,
     callr,
+    cli,
     covr,
     decor,
     desc,
-    glue,
     ggplot2,
+    glue,
     knitr,
     lobstr,
     mockery,
+    rmarkdown,
     scales,
     testthat,
     tibble,
     utils,
     vctrs,
-    withr,
-    xml2,
-    rmarkdown
-VignetteBuilder: knitr
-URL: https://github.com/r-lib/cpp11
-BugReports: https://github.com/r-lib/cpp11/issues
+    withr
+VignetteBuilder: 
+    knitr
 Config/testthat/edition: 3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+SystemRequirements: C++11

@@ -50,12 +50,18 @@ inline void r_vector<SEXP>::const_iterator::fill_buf(R_xlen_t) {
   return;
 }
 
+template <>
+inline SEXP r_vector<SEXP>::const_iterator::operator*() {
+  return VECTOR_ELT(data_->data(), pos_);
+}
+
 typedef r_vector<SEXP> list;
 
 namespace writable {
 
 template <>
-inline typename r_vector<SEXP>::proxy& r_vector<SEXP>::proxy::operator=(const SEXP& rhs) {
+template <>
+inline typename r_vector<SEXP>::proxy& r_vector<SEXP>::proxy::operator=<SEXP>(const SEXP& rhs) {
   SET_VECTOR_ELT(data_, index_, rhs);
   return *this;
 }

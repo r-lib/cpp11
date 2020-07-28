@@ -57,4 +57,13 @@ context("list-C++") {
 
     expect_true(Rf_inherits(x, "data.frame"));
   }
+
+  test_that("list::iterator uses VECTOR_ELT") {
+    cpp11::writable::list x({
+      cpp11::writable::integers({1, 2})
+    });
+    cpp11::integers first(*x.begin());
+    expect_true(first[0] == 1);
+    expect_true(first[1] == 2);
+  }
 }

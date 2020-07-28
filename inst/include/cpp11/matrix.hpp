@@ -105,4 +105,4 @@ using strings_matrix = matrix<r_vector<r_string>, r_vector<r_string>::proxy>;
 }  // namespace writable
 
 // TODO: Add tests for Matrix class
-};  // namespace cpp11
+}  // namespace cpp11
