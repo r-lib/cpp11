@@ -48,8 +48,7 @@ typedef r_vector<Rboolean> logicals;
 namespace writable {
 
 template <>
-template <>
-inline typename r_vector<Rboolean>::proxy& r_vector<Rboolean>::proxy::operator=<Rboolean>(
+inline typename r_vector<Rboolean>::proxy& r_vector<Rboolean>::proxy::operator=(
     const Rboolean& rhs) {
   if (is_altrep_) {
     SET_LOGICAL_ELT(data_, index_, rhs);
@@ -57,13 +56,6 @@ inline typename r_vector<Rboolean>::proxy& r_vector<Rboolean>::proxy::operator=<
     *p_ = rhs;
   }
   return *this;
-}
-
-template <>
-template <>
-inline typename r_vector<Rboolean>::proxy& r_vector<Rboolean>::proxy::operator=<bool>(
-  const bool& rhs) {
-  return operator=(rhs ? TRUE : FALSE);
 }
 
 template <>

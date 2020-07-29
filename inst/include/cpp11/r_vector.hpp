@@ -223,8 +223,7 @@ class r_vector : public cpp11::r_vector<T> {
    public:
     proxy(SEXP data, const R_xlen_t index, T* const p, bool is_altrep);
 
-    template <typename U>
-    proxy& operator=(const U& rhs);
+    proxy& operator=(const T& rhs);
     proxy& operator+=(const T& rhs);
     proxy& operator-=(const T& rhs);
     proxy& operator*=(const T& rhs);

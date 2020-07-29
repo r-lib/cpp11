@@ -52,8 +52,7 @@ typedef r_vector<uint8_t> raws;
 namespace writable {
 
 template <>
-template <>
-inline typename r_vector<uint8_t>::proxy& r_vector<uint8_t>::proxy::operator=<uint8_t>(
+inline typename r_vector<uint8_t>::proxy& r_vector<uint8_t>::proxy::operator=(
     const uint8_t& rhs) {
   if (is_altrep_) {
     // NOPROTECT: likely too costly to unwind protect every set elt
