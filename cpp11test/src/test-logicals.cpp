@@ -126,14 +126,6 @@ context("logicals-C++") {
 
     UNPROTECT(1);
   }
-  test_that("writable::logicals::proxy::operator=(bool)") {
-    cpp11::writable::logicals y(2);
-
-    y[0] = false;
-    y[1] = true;
-    expect_true(y[0] == TRUE);
-    expect_true(y[1] == FALSE);
-  }
   test_that("is_na(Rboolean)") {
     Rboolean x = TRUE;
     expect_true(!cpp11::is_na(x));
