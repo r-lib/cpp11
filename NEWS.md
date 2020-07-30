@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* `as_cpp<E>()` now allows enumeration `E` (#52, @bkietz)
+
 * `writable::logicals::operator=()` now allows C++ boolean values (#57, @romainfrancois)
 
 * `list::const_iterator::operator*()` added so iterators could be used on list objects (#60, @romainfrancois)
