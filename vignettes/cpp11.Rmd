@@ -864,6 +864,7 @@ logicals duplicated_cpp(integers x) {
 }
 ```
 
+<!--- TODO: Add `as_sexp()` support for maps
 ### Map
 
 A map is similar to a set, but instead of storing presence or absence, it can store additional data.
@@ -887,6 +888,7 @@ SEXP table_cpp(doubles x) {
   return as_sexp(counts);
 }
 ```
+!-->
 
 ### Exercises
 
