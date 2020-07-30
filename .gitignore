@@ -4,6 +4,8 @@ README.html
 .clangd/
 cpp11test/compile_commands.json
 cpp11test/src/Makevars
+cpp11test/src/*.o
+cpp11test/src/*.so
 compile_flags.txt
 inst/doc
 vignettes/*_cache

@@ -71,6 +71,18 @@ is_integral<T> as_cpp(SEXP from) {
   return T();
 }
 
+template <typename E>
+using is_enum = typename std::enable_if<std::is_enum<E>::value, E>::type;
+
+template <typename E>
+is_enum<E> as_cpp(SEXP from) {
+  if (Rf_isInteger(from)) {
+    return static_cast<E>(as_cpp<typename std::underlying_type<E>::type>(from));
+  }
+
+  stop("Expected single integer value");
+}
+
 template <typename T>
 using is_logical =
     typename std::enable_if<std::is_same<typename std::decay<T>::type, bool>::value,
