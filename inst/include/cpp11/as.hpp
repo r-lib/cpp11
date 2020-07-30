@@ -80,7 +80,7 @@ is_enum<E> as_cpp(SEXP from) {
     return static_cast<E>(as_cpp<typename std::underlying_type<E>::type>(from));
   }
 
-  stop("Expected single logical value");
+  stop("Expected single integer value");
 }
 
 template <typename T>
