@@ -143,7 +143,7 @@ template <typename T>
 is_char<T> as_cpp(SEXP from) {
   if (Rf_isString(from)) {
     if (Rf_xlength(from) == 1) {
-      return unwind_protect([&] { Rf_translateCharUTF8(STRING_ELT(from, 0))[0]; });
+      return unwind_protect([&] { return Rf_translateCharUTF8(STRING_ELT(from, 0))[0]; });
     }
   }
   stop("Expected string vector of length 1");
