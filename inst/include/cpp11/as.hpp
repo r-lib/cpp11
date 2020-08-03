@@ -143,14 +143,10 @@ template <typename T>
 is_char<T> as_cpp(SEXP from) {
   if (Rf_isString(from)) {
     if (Rf_xlength(from) == 1) {
-      const char* c_p = nullptr;
-      unwind_protect([&] { c_p = Rf_translateCharUTF8(STRING_ELT(from, 0)); });
-      return c_p[0];
+      return unwind_protect([&] { Rf_translateCharUTF8(STRING_ELT(from, 0))[0]; });
     }
   }
   stop("Expected string vector of length 1");
-
-  return T();
 }
 
 template <typename T>
@@ -163,31 +159,26 @@ template <typename T>
 is_constructible_from_const_char<T> as_cpp(SEXP from) {
   if (Rf_isString(from)) {
     if (Rf_xlength(from) == 1) {
-      const char* c_p = nullptr;
       // TODO: use vmaxget / vmaxset here?
-      unwind_protect([&] { c_p = Rf_translateCharUTF8(STRING_ELT(from, 0)); });
-      return {c_p};
+      return {unwind_protect([&] { return Rf_translateCharUTF8(STRING_ELT(from, 0)); })};
     }
   }
   stop("Expected string vector of length 1");
-
-  return T(nullptr);
 }
 
 template <typename T, is_integral<T>* = nullptr>
-inline SEXP as_sexp(T from) {
+SEXP as_sexp(T from) {
   return safe[Rf_ScalarInteger](from);
 }
 
 template <typename T, is_floating_point_value<T>* = nullptr>
-inline SEXP as_sexp(T from) {
+SEXP as_sexp(T from) {
   return safe[Rf_ScalarReal](from);
 }
 
 inline SEXP as_sexp(const std::string& from) {
-  SEXP res;
-  unwind_protect([&] { res = Rf_ScalarString(Rf_mkCharCE(from.c_str(), CE_UTF8)); });
-  return res;
+  return unwind_protect(
+      [&] { return Rf_ScalarString(Rf_mkCharCE(from.c_str(), CE_UTF8)); });
 }
 
 template <typename T>

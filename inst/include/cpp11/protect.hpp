@@ -4,12 +4,12 @@
 
 #include <csetjmp>        // for longjmp, setjmp, jmp_buf
 #include <exception>      // for exception
+#include <stdexcept>      // for std::runtime_error
 #include <string>         // for string, basic_string
 #include "R_ext/Error.h"  // for Rf_error, Rf_warning
 #include "R_ext/Print.h"  // for REprintf
 #include "R_ext/Utils.h"  // for R_CheckUserInterrupt
 #include "Rversion.h"     // for R_VERSION, R_Version
-#include <stdexcept>      // for std::runtime_error
 
 #if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
 #define HAS_UNWIND_PROTECT
@@ -175,6 +175,15 @@ void unwind_protect(Fun code) {
 }
 #endif
 
+template <typename Fun, typename R = decltype(std::declval<Fun>()())>
+typename std::enable_if<!std::is_same<R, SEXP>::value && !std::is_same<R, void>::value,
+                        R>::type
+unwind_protect(Fun code) {
+  R out;
+  unwind_protect([&] { out = code(); });
+  return out;
+}
+
 struct protect {
   template <typename F>
   struct function {
@@ -195,16 +204,18 @@ constexpr struct protect safe = {};
 inline void check_user_interrupt() { safe[R_CheckUserInterrupt](); }
 
 template <typename... Args>
-void stop [[noreturn]](const char* fmt, Args... args) {
+void stop [[noreturn]] (const char* fmt, Args... args) {
   unwind_protect([&] { Rf_error(fmt, args...); });
-  // Compiler hint to allow [[noreturn]] attribute; this is never executed since Rf_error will longjmp
+  // Compiler hint to allow [[noreturn]] attribute; this is never executed since Rf_error
+  // will longjmp
   throw std::runtime_error("stop()");
 }
 
 template <typename... Args>
-void stop [[noreturn]](const std::string& fmt, Args... args) {
+void stop [[noreturn]] (const std::string& fmt, Args... args) {
   unwind_protect([&] { Rf_error(fmt.c_str(), args...); });
-  // Compiler hint to allow [[noreturn]] attribute; this is never executed since Rf_error will longjmp
+  // Compiler hint to allow [[noreturn]] attribute; this is never executed since Rf_error
+  // will longjmp
   throw std::runtime_error("stop()");
 }
 
