@@ -197,20 +197,20 @@ template <>
 struct make_index_sequence<0> : index_sequence<> {};
 
 template <typename F, typename... A, size_t... I>
-auto apply(F&& f, std::tuple<A...> a, const index_sequence<I...>&)
-    -> decltype(f(static_cast<A&&>(std::get<I>(a))...)) {
-  return f(static_cast<A&&>(std::get<I>(a))...);
+auto apply(F&& f, std::tuple<A...>&& a, const index_sequence<I...>&)
+    -> decltype(f(std::get<I>(std::move(a))...)) {
+  return f(std::get<I>(std::move(a))...);
 }
 
 template <typename F, typename... A>
-auto apply(F&& f, std::tuple<A...> a)
+auto apply(F&& f, std::tuple<A...>&& a)
     -> decltype(apply(f, std::move(a), make_index_sequence<sizeof...(A)>{})) {
   return apply(f, std::move(a), make_index_sequence<sizeof...(A)>{});
 }
 
 // overload to silence a compiler warning that the tuple parameter is set but unused
 template <typename F>
-auto apply(F&& f, std::tuple<>) -> decltype(f()) {
+auto apply(F&& f, std::tuple<> &&) -> decltype(f()) {
   return f();
 }
 
@@ -225,7 +225,8 @@ struct protect {
                                   std::forward_as_tuple(std::forward<A>(a)...))) {
       // workaround to support gcc4.8, which can't capture a parameter pack
       auto a_packed_refs = std::forward_as_tuple(std::forward<A>(a)...);
-      return unwind_protect([&] { return detail::apply(ptr_, a_packed_refs); });
+      return unwind_protect(
+          [&] { return detail::apply(ptr_, std::move(a_packed_refs)); });
     }
     F* ptr_;
   };
