@@ -24,7 +24,7 @@ inline SEXP r_vector<uint8_t>::valid_type(SEXP data) {
 }
 
 template <>
-inline const uint8_t r_vector<uint8_t>::operator[](const R_xlen_t pos) const {
+inline uint8_t r_vector<uint8_t>::operator[](const R_xlen_t pos) const {
   // NOPROTECT: likely too costly to unwind protect every elt
   return is_altrep_ ? RAW_ELT(data_, pos) : data_p_[pos];
 }
