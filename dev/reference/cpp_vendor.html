@@ -128,7 +128,7 @@ project is using. It is often used in the go language community." />
 project is using. It is often used in the go language community.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cpp_vendor</span>(path = <span class='st'>"."</span>)</pre>
+    <pre class="usage"><span class='fu'>cpp_vendor</span>(<span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"."</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -155,13 +155,13 @@ code until you run <code>vector_cpp11()</code> again.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># create a new directory</span>
-<span class='kw'>dir</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span>()
-<span class='fu'><a href='https://rdrr.io/r/base/files2.html'>dir.create</a></span>(<span class='kw'>dir</span>)
+<span class='no'>dir</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span>()
+<span class='fu'><a href='https://rdrr.io/r/base/files2.html'>dir.create</a></span>(<span class='no'>dir</span>)
 
 <span class='co'># vendor the cpp11 headers into the directory</span>
-<span class='fu'>cpp_vendor</span>(<span class='kw'>dir</span>)
+<span class='fu'>cpp_vendor</span>(<span class='no'>dir</span>)
 
-<span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span>(<span class='kw'>dir</span>, <span class='st'>"inst"</span>, <span class='st'>"include"</span>, <span class='st'>"cpp11"</span>))</div><div class='output co'>#&gt;  [1] "altrep.hpp"           "as.hpp"               "attribute_proxy.hpp" 
+<span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span>(<span class='no'>dir</span>, <span class='st'>"inst"</span>, <span class='st'>"include"</span>, <span class='st'>"cpp11"</span>))</div><div class='output co'>#&gt;  [1] "altrep.hpp"           "as.hpp"               "attribute_proxy.hpp" 
 #&gt;  [4] "data_frame.hpp"       "declarations.hpp"     "doubles.hpp"         
 #&gt;  [7] "environment.hpp"      "external_pointer.hpp" "function.hpp"        
 #&gt; [10] "integers.hpp"         "list_of.hpp"          "list.hpp"            
@@ -170,7 +170,7 @@ code until you run <code>vector_cpp11()</code> again.</p>
 #&gt; [19] "R.hpp"                "raws.hpp"             "sexp.hpp"            
 #&gt; [22] "strings.hpp"         </div><div class='input'>
 <span class='co'># cleanup</span>
-<span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span>(<span class='kw'>dir</span>, recursive = <span class='fl'>TRUE</span>)</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span>(<span class='no'>dir</span>, <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -186,7 +186,7 @@ code until you run <code>vector_cpp11()</code> again.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
