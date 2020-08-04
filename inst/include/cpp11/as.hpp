@@ -297,7 +297,12 @@ inline SEXP as_sexp(std::initializer_list<const char*> from) {
   return as_sexp<std::initializer_list<const char*>>(from);
 }
 
-template <typename T>
+class r_string;
+
+template <typename T, typename R = void>
+using disable_if_r_string = enable_if_t<!std::is_same<T, cpp11::r_string>::value, R>;
+
+template <typename T, typename = disable_if_r_string<T>>
 enable_if_convertible_to_sexp<T, SEXP> as_sexp(const T& from) {
   return from;
 }

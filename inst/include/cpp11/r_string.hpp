@@ -66,4 +66,24 @@ inline SEXP as_sexp(std::initializer_list<r_string> il) {
 }
 
 inline bool is_na(const r_string& x) { return x == NA_STRING; }
+
+template <typename T, typename R = void>
+using enable_if_r_string = enable_if_t<std::is_same<T, cpp11::r_string>::value, R>;
+
+template <typename T>
+enable_if_r_string<T, SEXP> as_sexp(T from) {
+  r_string str(from);
+  sexp res;
+  unwind_protect([&] {
+    res = Rf_allocVector(STRSXP, 1);
+
+    if (str == NA_STRING) {
+      SET_STRING_ELT(res, 0, str);
+    } else {
+      SET_STRING_ELT(res, 0, Rf_mkCharCE(Rf_translateCharUTF8(str), CE_UTF8));
+    }
+  });
+
+  return res;
+}
 }  // namespace cpp11
