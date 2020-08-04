@@ -101,6 +101,15 @@ jobs:
         run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
+      - name: Run cpp11test tests
+        if: matrix.config.custom != 'no-cpp11test'
+        run: |
+          setwd("cpp11tests/tests")
+          library(testthat)
+          library(cpp11test)
+          test_check("cpp11test", reporter = "progress")
+        shell: Rscript {0}
+
       - name: Upload check results
         if: failure()
         uses: actions/upload-artifact@master
