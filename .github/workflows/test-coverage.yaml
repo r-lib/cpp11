@@ -36,7 +36,7 @@ jobs:
           install.packages(c("remotes"))
           remotes::install_local(dependencies = FALSE, force = TRUE)
           remotes::install_local("cpp11test", dependencies = TRUE, INSTALL_opts = "--install-tests", force = TRUE)
-          remotes::install_local(dependencies = TRUE, force = TRUE)
+          remotes::install_github("r-lib/testthat")
           remotes::install_github("r-lib/covr")
         shell: Rscript {0}
 

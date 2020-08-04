@@ -25,7 +25,7 @@ inline SEXP r_vector<int>::valid_type(SEXP data) {
 }
 
 template <>
-inline const int r_vector<int>::operator[](const R_xlen_t pos) const {
+inline int r_vector<int>::operator[](const R_xlen_t pos) const {
   // NOPROTECT: likely too costly to unwind protect every elt
   return is_altrep_ ? INTEGER_ELT(data_, pos) : data_p_[pos];
 }
