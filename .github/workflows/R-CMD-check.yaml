@@ -104,7 +104,7 @@ jobs:
       - name: Run cpp11test tests
         if: matrix.config.custom != 'no-cpp11test'
         run: |
-          setwd("cpp11tests/tests")
+          setwd("cpp11test/tests")
           library(testthat)
           library(cpp11test)
           test_check("cpp11test", reporter = "progress")
