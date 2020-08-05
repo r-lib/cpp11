@@ -25,9 +25,6 @@ context("as_cpp-C++") {
     auto x5 = cpp11::as_cpp<unsigned long>(r);
     expect_true(x5 == 42UL);
 
-    auto x6 = cpp11::as_cpp<cpp11::decay_t<const int>>(r);
-    expect_true(x6 == 42UL);
-
     UNPROTECT(1);
   }
 
@@ -103,9 +100,6 @@ context("as_cpp-C++") {
     auto x3 = cpp11::as_cpp<long double>(r);
     expect_true(x3 == 1.2);
 
-    auto x4 = cpp11::as_cpp<cpp11::decay_t<const double>>(r);
-    expect_true(x4 == 1.2);
-
     UNPROTECT(1);
   }
 
@@ -150,12 +144,9 @@ context("as_cpp-C++") {
     auto x1 = cpp11::as_cpp<bool>(r);
     expect_true(x1);
 
-    auto x2 = cpp11::as_cpp<cpp11::decay_t<const bool>>(r);
-    expect_true(x2);
-
     LOGICAL(r)[0] = FALSE;
-    auto x3 = cpp11::as_cpp<bool>(r);
-    expect_true(!x3);
+    auto x2 = cpp11::as_cpp<bool>(r);
+    expect_true(!x2);
 
     UNPROTECT(1);
   }
@@ -166,9 +157,6 @@ context("as_cpp-C++") {
 
     auto x1 = cpp11::as_cpp<char>(r);
     expect_true(x1 == 'f');
-
-    auto x2 = cpp11::as_cpp<cpp11::decay_t<const char>>(r);
-    expect_true(x2 == 'f');
 
     UNPROTECT(1);
   }
@@ -187,12 +175,6 @@ context("as_cpp-C++") {
     SET_STRING_ELT(r, 0, Rf_mkChar("foo"));
     auto x1 = cpp11::as_cpp<std::string>(r);
     expect_true(x1 == "foo");
-
-    auto x2 = cpp11::as_cpp<cpp11::decay_t<const std::string>>(r);
-    expect_true(x2 == "foo");
-
-    auto x3 = cpp11::as_cpp<cpp11::decay_t<const std::string&>>(r);
-    expect_true(x3 == "foo");
 
     UNPROTECT(1);
   }
@@ -284,11 +266,6 @@ context("as_cpp-C++") {
     expect_true(x2[0] == 1.);
     expect_true(x2[1] == 2.);
     expect_true(x2[2] == 3.);
-
-    auto x3 = cpp11::as_cpp<cpp11::decay_t<const cpp11::doubles&>>(r);
-    expect_true(x3[0] == 1.);
-    expect_true(x3[1] == 2.);
-    expect_true(x3[2] == 3.);
 
     UNPROTECT(1);
   }
