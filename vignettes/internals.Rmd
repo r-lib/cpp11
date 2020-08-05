@@ -16,6 +16,44 @@ knitr::opts_chunk$set(
 
 The development repository for cpp11 is <https://github.com/r-lib/cpp11>.
 
+## Initial setup and dev workflow
+
+First install any dependencies needed for development.
+
+```r
+install.packages("remotes")
+remotes::install_deps(dependencies = TRUE)
+```
+
+You can load the package in an interactive R session
+
+```r
+devtools::load_all()
+```
+
+Or run the tests with
+
+```r
+devtools::test()
+```
+
+`test()` will also re-compile the package if needed, so you do not always have to run `load_all()`.
+
+If you change the cpp11 headers you will need to clean and recompile the cpp11test package
+
+```r
+devtools::clean_dll()
+devtools::load_all()
+```
+
+Generally when developing the C++ headers I run R with its working directory in the `cpp11test` directory and use `devtools::test()` to run the cpp11tests.
+
+To calculate code coverage of the cpp11 package run the following from the `cpp11` root directory.
+
+```r
+covr::report(cpp11_coverage())
+```
+
 ## Code organization
 
 cpp11 is a header only library, so all source code exposed to users lives in [inst/include](https://github.com/r-lib/cpp11/tree/master/inst/include).
@@ -24,16 +62,6 @@ Tests for _only_ the code in `R/` is in [tests/testthat/](https://github.com/r-l
 The rest of the code is in a separate [cpp11test/](https://github.com/r-lib/cpp11/tree/master/cpp11test) package included in the source tree.
 Inside [cpp11test/src](https://github.com/r-lib/cpp11/tree/master/cpp11test/src) the files that start with `test-` are C++ tests using the [Catch](https://testthat.r-lib.org/reference/use_catch.html) support in testthat.
 In addition there are some regular R tests in [cpp11test/tests/testthat/](https://github.com/r-lib/cpp11/tree/master/cpp11test/tests/testthat).
-
-## Running tests
-
-All of the tests in both packages can be run by using `devtools::test()` from the cpp11 root directory.
-However it is sometimes more convenient to set your working directory to the `cpp11test` root to run only those tests.
-In order to calculate code coverage you need to call `cpp11_coverage()`, e.g. to generate a local coverage report you could use the following.
-
-```r
-covr::report(cpp11_coverage())
-```
 
 ## Naming conventions
 
