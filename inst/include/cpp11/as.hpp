@@ -96,7 +96,12 @@ enable_if_integral<T, T> as_cpp(SEXP from) {
 template <typename E>
 enable_if_enum<E, E> as_cpp(SEXP from) {
   if (Rf_isInteger(from)) {
-    return static_cast<E>(as_cpp<typename std::underlying_type<E>::type>(from));
+    using Type = typename std::conditional<
+      std::is_same<char, typename std::underlying_type<E>::type>::value,
+      int,
+      typename std::underlying_type<E>::type
+    >::type;
+    return static_cast<E>(as_cpp<Type>(from));
   }
 
   stop("Expected single integer value");
