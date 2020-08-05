@@ -6,6 +6,7 @@
 #include <exception>      // for exception
 #include <stdexcept>      // for std::runtime_error
 #include <string>         // for string, basic_string
+#include <tuple>          // for tuple, make_tuple
 #include "R_ext/Error.h"  // for Rf_error, Rf_warning
 #include "R_ext/Print.h"  // for REprintf
 #include "R_ext/Utils.h"  // for R_CheckUserInterrupt
@@ -64,8 +65,10 @@ inline void print_protect() {
   REprintf("---\n");
 }
 
+/* This is currently unused, but client packages could use it to free leaked resources in
+ * older R versions if needed */
 inline void release_existing_protections() {
-#if !defined(HAS_UNWIND_PROTECT) && !defined(CPP11_USE_PRESERVE_OBJECT)
+#if !defined(CPP11_USE_PRESERVE_OBJECT)
   SEXP first = CDR(protect_list);
   if (first != R_NilValue) {
     SETCAR(first, R_NilValue);
@@ -184,12 +187,57 @@ unwind_protect(Fun code) {
   return out;
 }
 
+namespace detail {
+
+template <size_t...>
+struct index_sequence {
+  using type = index_sequence;
+};
+
+template <typename, size_t>
+struct appended_sequence;
+
+template <std::size_t... I, std::size_t J>
+struct appended_sequence<index_sequence<I...>, J> : index_sequence<I..., J> {};
+
+template <size_t N>
+struct make_index_sequence
+    : appended_sequence<typename make_index_sequence<N - 1>::type, N - 1> {};
+
+template <>
+struct make_index_sequence<0> : index_sequence<> {};
+
+template <typename F, typename... A, size_t... I>
+auto apply(F&& f, std::tuple<A...>&& a, const index_sequence<I...>&)
+    -> decltype(f(std::get<I>(std::move(a))...)) {
+  return f(std::get<I>(std::move(a))...);
+}
+
+template <typename F, typename... A>
+auto apply(F&& f, std::tuple<A...>&& a)
+    -> decltype(apply(f, std::move(a), make_index_sequence<sizeof...(A)>{})) {
+  return apply(f, std::move(a), make_index_sequence<sizeof...(A)>{});
+}
+
+// overload to silence a compiler warning that the tuple parameter is set but unused
+template <typename F>
+auto apply(F&& f, std::tuple<> &&) -> decltype(f()) {
+  return f();
+}
+
+}  // namespace detail
+
 struct protect {
   template <typename F>
   struct function {
     template <typename... A>
-    auto operator()(A... a) const -> decltype(std::declval<F*>()(a...)) {
-      return unwind_protect([&] { return ptr_(a...); });
+    auto operator()(A&&... a) const
+        -> decltype(detail::apply(std::declval<F*>(),
+                                  std::forward_as_tuple(std::forward<A>(a)...))) {
+      // workaround to support gcc4.8, which can't capture a parameter pack
+      auto a_packed_refs = std::forward_as_tuple(std::forward<A>(a)...);
+      return unwind_protect(
+          [&] { return detail::apply(ptr_, std::move(a_packed_refs)); });
     }
     F* ptr_;
   };
@@ -205,7 +253,7 @@ inline void check_user_interrupt() { safe[R_CheckUserInterrupt](); }
 
 template <typename... Args>
 void stop [[noreturn]] (const char* fmt, Args... args) {
-  unwind_protect([&] { Rf_error(fmt, args...); });
+  safe[Rf_error](fmt, args...);
   // Compiler hint to allow [[noreturn]] attribute; this is never executed since Rf_error
   // will longjmp
   throw std::runtime_error("stop()");
@@ -213,7 +261,7 @@ void stop [[noreturn]] (const char* fmt, Args... args) {
 
 template <typename... Args>
 void stop [[noreturn]] (const std::string& fmt, Args... args) {
-  unwind_protect([&] { Rf_error(fmt.c_str(), args...); });
+  safe[Rf_error](fmt.c_str(), args...);
   // Compiler hint to allow [[noreturn]] attribute; this is never executed since Rf_error
   // will longjmp
   throw std::runtime_error("stop()");

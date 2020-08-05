@@ -9,31 +9,50 @@
 
 namespace cpp11 {
 
-template <typename T>
-using is_constructible_from_sexp =
-    typename std::enable_if<(std::is_class<typename std::decay<T>::type>::value ||
-                             std::is_same<T, SEXP>::value) &&
-                                std::is_constructible<T, SEXP>::value,
-                            typename std::decay<T>::type>::type;
+template <bool C, typename R = void>
+using enable_if_t = typename std::enable_if<C, R>::type;
 
-template <typename T>
-is_constructible_from_sexp<T> as_cpp(SEXP from) {
-  return T(from);
-}
+template <typename T, typename R = void>
+using enable_if_constructible_from_sexp =
+    enable_if_t<(std::is_class<T>::value || std::is_same<T, SEXP>::value) &&
+                    std::is_constructible<T, SEXP>::value,
+                R>;
 
-template <typename T>
-using is_integral = typename std::enable_if<
-    std::is_integral<T>::value &&
-        !std::is_same<typename std::decay<T>::type, bool>::value &&
-        !std::is_same<typename std::decay<T>::type, char>::value,
-    typename std::decay<T>::type>::type;
+template <typename T, typename R = void>
+using enable_if_convertible_to_sexp = enable_if_t<std::is_convertible<T, SEXP>::value, R>;
 
-template <typename T>
-using is_integral_value = typename std::enable_if<
-    std::is_integral<T>::value &&
-        !std::is_same<typename std::decay<T>::type, bool>::value &&
-        !std::is_same<typename std::decay<T>::type, char>::value,
-    typename std::decay<T>::type>::value;
+template <typename T, typename R = void>
+using disable_if_convertible_to_sexp =
+    enable_if_t<!std::is_convertible<T, SEXP>::value, R>;
+
+template <typename T, typename R = void>
+using enable_if_integral =
+    enable_if_t<std::is_integral<T>::value &&
+                    !std::is_same<typename std::remove_cv<T>::type, bool>::value &&
+                    !std::is_same<typename std::remove_cv<T>::type, char>::value,
+                R>;
+
+template <typename T, typename R = void>
+using enable_if_floating_point =
+    typename std::enable_if<std::is_floating_point<T>::value, R>::type;
+
+template <typename E, typename R = void>
+using enable_if_enum = enable_if_t<std::is_enum<E>::value, R>;
+
+template <typename T, typename R = void>
+using enable_if_bool =
+    enable_if_t<std::is_same<typename std::remove_cv<T>::type, bool>::value, R>;
+
+template <typename T, typename R = void>
+using enable_if_char =
+    enable_if_t<std::is_same<typename std::remove_cv<T>::type, char>::value, R>;
+
+template <typename T, typename R = void>
+using enable_if_std_string =
+    enable_if_t<std::is_same<typename std::remove_const<T>::type, std::string>::value, R>;
+
+template <typename T, typename R = void>
+using enable_if_c_string = enable_if_t<std::is_same<T, const char*>::value, R>;
 
 // https://stackoverflow.com/a/1521682/2055486
 //
@@ -43,7 +62,12 @@ inline bool is_convertable_without_loss_to_integer(double value) {
 }
 
 template <typename T>
-is_integral<T> as_cpp(SEXP from) {
+enable_if_constructible_from_sexp<T, T> as_cpp(SEXP from) {
+  return T(from);
+}
+
+template <typename T>
+enable_if_integral<T, T> as_cpp(SEXP from) {
   if (Rf_isInteger(from)) {
     if (Rf_xlength(from) == 1) {
       return INTEGER_ELT(from, 0);
@@ -67,15 +91,10 @@ is_integral<T> as_cpp(SEXP from) {
   }
 
   stop("Expected single integer value");
-
-  return T();
 }
 
 template <typename E>
-using is_enum = typename std::enable_if<std::is_enum<E>::value, E>::type;
-
-template <typename E>
-is_enum<E> as_cpp(SEXP from) {
+enable_if_enum<E, E> as_cpp(SEXP from) {
   if (Rf_isInteger(from)) {
     return static_cast<E>(as_cpp<typename std::underlying_type<E>::type>(from));
   }
@@ -84,11 +103,7 @@ is_enum<E> as_cpp(SEXP from) {
 }
 
 template <typename T>
-using is_logical =
-    typename std::enable_if<std::is_same<typename std::decay<T>::type, bool>::value,
-                            typename std::decay<T>::type>::type;
-template <typename T>
-is_logical<T> as_cpp(SEXP from) {
+enable_if_bool<T, T> as_cpp(SEXP from) {
   if (Rf_isLogical(from)) {
     if (Rf_xlength(from) == 1) {
       return LOGICAL_ELT(from, 0) == 1;
@@ -96,16 +111,10 @@ is_logical<T> as_cpp(SEXP from) {
   }
 
   stop("Expected single logical value");
-
-  return T();
 }
 
 template <typename T>
-using is_floating_point_value =
-    typename std::enable_if<std::is_floating_point<T>::value, T>::type;
-
-template <typename T>
-is_floating_point_value<T> as_cpp(SEXP from) {
+enable_if_floating_point<T, T> as_cpp(SEXP from) {
   if (Rf_isReal(from)) {
     if (Rf_xlength(from) == 1) {
       return REAL_ELT(from, 0);
@@ -131,70 +140,72 @@ is_floating_point_value<T> as_cpp(SEXP from) {
   }
 
   stop("Expected single double value");
-
-  return T();
 }
 
 template <typename T>
-using is_char =
-    typename std::enable_if<std::is_same<typename std::decay<T>::type, char>::value,
-                            typename std::decay<T>::type>::type;
-template <typename T>
-is_char<T> as_cpp(SEXP from) {
+enable_if_char<T, T> as_cpp(SEXP from) {
   if (Rf_isString(from)) {
     if (Rf_xlength(from) == 1) {
       return unwind_protect([&] { return Rf_translateCharUTF8(STRING_ELT(from, 0))[0]; });
     }
   }
+
   stop("Expected string vector of length 1");
 }
 
 template <typename T>
-using is_constructible_from_const_char = typename std::enable_if<
-    std::is_constructible<typename std::decay<T>::type, const char*>::value &&
-        !std::is_constructible<T, SEXP>::value,
-    typename std::decay<T>::type>::type;
-
-template <typename T>
-is_constructible_from_const_char<T> as_cpp(SEXP from) {
+enable_if_c_string<T, T> as_cpp(SEXP from) {
   if (Rf_isString(from)) {
     if (Rf_xlength(from) == 1) {
       // TODO: use vmaxget / vmaxset here?
       return {unwind_protect([&] { return Rf_translateCharUTF8(STRING_ELT(from, 0)); })};
     }
   }
+
   stop("Expected string vector of length 1");
 }
 
-template <typename T, is_integral<T>* = nullptr>
-SEXP as_sexp(T from) {
-  return safe[Rf_ScalarInteger](from);
+template <typename T>
+enable_if_std_string<T, T> as_cpp(SEXP from) {
+  return {as_cpp<const char*>(from)};
 }
 
-template <typename T, is_floating_point_value<T>* = nullptr>
-SEXP as_sexp(T from) {
-  return safe[Rf_ScalarReal](from);
-}
-
-inline SEXP as_sexp(const std::string& from) {
-  return unwind_protect(
-      [&] { return Rf_ScalarString(Rf_mkCharCE(from.c_str(), CE_UTF8)); });
+// references are automatically decayed
+template <typename T>
+auto as_cpp(SEXP from)
+    -> enable_if_t<std::is_reference<T>::value,
+                   decltype(as_cpp<typename std::decay<T>::type>(from))> {
+  return as_cpp<typename std::decay<T>::type>(from);
 }
 
 template <typename T>
-using is_bool =
-    typename std::enable_if<std::is_same<typename std::decay<T>::type, bool>::value,
-                            typename std::decay<T>::type>::type;
+enable_if_integral<T, SEXP> as_sexp(T from) {
+  return safe[Rf_ScalarInteger](from);
+}
 
-template <typename T, is_bool<T> = false>
-inline SEXP as_sexp(T from) {
+template <typename T>
+enable_if_floating_point<T, SEXP> as_sexp(T from) {
+  return safe[Rf_ScalarReal](from);
+}
+
+template <typename T>
+enable_if_bool<T, SEXP> as_sexp(T from) {
   return safe[Rf_ScalarLogical](from);
 }
 
-template <typename C, typename T = typename C::value_type,
-          typename std::enable_if<!std::is_convertible<C, SEXP>::value,
-                                  is_integral<T>>::type* = nullptr>
-inline SEXP as_sexp(C from) {
+template <typename T>
+enable_if_c_string<T, SEXP> as_sexp(T from) {
+  return unwind_protect([&] { return Rf_ScalarString(Rf_mkCharCE(from, CE_UTF8)); });
+}
+
+template <typename T>
+enable_if_std_string<T, SEXP> as_sexp(const T& from) {
+  return as_sexp(from.c_str());
+}
+
+template <typename Container, typename T = typename Container::value_type,
+          typename = disable_if_convertible_to_sexp<Container>>
+enable_if_integral<T, SEXP> as_sexp(const Container& from) {
   R_xlen_t size = from.size();
   SEXP data = safe[Rf_allocVector](INTSXP, size);
 
@@ -210,9 +221,9 @@ inline SEXP as_sexp(std::initializer_list<int> from) {
   return as_sexp<std::initializer_list<int>>(from);
 }
 
-template <typename C, typename T = typename C::value_type,
-          is_floating_point_value<T>* = nullptr>
-inline SEXP as_sexp(C from) {
+template <typename Container, typename T = typename Container::value_type,
+          typename = disable_if_convertible_to_sexp<Container>>
+enable_if_floating_point<T, SEXP> as_sexp(const Container& from) {
   R_xlen_t size = from.size();
   SEXP data = safe[Rf_allocVector](REALSXP, size);
 
@@ -228,8 +239,9 @@ inline SEXP as_sexp(std::initializer_list<double> from) {
   return as_sexp<std::initializer_list<double>>(from);
 }
 
-template <typename C, typename T = typename C::value_type, is_bool<T>* = nullptr>
-inline SEXP as_sexp(C from) {
+template <typename Container, typename T = typename Container::value_type,
+          typename = disable_if_convertible_to_sexp<Container>>
+enable_if_bool<T, SEXP> as_sexp(const Container& from) {
   R_xlen_t size = from.size();
   SEXP data = safe[Rf_allocVector](LGLSXP, size);
 
@@ -245,15 +257,9 @@ inline SEXP as_sexp(std::initializer_list<bool> from) {
   return as_sexp<std::initializer_list<bool>>(from);
 }
 
-template <typename T>
-using is_convertible_to_std_string = typename std::enable_if<
-    std::is_convertible<typename std::decay<T>::type, std::string>::value &&
-        !std::is_convertible<typename std::decay<T>::type, const char*>::value,
-    typename std::decay<T>::type>::type;
-
-template <typename C, typename T = typename C::value_type,
-          is_convertible_to_std_string<T>* = nullptr>
-inline SEXP as_sexp(C from) {
+namespace detail {
+template <typename Container, typename AsCstring>
+SEXP as_sexp_strings(const Container& from, AsCstring&& c_str) {
   R_xlen_t size = from.size();
 
   SEXP data;
@@ -262,8 +268,7 @@ inline SEXP as_sexp(C from) {
 
     auto it = from.begin();
     for (R_xlen_t i = 0; i < size; ++i, ++it) {
-      SET_STRING_ELT(data, i,
-                     safe[Rf_mkCharCE](static_cast<std::string>(*it).c_str(), CE_UTF8));
+      SET_STRING_ELT(data, i, safe[Rf_mkCharCE](c_str(*it), CE_UTF8));
     }
   } catch (const unwind_exception& e) {
     UNPROTECT(1);
@@ -273,38 +278,33 @@ inline SEXP as_sexp(C from) {
   UNPROTECT(1);
   return data;
 }
-template <typename T>
-using is_convertible_to_const_char = typename std::enable_if<
-    std::is_convertible<typename std::decay<T>::type, const char*>::value &&
-        !std::is_convertible<typename std::decay<T>::type, SEXP>::value,
-    typename std::decay<T>::type>::type;
+}  // namespace detail
 
-template <typename C, typename T = typename C::value_type,
-          is_convertible_to_const_char<T>* = nullptr>
-inline SEXP as_sexp(C from) {
-  R_xlen_t size = from.size();
+template <typename Container, typename T = typename Container::value_type>
+enable_if_t<std::is_convertible<T, std::string>::value &&
+                !std::is_convertible<T, const char*>::value,
+            SEXP>
+as_sexp(const Container& from) {
+  return detail::as_sexp_strings(from, [](const std::string& s) { return s.c_str(); });
+}
 
-  SEXP data;
-  try {
-    data = PROTECT(safe[Rf_allocVector](STRSXP, size));
-
-    auto it = from.begin();
-    for (R_xlen_t i = 0; i < size; ++i, ++it) {
-      SET_STRING_ELT(data, i, safe[Rf_mkCharCE](static_cast<const char*>(*it), CE_UTF8));
-    }
-  } catch (const unwind_exception& e) {
-    UNPROTECT(1);
-    throw e;
-  }
-
-  UNPROTECT(1);
-  return data;
+template <typename Container, typename T = typename Container::value_type>
+enable_if_c_string<T, SEXP> as_sexp(const Container& from) {
+  return detail::as_sexp_strings(from, [](const char* s) { return s; });
 }
 
 inline SEXP as_sexp(std::initializer_list<const char*> from) {
   return as_sexp<std::initializer_list<const char*>>(from);
 }
 
-inline SEXP as_sexp(SEXP from) { return from; }
+class r_string;
+
+template <typename T, typename R = void>
+using disable_if_r_string = enable_if_t<!std::is_same<T, cpp11::r_string>::value, R>;
+
+template <typename T, typename = disable_if_r_string<T>>
+enable_if_convertible_to_sexp<T, SEXP> as_sexp(const T& from) {
+  return from;
+}
 
 }  // namespace cpp11

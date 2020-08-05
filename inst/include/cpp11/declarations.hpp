@@ -27,11 +27,10 @@ T& unmove(T&& t) {
   } while (false);
 #endif
 
-#define BEGIN_CPP11                      \
-  SEXP err = R_NilValue;                 \
-  const size_t ERROR_SIZE = 8192;        \
-  char buf[ERROR_SIZE] = "";             \
-  cpp11::release_existing_protections(); \
+#define BEGIN_CPP11               \
+  SEXP err = R_NilValue;          \
+  const size_t ERROR_SIZE = 8192; \
+  char buf[ERROR_SIZE] = "";      \
   try {
 #define END_CPP11                                              \
   }                                                            \
