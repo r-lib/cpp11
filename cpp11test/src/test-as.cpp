@@ -25,7 +25,7 @@ context("as_cpp-C++") {
     auto x5 = cpp11::as_cpp<unsigned long>(r);
     expect_true(x5 == 42UL);
 
-    auto x6 = cpp11::as_cpp<const int>(r);
+    auto x6 = cpp11::as_cpp<cpp11::decay_t<const int>>(r);
     expect_true(x6 == 42UL);
 
     UNPROTECT(1);
@@ -103,7 +103,7 @@ context("as_cpp-C++") {
     auto x3 = cpp11::as_cpp<long double>(r);
     expect_true(x3 == 1.2);
 
-    auto x4 = cpp11::as_cpp<const double>(r);
+    auto x4 = cpp11::as_cpp<cpp11::decay_t<const double>>(r);
     expect_true(x4 == 1.2);
 
     UNPROTECT(1);
@@ -150,7 +150,7 @@ context("as_cpp-C++") {
     auto x1 = cpp11::as_cpp<bool>(r);
     expect_true(x1);
 
-    auto x2 = cpp11::as_cpp<const bool>(r);
+    auto x2 = cpp11::as_cpp<cpp11::decay_t<const bool>>(r);
     expect_true(x2);
 
     LOGICAL(r)[0] = FALSE;
@@ -167,7 +167,7 @@ context("as_cpp-C++") {
     auto x1 = cpp11::as_cpp<char>(r);
     expect_true(x1 == 'f');
 
-    auto x2 = cpp11::as_cpp<const char>(r);
+    auto x2 = cpp11::as_cpp<cpp11::decay_t<const char>>(r);
     expect_true(x2 == 'f');
 
     UNPROTECT(1);
@@ -188,10 +188,10 @@ context("as_cpp-C++") {
     auto x1 = cpp11::as_cpp<std::string>(r);
     expect_true(x1 == "foo");
 
-    auto x2 = cpp11::as_cpp<const std::string>(r);
+    auto x2 = cpp11::as_cpp<cpp11::decay_t<const std::string>>(r);
     expect_true(x2 == "foo");
 
-    auto x3 = cpp11::as_cpp<const std::string&>(r);
+    auto x3 = cpp11::as_cpp<cpp11::decay_t<const std::string&>>(r);
     expect_true(x3 == "foo");
 
     UNPROTECT(1);
@@ -285,7 +285,7 @@ context("as_cpp-C++") {
     expect_true(x2[1] == 2.);
     expect_true(x2[2] == 3.);
 
-    auto x3 = cpp11::as_cpp<const cpp11::doubles&>(r);
+    auto x3 = cpp11::as_cpp<cpp11::decay_t<const cpp11::doubles&>>(r);
     expect_true(x3[0] == 1.);
     expect_true(x3[1] == 2.);
     expect_true(x3[2] == 3.);
@@ -476,9 +476,10 @@ context("as_cpp-C++") {
     UNPROTECT(1);
   }
 
-  test_that("as_sexp(r_vector<cpp11::r_string>)") {
-    SEXP s1 =
-        PROTECT(cpp11::as_sexp(std::vector<cpp11::r_string>({"foo", "bar", "baz"})));
+  test_that("as_sexp(cpp11::strings)") {
+    cpp11::writable::strings s({"foo", "bar", "baz"});
+    cpp11::strings s0(s);
+    SEXP s1 = PROTECT(cpp11::as_sexp(s0));
 
     expect_true(Rf_isString(s1));
     expect_true(Rf_xlength(s1) == 3);

@@ -12,6 +12,9 @@ namespace cpp11 {
 template <bool C, typename R = void>
 using enable_if_t = typename std::enable_if<C, R>::type;
 
+template <typename T>
+using decay_t = typename std::decay<T>::type;
+
 template <typename T, typename R = void>
 using enable_if_constructible_from_sexp =
     enable_if_t<(std::is_class<T>::value || std::is_same<T, SEXP>::value) &&
@@ -27,9 +30,8 @@ using disable_if_convertible_to_sexp =
 
 template <typename T, typename R = void>
 using enable_if_integral =
-    enable_if_t<std::is_integral<T>::value &&
-                    !std::is_same<typename std::remove_cv<T>::type, bool>::value &&
-                    !std::is_same<typename std::remove_cv<T>::type, char>::value,
+    enable_if_t<std::is_integral<T>::value && !std::is_same<T, bool>::value &&
+                    !std::is_same<T, char>::value,
                 R>;
 
 template <typename T, typename R = void>
@@ -40,16 +42,13 @@ template <typename E, typename R = void>
 using enable_if_enum = enable_if_t<std::is_enum<E>::value, R>;
 
 template <typename T, typename R = void>
-using enable_if_bool =
-    enable_if_t<std::is_same<typename std::remove_cv<T>::type, bool>::value, R>;
+using enable_if_bool = enable_if_t<std::is_same<T, bool>::value, R>;
 
 template <typename T, typename R = void>
-using enable_if_char =
-    enable_if_t<std::is_same<typename std::remove_cv<T>::type, char>::value, R>;
+using enable_if_char = enable_if_t<std::is_same<T, char>::value, R>;
 
 template <typename T, typename R = void>
-using enable_if_std_string =
-    enable_if_t<std::is_same<typename std::remove_const<T>::type, std::string>::value, R>;
+using enable_if_std_string = enable_if_t<std::is_same<T, std::string>::value, R>;
 
 template <typename T, typename R = void>
 using enable_if_c_string = enable_if_t<std::is_same<T, const char*>::value, R>;
@@ -170,14 +169,6 @@ enable_if_std_string<T, T> as_cpp(SEXP from) {
   return {as_cpp<const char*>(from)};
 }
 
-// references are automatically decayed
-template <typename T>
-auto as_cpp(SEXP from)
-    -> enable_if_t<std::is_reference<T>::value,
-                   decltype(as_cpp<typename std::decay<T>::type>(from))> {
-  return as_cpp<typename std::decay<T>::type>(from);
-}
-
 template <typename T>
 enable_if_integral<T, SEXP> as_sexp(T from) {
   return safe[Rf_ScalarInteger](from);
@@ -280,7 +271,13 @@ SEXP as_sexp_strings(const Container& from, AsCstring&& c_str) {
 }
 }  // namespace detail
 
-template <typename Container, typename T = typename Container::value_type>
+class r_string;
+
+template <typename T, typename R = void>
+using disable_if_r_string = enable_if_t<!std::is_same<T, cpp11::r_string>::value, R>;
+
+template <typename Container, typename T = typename Container::value_type,
+          typename = disable_if_r_string<T>>
 enable_if_t<std::is_convertible<T, std::string>::value &&
                 !std::is_convertible<T, const char*>::value,
             SEXP>
@@ -296,11 +293,6 @@ enable_if_c_string<T, SEXP> as_sexp(const Container& from) {
 inline SEXP as_sexp(std::initializer_list<const char*> from) {
   return as_sexp<std::initializer_list<const char*>>(from);
 }
-
-class r_string;
-
-template <typename T, typename R = void>
-using disable_if_r_string = enable_if_t<!std::is_same<T, cpp11::r_string>::value, R>;
 
 template <typename T, typename = disable_if_r_string<T>>
 enable_if_convertible_to_sexp<T, SEXP> as_sexp(const T& from) {

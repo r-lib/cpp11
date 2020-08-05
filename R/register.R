@@ -225,7 +225,7 @@ generate_r_functions <- function(funs, package = "cpp11", use_package = FALSE) {
 }
 
 wrap_call <- function(name, return_type, args) {
-  call <- glue::glue('{name}({list_params})', list_params = glue_collapse_data(args, "cpp11::unmove(cpp11::as_cpp<{type}>({name}))"))
+  call <- glue::glue('{name}({list_params})', list_params = glue_collapse_data(args, "cpp11::unmove(cpp11::as_cpp<cpp11::decay_t<{type}>>({name}))"))
   if (return_type == "void") {
     unclass(glue::glue("  {call};\n    return R_NilValue;", .trim = FALSE))
   } else {
