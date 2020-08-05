@@ -88,16 +88,28 @@
     
     
 <p>The development repository for cpp11 is <a href="https://github.com/r-lib/cpp11" class="uri">https://github.com/r-lib/cpp11</a>.</p>
+<div id="initial-setup-and-dev-workflow" class="section level2">
+<h2 class="hasAnchor">
+<a href="#initial-setup-and-dev-workflow" class="anchor"></a>Initial setup and dev workflow</h2>
+<p>First install any dependencies needed for development.</p>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"remotes"</span>)
+<span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_deps.html">install_deps</a></span>(<span class="kw">dependencies</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<p>You can load the package in an interactive R session</p>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu">load_all</span>()</pre></body></html></div>
+<p>Or run the tests with</p>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu">test</span>()</pre></body></html></div>
+<p><code>test()</code> will also re-compile the package if needed, so you do not always have to run <code>load_all()</code>.</p>
+<p>If you change the cpp11 headers you will need to clean and recompile the cpp11test package</p>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu">clean_dll</span>()
+<span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu">load_all</span>()</pre></body></html></div>
+<p>Generally when developing the C++ headers I run R with its working directory in the <code>cpp11test</code> directory and use <code>devtools::test()</code> to run the cpp11tests.</p>
+<p>To calculate code coverage of the cpp11 package run the following from the <code>cpp11</code> root directory.</p>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="kw pkg">covr</span><span class="kw ns">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/report.html">report</a></span>(<span class="fu">cpp11_coverage</span>())</pre></body></html></div>
+</div>
 <div id="code-organization" class="section level2">
 <h2 class="hasAnchor">
 <a href="#code-organization" class="anchor"></a>Code organization</h2>
 <p>cpp11 is a header only library, so all source code exposed to users lives in <a href="https://github.com/r-lib/cpp11/tree/master/inst/include">inst/include</a>. R code used to register functions and for <code><a href="../reference/cpp_source.html">cpp11::cpp_source()</a></code> is in <a href="https://github.com/r-lib/cpp11/tree/master/R">R/</a>. Tests for <em>only</em> the code in <code>R/</code> is in <a href="https://github.com/r-lib/cpp11/tree/master/tests/testthat">tests/testthat/</a> The rest of the code is in a separate <a href="https://github.com/r-lib/cpp11/tree/master/cpp11test">cpp11test/</a> package included in the source tree. Inside <a href="https://github.com/r-lib/cpp11/tree/master/cpp11test/src">cpp11test/src</a> the files that start with <code>test-</code> are C++ tests using the <a href="https://testthat.r-lib.org/reference/use_catch.html">Catch</a> support in testthat. In addition there are some regular R tests in <a href="https://github.com/r-lib/cpp11/tree/master/cpp11test/tests/testthat">cpp11test/tests/testthat/</a>.</p>
-</div>
-<div id="running-tests" class="section level2">
-<h2 class="hasAnchor">
-<a href="#running-tests" class="anchor"></a>Running tests</h2>
-<p>All of the tests in both packages can be run by using <code>devtools::test()</code> from the cpp11 root directory. However it is sometimes more convenient to set your working directory to the <code>cpp11test</code> root to run only those tests. In order to calculate code coverage you need to call <code>cpp11_coverage()</code>, e.g. to generate a local coverage report you could use the following.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="kw pkg">covr</span><span class="kw ns">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/report.html">report</a></span>(<span class="fu">cpp11_coverage</span>())</pre></body></html></div>
 </div>
 <div id="naming-conventions" class="section level2">
 <h2 class="hasAnchor">
