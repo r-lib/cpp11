@@ -161,9 +161,9 @@
 <li>Causes behavior changes and test failures, so it was ruled out.</li>
 <li>Was also ruled out since we want to support back to R 3.3.</li>
 <li>Was ruled out partially because the implementation would be somewhat tricky and more because performance would suffer greatly.</li>
-<li>is what we now do in cpp11.</li>
+<li>is what we now do in cpp11. It leaks protected objects when there are R API errors.</li>
 </ol>
-<p>We somewhat mitigate the scope of R object leaks by calling <code>release_existing_protections()</code> at the start of any wrapped cpp11 function. This function releases any existing protected nodes, so any R object leaks should only last until the next cpp11 call.</p>
+<p>If packages are concerned about the leaked memory they can call <code>cpp11::release_existing_protections()</code> as needed to release the current protections for all objects managed by cpp11. This is not done automatically because in some cases the protections should persist beyond the <code><a href="https://rdrr.io/r/base/CallExternal.html">.Call()</a></code> boundry, e.g. in vroom altrep objects for example.</p>
 </div>
 </div>
   </div>
