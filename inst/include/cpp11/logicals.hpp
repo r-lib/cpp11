@@ -23,7 +23,7 @@ inline SEXP r_vector<Rboolean>::valid_type(SEXP data) {
 }
 
 template <>
-inline const Rboolean r_vector<Rboolean>::operator[](const R_xlen_t pos) const {
+inline Rboolean r_vector<Rboolean>::operator[](const R_xlen_t pos) const {
   return is_altrep_ ? static_cast<Rboolean>(LOGICAL_ELT(data_, pos)) : data_p_[pos];
 }
 

@@ -65,8 +65,10 @@ inline void print_protect() {
   REprintf("---\n");
 }
 
+/* This is currently unused, but client packages could use it to free leaked resources in
+ * older R versions if needed */
 inline void release_existing_protections() {
-#if !defined(HAS_UNWIND_PROTECT) && !defined(CPP11_USE_PRESERVE_OBJECT)
+#if !defined(CPP11_USE_PRESERVE_OBJECT)
   SEXP first = CDR(protect_list);
   if (first != R_NilValue) {
     SETCAR(first, R_NilValue);

@@ -24,7 +24,7 @@ inline SEXP r_vector<r_string>::valid_type(SEXP data) {
 }
 
 template <>
-inline const r_string r_vector<r_string>::operator[](const R_xlen_t pos) const {
+inline r_string r_vector<r_string>::operator[](const R_xlen_t pos) const {
   // NOPROTECT: likely too costly to unwind protect every elt
   return STRING_ELT(data_, pos);
 }
