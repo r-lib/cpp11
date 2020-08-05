@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* `safe[]` can now work with functions that return any type (#70, @bkietz)
+
 * cpp11 is now able to compile on gcc 4.8.5 (#69, @bkietz)
 
 * `as_cpp<E>()` now allows enumeration `E` (#52, @bkietz)
