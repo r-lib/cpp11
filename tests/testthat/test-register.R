@@ -85,13 +85,13 @@ describe("wrap_call", {
   it("works with void functions and some arguments", {
     expect_equal(
       wrap_call("foo", "void", tibble::tibble(type = c("double", "int"), name = c("x", "y"))),
-      "  foo(cpp11::unmove(cpp11::as_cpp<double>(x)), cpp11::unmove(cpp11::as_cpp<int>(y)));\n    return R_NilValue;"
+      "  foo(cpp11::unmove(cpp11::as_cpp<cpp11::decay_t<double>>(x)), cpp11::unmove(cpp11::as_cpp<cpp11::decay_t<int>>(y)));\n    return R_NilValue;"
     )
   })
   it("works with non-void functions and some arguments", {
     expect_equal(
       wrap_call("foo", "bool", tibble::tibble(type = c("double", "int"), name = c("x", "y"))),
-      "  return cpp11::as_sexp(foo(cpp11::unmove(cpp11::as_cpp<double>(x)), cpp11::unmove(cpp11::as_cpp<int>(y))));"
+      "  return cpp11::as_sexp(foo(cpp11::unmove(cpp11::as_cpp<cpp11::decay_t<double>>(x)), cpp11::unmove(cpp11::as_cpp<cpp11::decay_t<int>>(y))));"
     )
   })
 })
@@ -254,7 +254,7 @@ extern \"C\" SEXP _cpp11_foo() {
 void foo(int bar);
 extern \"C\" SEXP _cpp11_foo(SEXP bar) {
   BEGIN_CPP11
-    foo(cpp11::unmove(cpp11::as_cpp<int>(bar)));
+    foo(cpp11::unmove(cpp11::as_cpp<cpp11::decay_t<int>>(bar)));
     return R_NilValue;
   END_CPP11
 }"
@@ -278,7 +278,7 @@ extern \"C\" SEXP _cpp11_foo(SEXP bar) {
 int foo(int bar);
 extern \"C\" SEXP _cpp11_foo(SEXP bar) {
   BEGIN_CPP11
-    return cpp11::as_sexp(foo(cpp11::unmove(cpp11::as_cpp<int>(bar))));
+    return cpp11::as_sexp(foo(cpp11::unmove(cpp11::as_cpp<cpp11::decay_t<int>>(bar))));
   END_CPP11
 }"
     )
@@ -304,14 +304,14 @@ extern \"C\" SEXP _cpp11_foo(SEXP bar) {
 int foo(int bar);
 extern \"C\" SEXP _cpp11_foo(SEXP bar) {
   BEGIN_CPP11
-    return cpp11::as_sexp(foo(cpp11::unmove(cpp11::as_cpp<int>(bar))));
+    return cpp11::as_sexp(foo(cpp11::unmove(cpp11::as_cpp<cpp11::decay_t<int>>(bar))));
   END_CPP11
 }
 // bar.cpp
 bool bar(double baz);
 extern \"C\" SEXP _cpp11_bar(SEXP baz) {
   BEGIN_CPP11
-    return cpp11::as_sexp(bar(cpp11::unmove(cpp11::as_cpp<double>(baz))));
+    return cpp11::as_sexp(bar(cpp11::unmove(cpp11::as_cpp<cpp11::decay_t<double>>(baz))));
   END_CPP11
 }"
     )
