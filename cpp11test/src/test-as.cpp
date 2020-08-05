@@ -25,6 +25,9 @@ context("as_cpp-C++") {
     auto x5 = cpp11::as_cpp<unsigned long>(r);
     expect_true(x5 == 42UL);
 
+    auto x6 = cpp11::as_cpp<const int>(r);
+    expect_true(x6 == 42UL);
+
     UNPROTECT(1);
   }
 
@@ -100,6 +103,9 @@ context("as_cpp-C++") {
     auto x3 = cpp11::as_cpp<long double>(r);
     expect_true(x3 == 1.2);
 
+    auto x4 = cpp11::as_cpp<const double>(r);
+    expect_true(x4 == 1.2);
+
     UNPROTECT(1);
   }
 
@@ -142,10 +148,14 @@ context("as_cpp-C++") {
     SEXP r = PROTECT(Rf_allocVector(LGLSXP, 1));
     LOGICAL(r)[0] = TRUE;
     auto x1 = cpp11::as_cpp<bool>(r);
+    expect_true(x1);
+
+    auto x2 = cpp11::as_cpp<const bool>(r);
+    expect_true(x2);
 
     LOGICAL(r)[0] = FALSE;
-    auto x2 = cpp11::as_cpp<bool>(r);
-    expect_true(!x2);
+    auto x3 = cpp11::as_cpp<bool>(r);
+    expect_true(!x3);
 
     UNPROTECT(1);
   }
@@ -153,13 +163,17 @@ context("as_cpp-C++") {
   test_that("as_cpp<char>()") {
     SEXP r = PROTECT(Rf_allocVector(STRSXP, 1));
     SET_STRING_ELT(r, 0, Rf_mkChar("foo"));
+
     auto x1 = cpp11::as_cpp<char>(r);
     expect_true(x1 == 'f');
+
+    auto x2 = cpp11::as_cpp<const char>(r);
+    expect_true(x2 == 'f');
 
     UNPROTECT(1);
   }
 
-  test_that("as_cpp<std::string>()") {
+  test_that("as_cpp<const char*>()") {
     SEXP r = PROTECT(Rf_allocVector(STRSXP, 1));
     SET_STRING_ELT(r, 0, Rf_mkChar("foo"));
     auto x1 = cpp11::as_cpp<const char*>(r);
@@ -174,8 +188,11 @@ context("as_cpp-C++") {
     auto x1 = cpp11::as_cpp<std::string>(r);
     expect_true(x1 == "foo");
 
-    auto x2 = cpp11::as_cpp<const std::string&>(r);
+    auto x2 = cpp11::as_cpp<const std::string>(r);
     expect_true(x2 == "foo");
+
+    auto x3 = cpp11::as_cpp<const std::string&>(r);
+    expect_true(x3 == "foo");
 
     UNPROTECT(1);
   }
@@ -191,10 +208,15 @@ context("as_cpp-C++") {
     expect_true(x1[1] == 2);
     expect_true(x1[2] == 3);
 
-    auto x2 = cpp11::as_cpp<const std::vector<int>&>(r);
+    auto x2 = cpp11::as_cpp<const std::vector<int>>(r);
     expect_true(x2[0] == 1);
     expect_true(x2[1] == 2);
     expect_true(x2[2] == 3);
+
+    auto x3 = cpp11::as_cpp<const std::vector<int>&>(r);
+    expect_true(x3[0] == 1);
+    expect_true(x3[1] == 2);
+    expect_true(x3[2] == 3);
 
     UNPROTECT(1);
   }
@@ -210,10 +232,15 @@ context("as_cpp-C++") {
     expect_true(x1[1] == "bar");
     expect_true(x1[2] == "baz");
 
-    auto x2 = cpp11::as_cpp<const std::vector<std::string>&>(r);
+    auto x2 = cpp11::as_cpp<const std::vector<std::string>>(r);
     expect_true(x2[0] == "foo");
     expect_true(x2[1] == "bar");
     expect_true(x2[2] == "baz");
+
+    auto x3 = cpp11::as_cpp<const std::vector<std::string>&>(r);
+    expect_true(x3[0] == "foo");
+    expect_true(x3[1] == "bar");
+    expect_true(x3[2] == "baz");
 
     UNPROTECT(1);
   }
@@ -229,10 +256,15 @@ context("as_cpp-C++") {
     expect_true(x1[1] == "bar");
     expect_true(x1[2] == "baz");
 
-    auto x2 = cpp11::as_cpp<const std::deque<std::string>&>(r);
+    auto x2 = cpp11::as_cpp<const std::deque<std::string>>(r);
     expect_true(x2[0] == "foo");
     expect_true(x2[1] == "bar");
     expect_true(x2[2] == "baz");
+
+    auto x3 = cpp11::as_cpp<const std::deque<std::string>&>(r);
+    expect_true(x3[0] == "foo");
+    expect_true(x3[1] == "bar");
+    expect_true(x3[2] == "baz");
 
     UNPROTECT(1);
   }
@@ -248,28 +280,17 @@ context("as_cpp-C++") {
     expect_true(x1[1] == 2.);
     expect_true(x1[2] == 3.);
 
+    auto x2 = cpp11::as_cpp<const cpp11::doubles>(r);
+    expect_true(x2[0] == 1.);
+    expect_true(x2[1] == 2.);
+    expect_true(x2[2] == 3.);
+
+    auto x3 = cpp11::as_cpp<const cpp11::doubles&>(r);
+    expect_true(x3[0] == 1.);
+    expect_true(x3[1] == 2.);
+    expect_true(x3[2] == 3.);
+
     UNPROTECT(1);
-  }
-
-  test_that("as_cpp<raws>()") {
-    cpp11::writable::raws x;
-    x.push_back(0);
-    x.push_back(1);
-    x.push_back(2);
-
-    auto res1 = cpp11::as_sexp(x);
-    expect_true(TYPEOF(res1) == RAWSXP);
-    expect_true(RAW(res1)[0] == 0);
-    expect_true(RAW(res1)[1] == 1);
-    expect_true(RAW(res1)[2] == 2);
-
-    cpp11::raws y(x);
-
-    auto res2 = cpp11::as_sexp(y);
-    expect_true(TYPEOF(res2) == RAWSXP);
-    expect_true(RAW(res2)[0] == 0);
-    expect_true(RAW(res2)[1] == 1);
-    expect_true(RAW(res2)[2] == 2);
   }
 
   test_that("as_cpp<Rcpp::List>()") {
@@ -364,6 +385,27 @@ context("as_cpp-C++") {
     expect_true(LOGICAL(l2)[0] == FALSE);
 
     UNPROTECT(2);
+  }
+
+  test_that("as_sexp(raws)") {
+    cpp11::writable::raws x;
+    x.push_back(0);
+    x.push_back(1);
+    x.push_back(2);
+
+    auto res1 = cpp11::as_sexp(x);
+    expect_true(TYPEOF(res1) == RAWSXP);
+    expect_true(RAW(res1)[0] == 0);
+    expect_true(RAW(res1)[1] == 1);
+    expect_true(RAW(res1)[2] == 2);
+
+    cpp11::raws y(x);
+
+    auto res2 = cpp11::as_sexp(y);
+    expect_true(TYPEOF(res2) == RAWSXP);
+    expect_true(RAW(res2)[0] == 0);
+    expect_true(RAW(res2)[1] == 1);
+    expect_true(RAW(res2)[2] == 2);
   }
 
   test_that("as_sexp(stringish)") {

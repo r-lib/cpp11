@@ -27,8 +27,9 @@ using disable_if_convertible_to_sexp =
 
 template <typename T, typename R = void>
 using enable_if_integral =
-    enable_if_t<std::is_integral<T>::value && !std::is_same<T, bool>::value &&
-                    !std::is_same<T, char>::value,
+    enable_if_t<std::is_integral<T>::value &&
+                    !std::is_same<typename std::remove_cv<T>::type, bool>::value &&
+                    !std::is_same<typename std::remove_cv<T>::type, char>::value,
                 R>;
 
 template <typename T, typename R = void>
@@ -39,13 +40,16 @@ template <typename E, typename R = void>
 using enable_if_enum = enable_if_t<std::is_enum<E>::value, R>;
 
 template <typename T, typename R = void>
-using enable_if_bool = enable_if_t<std::is_same<T, bool>::value, R>;
+using enable_if_bool =
+    enable_if_t<std::is_same<typename std::remove_cv<T>::type, bool>::value, R>;
 
 template <typename T, typename R = void>
-using enable_if_char = enable_if_t<std::is_same<T, char>::value, R>;
+using enable_if_char =
+    enable_if_t<std::is_same<typename std::remove_cv<T>::type, char>::value, R>;
 
 template <typename T, typename R = void>
-using enable_if_std_string = enable_if_t<std::is_same<T, std::string>::value, R>;
+using enable_if_std_string =
+    enable_if_t<std::is_same<typename std::remove_const<T>::type, std::string>::value, R>;
 
 template <typename T, typename R = void>
 using enable_if_c_string = enable_if_t<std::is_same<T, const char*>::value, R>;
