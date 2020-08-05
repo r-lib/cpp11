@@ -175,7 +175,7 @@ template <typename T>
 auto as_cpp(SEXP from)
     -> enable_if_t<std::is_reference<T>::value,
                    decltype(as_cpp<typename std::decay<T>::type>(from))> {
-  return T(from);
+  return as_cpp<typename std::decay<T>::type>(from);
 }
 
 template <typename T>
