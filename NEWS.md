@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* `cpp_source()`, `cpp_function()` and `cpp_eval()` now support `[[cpp11::linking_to()]]` syntax to link to third party packages with C++ headers. (#48)
+
 * `safe[]` can now work with functions that return any type (#70, @bkietz)
 
 * cpp11 is now able to compile on gcc 4.8.5 (#69, @bkietz)

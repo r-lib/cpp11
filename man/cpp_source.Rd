@@ -33,6 +33,11 @@ expression.
 \code{\link[=cpp_function]{cpp_function()}} compiles and loads a single function for use in R.
 \code{\link[=cpp_eval]{cpp_eval()}} evaluates a single C++ expression and returns the result.
 }
+\details{
+Within C++ code you can use \verb{[[cpp11::linking_to(pkgxyz)]]} to link to
+external packages. This is equivalent to putting those packages in the
+\code{LinkingTo} field in a package DESCRIPTION.
+}
 \examples{
 \dontrun{
 cpp_source(
@@ -51,5 +56,29 @@ cpp_source(
   ')
 
 num_odd(as.integer(c(1:10, 15, 23)))
+
+if (require("progress")) {
+
+cpp_source(
+  code = '
+#include <cpp11/R.hpp>
+#include <RProgress.h>
+
+[[cpp11::linking_to(progress)]]
+
+[[cpp11::register]] void
+show_progress() {
+  RProgress::RProgress pb("Downloading [:bar] ETA: :eta");
+
+  pb.tick(0);
+  for (int i = 0; i < 100; i++) {
+    usleep(2.0 / 100 * 1000000);
+    pb.tick();
+  }
+}
+')
+
+show_progress()
+}
 }
 }

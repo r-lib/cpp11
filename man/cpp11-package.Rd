@@ -6,10 +6,11 @@
 \alias{cpp11-package}
 \title{cpp11: A C++11 Interface for R's C Interface}
 \description{
-Provides a header only, C++11 interface to R's C interface.
-  Compared to other approaches 'cpp11' strives to be safe against long jumps
-  from the C API as well as C++ exceptions, conform to normal R function
-  semantics and supports interaction with 'ALTREP' vectors.
+Provides a header only, C++11 interface to R's C
+    interface.  Compared to other approaches 'cpp11' strives to be safe
+    against long jumps from the C API as well as C++ exceptions, conform
+    to normal R function semantics and supports interaction with 'ALTREP'
+    vectors.
 }
 \seealso{
 Useful links:
@@ -24,6 +25,8 @@ Useful links:
 
 Other contributors:
 \itemize{
+  \item Romain François [contributor]
+  \item Benjamin Kietzman [contributor]
   \item RStudio [copyright holder, funder]
 }
 

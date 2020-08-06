@@ -36,6 +36,7 @@ Suggests:
     knitr,
     lobstr,
     mockery,
+    progress,
     rmarkdown,
     scales,
     testthat,

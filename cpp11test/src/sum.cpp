@@ -1,7 +1,10 @@
 #include <numeric>
 #include "cpp11/doubles.hpp"
 
-[[cpp11::register]] double sum_dbl_for_(cpp11::doubles x) {
+[[cpp11::linking_to(foo)]]
+
+[[cpp11::register]] double
+sum_dbl_for_(cpp11::doubles x) {
   double sum = 0.;
   R_xlen_t n = x.size();
   for (R_xlen_t i = 0; i < n; ++i) {

@@ -4,6 +4,10 @@
 #' [cpp_function()] compiles and loads a single function for use in R.
 #' [cpp_eval()] evaluates a single C++ expression and returns the result.
 #'
+#' Within C++ code you can use `[[cpp11::linking_to(pkgxyz)]]` to link to
+#' external packages. This is equivalent to putting those packages in the
+#' `LinkingTo` field in a package DESCRIPTION.
+#'
 #' @param file A file containing C++ code to compile
 #' @param code If non-null, the C++ code to compile
 #' @param env The R environment where the R wrapping functions should be defined.
@@ -30,6 +34,30 @@
 #'   ')
 #'
 #' num_odd(as.integer(c(1:10, 15, 23)))
+#'
+#' if (require("progress")) {
+#'
+#' cpp_source(
+#'   code = '
+#' #include <cpp11/R.hpp>
+#' #include <RProgress.h>
+#'
+#' [[cpp11::linking_to(progress)]]
+#'
+#' [[cpp11::register]] void
+#' show_progress() {
+#'   RProgress::RProgress pb("Downloading [:bar] ETA: :eta");
+#'
+#'   pb.tick(0);
+#'   for (int i = 0; i < 100; i++) {
+#'     usleep(2.0 / 100 * 1000000);
+#'     pb.tick();
+#'   }
+#' }
+#' ')
+#'
+#' show_progress()
+#' }
 #' }
 #' @export
 cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE) {
@@ -65,7 +93,9 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   cpp_path <- file.path(dir, "src", "cpp11.cpp")
   brio::write_lines(c('#include "cpp11/declarations.hpp"', "using namespace cpp11;", cpp_functions_definitions), cpp_path)
 
-  includes <- generate_include_paths("cpp11")
+  linking_to <- union(get_linking_to(all_decorations), "cpp11")
+
+  includes <- generate_include_paths(linking_to)
 
   if (isTRUE(clean)) {
     on.exit(unlink(dir, recursive = TRUE))
@@ -141,4 +171,14 @@ cpp_eval <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE) {
     clean = clean,
     quiet = quiet)
   f()
+}
+
+get_linking_to <- function(decorations) {
+  out <- decorations[decorations$decoration == "cpp11::linking_to", ]
+
+  if (NROW(decorations) == 0) {
+    return(character())
+  }
+
+  as.character(unlist(out$params))
 }
