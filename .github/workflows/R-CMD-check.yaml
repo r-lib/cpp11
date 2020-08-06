@@ -24,11 +24,11 @@ jobs:
           - {os: ubuntu-16.04,   r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest"}
           - {os: ubuntu-16.04,   r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest"}
           - {os: ubuntu-16.04,   r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest", custom: 'no-cpp11test'}
+          - {os: ubuntu-16.04,   r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest", custom: 'gcc 4.8'}
           - {os: ubuntu-16.04,   r: 'oldrel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest"}
           - {os: ubuntu-16.04,   r: '3.5', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest"}
           - {os: ubuntu-16.04,   r: '3.4', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest"}
           - {os: ubuntu-16.04,   r: '3.3', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest"}
-          - {os: centos-7,       r: '3.6'}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -72,6 +72,12 @@ jobs:
           mkdir -p ~/.R/
           sudo apt install g++-6 -y
           echo $'CXX1X=g++-6\nCXX11=g++-6' >> ~/.R/Makevars
+
+      - name : Install compiler version
+        if: matrix.config.custom == 'gcc 4.8'
+        run: |
+          apt-get install -y g++-4.8
+          echo $'CXX1X=g++-4.8\nCXX11=g++-4.8' >> ~/.R/Makevars
 
       - name: install macOS system dependecies
         if: runner.os == 'macOS'
