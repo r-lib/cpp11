@@ -166,6 +166,11 @@ cpp_eval() evaluates a single C++ expression and returns the result." />
     <p>For <code>cpp_source()</code> and <code>[cpp_function()]</code> the results of
 <code><a href='https://rdrr.io/r/base/dynload.html'>dyn.load()</a></code> (invisibly). For <code>[cpp_eval()]</code> the results of the evaluated
 expression.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Within C++ code you can use <code>[[cpp11::linking_to(pkgxyz)]]</code> to link to
+external packages. This is equivalent to putting those packages in the
+<code>LinkingTo</code> field in a package DESCRIPTION.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
@@ -185,6 +190,30 @@ expression.</p>
   '</span>)
 
 <span class='fu'>num_odd</span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>15</span>, <span class='fl'>23</span>)))
+
+<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='st'>"progress"</span>)) {
+
+<span class='fu'>cpp_source</span>(
+  <span class='kw'>code</span> <span class='kw'>=</span> <span class='st'>'
+#include &lt;cpp11/R.hpp&gt;
+#include &lt;RProgress.h&gt;
+
+[[cpp11::linking_to(progress)]]
+
+[[cpp11::register]] void
+show_progress() {
+  RProgress::RProgress pb("Downloading [:bar] ETA: :eta");
+
+  pb.tick(0);
+  for (int i = 0; i &lt; 100; i++) {
+    usleep(2.0 / 100 * 1000000);
+    pb.tick();
+  }
+}
+'</span>)
+
+<span class='fu'>show_progress</span>()
+}
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
