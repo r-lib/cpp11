@@ -91,10 +91,11 @@ context("as_cpp-C++") {
   }
 
   test_that("as_cpp<enum:char>(INTSEXP)") {
-    enum class Response: char { YES, NO, MAYBE };
+    enum class Response : char { YES, NO, MAYBE };
     SEXP r = PROTECT(Rf_allocVector(INTSXP, 1));
 
-    for (Response e : {Response::YES, Response::NO, Response::MAYBE, static_cast<Response>(42)}) {
+    for (Response e :
+         {Response::YES, Response::NO, Response::MAYBE, static_cast<Response>(42)}) {
       INTEGER(r)[0] = static_cast<int>(e);
       auto x = cpp11::as_cpp<Response>(r);
       expect_true(x == e);
