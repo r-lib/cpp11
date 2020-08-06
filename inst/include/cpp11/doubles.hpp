@@ -1,8 +1,9 @@
 #pragma once
 
-#include <algorithm>            // for min
-#include <array>                // for array
-#include <initializer_list>     // for initializer_list
+#include <algorithm>         // for min
+#include <array>             // for array
+#include <initializer_list>  // for initializer_list
+
 #include "R_ext/Arith.h"        // for ISNA
 #include "cpp11/R.hpp"          // for SEXP, SEXPREC, Rf_allocVector, REAL
 #include "cpp11/as.hpp"         // for as_sexp

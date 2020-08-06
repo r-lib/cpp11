@@ -1,15 +1,15 @@
 #include <testthat.h>
-#include "cpp11/strings.hpp"
 #include "cpp11/doubles.hpp"
 #include "cpp11/list.hpp"
 #include "cpp11/list_of.hpp"
+#include "cpp11/strings.hpp"
 
 context("list_of-C++") {
   test_that("list_of works") {
     using namespace cpp11::literals;
 
     cpp11::writable::list x({"x"_nm = cpp11::writable::doubles({1., 2., 3.}),
-                               "y"_nm = cpp11::writable::doubles({4., 5., 6.})});
+                             "y"_nm = cpp11::writable::doubles({4., 5., 6.})});
 
     cpp11::list_of<cpp11::doubles> res(x);
 
@@ -24,7 +24,7 @@ context("list_of-C++") {
     using namespace cpp11::literals;
 
     cpp11::writable::list x({"x"_nm = cpp11::writable::doubles({1., 2., 3.}),
-                               "y"_nm = cpp11::writable::doubles({4., 5., 6.})});
+                             "y"_nm = cpp11::writable::doubles({4., 5., 6.})});
 
     cpp11::writable::list_of<cpp11::writable::doubles> res(x);
 

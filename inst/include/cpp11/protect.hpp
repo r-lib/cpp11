@@ -1,12 +1,14 @@
 #pragma once
 
+#include <csetjmp>    // for longjmp, setjmp, jmp_buf
+#include <exception>  // for exception
+#include <stdexcept>  // for std::runtime_error
+#include <string>     // for string, basic_string
+#include <tuple>      // for tuple, make_tuple
+
+// NB: cpp11/R.hpp must precede R_ext includes so our definition of Rboolean is used
 #include "cpp11/R.hpp"  // for SEXP, SEXPREC, CDR, R_NilValue, CAR, R_Pres...
 
-#include <csetjmp>        // for longjmp, setjmp, jmp_buf
-#include <exception>      // for exception
-#include <stdexcept>      // for std::runtime_error
-#include <string>         // for string, basic_string
-#include <tuple>          // for tuple, make_tuple
 #include "R_ext/Error.h"  // for Rf_error, Rf_warning
 #include "R_ext/Print.h"  // for REprintf
 #include "R_ext/Utils.h"  // for R_CheckUserInterrupt

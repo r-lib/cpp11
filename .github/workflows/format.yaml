@@ -1,0 +1,24 @@
+on:
+  push:
+    branches: master
+  pull_request:
+    branches:
+      - master
+
+name: format_check
+
+jobs:
+  format_check:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install ClangFormat
+        run: sudo apt-get install -y clang-format-10
+
+      - name: Run ClangFormat
+        run: make format clang_format=clang-format-10
+
+      - name: Check for a non-empty diff
+        run: git diff-files -U --exit-code
+

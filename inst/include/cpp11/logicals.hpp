@@ -1,8 +1,9 @@
 #pragma once
 
-#include <algorithm>                  // for min
-#include <array>                      // for array
-#include <initializer_list>           // for initializer_list
+#include <algorithm>         // for min
+#include <array>             // for array
+#include <initializer_list>  // for initializer_list
+
 #include "cpp11/R.hpp"                // for Rboolean, SEXP, SEXPREC, Rf_all...
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/named_arg.hpp"        // for named_arg

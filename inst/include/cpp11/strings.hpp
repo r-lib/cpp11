@@ -1,7 +1,8 @@
 #pragma once
 
-#include <initializer_list>           // for initializer_list
-#include <string>                     // for string, basic_string
+#include <initializer_list>  // for initializer_list
+#include <string>            // for string, basic_string
+
 #include "cpp11/R.hpp"                // for SEXP, TYPEOF, SEXPREC, SET_STRI...
 #include "cpp11/as.hpp"               // for as_sexp
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy

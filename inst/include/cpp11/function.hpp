@@ -1,8 +1,10 @@
 #pragma once
 
-#include <string.h>             // for strcmp
-#include <string>               // for string, basic_string
-#include <utility>              // for forward
+#include <string.h>  // for strcmp
+
+#include <string>   // for string, basic_string
+#include <utility>  // for forward
+
 #include "cpp11/R.hpp"          // for SEXP, SEXPREC, CDR, Rf_install, SETCAR
 #include "cpp11/as.hpp"         // for as_sexp
 #include "cpp11/named_arg.hpp"  // for named_arg

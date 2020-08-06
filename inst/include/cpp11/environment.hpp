@@ -1,6 +1,7 @@
 #pragma once
 
-#include <string>             // for string, basic_string
+#include <string>  // for string, basic_string
+
 #include "Rversion.h"         // for R_VERSION, R_Version
 #include "cpp11/R.hpp"        // for SEXP, SEXPREC, Rf_install, Rf_findVarIn...
 #include "cpp11/as.hpp"       // for as_sexp
