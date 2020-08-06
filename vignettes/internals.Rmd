@@ -54,6 +54,12 @@ To calculate code coverage of the cpp11 package run the following from the `cpp1
 covr::report(cpp11_coverage())
 ```
 
+## Code formatting
+
+This project uses [clang-format](https://clang.llvm.org/docs/ClangFormat.html) to automatically format the c++ code.
+
+You can run `make format` to re-format all code in the project. Alternatively many IDEs support automatically running `clang-format` every time files are written.
+
 ## Code organization
 
 cpp11 is a header only library, so all source code exposed to users lives in [inst/include](https://github.com/r-lib/cpp11/tree/master/inst/include).
