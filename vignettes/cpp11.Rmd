@@ -1107,10 +1107,10 @@ To add `cpp11` to an existing package, you put your C++ files in the `src/` dire
 
 The easiest way to set this up automatically is to call `usethis::use_cpp11()`.
 
-Before building the package, you'll need to run `cpp11::cpp_generate_bindings()`.
+Before building the package, you'll need to run `cpp11::cpp_register()`.
 This function scans the C++ files for `[[cpp11::register]]` attributes and generates the binding code required to make the functions available in R.
-Re-run `cpp11::cpp_generate_bindings()` whenever functions are added, removed, or have their signatures changed.
-If you are using `devtools` to develop your package this is done automatically by the pkgbuild package.
+Re-run `cpp11::cpp_register()` whenever functions are added, removed, or have their signatures changed.
+If you are using `devtools` to develop your package this is done automatically by the pkgbuild package when your package has `LinkingTo: cpp11` in its DESCRIPTION file.
 
 ## Learning more {#more}
 
