@@ -4,8 +4,9 @@
 #include <string>
 #include <vector>
 
-#include "Rcpp.h"
 #include "cpp11/declarations.hpp"
+
+#include "Rcpp.h"
 
 context("as_cpp-C++") {
   test_that("as_cpp<integer>(INTSEXP)") {
@@ -191,16 +192,6 @@ context("as_cpp-C++") {
     expect_true(x1[1] == 2);
     expect_true(x1[2] == 3);
 
-    auto x2 = cpp11::as_cpp<const std::vector<int>>(r);
-    expect_true(x2[0] == 1);
-    expect_true(x2[1] == 2);
-    expect_true(x2[2] == 3);
-
-    auto x3 = cpp11::as_cpp<const std::vector<int>&>(r);
-    expect_true(x3[0] == 1);
-    expect_true(x3[1] == 2);
-    expect_true(x3[2] == 3);
-
     UNPROTECT(1);
   }
 
@@ -214,16 +205,6 @@ context("as_cpp-C++") {
     expect_true(x1[0] == "foo");
     expect_true(x1[1] == "bar");
     expect_true(x1[2] == "baz");
-
-    auto x2 = cpp11::as_cpp<const std::vector<std::string>>(r);
-    expect_true(x2[0] == "foo");
-    expect_true(x2[1] == "bar");
-    expect_true(x2[2] == "baz");
-
-    auto x3 = cpp11::as_cpp<const std::vector<std::string>&>(r);
-    expect_true(x3[0] == "foo");
-    expect_true(x3[1] == "bar");
-    expect_true(x3[2] == "baz");
 
     UNPROTECT(1);
   }
@@ -239,16 +220,6 @@ context("as_cpp-C++") {
     expect_true(x1[1] == "bar");
     expect_true(x1[2] == "baz");
 
-    auto x2 = cpp11::as_cpp<const std::deque<std::string>>(r);
-    expect_true(x2[0] == "foo");
-    expect_true(x2[1] == "bar");
-    expect_true(x2[2] == "baz");
-
-    auto x3 = cpp11::as_cpp<const std::deque<std::string>&>(r);
-    expect_true(x3[0] == "foo");
-    expect_true(x3[1] == "bar");
-    expect_true(x3[2] == "baz");
-
     UNPROTECT(1);
   }
 
@@ -262,11 +233,6 @@ context("as_cpp-C++") {
     expect_true(x1[0] == 1.);
     expect_true(x1[1] == 2.);
     expect_true(x1[2] == 3.);
-
-    auto x2 = cpp11::as_cpp<const cpp11::doubles>(r);
-    expect_true(x2[0] == 1.);
-    expect_true(x2[1] == 2.);
-    expect_true(x2[2] == 3.);
 
     UNPROTECT(1);
   }
