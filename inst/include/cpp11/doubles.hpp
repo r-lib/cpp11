@@ -79,19 +79,22 @@ template <>
 inline r_vector<double>::r_vector(std::initializer_list<named_arg> il)
     : cpp11::r_vector<double>(safe[Rf_allocVector](REALSXP, il.size())),
       capacity_(il.size()) {
+  protect_ = protect_sexp(data_);
+
   try {
     unwind_protect([&] {
-      protect_ = protect_sexp(data_);
       Rf_setAttrib(data_, R_NamesSymbol, Rf_allocVector(STRSXP, capacity_));
-      sexp names(Rf_getAttrib(data_, R_NamesSymbol));
+      SEXP names = PROTECT(Rf_getAttrib(data_, R_NamesSymbol));
       auto it = il.begin();
       for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
-        data_p_[i] = doubles(it->value())[0];
+        data_p_[i] = REAL_ELT(it->value(), 0);
         SET_STRING_ELT(names, i, Rf_mkCharCE(it->name(), CE_UTF8));
       }
+      UNPROTECT(1);
     });
   } catch (const unwind_exception& e) {
     release_protect(protect_);
+    UNPROTECT(1);
     throw e;
   }
 }
