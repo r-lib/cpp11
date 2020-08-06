@@ -20,11 +20,5 @@ jobs:
         run: make format clang_format=clang-format-10
 
       - name: Check for a non-empty diff
-        run: |
-          if [ "$(git diff --name-only)" != "" ]
-          then
-            echo "Please run clang-format to make the following changes:"
-            git diff
-            exit 1
-          fi
+        run: git diff-files -U --exit-code
 
