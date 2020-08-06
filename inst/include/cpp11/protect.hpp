@@ -277,4 +277,9 @@ void warning(const std::string& fmt, Args... args) {
   safe[Rf_warning](fmt.c_str(), args...);
 }
 
+template <typename... Args>
+void gcc48_error(Args... args) {
+  unwind_protect([&] { std::ignore = std::make_tuple(args...); });
+}
+
 }  // namespace cpp11
