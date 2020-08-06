@@ -1,9 +1,10 @@
 #pragma once
 
-#include <cmath>              // for modf
-#include <initializer_list>   // for initializer_list
-#include <string>             // for string, basic_string
-#include <type_traits>        // for decay, enable_if, is_same, is_convertible
+#include <cmath>             // for modf
+#include <initializer_list>  // for initializer_list
+#include <string>            // for string, basic_string
+#include <type_traits>       // for decay, enable_if, is_same, is_convertible
+
 #include "cpp11/R.hpp"        // for SEXP, SEXPREC, Rf_xlength, R_xlen_t
 #include "cpp11/protect.hpp"  // for stop, protect, safe, protect::function
 
@@ -168,6 +169,10 @@ template <typename T>
 enable_if_std_string<T, T> as_cpp(SEXP from) {
   return {as_cpp<const char*>(from)};
 }
+/// If your compilation fails here you are calling as_cpp<T> with a T
+/// which is not decayed; consider rewriting or wrapping T into cpp11::decay_t<T>.
+template <typename T>
+enable_if_t<!std::is_same<decay_t<T>, T>::value, T> as_cpp(SEXP from) = delete;
 
 template <typename T>
 enable_if_integral<T, SEXP> as_sexp(T from) {
