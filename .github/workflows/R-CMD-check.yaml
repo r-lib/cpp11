@@ -76,7 +76,7 @@ jobs:
       - name : Install compiler version
         if: matrix.config.custom == 'gcc 4.8'
         run: |
-          apt-get install -y g++-4.8
+          sudo apt-get install -y g++-4.8
           echo $'CXX1X=g++-4.8\nCXX11=g++-4.8' >> ~/.R/Makevars
 
       - name: install macOS system dependecies
