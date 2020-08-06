@@ -697,7 +697,7 @@ inline typename r_vector<T>::proxy r_vector<T>::operator[](const R_xlen_t pos) c
   if (is_altrep_) {
     return {data_, pos, nullptr, true};
   }
-  return {data_, pos, &data_p_[pos], false};
+  return {data_, pos, data_p_ != nullptr ? &data_p_[pos] : nullptr, false};
 }
 
 template <typename T>
