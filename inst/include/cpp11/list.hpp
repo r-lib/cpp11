@@ -1,6 +1,7 @@
 #pragma once
 
-#include <initializer_list>           // for initializer_list
+#include <initializer_list>  // for initializer_list
+
 #include "cpp11/R.hpp"                // for SEXP, SEXPREC, SET_VECTOR_ELT
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/named_arg.hpp"        // for named_arg

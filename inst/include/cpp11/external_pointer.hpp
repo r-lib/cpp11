@@ -1,8 +1,9 @@
 #pragma once
 
-#include <cstddef>             // for nullptr_t, NULL
-#include <memory>              // for bad_weak_ptr
-#include <type_traits>         // for add_lvalue_reference
+#include <cstddef>      // for nullptr_t, NULL
+#include <memory>       // for bad_weak_ptr
+#include <type_traits>  // for add_lvalue_reference
+
 #include "cpp11/R.hpp"         // for SEXP, SEXPREC, TYPEOF, R_NilValue, R_C...
 #include "cpp11/protect.hpp"   // for protect, safe, protect::function
 #include "cpp11/r_vector.hpp"  // for type_error

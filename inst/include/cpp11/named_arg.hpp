@@ -1,9 +1,11 @@
 #pragma once
 
-#include <stddef.h>          // for size_t
+#include <stddef.h>  // for size_t
+
 #include <initializer_list>  // for initializer_list
-#include "cpp11/R.hpp"       // for SEXP, SEXPREC, literals
-#include "cpp11/as.hpp"      // for as_sexp
+
+#include "cpp11/R.hpp"   // for SEXP, SEXPREC, literals
+#include "cpp11/as.hpp"  // for as_sexp
 
 namespace cpp11 {
 class named_arg {

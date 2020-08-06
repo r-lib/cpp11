@@ -1,7 +1,8 @@
 #pragma once
 
-#include <string>             // for string, basic_string, operator==
-#include <type_traits>        // for is_convertible, enable_if
+#include <string>       // for string, basic_string, operator==
+#include <type_traits>  // for is_convertible, enable_if
+
 #include "R_ext/Memory.h"     // for vmaxget, vmaxset
 #include "cpp11/R.hpp"        // for SEXP, SEXPREC, Rf_mkCharCE, Rf_translat...
 #include "cpp11/as.hpp"       // for as_sexp
