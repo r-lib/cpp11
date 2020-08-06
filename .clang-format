@@ -1,3 +1,4 @@
 BasedOnStyle:  Google
 DerivePointerAlignment: false
 ColumnLimit: 90
+IncludeBlocks: Preserve
