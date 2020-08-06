@@ -1,9 +1,10 @@
 #pragma once
 
-#include <cmath>              // for modf
-#include <initializer_list>   // for initializer_list
-#include <string>             // for string, basic_string
-#include <type_traits>        // for decay, enable_if, is_same, is_convertible
+#include <cmath>             // for modf
+#include <initializer_list>  // for initializer_list
+#include <string>            // for string, basic_string
+#include <type_traits>       // for decay, enable_if, is_same, is_convertible
+
 #include "cpp11/R.hpp"        // for SEXP, SEXPREC, Rf_xlength, R_xlen_t
 #include "cpp11/protect.hpp"  // for stop, protect, safe, protect::function
 
@@ -145,9 +146,7 @@ template <typename T>
 enable_if_char<T, T> as_cpp(SEXP from) {
   if (Rf_isString(from)) {
     if (Rf_xlength(from) == 1) {
-      const char* c_p = nullptr;
-      unwind_protect([&] { c_p = Rf_translateCharUTF8(STRING_ELT(from, 0)); });
-      return c_p[0];
+      return unwind_protect([&] { return Rf_translateCharUTF8(STRING_ELT(from, 0))[0]; });
     }
   }
 
@@ -158,10 +157,8 @@ template <typename T>
 enable_if_c_string<T, T> as_cpp(SEXP from) {
   if (Rf_isString(from)) {
     if (Rf_xlength(from) == 1) {
-      const char* c_p = nullptr;
       // TODO: use vmaxget / vmaxset here?
-      unwind_protect([&] { c_p = Rf_translateCharUTF8(STRING_ELT(from, 0)); });
-      return c_p;
+      return {unwind_protect([&] { return Rf_translateCharUTF8(STRING_ELT(from, 0)); })};
     }
   }
 
@@ -176,6 +173,7 @@ enable_if_std_string<T, T> as_cpp(SEXP from) {
 /// which is not decayed; consider rewriting or wrapping T into cpp11::decay_t<T>.
 template <typename T>
 enable_if_t<!std::is_same<decay_t<T>, T>::value, T> as_cpp(SEXP from) = delete;
+
 template <typename T>
 enable_if_integral<T, SEXP> as_sexp(T from) {
   return safe[Rf_ScalarInteger](from);

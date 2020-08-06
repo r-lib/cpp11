@@ -1,10 +1,11 @@
 #include <testthat.h>
+
 #include <deque>
 #include <string>
 #include <vector>
-#include "cpp11/declarations.hpp"
 
 #include "Rcpp.h"
+#include "cpp11/declarations.hpp"
 
 context("as_cpp-C++") {
   test_that("as_cpp<integer>(INTSEXP)") {

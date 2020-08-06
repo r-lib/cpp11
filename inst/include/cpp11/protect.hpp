@@ -178,6 +178,15 @@ void unwind_protect(Fun code) {
 }
 #endif
 
+template <typename Fun, typename R = decltype(std::declval<Fun>()())>
+typename std::enable_if<!std::is_same<R, SEXP>::value && !std::is_same<R, void>::value,
+                        R>::type
+unwind_protect(Fun code) {
+  R out;
+  unwind_protect([&] { out = code(); });
+  return out;
+}
+
 namespace detail {
 
 template <size_t...>
