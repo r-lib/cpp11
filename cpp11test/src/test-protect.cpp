@@ -39,9 +39,7 @@ context("unwind_protect-C++") {
 
   test_that("stop throws an unwind_exception") {
     expect_error_as(cpp11::stop("error"), cpp11::unwind_exception);
-    expect_error_with(cpp11::stop("error"), "error");
     expect_error_as(cpp11::stop("error: %s", "message"), cpp11::unwind_exception);
-    expect_error_with(cpp11::stop("error: %s", "message"), "error: message");
   }
 
   test_that("safe wraps R functions and works if there is an R error") {
