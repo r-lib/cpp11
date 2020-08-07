@@ -74,7 +74,7 @@ cpp_eval() evaluates a single C++ expression and returns the result." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -130,11 +130,11 @@ cpp_eval() evaluates a single C++ expression and returns the result." />
 <code>cpp_eval()</code> evaluates a single C++ expression and returns the result.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cpp_source</span>(<span class='kw'>file</span>, code = <span class='kw'>NULL</span>, env = <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(), clean = <span class='fl'>TRUE</span>, quiet = <span class='fl'>TRUE</span>)
+    <pre class="usage"><span class='fu'>cpp_source</span>(<span class='no'>file</span>, <span class='kw'>code</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(), <span class='kw'>clean</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
-<span class='fu'>cpp_function</span>(<span class='kw'>code</span>, env = <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(), clean = <span class='fl'>TRUE</span>, quiet = <span class='fl'>TRUE</span>)
+<span class='fu'>cpp_function</span>(<span class='no'>code</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(), <span class='kw'>clean</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
-<span class='fu'>cpp_eval</span>(<span class='kw'>code</span>)</pre>
+<span class='fu'>cpp_eval</span>(<span class='no'>code</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(), <span class='kw'>clean</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,11 +166,16 @@ cpp_eval() evaluates a single C++ expression and returns the result." />
     <p>For <code>cpp_source()</code> and <code>[cpp_function()]</code> the results of
 <code><a href='https://rdrr.io/r/base/dynload.html'>dyn.load()</a></code> (invisibly). For <code>[cpp_eval()]</code> the results of the evaluated
 expression.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Within C++ code you can use <code>[[cpp11::linking_to("pkgxyz")]]</code> to link to
+external packages. This is equivalent to putting those packages in the
+<code>LinkingTo</code> field in a package DESCRIPTION.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='fu'>cpp_source</span>(
-  code = <span class='st'>'#include "cpp11/integers.hpp"
+  <span class='kw'>code</span> <span class='kw'>=</span> <span class='st'>'#include "cpp11/integers.hpp"
 
   [[cpp11::register]]
   int num_odd(cpp11::integers x) {
@@ -182,21 +187,33 @@ expression.</p>
     }
     return total;
   }
-  '</span>ode = '#include "cpp11/integers.hpp"
+  '</span>)
 
-  [[cpp11::register]]
-  int num_odd(cpp11::integers x) {
-    int total = 0;
-    for (int val : x) {
-      if ((val % 2) == 1) {
-        ++total;
-      }
-    }
-    return total;
+<span class='fu'>num_odd</span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>15</span>, <span class='fl'>23</span>)))
+
+<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='st'>"progress"</span>)) {
+
+<span class='fu'>cpp_source</span>(
+  <span class='kw'>code</span> <span class='kw'>=</span> <span class='st'>'
+#include &lt;cpp11/R.hpp&gt;
+#include &lt;RProgress.h&gt;
+
+[[cpp11::linking_to("progress")]]
+
+[[cpp11::register]] void
+show_progress() {
+  RProgress::RProgress pb("Downloading [:bar] ETA: :eta");
+
+  pb.tick(0);
+  for (int i = 0; i &lt; 100; i++) {
+    usleep(2.0 / 100 * 1000000);
+    pb.tick();
   }
-  ')
+}
+'</span>)
 
-<span class='fu'>num_odd</span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, <span class='fl'>15</span>, <span class='fl'>23</span>)))
+<span class='fu'>show_progress</span>()
+}
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -213,7 +230,7 @@ expression.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

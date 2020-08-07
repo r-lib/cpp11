@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -205,6 +205,12 @@
 <p>The default classes, e.g. <code>cpp11::doubles</code> are <em>read-only</em> classes that do not permit modification. If you want to modify the data you need to use the classes in the <code>cpp11::writable</code> namespace, e.g. <code>cpp11::writable::doubles</code>.</p>
 <p>In addition use the <code>writable</code> variants if you need to create a new R vector entirely in C++.</p>
 </div>
+<div id="fewer-implicit-conversions" class="section level2">
+<h2 class="hasAnchor">
+<a href="#fewer-implicit-conversions" class="anchor"></a>Fewer implicit conversions</h2>
+<p>Rcpp also allows very flexible implicit conversions, e.g. if you pass a <code>REALSXP</code> to a function that takes a <code>Rcpp::IntegerVector()</code> it is implicitly converted to a <code>INTSXP</code>. These conversions are nice for usability, but require (implicit) duplication of the data, with the associated runtime costs.</p>
+<p>cpp11 throws an error in these cases. If you want the implicit coercions you can add a call to <code><a href="https://rdrr.io/r/base/integer.html">as.integer()</a></code> or <code><a href="https://rdrr.io/r/base/double.html">as.double()</a></code> as appropriate from R when you call the function.</p>
+</div>
 <div id="calling-r-functions-from-c" class="section level2">
 <h2 class="hasAnchor">
 <a href="#calling-r-functions-from-c" class="anchor"></a>Calling R functions from C++</h2>
@@ -221,22 +227,21 @@
 <a href="#appending-behavior" class="anchor"></a>Appending behavior</h2>
 <p>One major difference in Rcpp and cpp11 is how vectors are grown. Rcpp vectors have a <code>push_back()</code> method, but unlike <code>std::vector()</code> no additional space is reserved when pushing. This makes calling <code>push_back()</code> repeatably very expensive, as the entire vector has to be copied each call.</p>
 <p>In contrast <code>cpp11</code> vectors grow efficiently, reserving extra space. Because of this you can do ~10,000,000 vector appends with cpp11 in approximately the same amount of time that Rcpp does 10,000, as this benchmark demonstrates.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw">grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span>(len = <span class="fl">10</span> <span class="op">^</span> (<span class="fl">0</span><span class="op">:</span><span class="fl">7</span>), pkg = <span class="st">"cpp11"</span>, stringsAsFactors = <span class="fl">FALSE</span>)
-<span class="kw">grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(
-  <span class="kw">grid</span>,
-  <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span>(len = <span class="fl">10</span> <span class="op">^</span> (<span class="fl">0</span><span class="op">:</span><span class="fl">4</span>), pkg = <span class="st">"rcpp"</span>, stringsAsFactors = <span class="fl">FALSE</span>)
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">cpp11test</span>)
+<span class="no">grid</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span>(<span class="kw">len</span> <span class="kw">=</span> <span class="fl">10</span> ^ (<span class="fl">0</span>:<span class="fl">7</span>), <span class="kw">pkg</span> <span class="kw">=</span> <span class="st">"cpp11"</span>, <span class="kw">stringsAsFactors</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
+<span class="no">grid</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(
+  <span class="no">grid</span>,
+  <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span>(<span class="kw">len</span> <span class="kw">=</span> <span class="fl">10</span> ^ (<span class="fl">0</span>:<span class="fl">4</span>), <span class="kw">pkg</span> <span class="kw">=</span> <span class="st">"rcpp"</span>, <span class="kw">stringsAsFactors</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
 )
-<span class="kw">b_grow</span> <span class="op">&lt;-</span> <span class="kw">bench</span>::<span class="fu"><a href="https://rdrr.io/pkg/bench/man/press.html">press</a></span>(.grid = <span class="kw">grid</span>,
+<span class="no">b_grow</span> <span class="kw">&lt;-</span> <span class="kw pkg">bench</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/press.html">press</a></span>(<span class="kw">.grid</span> <span class="kw">=</span> <span class="no">grid</span>,
   {
-    <span class="kw">fun</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/match.fun.html">match.fun</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"%sgrow_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="kw">pkg</span> <span class="op">==</span> <span class="st">"cpp11"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="kw">pkg</span>, <span class="st">"_"</span>))))
-    <span class="kw">bench</span>::<span class="fu"><a href="https://rdrr.io/pkg/bench/man/mark.html">mark</a></span>(
-      <span class="fu">fun</span>(<span class="kw">len</span>)
+    <span class="no">fun</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/match.fun.html">match.fun</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"%sgrow_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">pkg</span> <span class="kw">==</span> <span class="st">"cpp11"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">pkg</span>, <span class="st">"_"</span>))))
+    <span class="kw pkg">bench</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/mark.html">mark</a></span>(
+      <span class="fu">fun</span>(<span class="no">len</span>)
     )
   }
 )[<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"len"</span>, <span class="st">"pkg"</span>, <span class="st">"min"</span>, <span class="st">"mem_alloc"</span>, <span class="st">"n_itr"</span>, <span class="st">"n_gc"</span>)]
-<span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span>(<span class="kw">b_grow</span>, <span class="st">"growth.Rds"</span>, version = <span class="fl">2</span>)
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span>(<span class="no">b_grow</span>, <span class="st">"growth.Rds"</span>, <span class="kw">version</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
 <p><img src="converting_files/figure-html/unnamed-chunk-3-1.svg" width="700"></p>
 <table class="table">
 <thead><tr class="header">
@@ -251,15 +256,15 @@
 <tr class="odd">
 <td align="right">1e+00</td>
 <td align="left">cpp11</td>
-<td align="right">3.25µs</td>
+<td align="right">3.3µs</td>
 <td align="right">0B</td>
-<td align="right">9999</td>
-<td align="right">1</td>
+<td align="right">10000</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="right">1e+01</td>
 <td align="left">cpp11</td>
-<td align="right">5.76µs</td>
+<td align="right">6.05µs</td>
 <td align="right">0B</td>
 <td align="right">9999</td>
 <td align="right">1</td>
@@ -267,15 +272,15 @@
 <tr class="odd">
 <td align="right">1e+02</td>
 <td align="left">cpp11</td>
-<td align="right">8.45µs</td>
+<td align="right">8.49µs</td>
 <td align="right">1.89KB</td>
-<td align="right">9999</td>
-<td align="right">1</td>
+<td align="right">10000</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="right">1e+03</td>
 <td align="left">cpp11</td>
-<td align="right">13.62µs</td>
+<td align="right">14.18µs</td>
 <td align="right">16.03KB</td>
 <td align="right">9999</td>
 <td align="right">1</td>
@@ -283,31 +288,31 @@
 <tr class="odd">
 <td align="right">1e+04</td>
 <td align="left">cpp11</td>
-<td align="right">63.47µs</td>
+<td align="right">63.77µs</td>
 <td align="right">256.22KB</td>
-<td align="right">2797</td>
+<td align="right">3477</td>
 <td align="right">2</td>
 </tr>
 <tr class="even">
 <td align="right">1e+05</td>
 <td align="left">cpp11</td>
-<td align="right">432.75µs</td>
+<td align="right">443.32µs</td>
 <td align="right">2MB</td>
-<td align="right">451</td>
-<td align="right">4</td>
+<td align="right">404</td>
+<td align="right">5</td>
 </tr>
 <tr class="odd">
 <td align="right">1e+06</td>
 <td align="left">cpp11</td>
-<td align="right">3.45ms</td>
+<td align="right">3.99ms</td>
 <td align="right">16MB</td>
-<td align="right">56</td>
+<td align="right">70</td>
 <td align="right">3</td>
 </tr>
 <tr class="even">
 <td align="right">1e+07</td>
 <td align="left">cpp11</td>
-<td align="right">111.09ms</td>
+<td align="right">105.51ms</td>
 <td align="right">256MB</td>
 <td align="right">1</td>
 <td align="right">5</td>
@@ -315,7 +320,7 @@
 <tr class="odd">
 <td align="right">1e+00</td>
 <td align="left">rcpp</td>
-<td align="right">2.36µs</td>
+<td align="right">2.64µs</td>
 <td align="right">0B</td>
 <td align="right">10000</td>
 <td align="right">0</td>
@@ -323,7 +328,7 @@
 <tr class="even">
 <td align="right">1e+01</td>
 <td align="left">rcpp</td>
-<td align="right">2.87µs</td>
+<td align="right">3.13µs</td>
 <td align="right">0B</td>
 <td align="right">9999</td>
 <td align="right">1</td>
@@ -331,7 +336,7 @@
 <tr class="odd">
 <td align="right">1e+02</td>
 <td align="left">rcpp</td>
-<td align="right">14.84µs</td>
+<td align="right">13.87µs</td>
 <td align="right">42.33KB</td>
 <td align="right">9997</td>
 <td align="right">3</td>
@@ -339,18 +344,18 @@
 <tr class="even">
 <td align="right">1e+03</td>
 <td align="left">rcpp</td>
-<td align="right">529.55µs</td>
+<td align="right">440.77µs</td>
 <td align="right">3.86MB</td>
-<td align="right">345</td>
-<td align="right">3</td>
+<td align="right">319</td>
+<td align="right">1</td>
 </tr>
 <tr class="odd">
 <td align="right">1e+04</td>
 <td align="left">rcpp</td>
-<td align="right">71.19ms</td>
+<td align="right">54.13ms</td>
 <td align="right">381.96MB</td>
-<td align="right">1</td>
-<td align="right">3</td>
+<td align="right">2</td>
+<td align="right">2</td>
 </tr>
 </tbody>
 </table>
@@ -427,7 +432,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
