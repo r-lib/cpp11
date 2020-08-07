@@ -4,7 +4,7 @@
 #' [cpp_function()] compiles and loads a single function for use in R.
 #' [cpp_eval()] evaluates a single C++ expression and returns the result.
 #'
-#' Within C++ code you can use `[[cpp11::linking_to(pkgxyz)]]` to link to
+#' Within C++ code you can use `[[cpp11::linking_to("pkgxyz")]]` to link to
 #' external packages. This is equivalent to putting those packages in the
 #' `LinkingTo` field in a package DESCRIPTION.
 #'
@@ -42,7 +42,7 @@
 #' #include <cpp11/R.hpp>
 #' #include <RProgress.h>
 #'
-#' [[cpp11::linking_to(progress)]]
+#' [[cpp11::linking_to("progress")]]
 #'
 #' [[cpp11::register]] void
 #' show_progress() {

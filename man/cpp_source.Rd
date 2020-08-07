@@ -34,7 +34,7 @@ expression.
 \code{\link[=cpp_eval]{cpp_eval()}} evaluates a single C++ expression and returns the result.
 }
 \details{
-Within C++ code you can use \verb{[[cpp11::linking_to(pkgxyz)]]} to link to
+Within C++ code you can use \verb{[[cpp11::linking_to("pkgxyz")]]} to link to
 external packages. This is equivalent to putting those packages in the
 \code{LinkingTo} field in a package DESCRIPTION.
 }
@@ -64,7 +64,7 @@ cpp_source(
 #include <cpp11/R.hpp>
 #include <RProgress.h>
 
-[[cpp11::linking_to(progress)]]
+[[cpp11::linking_to("progress")]]
 
 [[cpp11::register]] void
 show_progress() {
