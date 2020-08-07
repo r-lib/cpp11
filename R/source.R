@@ -180,5 +180,5 @@ get_linking_to <- function(decorations) {
     return(character())
   }
 
-  as.character(unlist(out$params))
+  gsub("\"", "", as.character(unlist(out$params)))
 }
