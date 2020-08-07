@@ -129,8 +129,8 @@ inline SEXP init_unwind_continuation() {
 ///
 /// @param code The code to which needs to be protected, as a nullary callable
 template <typename Fun, typename = typename std::enable_if<std::is_same<
-                            decltype(std::declval<Fun>()()), SEXP>::value>::type>
-SEXP unwind_protect(Fun code) {
+                            decltype(std::declval<Fun&&>()()), SEXP>::value>::type>
+SEXP unwind_protect(Fun&& code) {
   static SEXP token = init_unwind_continuation();
   internal::unwind_data_t unwind_data;
 
@@ -140,15 +140,15 @@ SEXP unwind_protect(Fun code) {
 
   return R_UnwindProtect(
       [](void* data) -> SEXP {
-        Fun* callback = (Fun*)data;
-        return (*callback)();
+        auto callback = static_cast<decltype(&code)>(data);
+        return static_cast<Fun&&>(*callback)();
       },
       &code, internal::maybe_jump, &unwind_data, token);
 }
 
 template <typename Fun, typename = typename std::enable_if<std::is_same<
-                            decltype(std::declval<Fun>()()), void>::value>::type>
-void unwind_protect(Fun code) {
+                            decltype(std::declval<Fun&&>()()), void>::value>::type>
+void unwind_protect(Fun&& code) {
   static SEXP token = init_unwind_continuation();
   internal::unwind_data_t unwind_data;
 
@@ -158,36 +158,30 @@ void unwind_protect(Fun code) {
 
   (void)R_UnwindProtect(
       [](void* data) -> SEXP {
-        Fun* callback = (Fun*)data;
-        (*callback)();
+        auto callback = static_cast<decltype(&code)>(data);
+        static_cast<Fun&&> (*callback)();
         return R_NilValue;
       },
       &code, internal::maybe_jump, &unwind_data, token);
 }
+
+template <typename Fun, typename R = decltype(std::declval<Fun&&>()())>
+typename std::enable_if<!std::is_same<R, SEXP>::value && !std::is_same<R, void>::value,
+                        R>::type
+unwind_protect(Fun&& code) {
+  R out;
+  unwind_protect([&] { out = std::forward<Fun>(code)(); });
+  return out;
+}
+
 #else
 // Don't do anything if we don't have unwind protect. This will leak C++ resources,
 // including those held by cpp11 objects, but the other alternatives are also not great.
-template <typename Fun, typename = typename std::enable_if<std::is_same<
-                            decltype(std::declval<Fun>()()), SEXP>::value>::type>
-SEXP unwind_protect(Fun code) {
-  return code();
-}
-
-template <typename Fun, typename = typename std::enable_if<std::is_same<
-                            decltype(std::declval<Fun>()()), void>::value>::type>
-void unwind_protect(Fun code) {
-  code();
+template <typename Fun>
+decltype(std::declval<Fun&&>()()) unwind_protect(Fun&& code) {
+  return std::forward<Fun>(code)();
 }
 #endif
-
-template <typename Fun, typename R = decltype(std::declval<Fun>()())>
-typename std::enable_if<!std::is_same<R, SEXP>::value && !std::is_same<R, void>::value,
-                        R>::type
-unwind_protect(Fun code) {
-  R out;
-  unwind_protect([&] { out = code(); });
-  return out;
-}
 
 namespace detail {
 
@@ -209,23 +203,33 @@ struct make_index_sequence
 template <>
 struct make_index_sequence<0> : index_sequence<> {};
 
-template <typename F, typename... A, size_t... I>
-auto apply(F&& f, std::tuple<A...>&& a, const index_sequence<I...>&)
-    -> decltype(f(std::get<I>(std::move(a))...)) {
-  return f(std::get<I>(std::move(a))...);
+template <typename F, typename... Aref, size_t... I>
+decltype(std::declval<F&&>()(std::declval<Aref>()...)) apply(
+    F&& f, std::tuple<Aref...>&& a, const index_sequence<I...>&) {
+  return std::forward<F>(f)(std::get<I>(std::move(a))...);
 }
 
-template <typename F, typename... A>
-auto apply(F&& f, std::tuple<A...>&& a)
-    -> decltype(apply(f, std::move(a), make_index_sequence<sizeof...(A)>{})) {
-  return apply(f, std::move(a), make_index_sequence<sizeof...(A)>{});
+template <typename F, typename... Aref>
+decltype(std::declval<F&&>()(std::declval<Aref>()...)) apply(F&& f,
+                                                             std::tuple<Aref...>&& a) {
+  return apply(std::forward<F>(f), std::move(a), make_index_sequence<sizeof...(Aref)>{});
 }
 
-// overload to silence a compiler warning that the tuple parameter is set but unused
+// overload to silence a compiler warning that the (empty) tuple parameter is set but
+// unused
 template <typename F>
-auto apply(F&& f, std::tuple<> &&) -> decltype(f()) {
-  return f();
+decltype(std::declval<F&&>()()) apply(F&& f, std::tuple<>&&) {
+  return std::forward<F>(f)();
 }
+
+template <typename F, typename... Aref>
+struct closure {
+  decltype(std::declval<F*>()(std::declval<Aref>()...)) operator()() && {
+    return apply(ptr_, std::move(arefs_));
+  }
+  F* ptr_;
+  std::tuple<Aref...> arefs_;
+};
 
 }  // namespace detail
 
@@ -233,13 +237,11 @@ struct protect {
   template <typename F>
   struct function {
     template <typename... A>
-    auto operator()(A&&... a) const
-        -> decltype(detail::apply(std::declval<F*>(),
-                                  std::forward_as_tuple(std::forward<A>(a)...))) {
+    decltype(std::declval<F*>()(std::declval<A&&>()...)) operator()(A&&... a) const {
       // workaround to support gcc4.8, which can't capture a parameter pack
-      auto a_packed_refs = std::forward_as_tuple(std::forward<A>(a)...);
+      // also workaround to avoid an anonymous lambda here, which causes linker errors
       return unwind_protect(
-          [&] { return detail::apply(ptr_, std::move(a_packed_refs)); });
+          detail::closure<F, A&&...>{ptr_, std::forward_as_tuple(std::forward<A>(a)...)});
     }
     F* ptr_;
   };

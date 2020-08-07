@@ -9,3 +9,4 @@ cpp11test/src/*.so
 compile_flags.txt
 inst/doc
 vignettes/*_cache
+compile_commands.json
