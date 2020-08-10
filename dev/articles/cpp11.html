@@ -239,9 +239,9 @@
 <span class="co">#&gt; # A tibble: 3 x 6</span>
 <span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 sum(x)       1.49µs   1.71µs   574040.        0B     57.4</span>
-<span class="co">#&gt; 2 sum_cpp(x)   5.47µs    6.1µs   154004.        0B      0  </span>
-<span class="co">#&gt; 3 sum_r(x)    29.98µs  31.94µs    31213.    3.96MB      0</span></pre></body></html></div>
+<span class="co">#&gt; 1 sum(x)       5.04µs   5.62µs   155295.        0B        0</span>
+<span class="co">#&gt; 2 sum_cpp(x)    7.7µs  24.43µs    48284.        0B        0</span>
+<span class="co">#&gt; 3 sum_r(x)    32.88µs  34.03µs    24795.    3.96MB        0</span></pre></body></html></div>
 </div>
 <div id="vector-input-vector-output" class="section level3">
 <h3 class="hasAnchor">
@@ -275,8 +275,8 @@
 <span class="co">#&gt; # A tibble: 2 x 6</span>
 <span class="co">#&gt;   expression             min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt;        &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 pdist_r(0.5, y)     6.15ms   6.62ms      144.    7.63MB     73.6</span>
-<span class="co">#&gt; 2 pdist_cpp(0.5, y)   3.73ms    4.1ms      230.    7.63MB    127.</span></pre></body></html></div>
+<span class="co">#&gt; 1 pdist_r(0.5, y)     6.44ms      7ms     118.     7.63MB     60.8</span>
+<span class="co">#&gt; 2 pdist_cpp(0.5, y)  11.89ms   12.3ms      68.0    7.63MB     61.8</span></pre></body></html></div>
 <p>On my computer, it takes around 5 ms with a 1 million element <code>y</code> vector. The C++ function is about 2.5 times faster, ~2 ms, but assuming it took you 10 minutes to write the C++ function, you’d need to run it ~200,000 times to make rewriting worthwhile. The reason why the C++ function is faster is subtle, and relates to memory management. The R version needs to create an intermediate vector the same length as y (<code>x - ys</code>), and allocating memory is an expensive operation. The C++ function avoids this overhead because it uses an intermediate scalar.</p>
 </div>
 <div id="cpp-source" class="section level3">
@@ -557,7 +557,7 @@
 <h2 class="hasAnchor">
 <a href="#stl" class="anchor"></a>Standard Template Library</h2>
 <p>The real strength of C++ is revealed when you need to implement more complex algorithms. The standard template library (STL) provides a set of extremely useful data structures and algorithms. This section will explain some of the most important algorithms and data structures and point you in the right direction to learn more. I can’t teach you everything you need to know about the STL, but hopefully the examples will show you the power of the STL, and persuade you that it’s useful to learn more.</p>
-<p>If you need an algorithm or data structure that isn’t implemented in STL, one place to look is <a href="http://www.boost.org/doc/">boost</a>. Installing boost on your computer is beyond the scope of this vignette, but once you have it installed, you can use boost data structures and algorithms by including the appropriate header file with (e.g.) <code>#include &lt;boost/array.hpp&gt;</code>.</p>
+<p>If you need an algorithm or data structure that isn’t implemented in STL, one place to look is <a href="https://www.boost.org/doc/">boost</a>. Installing boost on your computer is beyond the scope of this vignette, but once you have it installed, you can use boost data structures and algorithms by including the appropriate header file with (e.g.) <code>#include &lt;boost/array.hpp&gt;</code>.</p>
 <div id="using-iterators" class="section level3">
 <h3 class="hasAnchor">
 <a href="#using-iterators" class="anchor"></a>Using iterators</h3>
@@ -805,8 +805,8 @@ SEXP table_cpp(doubles x) {
 <span class="co">#&gt; # A tibble: 2 x 6</span>
 <span class="co">#&gt;   expression   min median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 r           34.6   38.4       1       1314.      Inf</span>
-<span class="co">#&gt; 2 cpp          1      1        42.6        1       NaN</span></pre></body></html></div>
+<span class="co">#&gt; 1 r           38.8   59.9       1       1314.      Inf</span>
+<span class="co">#&gt; 2 cpp          1      1        72.7        1       NaN</span></pre></body></html></div>
 </div>
 <div id="r-vectorisation-versus-c-vectorisation" class="section level3">
 <h3 class="hasAnchor">
@@ -881,9 +881,9 @@ SEXP table_cpp(doubles x) {
 <span class="co">#&gt; # A tibble: 3 x 6</span>
 <span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 vacc1        2.49ms   2.66ms      367.    7.86KB    22.7 </span>
-<span class="co">#&gt; 2 vacc2       74.62µs  84.41µs    10843.  148.85KB    18.7 </span>
-<span class="co">#&gt; 3 vacc3       20.57µs  22.64µs    43274.   14.03KB     8.66</span></pre></body></html></div>
+<span class="co">#&gt; 1 vacc1        2.67ms   2.88ms      329.    7.86KB    20.3 </span>
+<span class="co">#&gt; 2 vacc2       79.73µs  89.69µs     9000.  148.85KB    27.3 </span>
+<span class="co">#&gt; 3 vacc3       23.43µs  24.94µs    37003.   14.03KB     7.40</span></pre></body></html></div>
 <p>Not surprisingly, our original approach with loops is very slow. Vectorising in R gives a huge speedup, and we can eke out even more performance (about ten times) with the C++ loop. I was a little surprised that the C++ was so much faster, but it is because the R version has to create 11 vectors to store intermediate results, where the C++ code only needs to create 1.</p>
 </div>
 </div>
