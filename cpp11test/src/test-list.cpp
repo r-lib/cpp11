@@ -47,6 +47,64 @@ context("list-C++") {
     expect_true(fifth[2] == 'c');
   }
 
+  using namespace cpp11::literals;
+  test_that("unnamed_list.push_back(unnamed_arg)") {
+    cpp11::writable::list x(1);
+    x.push_back(cpp11::writable::integers(2));
+
+    expect_true(x.names() == R_NilValue);
+  }
+
+  test_that("unnamed_list.push_back(named_arg)") {
+    cpp11::writable::list x(1);
+    x.push_back("bar"_nm = 2);
+
+    cpp11::strings nms(x.names());
+
+    expect_true(nms.size() == 2);
+    expect_true(nms[0] == "");
+    expect_true(nms[1] == "bar");
+  }
+
+  test_that("named_list.push_back(unnamed_arg)") {
+    cpp11::writable::list x({"foo"_nm = 1});
+    x.push_back(cpp11::writable::integers(2));
+
+    cpp11::strings nms(x.names());
+
+    expect_true(nms.size() == 2);
+    expect_true(nms[0] == "foo");
+    expect_true(nms[1] == "");
+  }
+
+  test_that("named_list.push_back(named_arg)") {
+    cpp11::writable::list x({"foo"_nm = 1});
+    x.push_back({"bar"_nm = 2});
+
+    cpp11::strings nms(x.names());
+
+    expect_true(nms.size() == 2);
+    expect_true(nms[0] == "foo");
+    expect_true(nms[1] == "bar");
+  }
+
+  test_that("empty_list.push_back(unnamed_arg)") {
+    cpp11::writable::list x;
+    x.push_back(cpp11::writable::integers(2));
+
+    expect_true(x.names() == R_NilValue);
+  }
+
+  test_that("empty_list.push_back(named_arg)") {
+    cpp11::writable::list x;
+    x.push_back({"bar"_nm = 2});
+
+    cpp11::strings nms(x.names());
+
+    expect_true(nms.size() == 1);
+    expect_true(nms[0] == "bar");
+  }
+
   test_that("attribute setting works") {
     cpp11::writable::list x(
         {cpp11::writable::doubles({1, 2, 3}), cpp11::writable::strings({"x", "y", "z"})});

@@ -330,6 +330,7 @@ class r_vector : public cpp11::r_vector<T> {
 
   using cpp11::r_vector<T>::cbegin;
   using cpp11::r_vector<T>::cend;
+  using cpp11::r_vector<T>::size;
 
   iterator find(const r_string& name) const;
 

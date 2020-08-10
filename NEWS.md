@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* `push_back()` now works more consistently with named arguments (#86)
+
 # cpp11 0.2.0
 
 ## New features
