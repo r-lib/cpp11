@@ -14,3 +14,9 @@ on_package_load <- function(pkg, expr) {
     knitr::knit_engines$set(cpp11 = eng_cpp11)
   })
 }
+
+release_bullets <- function() {
+  c(
+    '`Sys.setenv("CPP11_EVAL" = "true"); devtools::submit_cran()`'
+  )
+}
