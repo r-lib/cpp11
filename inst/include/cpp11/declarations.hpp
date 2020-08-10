@@ -12,6 +12,13 @@ namespace writable = cpp11::writable;
 
 #include <R_ext/Rdynload.h>
 
+namespace cpp11 {
+template <class T>
+T& unmove(T&& t) {
+  return t;
+}
+}  // namespace cpp11
+
 #ifdef HAS_UNWIND_PROTECT
 #define CPP11_UNWIND R_ContinueUnwind(err);
 #else
