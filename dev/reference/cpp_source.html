@@ -74,7 +74,7 @@ cpp_eval() evaluates a single C++ expression and returns the result." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.1.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.2.0.9000</span>
       </span>
     </div>
 
@@ -168,7 +168,7 @@ cpp_eval() evaluates a single C++ expression and returns the result." />
 expression.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Within C++ code you can use <code>[[cpp11::linking_to(pkgxyz)]]</code> to link to
+    <p>Within C++ code you can use <code>[[cpp11::linking_to("pkgxyz")]]</code> to link to
 external packages. This is equivalent to putting those packages in the
 <code>LinkingTo</code> field in a package DESCRIPTION.</p>
 
@@ -198,7 +198,7 @@ external packages. This is equivalent to putting those packages in the
 #include &lt;cpp11/R.hpp&gt;
 #include &lt;RProgress.h&gt;
 
-[[cpp11::linking_to(progress)]]
+[[cpp11::linking_to("progress")]]
 
 [[cpp11::register]] void
 show_progress() {

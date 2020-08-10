@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.1.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.2.0.9000</span>
       </span>
     </div>
 
@@ -125,17 +125,36 @@
 <a href="#cpp11-development-version" class="anchor"></a>cpp11 (development version)<small> Unreleased </small>
 </h1>
 <ul>
-<li><p><code><a href="../reference/cpp_source.html">cpp_source()</a></code>, <code><a href="../reference/cpp_source.html">cpp_function()</a></code> and <code><a href="../reference/cpp_source.html">cpp_eval()</a></code> now support <code>[[cpp11::linking_to()]]</code> syntax to link to third party packages with C++ headers. (<a href='https://github.com/r-lib/cpp11/issues/48'>#48</a>)</p></li>
-<li><p><code>safe[]</code> can now work with functions that return any type (<a href='https://github.com/r-lib/cpp11/issues/70'>#70</a>, <a href='https://github.com/bkietz'>@bkietz</a>)</p></li>
+<li>
+<code>push_back()</code> now works more consistently with named arguments (<a href='https://github.com/r-lib/cpp11/issues/86'>#86</a>)</li>
+</ul>
+</div>
+    <div id="cpp11-020" class="section level1">
+<h1 class="page-header" data-toc-text="0.2.0">
+<a href="#cpp11-020" class="anchor"></a>cpp11 0.2.0<small> Unreleased </small>
+</h1>
+<div id="new-features" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features" class="anchor"></a>New features</h2>
+<ul>
 <li><p>cpp11 is now able to compile on gcc 4.8.5 (<a href='https://github.com/r-lib/cpp11/issues/69'>#69</a>, <a href='https://github.com/bkietz'>@bkietz</a>)</p></li>
-<li><p><code>as_cpp&lt;E&gt;()</code> now allows enumeration <code>E</code> (<a href='https://github.com/r-lib/cpp11/issues/52'>#52</a>, <a href='https://github.com/bkietz'>@bkietz</a>)</p></li>
-<li><p><code>writable::logicals::operator=()</code> now allows C++ boolean values (<a href='https://github.com/r-lib/cpp11/issues/57'>#57</a>, <a href='https://github.com/romainfrancois'>@romainfrancois</a>)</p></li>
+<li><p><code><a href="../reference/cpp_source.html">cpp_source()</a></code>, <code><a href="../reference/cpp_source.html">cpp_function()</a></code> and <code><a href="../reference/cpp_source.html">cpp_eval()</a></code> now support <code>[[cpp11::linking_to()]]</code> syntax to link to third party packages with C++ headers. (<a href='https://github.com/r-lib/cpp11/issues/48'>#48</a>)</p></li>
+</ul>
+</div>
+<div id="minor-improvements-and-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-improvements-and-fixes" class="anchor"></a>Minor improvements and fixes</h2>
+<ul>
+<li><p><code>as_cpp&lt;E&gt;()</code> now works with enumeration types (<a href='https://github.com/r-lib/cpp11/issues/52'>#52</a>, <a href='https://github.com/bkietz'>@bkietz</a>)</p></li>
+<li><p><code>as_cpp&lt;int&gt;()</code> and <code>as_cpp&lt;double&gt;()</code> now implicitly coerce between all 3 types of single NA values (<a href='https://github.com/r-lib/cpp11/issues/53'>#53</a>).</p></li>
 <li><p><code>list::const_iterator::operator*()</code> added so iterators could be used on list objects (<a href='https://github.com/r-lib/cpp11/issues/60'>#60</a>, <a href='https://github.com/romainfrancois'>@romainfrancois</a>)</p></li>
-<li><p><code>cpp11::as_cpp&lt;int&gt;()</code> and <code>cpp11::as_cpp&lt;double&gt;()</code> now implicitly coerce between all 3 types of single NA values (<a href='https://github.com/r-lib/cpp11/issues/53'>#53</a>).</p></li>
+<li><p><code>safe[]</code> can now work with functions that return any type (<a href='https://github.com/r-lib/cpp11/issues/70'>#70</a>, <a href='https://github.com/bkietz'>@bkietz</a>)</p></li>
+<li><p><code>writable::logicals::operator=()</code> now allows C++ boolean values (<a href='https://github.com/r-lib/cpp11/issues/57'>#57</a>, <a href='https://github.com/romainfrancois'>@romainfrancois</a>)</p></li>
 <li><p>The <code>END_CPP</code> macro now includes a <code>catch(...)</code> block to catch all C++ exceptions that do not inherit from <code>std::exception</code> (<a href='https://github.com/r-lib/cpp11/issues/47'>#47</a>).</p></li>
 <li><p>Improve consistency of inserting NA values in r_string objects (<a href='https://github.com/r-lib/cpp11/issues/45'>#45</a>)</p></li>
 <li><p>Added a <code>NEWS.md</code> file to track changes to the package.</p></li>
 </ul>
+</div>
 </div>
     <div id="cpp11-010" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.0">
