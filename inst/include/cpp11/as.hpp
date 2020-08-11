@@ -174,10 +174,12 @@ template <typename T>
 enable_if_std_string<T, T> as_cpp(SEXP from) {
   return {as_cpp<const char*>(from)};
 }
-/// If your compilation fails here you are calling as_cpp<T> with a T
-/// which is not decayed; consider rewriting or wrapping T into cpp11::decay_t<T>.
+
+/// Temporary workaround for compatibility with cpp11 0.1.0
 template <typename T>
-enable_if_t<!std::is_same<decay_t<T>, T>::value, T> as_cpp(SEXP from) = delete;
+enable_if_t<!std::is_same<decay_t<T>, T>::value, decay_t<T>> as_cpp(SEXP from) {
+  return as_cpp<decay_t<T>>(from);
+}
 
 template <typename T>
 enable_if_integral<T, SEXP> as_sexp(T from) {
