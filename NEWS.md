@@ -1,4 +1,4 @@
-# cpp11 (development version)
+# cpp11 0.2.1
 
 * Ensures backwards compatibility with code generation from cpp11 0.1.0 (#88)
 
