@@ -239,15 +239,38 @@ struct protect {
     template <typename... A>
     decltype(std::declval<F*>()(std::declval<A&&>()...)) operator()(A&&... a) const {
       // workaround to support gcc4.8, which can't capture a parameter pack
-      // also workaround to avoid an anonymous lambda here, which causes linker errors
       return unwind_protect(
           detail::closure<F, A&&...>{ptr_, std::forward_as_tuple(std::forward<A>(a)...)});
+    }
+
+    F* ptr_;
+  };
+
+  /// May not be applied to a function bearing attributes, which interfere with linkage on
+  /// some compilers; use an appropriately attributed alternative. (For example, Rf_error
+  /// bears the [[noreturn]] attribute and must be protected with safe.noreturn rather
+  /// than safe.operator[]).
+  template <typename F>
+  constexpr function<F> operator[](F* raw) const {
+    return {raw};
+  }
+
+  template <typename F>
+  struct noreturn_function {
+    template <typename... A>
+    void operator() [[noreturn]] (A&&... a) const {
+      // workaround to support gcc4.8, which can't capture a parameter pack
+      unwind_protect(
+          detail::closure<F, A&&...>{ptr_, std::forward_as_tuple(std::forward<A>(a)...)});
+      // Compiler hint to allow [[noreturn]] attribute; this is never executed since
+      // the above call will not return.
+      throw std::runtime_error("[[noreturn]]");
     }
     F* ptr_;
   };
 
   template <typename F>
-  constexpr function<F> operator[](F* raw) const {
+  constexpr noreturn_function<F> noreturn(F* raw) const {
     return {raw};
   }
 };
@@ -257,18 +280,12 @@ inline void check_user_interrupt() { safe[R_CheckUserInterrupt](); }
 
 template <typename... Args>
 void stop [[noreturn]] (const char* fmt, Args... args) {
-  safe[Rf_error](fmt, args...);
-  // Compiler hint to allow [[noreturn]] attribute; this is never executed since Rf_error
-  // will longjmp
-  throw std::runtime_error("stop()");
+  safe.noreturn(Rf_error)(fmt, args...);
 }
 
 template <typename... Args>
 void stop [[noreturn]] (const std::string& fmt, Args... args) {
-  safe[Rf_error](fmt.c_str(), args...);
-  // Compiler hint to allow [[noreturn]] attribute; this is never executed since Rf_error
-  // will longjmp
-  throw std::runtime_error("stop()");
+  safe.noreturn(Rf_error)(fmt.c_str(), args...);
 }
 
 template <typename... Args>
