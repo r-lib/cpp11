@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* `data_frame()` objects now have the number of rows correctly set as real length, not the reserved length (#91)
+
 # cpp11 0.2.1
 
 * Ensures backwards compatibility with code generation from cpp11 0.1.0 (#88)

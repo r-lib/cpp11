@@ -760,22 +760,20 @@ inline typename r_vector<T>::iterator r_vector<T>::find(const r_string& name) co
 
 template <typename T>
 inline r_vector<T>::r_vector(const r_vector<T>& rhs)
-    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs.data_)),
+    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs)),
       protect_(protect_sexp(data_)),
       capacity_(rhs.capacity_) {}
 
 template <typename T>
 inline r_vector<T>::r_vector(r_vector<T>&& rhs)
-    : cpp11::r_vector<T>(rhs.data_),
-      protect_(protect_sexp(data_)),
-      capacity_(rhs.capacity_) {
+    : cpp11::r_vector<T>(rhs), protect_(protect_sexp(data_)), capacity_(rhs.capacity_) {
   rhs.data_ = R_NilValue;
   rhs.protect_ = R_NilValue;
 }
 
 template <typename T>
 inline r_vector<T>::r_vector(const cpp11::r_vector<T>& rhs)
-    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs.data_)),
+    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs)),
       protect_(protect_sexp(data_)),
       capacity_(rhs.length_) {}
 

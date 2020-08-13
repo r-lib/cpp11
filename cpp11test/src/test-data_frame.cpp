@@ -90,4 +90,17 @@ context("data_frame-C++") {
     expect_true(cpp11::integers(df["a"])[0] == 1);
     expect_true(cpp11::strings(df["b"])[2] == "c");
   }
+
+  test_that("growing vectors uses proper length") {
+    using namespace cpp11::literals;
+
+    cpp11::writable::integers x, y;
+    for (int i = 0; i < 10; ++i) {
+      x.push_back(i);
+      y.push_back(i);
+    }
+    cpp11::writable::data_frame out({"x"_nm = x, "y"_nm = y});
+
+    expect_true(out.nrow() == 10);
+  }
 }
