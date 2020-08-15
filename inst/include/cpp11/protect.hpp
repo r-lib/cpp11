@@ -25,14 +25,86 @@ class unwind_exception : public std::exception {
   unwind_exception(SEXP token_) : token(token_) {}
 };
 
-static SEXP preserve(SEXP obj) {
-  PROTECT(obj);
-  R_PreserveObject(obj);
-  UNPROTECT(1);
-  return obj;
-}
+/// A doubly-linked list of preserved objects, allowing O(1) insertion/release of objects
+/// compared to O(N preserved) with R_PreserveObject.
+struct {
+  SEXP insert(SEXP obj) {
+    if (obj == R_NilValue) {
+      return R_NilValue;
+    }
 
-static SEXP protect_list = preserve(Rf_cons(R_NilValue, R_NilValue));
+#ifdef CPP11_USE_PRESERVE_OBJECT
+    return preserve_(obj);
+#endif
+
+    PROTECT(obj);
+
+    // Add a new cell that points to the previous end.
+    SEXP cell = PROTECT(Rf_cons(list_, CDR(list_)));
+    SET_TAG(cell, obj);
+
+    SETCDR(list_, cell);
+    if (CDR(cell) != R_NilValue) {
+      SETCAR(CDR(cell), cell);
+    }
+
+    UNPROTECT(2);
+
+    return cell;
+  }
+
+  void print() {
+    for (SEXP head = list_; head != R_NilValue; head = CDR(head)) {
+      REprintf("%x CAR: %x CDR: %x TAG: %x\n", head, CAR(head), CDR(head), TAG(head));
+    }
+    REprintf("---\n");
+  }
+
+  // This is currently unused, but client packages could use it to free leaked resources
+  // in older R versions if needed
+  void release_all() {
+#if !defined(CPP11_USE_PRESERVE_OBJECT)
+    SEXP first = CDR(list_);
+    if (first != R_NilValue) {
+      SETCAR(first, R_NilValue);
+      SETCDR(list_, R_NilValue);
+    }
+#endif
+  }
+
+  void release(SEXP token) {
+    if (token == R_NilValue) {
+      return;
+    }
+
+#ifdef CPP11_USE_PRESERVE_OBJECT
+    R_ReleaseObject(token);
+    return;
+#endif
+
+    SEXP before = CAR(token);
+    SEXP after = CDR(token);
+
+    if (before == R_NilValue && after == R_NilValue) {
+      Rf_error("should never happen");
+    }
+
+    SETCDR(before, after);
+    if (after != R_NilValue) {
+      SETCAR(after, before);
+    }
+  }
+
+  // private:
+  static SEXP preserve_(SEXP obj) {
+    PROTECT(obj);
+    R_PreserveObject(obj);
+    UNPROTECT(1);
+  }
+
+  SEXP list_ = preserve_(Rf_cons(R_NilValue, R_NilValue));
+
+} preserved;
 
 inline SEXP protect_sexp(SEXP obj) {
   if (obj == R_NilValue) {
@@ -45,10 +117,10 @@ inline SEXP protect_sexp(SEXP obj) {
   PROTECT(obj);
 
   // Add a new cell that points to the previous end.
-  SEXP cell = PROTECT(Rf_cons(protect_list, CDR(protect_list)));
+  SEXP cell = PROTECT(Rf_cons(preserved.list_, CDR(preserved.list_)));
   SET_TAG(cell, obj);
 
-  SETCDR(protect_list, cell);
+  SETCDR(preserved.list_, cell);
   if (CDR(cell) != R_NilValue) {
     SETCAR(CDR(cell), cell);
   }
@@ -59,7 +131,7 @@ inline SEXP protect_sexp(SEXP obj) {
 }
 
 inline void print_protect() {
-  SEXP head = protect_list;
+  SEXP head = preserved.list_;
   while (head != R_NilValue) {
     REprintf("%x CAR: %x CDR: %x TAG: %x\n", head, CAR(head), CDR(head), TAG(head));
     head = CDR(head);
@@ -71,10 +143,10 @@ inline void print_protect() {
  * older R versions if needed */
 inline void release_existing_protections() {
 #if !defined(CPP11_USE_PRESERVE_OBJECT)
-  SEXP first = CDR(protect_list);
+  SEXP first = CDR(preserved.list_);
   if (first != R_NilValue) {
     SETCAR(first, R_NilValue);
-    SETCDR(protect_list, R_NilValue);
+    SETCDR(preserved.list_, R_NilValue);
   }
 #endif
 }
