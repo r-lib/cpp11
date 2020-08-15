@@ -6,7 +6,7 @@
 
 #include "cpp11/R.hpp"                // for SEXP, SEXPREC, REAL_ELT, R_NilV...
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
-#include "cpp11/protect.hpp"          // for protect_sexp, release_protect
+#include "cpp11/protect.hpp"          // for preserved
 
 namespace cpp11 {
 
@@ -14,31 +14,37 @@ namespace cpp11 {
 class sexp {
  private:
   SEXP data_ = R_NilValue;
-  SEXP protect_ = R_NilValue;
+  SEXP preserve_token_ = R_NilValue;
 
  public:
   sexp() = default;
-  sexp(SEXP data) : data_(data), protect_(protect_sexp(data_)) {
-    // REprintf("created %x %x : %i\n", data_, protect_, protect_head_size());
+
+  sexp(SEXP data) : data_(data), preserve_token_(preserved.insert(data_)) {
+    // REprintf("created %x %x : %i\n", data_, preserve_token_, protect_head_size());
   }
+
   sexp(const sexp& rhs) {
     data_ = rhs.data_;
-    protect_ = protect_sexp(data_);
-    // REprintf("copied %x new protect %x : %i\n", rhs.data_, protect_,
+    preserve_token_ = preserved.insert(data_);
+    // REprintf("copied %x new protect %x : %i\n", rhs.data_, preserve_token_,
     // protect_head_size());
   }
+
   sexp(sexp&& rhs) {
     data_ = rhs.data_;
-    protect_ = rhs.protect_;
+    preserve_token_ = rhs.preserve_token_;
 
     rhs.data_ = R_NilValue;
-    rhs.protect_ = R_NilValue;
+    rhs.preserve_token_ = R_NilValue;
 
     // REprintf("moved %x : %i\n", rhs.data_, protect_head_size());
   }
+
   sexp& operator=(const sexp& rhs) {
+    preserved.release(preserve_token_);
+
     data_ = rhs.data_;
-    protect_ = protect_sexp(data_);
+    preserve_token_ = preserved.insert(data_);
     // REprintf("assigned %x : %i\n", rhs.data_, protect_head_size());
     return *this;
   }
@@ -49,7 +55,7 @@ class sexp {
   //*this = tmp;
   //}
 
-  ~sexp() { release_protect(protect_); }
+  ~sexp() { preserved.release(preserve_token_); }
 
   attribute_proxy<sexp> attr(const char* name) const {
     return attribute_proxy<sexp>(*this, name);
