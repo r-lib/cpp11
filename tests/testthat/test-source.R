@@ -15,9 +15,9 @@ test_that("cpp_source works with the `code` parameter", {
       return total;
     }
     ', clean = TRUE)
-    on.exit(dyn.unload(dll_info[["path"]]))
+  on.exit(dyn.unload(dll_info[["path"]]))
 
-    expect_equal(num_odd(as.integer(c(1:10, 15, 23))), 7)
+  expect_equal(num_odd(as.integer(c(1:10, 15, 23))), 7)
 })
 
 test_that("cpp_source works with the `file` parameter", {

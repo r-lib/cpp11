@@ -9,7 +9,7 @@
 #include "cpp11/as.hpp"               // for as_sexp
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/named_arg.hpp"        // for named_arg
-#include "cpp11/protect.hpp"          // for protect_sexp, release_protect
+#include "cpp11/protect.hpp"          // for preserved
 #include "cpp11/r_vector.hpp"         // for r_vector, r_vector<>::proxy
 #include "cpp11/sexp.hpp"             // for sexp
 
@@ -83,10 +83,10 @@ inline void r_vector<int>::reserve(R_xlen_t new_capacity) {
   SEXP old_protect = protect_;
 
   // Protect the new data
-  protect_ = protect_sexp(data_);
+  protect_ = preserved.insert(data_);
 
   // Release the old protection;
-  release_protect(old_protect);
+  preserved.release(old_protect);
 
   data_p_ = INTEGER(data_);
   capacity_ = new_capacity;
@@ -96,7 +96,7 @@ template <>
 inline r_vector<int>::r_vector(std::initializer_list<named_arg> il)
     : cpp11::r_vector<int>(safe[Rf_allocVector](INTSXP, il.size())),
       capacity_(il.size()) {
-  protect_ = protect_sexp(data_);
+  protect_ = preserved.insert(data_);
   int n_protected = 0;
 
   try {
@@ -112,7 +112,7 @@ inline r_vector<int>::r_vector(std::initializer_list<named_arg> il)
       UNPROTECT(n_protected);
     });
   } catch (const unwind_exception& e) {
-    release_protect(protect_);
+    preserved.release(protect_);
     UNPROTECT(n_protected);
     throw e;
   }

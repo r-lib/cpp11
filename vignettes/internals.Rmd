@@ -115,8 +115,8 @@ cpp11 uses an idea proposed by [Luke Tierney](https://github.com/RcppCore/Rcpp/i
 Each node in the list uses the head (`CAR`) part to point to the previous node, and the `CDR` part to point to the next node. The `TAG` is used to point to the object being protected.
 The head and tail of the list have `R_NilValue` as their `CAR` and `CDR` pointers respectively.
 
-Calling `protect_sexp()` with a regular R object will add a new node to the list and return a protect token corresponding to the node added.
-Calling `release_protect()` on this returned token will release the protection by unlinking the node from the linked list.
+Calling `preserved.insert()` with a regular R object will add a new node to the list and return a protect token corresponding to the node added.
+Calling `preserved.release()` on this returned token will release the protection by unlinking the node from the linked list.
 
 This scheme scales in O(1) time to release or insert an object vs O(N) or worse time with `R_PreserveObject()` / `R_ReleaseObject()`.
 
@@ -146,5 +146,5 @@ None of these options is perfect, here are some pros and cons for each.
 3. Was ruled out partially because the implementation would be somewhat tricky and more because performance would suffer greatly.
 4. is what we now do in cpp11. It leaks protected objects when there are R API errors.
 
-If packages are concerned about the leaked memory they can call `cpp11::release_existing_protections()` as needed to release the current protections for all objects managed by cpp11.
+If packages are concerned about the leaked memory they can call `cpp11::preserved.release_all()` as needed to release the current protections for all objects managed by cpp11.
 This is not done automatically because in some cases the protections should persist beyond the `.Call()` boundry, e.g. in vroom altrep objects for example.
