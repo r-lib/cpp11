@@ -103,38 +103,20 @@ inline void release_protect(SEXP protect) {
 
 #ifdef HAS_UNWIND_PROTECT
 
-namespace internal {
-struct unwind_data_t {
-  std::jmp_buf jmpbuf;
-};
-
-// We need to first jump back into the C++ stacks because you can't safely throw
-// exceptions from C stack frames.
-inline void maybe_jump(void* unwind_data, Rboolean jump) {
-  if (jump) {
-    unwind_data_t* data = static_cast<unwind_data_t*>(unwind_data);
-    longjmp(data->jmpbuf, 1);
-  }
-}
-
-}  // namespace internal
-
-inline SEXP init_unwind_continuation() {
-  SEXP res = R_MakeUnwindCont();
-  R_PreserveObject(res);
-  return res;
-}
-
 /// Unwind Protection from C longjmp's, like those used in R error handling
 ///
 /// @param code The code to which needs to be protected, as a nullary callable
 template <typename Fun, typename = typename std::enable_if<std::is_same<
                             decltype(std::declval<Fun&&>()()), SEXP>::value>::type>
 SEXP unwind_protect(Fun&& code) {
-  static SEXP token = init_unwind_continuation();
-  internal::unwind_data_t unwind_data;
+  static SEXP token = [] {
+    SEXP res = R_MakeUnwindCont();
+    R_PreserveObject(res);
+    return res;
+  }();
 
-  if (setjmp(unwind_data.jmpbuf)) {
+  std::jmp_buf jmpbuf;
+  if (setjmp(jmpbuf)) {
     throw unwind_exception(token);
   }
 
@@ -143,26 +125,24 @@ SEXP unwind_protect(Fun&& code) {
         auto callback = static_cast<decltype(&code)>(data);
         return static_cast<Fun&&>(*callback)();
       },
-      &code, internal::maybe_jump, &unwind_data, token);
+      &code,
+      [](void* jmpbuf, Rboolean jump) {
+        if (jump) {
+          // We need to first jump back into the C++ stacks because you can't safely throw
+          // exceptions from C stack frames.
+          longjmp(*static_cast<std::jmp_buf*>(jmpbuf), 1);
+        }
+      },
+      &jmpbuf, token);
 }
 
 template <typename Fun, typename = typename std::enable_if<std::is_same<
                             decltype(std::declval<Fun&&>()()), void>::value>::type>
 void unwind_protect(Fun&& code) {
-  static SEXP token = init_unwind_continuation();
-  internal::unwind_data_t unwind_data;
-
-  if (setjmp(unwind_data.jmpbuf)) {
-    throw unwind_exception(token);
-  }
-
-  (void)R_UnwindProtect(
-      [](void* data) -> SEXP {
-        auto callback = static_cast<decltype(&code)>(data);
-        static_cast<Fun&&> (*callback)();
-        return R_NilValue;
-      },
-      &code, internal::maybe_jump, &unwind_data, token);
+  (void)unwind_protect([&] {
+    std::forward<Fun>(code)();
+    return R_NilValue;
+  });
 }
 
 template <typename Fun, typename R = decltype(std::declval<Fun&&>()())>
@@ -170,7 +150,10 @@ typename std::enable_if<!std::is_same<R, SEXP>::value && !std::is_same<R, void>:
                         R>::type
 unwind_protect(Fun&& code) {
   R out;
-  unwind_protect([&] { out = std::forward<Fun>(code)(); });
+  (void)unwind_protect([&] {
+    out = std::forward<Fun>(code)();
+    return R_NilValue;
+  });
   return out;
 }
 
