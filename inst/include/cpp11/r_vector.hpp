@@ -766,7 +766,9 @@ inline r_vector<T>::r_vector(const r_vector<T>& rhs)
 
 template <typename T>
 inline r_vector<T>::r_vector(r_vector<T>&& rhs)
-    : cpp11::r_vector<T>(rhs), protect_(preserved.insert(data_)), capacity_(rhs.capacity_) {
+    : cpp11::r_vector<T>(rhs),
+      protect_(preserved.insert(data_)),
+      capacity_(rhs.capacity_) {
   rhs.data_ = R_NilValue;
   rhs.protect_ = R_NilValue;
 }

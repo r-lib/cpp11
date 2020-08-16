@@ -288,8 +288,18 @@ static struct {
       // The .preserve_list singleton is a member of cpp11::: and is managed by the R
       // runtime. It cannot be constructed a header since many translation units may be
       // compiled, resulting in unrelated instances of each static variable.
-      SEXP ns = safe[Rf_findVarInFrame](R_NamespaceRegistry, safe[Rf_install]("cpp11"));
-      list_singleton = safe[Rf_findVar](safe[Rf_install](".preserve_list"), ns);
+
+      // FIXME how can we create the cpp11 namespace when it doesn't already exist?
+      SEXP list_singleton_sym = safe[Rf_install](".cpp11_preserve_list");
+
+      list_singleton = safe[Rf_findVarInFrame](R_GlobalEnv, list_singleton_sym);
+
+      if (list_singleton == R_UnboundValue) {
+        list_singleton = PROTECT(Rf_cons(R_NilValue, R_NilValue));
+        R_PreserveObject(list_singleton);
+        UNPROTECT(1);
+        safe[Rf_defineVar](list_singleton_sym, list_singleton, R_GlobalEnv);
+      }
     }
 
     return list_singleton;
