@@ -18,9 +18,10 @@ using decay_t = typename std::decay<T>::type;
 
 template <typename T, typename R = void>
 using enable_if_constructible_from_sexp =
-    enable_if_t<(std::is_class<T>::value || std::is_same<T, SEXP>::value) &&
-                    std::is_constructible<T, SEXP>::value,
-                R>;
+    enable_if_t<std::is_class<T>::value && std::is_constructible<T, SEXP>::value, R>;
+
+template <typename T, typename R = void>
+using enable_if_is_sexp = enable_if_t<std::is_same<T, SEXP>::value, R>;
 
 template <typename T, typename R = void>
 using enable_if_convertible_to_sexp = enable_if_t<std::is_convertible<T, SEXP>::value, R>;
@@ -64,6 +65,11 @@ inline bool is_convertable_without_loss_to_integer(double value) {
 template <typename T>
 enable_if_constructible_from_sexp<T, T> as_cpp(SEXP from) {
   return T(from);
+}
+
+template <typename T>
+enable_if_is_sexp<T, T> as_cpp(SEXP from) {
+  return from;
 }
 
 template <typename T>
