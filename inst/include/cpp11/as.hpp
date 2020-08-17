@@ -21,8 +21,7 @@ using enable_if_constructible_from_sexp =
     enable_if_t<std::is_class<T>::value && std::is_constructible<T, SEXP>::value, R>;
 
 template <typename T, typename R = void>
-using enable_if_is_sexp =
-    enable_if_t<std::is_same<T, SEXP>::value, R>;
+using enable_if_is_sexp = enable_if_t<std::is_same<T, SEXP>::value, R>;
 
 template <typename T, typename R = void>
 using enable_if_convertible_to_sexp = enable_if_t<std::is_convertible<T, SEXP>::value, R>;
