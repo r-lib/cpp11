@@ -1,6 +1,5 @@
 #include <algorithm>
 #include "cpp11.hpp"
-using namespace cpp11;
 
 #include <Rcpp.h>
 #include <algorithm>
@@ -14,13 +13,13 @@ using namespace Rcpp;
   return out;
 }
 
-[[cpp11::register]] double upper_bound(doubles x, doubles breaks) {
+[[cpp11::register]] double upper_bound(cpp11::doubles x, cpp11::doubles breaks) {
   auto pos = std::upper_bound(breaks.begin(), breaks.end(), x[0]);
   return std::distance(breaks.begin(), pos);
 }
 
-[[cpp11::register]] integers findInterval2(doubles x, doubles breaks) {
-  writable::integers out(x.size());
+[[cpp11::register]] cpp11::integers findInterval2(cpp11::doubles x, cpp11::doubles breaks) {
+  cpp11::writable::integers out(x.size());
   auto out_it = out.begin();
 
   for (auto&& val : x) {
@@ -30,8 +29,8 @@ using namespace Rcpp;
   }
   return out;
 }
-[[cpp11::register]] integers findInterval2_5(doubles x, doubles breaks) {
-  writable::integers out(x.size());
+[[cpp11::register]] cpp11::integers findInterval2_5(cpp11::doubles x, cpp11::doubles breaks) {
+  cpp11::writable::integers out(x.size());
   auto out_it = out.begin();
   auto bb = breaks.begin();
   auto be = breaks.end();
@@ -45,8 +44,8 @@ using namespace Rcpp;
 }
 
 // This version avoids the overhead of the cpp11 iterator types
-[[cpp11::register]] integers findInterval3(doubles x, doubles breaks) {
-  writable::integers out(x.size());
+[[cpp11::register]] cpp11::integers findInterval3(cpp11::doubles x, cpp11::doubles breaks) {
+  cpp11::writable::integers out(x.size());
   auto out_it = out.begin();
   auto b = REAL(breaks);
   auto e = REAL(breaks) + Rf_xlength(breaks);

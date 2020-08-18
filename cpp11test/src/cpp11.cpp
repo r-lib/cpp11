@@ -28,31 +28,31 @@ extern "C" SEXP _cpp11test_remove_altrep(SEXP x) {
   END_CPP11
 }
 // find-intervals.cpp
-double upper_bound(doubles x, doubles breaks);
+double upper_bound(cpp11::doubles x, cpp11::doubles breaks);
 extern "C" SEXP _cpp11test_upper_bound(SEXP x, SEXP breaks) {
   BEGIN_CPP11
-    return cpp11::as_sexp(upper_bound(cpp11::as_cpp<cpp11::decay_t<doubles>>(x), cpp11::as_cpp<cpp11::decay_t<doubles>>(breaks)));
+    return cpp11::as_sexp(upper_bound(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(breaks)));
   END_CPP11
 }
 // find-intervals.cpp
-integers findInterval2(doubles x, doubles breaks);
+cpp11::integers findInterval2(cpp11::doubles x, cpp11::doubles breaks);
 extern "C" SEXP _cpp11test_findInterval2(SEXP x, SEXP breaks) {
   BEGIN_CPP11
-    return cpp11::as_sexp(findInterval2(cpp11::as_cpp<cpp11::decay_t<doubles>>(x), cpp11::as_cpp<cpp11::decay_t<doubles>>(breaks)));
+    return cpp11::as_sexp(findInterval2(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(breaks)));
   END_CPP11
 }
 // find-intervals.cpp
-integers findInterval2_5(doubles x, doubles breaks);
+cpp11::integers findInterval2_5(cpp11::doubles x, cpp11::doubles breaks);
 extern "C" SEXP _cpp11test_findInterval2_5(SEXP x, SEXP breaks) {
   BEGIN_CPP11
-    return cpp11::as_sexp(findInterval2_5(cpp11::as_cpp<cpp11::decay_t<doubles>>(x), cpp11::as_cpp<cpp11::decay_t<doubles>>(breaks)));
+    return cpp11::as_sexp(findInterval2_5(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(breaks)));
   END_CPP11
 }
 // find-intervals.cpp
-integers findInterval3(doubles x, doubles breaks);
+cpp11::integers findInterval3(cpp11::doubles x, cpp11::doubles breaks);
 extern "C" SEXP _cpp11test_findInterval3(SEXP x, SEXP breaks) {
   BEGIN_CPP11
-    return cpp11::as_sexp(findInterval3(cpp11::as_cpp<cpp11::decay_t<doubles>>(x), cpp11::as_cpp<cpp11::decay_t<doubles>>(breaks)));
+    return cpp11::as_sexp(findInterval3(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(breaks)));
   END_CPP11
 }
 // find-intervals.cpp
