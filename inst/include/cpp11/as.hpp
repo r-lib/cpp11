@@ -20,13 +20,13 @@ template <typename T>
 struct is_smart_ptr : std::false_type {};
 
 template <typename T>
-struct is_smart_ptr<std::shared_ptr<T>> : std::true_type{};
+struct is_smart_ptr<std::shared_ptr<T>> : std::true_type {};
 
 template <typename T>
-struct is_smart_ptr<std::unique_ptr<T>> : std::true_type{};
+struct is_smart_ptr<std::unique_ptr<T>> : std::true_type {};
 
 template <typename T>
-struct is_smart_ptr<std::weak_ptr<T>> : std::true_type{};
+struct is_smart_ptr<std::weak_ptr<T>> : std::true_type {};
 
 template <typename T, typename R = void>
 using enable_if_constructible_from_sexp =
