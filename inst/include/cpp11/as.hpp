@@ -31,11 +31,9 @@ struct is_smart_ptr<std::weak_ptr<T>> : std::true_type {};
 
 template <typename T, typename R = void>
 using enable_if_constructible_from_sexp =
-    enable_if_t<
-      !is_smart_ptr<T>::value && // workaround for gcc 4.8
-      std::is_class<T>::value && std::is_constructible<T, SEXP>::value,
-      R
-    >;
+    enable_if_t<!is_smart_ptr<T>::value && // workaround for gcc 4.8
+                  std::is_class<T>::value && std::is_constructible<T, SEXP>::value,
+                R>;
 
 template <typename T, typename R = void>
 using enable_if_is_sexp = enable_if_t<std::is_same<T, SEXP>::value, R>;
