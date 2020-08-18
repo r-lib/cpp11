@@ -18,7 +18,8 @@ using namespace Rcpp;
   return std::distance(breaks.begin(), pos);
 }
 
-[[cpp11::register]] cpp11::integers findInterval2(cpp11::doubles x, cpp11::doubles breaks) {
+[[cpp11::register]] cpp11::integers findInterval2(cpp11::doubles x,
+                                                  cpp11::doubles breaks) {
   cpp11::writable::integers out(x.size());
   auto out_it = out.begin();
 
@@ -29,7 +30,8 @@ using namespace Rcpp;
   }
   return out;
 }
-[[cpp11::register]] cpp11::integers findInterval2_5(cpp11::doubles x, cpp11::doubles breaks) {
+[[cpp11::register]] cpp11::integers findInterval2_5(cpp11::doubles x,
+                                                    cpp11::doubles breaks) {
   cpp11::writable::integers out(x.size());
   auto out_it = out.begin();
   auto bb = breaks.begin();
@@ -44,7 +46,8 @@ using namespace Rcpp;
 }
 
 // This version avoids the overhead of the cpp11 iterator types
-[[cpp11::register]] cpp11::integers findInterval3(cpp11::doubles x, cpp11::doubles breaks) {
+[[cpp11::register]] cpp11::integers findInterval3(cpp11::doubles x,
+                                                  cpp11::doubles breaks) {
   cpp11::writable::integers out(x.size());
   auto out_it = out.begin();
   auto b = REAL(breaks);
