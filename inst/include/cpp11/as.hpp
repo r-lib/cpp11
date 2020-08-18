@@ -2,6 +2,7 @@
 
 #include <cmath>             // for modf
 #include <initializer_list>  // for initializer_list
+#include <memory>            // for std::shared_ptr, std::weak_ptr, std::unique_ptr
 #include <string>            // for string, basic_string
 #include <type_traits>       // for decay, enable_if, is_same, is_convertible
 
@@ -16,9 +17,23 @@ using enable_if_t = typename std::enable_if<C, R>::type;
 template <typename T>
 using decay_t = typename std::decay<T>::type;
 
+template <typename T>
+struct is_smart_ptr : std::false_type {};
+
+template <typename T>
+struct is_smart_ptr<std::shared_ptr<T>> : std::true_type {};
+
+template <typename T>
+struct is_smart_ptr<std::unique_ptr<T>> : std::true_type {};
+
+template <typename T>
+struct is_smart_ptr<std::weak_ptr<T>> : std::true_type {};
+
 template <typename T, typename R = void>
 using enable_if_constructible_from_sexp =
-    enable_if_t<std::is_class<T>::value && std::is_constructible<T, SEXP>::value, R>;
+    enable_if_t<!is_smart_ptr<T>::value &&  // workaround for gcc 4.8
+                    std::is_class<T>::value && std::is_constructible<T, SEXP>::value,
+                R>;
 
 template <typename T, typename R = void>
 using enable_if_is_sexp = enable_if_t<std::is_same<T, SEXP>::value, R>;
