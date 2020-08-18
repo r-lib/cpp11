@@ -16,6 +16,18 @@ using enable_if_t = typename std::enable_if<C, R>::type;
 template <typename T>
 using decay_t = typename std::decay<T>::type;
 
+template <typename T>
+struct is_smart_ptr : std::false_type {};;
+
+template <typename T>
+struct is_smart_ptr<std::shared_ptr<T>> : std::true_type{};
+
+template <typename T>
+struct is_smart_ptr<std::unique_ptr<T>> : std::true_type{};
+
+template <typename T>
+struct is_smart_ptr<std::weak_ptr<T>> : std::true_type{};
+
 template <typename T, typename R = void>
 using enable_if_constructible_from_sexp =
     enable_if_t<std::is_class<T>::value && std::is_constructible<T, SEXP>::value, R>;
@@ -62,7 +74,7 @@ inline bool is_convertable_without_loss_to_integer(double value) {
   return std::modf(value, &int_part) == 0.0;
 }
 
-template <typename T>
+template <typename T, typename = enable_if_t<!is_smart_ptr<T>::value>>
 enable_if_constructible_from_sexp<T, T> as_cpp(SEXP from) {
   return T(from);
 }
