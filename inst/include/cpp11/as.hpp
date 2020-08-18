@@ -31,7 +31,11 @@ struct is_smart_ptr<std::weak_ptr<T>> : std::true_type {};
 
 template <typename T, typename R = void>
 using enable_if_constructible_from_sexp =
-    enable_if_t<std::is_class<T>::value && std::is_constructible<T, SEXP>::value, R>;
+    enable_if_t<
+      !is_smart_ptr<T>::value && // workaround for gcc 4.8
+      std::is_class<T>::value && std::is_constructible<T, SEXP>::value,
+      R
+    >;
 
 template <typename T, typename R = void>
 using enable_if_is_sexp = enable_if_t<std::is_same<T, SEXP>::value, R>;
@@ -75,7 +79,7 @@ inline bool is_convertable_without_loss_to_integer(double value) {
   return std::modf(value, &int_part) == 0.0;
 }
 
-template <typename T, typename = enable_if_t<!is_smart_ptr<T>::value>>
+template <typename T>
 enable_if_constructible_from_sexp<T, T> as_cpp(SEXP from) {
   return T(from);
 }
