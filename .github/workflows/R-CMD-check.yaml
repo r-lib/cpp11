@@ -98,7 +98,7 @@ jobs:
         env:
           R_REMOTES_NO_ERRORS_FROM_WARNINGS: false
         run: |
-          install.packages("cpp11")
+          install.packages("cpp11", repos = NULL)
           pak::local_install_dev_deps("cpp11test")
           install.packages("cpp11test", repos = NULL, INSTALL_opts = "--install-tests")
         shell: Rscript {0}
