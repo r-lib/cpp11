@@ -281,6 +281,18 @@ static struct {
   }
 
  private:
+  static void set_option(SEXP name, SEXP value) {
+    SEXP opt = SYMVALUE(safe[Rf_install](".Options"));
+    SEXP t = opt;
+    while (CDR(t) != R_NilValue) {
+      t = CDR(t);
+    }
+    SETCDR(t, Rf_allocList(1));
+    opt = CDR(t);
+    SET_TAG(opt, name);
+    SETCAR(opt, value);
+  }
+
   static SEXP get_preserve_list() {
     static SEXP list_singleton = R_NilValue;
 
@@ -290,15 +302,14 @@ static struct {
       // compiled, resulting in unrelated instances of each static variable.
 
       // FIXME how can we create the cpp11 namespace when it doesn't already exist?
-      SEXP list_singleton_sym = safe[Rf_install](".cpp11_preserve_list");
+      SEXP list_singleton_sym = safe[Rf_install]("cpp11_preserve_list");
 
-      list_singleton = safe[Rf_findVarInFrame](R_GlobalEnv, list_singleton_sym);
+      list_singleton = safe[Rf_GetOption1](list_singleton_sym);
 
-      if (list_singleton == R_UnboundValue) {
-        list_singleton = PROTECT(Rf_cons(R_NilValue, R_NilValue));
+      if (list_singleton == R_NilValue) {
+        list_singleton = Rf_cons(R_NilValue, R_NilValue);
         R_PreserveObject(list_singleton);
-        UNPROTECT(1);
-        safe[Rf_defineVar](list_singleton_sym, list_singleton, R_GlobalEnv);
+        set_option(list_singleton_sym, list_singleton);
       }
     }
 
