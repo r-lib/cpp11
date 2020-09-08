@@ -67,5 +67,3 @@ is_interactive <- function() {
     }
     interactive()
 }
-
-`.preserve_list` <- pairlist(NA, NA)
