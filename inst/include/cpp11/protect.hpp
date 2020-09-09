@@ -293,30 +293,42 @@ static struct {
     SETCAR(opt, value);
   }
 
-  static SEXP get_preserve_list() {
-    static SEXP list_singleton = R_NilValue;
+  static SEXP new_environment() {
+    SEXP new_env_sym = safe[Rf_install]("new.env");
+    SEXP new_env_fun = safe[Rf_findFun](new_env_sym, R_BaseEnv);
+    SEXP call = PROTECT(safe[Rf_allocVector](LANGSXP, 1));
+    SETCAR(call, new_env_fun);
+    SEXP res = safe[Rf_eval](call, R_GlobalEnv);
+    UNPROTECT(1);
+    return res;
+  }
 
-    if (list_singleton == R_NilValue) {
+  static SEXP get_preserve_list() {
+    static SEXP preserve_env = R_NilValue;
+
+    if (preserve_env == R_NilValue) {
       // The .preserve_list singleton is a member of cpp11::: and is managed by the R
       // runtime. It cannot be constructed a header since many translation units may be
       // compiled, resulting in unrelated instances of each static variable.
 
       // FIXME how can we create the cpp11 namespace when it doesn't already exist?
-      SEXP list_singleton_sym = safe[Rf_install]("cpp11_preserve_list");
+      SEXP preserve_env_sym = safe[Rf_install]("cpp11_preserve_env");
 
-      list_singleton = safe[Rf_GetOption1](list_singleton_sym);
+      preserve_env = safe[Rf_GetOption1](preserve_env_sym);
 
-      if (list_singleton == R_NilValue) {
-        list_singleton = Rf_cons(R_NilValue, R_NilValue);
-        R_PreserveObject(list_singleton);
-        set_option(list_singleton_sym, list_singleton);
+      if (preserve_env == R_NilValue) {
+        preserve_env = new_environment();
+        safe[Rf_defineVar](preserve_env_sym, Rf_cons(R_NilValue, R_NilValue),
+                           preserve_env);
+        set_option(preserve_env_sym, preserve_env);
       }
     }
 
-    return list_singleton;
+    return preserve_env;
   }
 
-  SEXP list_ = get_preserve_list();
+  SEXP list_ = safe[Rf_findVarInFrame](get_preserve_list(),
+                                       safe[Rf_install]("cpp11_preserve_env"));
 } preserved;
 
 }  // namespace cpp11
