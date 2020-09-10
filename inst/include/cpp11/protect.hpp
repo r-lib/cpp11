@@ -281,8 +281,12 @@ static struct {
   }
 
  private:
+  // We deliberately avoid using safe[] in the below code, as this code runs
+  // when the shared library is loaded and will not be wrapped by
+  // `CPP11_UNWIND`, so if an error occurs we will not catch the C++ exception
+  // that safe emits.
   static void set_option(SEXP name, SEXP value) {
-    SEXP opt = SYMVALUE(safe[Rf_install](".Options"));
+    SEXP opt = SYMVALUE(Rf_install(".Options"));
     SEXP t = opt;
     while (CDR(t) != R_NilValue) {
       t = CDR(t);
@@ -294,32 +298,41 @@ static struct {
   }
 
   static SEXP new_environment() {
-    SEXP new_env_sym = safe[Rf_install]("new.env");
-    SEXP new_env_fun = safe[Rf_findFun](new_env_sym, R_BaseEnv);
-    SEXP call = PROTECT(safe[Rf_allocVector](LANGSXP, 1));
+    SEXP new_env_sym = Rf_install("new.env");
+    SEXP new_env_fun = Rf_findFun(new_env_sym, R_BaseEnv);
+    SEXP call = PROTECT(Rf_allocVector(LANGSXP, 1));
     SETCAR(call, new_env_fun);
-    SEXP res = safe[Rf_eval](call, R_GlobalEnv);
+    SEXP res = Rf_eval(call, R_GlobalEnv);
     UNPROTECT(1);
     return res;
   }
 
-  static SEXP get_preserve_list() {
+  // The preserve_env singleton is stored in an environment within an R global option.
+  //
+  // It is not constructed as a static variable directly since many
+  // translation units may be compiled, resulting in unrelated instances of each
+  // static variable.
+  //
+  // We cannot store it in the cpp11 namespace, as cpp11 likely will not be loaded by
+  // packages.
+  // We cannot store it in R's global environment, as that is against CRAN
+  // policies.
+  // We need to use a environment as option() and getOption duplicates their
+  // values, and duplicating the preserve pairlist causes the protection stack to
+  // overflow.
+  static SEXP get_preserve_env() {
     static SEXP preserve_env = R_NilValue;
 
     if (preserve_env == R_NilValue) {
-      // The .preserve_list singleton is a member of cpp11::: and is managed by the R
-      // runtime. It cannot be constructed a header since many translation units may be
-      // compiled, resulting in unrelated instances of each static variable.
+      SEXP preserve_env_sym = Rf_install("cpp11_preserve_env");
 
-      // FIXME how can we create the cpp11 namespace when it doesn't already exist?
-      SEXP preserve_env_sym = safe[Rf_install]("cpp11_preserve_env");
-
-      preserve_env = safe[Rf_GetOption1](preserve_env_sym);
+      preserve_env = Rf_GetOption1(preserve_env_sym);
 
       if (preserve_env == R_NilValue) {
         preserve_env = new_environment();
-        safe[Rf_defineVar](preserve_env_sym, Rf_cons(R_NilValue, R_NilValue),
-                           preserve_env);
+
+        SEXP preserve_list_sym = Rf_install("cpp11_preserve_list");
+        Rf_defineVar(preserve_list_sym, Rf_cons(R_NilValue, R_NilValue), preserve_env);
         set_option(preserve_env_sym, preserve_env);
       }
     }
@@ -327,8 +340,7 @@ static struct {
     return preserve_env;
   }
 
-  SEXP list_ = safe[Rf_findVarInFrame](get_preserve_list(),
-                                       safe[Rf_install]("cpp11_preserve_env"));
+  SEXP list_ = Rf_findVarInFrame(get_preserve_env(), Rf_install("cpp11_preserve_list"));
 } preserved;
 
 }  // namespace cpp11
