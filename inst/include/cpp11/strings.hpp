@@ -7,7 +7,7 @@
 #include "cpp11/as.hpp"               // for as_sexp
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/named_arg.hpp"        // for named_arg
-#include "cpp11/protect.hpp"          // for preserved.insert, unwind_protect
+#include "cpp11/protect.hpp"          // for preserved
 #include "cpp11/r_string.hpp"         // for r_string
 #include "cpp11/r_vector.hpp"         // for r_vector, r_vector<>::proxy
 #include "cpp11/sexp.hpp"             // for sexp
