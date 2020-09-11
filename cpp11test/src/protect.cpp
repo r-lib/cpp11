@@ -18,8 +18,8 @@
 
 [[cpp11::register]] void protect_one_cpp11_(SEXP x, int n) {
   for (R_xlen_t i = 0; i < n; ++i) {
-    SEXP p = cpp11::protect_sexp(x);
-    cpp11::release_protect(p);
+    SEXP p = cpp11::preserved.insert(x);
+    cpp11::preserved.release(p);
   }
 }
 
@@ -63,12 +63,12 @@
 [[cpp11::register]] void protect_many_cpp11_(int n) {
   std::vector<SEXP> res;
   for (R_xlen_t i = 0; i < n; ++i) {
-    res.push_back(cpp11::protect_sexp(Rf_ScalarInteger(n)));
+    res.push_back(cpp11::preserved.insert(Rf_ScalarInteger(n)));
   }
 
   for (R_xlen_t i = n - 1; i >= 0; --i) {
     SEXP x = res[i];
-    cpp11::release_protect(x);
+    cpp11::preserved.release(x);
     res.pop_back();
   }
 }

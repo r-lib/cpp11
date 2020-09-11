@@ -7,7 +7,7 @@
 #include "cpp11/R.hpp"                // for Rboolean, SEXP, SEXPREC, Rf_all...
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/named_arg.hpp"        // for named_arg
-#include "cpp11/protect.hpp"          // for protect_sexp, release_protect
+#include "cpp11/protect.hpp"          // for preserved
 #include "cpp11/r_vector.hpp"         // for r_vector, r_vector<>::proxy
 #include "cpp11/sexp.hpp"             // for sexp
 
@@ -71,7 +71,7 @@ inline r_vector<Rboolean>::proxy::operator Rboolean() const {
 template <>
 inline r_vector<Rboolean>::r_vector(std::initializer_list<Rboolean> il)
     : cpp11::r_vector<Rboolean>(Rf_allocVector(LGLSXP, il.size())), capacity_(il.size()) {
-  protect_ = protect_sexp(data_);
+  protect_ = preserved.insert(data_);
   auto it = il.begin();
   for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
     SET_LOGICAL_ELT(data_, i, *it);
@@ -82,7 +82,7 @@ template <>
 inline r_vector<Rboolean>::r_vector(std::initializer_list<named_arg> il)
     : cpp11::r_vector<Rboolean>(safe[Rf_allocVector](LGLSXP, il.size())),
       capacity_(il.size()) {
-  protect_ = protect_sexp(data_);
+  protect_ = preserved.insert(data_);
   int n_protected = 0;
 
   try {
@@ -98,7 +98,7 @@ inline r_vector<Rboolean>::r_vector(std::initializer_list<named_arg> il)
       UNPROTECT(n_protected);
     });
   } catch (const unwind_exception& e) {
-    release_protect(protect_);
+    preserved.release(protect_);
     UNPROTECT(n_protected);
     throw e;
   }
@@ -109,9 +109,9 @@ inline void r_vector<Rboolean>::reserve(R_xlen_t new_capacity) {
   data_ = data_ == R_NilValue ? safe[Rf_allocVector](LGLSXP, new_capacity)
                               : safe[Rf_xlengthgets](data_, new_capacity);
   SEXP old_protect = protect_;
-  protect_ = protect_sexp(data_);
+  protect_ = preserved.insert(data_);
 
-  release_protect(old_protect);
+  preserved.release(old_protect);
 
   data_p_ = reinterpret_cast<Rboolean*>(LOGICAL(data_));
   capacity_ = new_capacity;

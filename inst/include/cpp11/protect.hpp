@@ -25,82 +25,6 @@ class unwind_exception : public std::exception {
   unwind_exception(SEXP token_) : token(token_) {}
 };
 
-static SEXP preserve(SEXP obj) {
-  PROTECT(obj);
-  R_PreserveObject(obj);
-  UNPROTECT(1);
-  return obj;
-}
-
-static SEXP protect_list = preserve(Rf_cons(R_NilValue, R_NilValue));
-
-inline SEXP protect_sexp(SEXP obj) {
-  if (obj == R_NilValue) {
-    return R_NilValue;
-  }
-#ifdef CPP11_USE_PRESERVE_OBJECT
-  R_PreserveObject(obj);
-  return obj;
-#endif
-  PROTECT(obj);
-
-  // Add a new cell that points to the previous end.
-  SEXP cell = PROTECT(Rf_cons(protect_list, CDR(protect_list)));
-  SET_TAG(cell, obj);
-
-  SETCDR(protect_list, cell);
-  if (CDR(cell) != R_NilValue) {
-    SETCAR(CDR(cell), cell);
-  }
-
-  UNPROTECT(2);
-
-  return cell;
-}
-
-inline void print_protect() {
-  SEXP head = protect_list;
-  while (head != R_NilValue) {
-    REprintf("%x CAR: %x CDR: %x TAG: %x\n", head, CAR(head), CDR(head), TAG(head));
-    head = CDR(head);
-  }
-  REprintf("---\n");
-}
-
-/* This is currently unused, but client packages could use it to free leaked resources in
- * older R versions if needed */
-inline void release_existing_protections() {
-#if !defined(CPP11_USE_PRESERVE_OBJECT)
-  SEXP first = CDR(protect_list);
-  if (first != R_NilValue) {
-    SETCAR(first, R_NilValue);
-    SETCDR(protect_list, R_NilValue);
-  }
-#endif
-}
-
-inline void release_protect(SEXP protect) {
-  if (protect == R_NilValue) {
-    return;
-  }
-#ifdef CPP11_USE_PRESERVE_OBJECT
-  R_ReleaseObject(protect);
-  return;
-#endif
-
-  SEXP before = CAR(protect);
-  SEXP after = CDR(protect);
-
-  if (before == R_NilValue && after == R_NilValue) {
-    Rf_error("should never happen");
-  }
-
-  SETCDR(before, after);
-  if (after != R_NilValue) {
-    SETCAR(after, before);
-  }
-}
-
 #ifdef HAS_UNWIND_PROTECT
 
 /// Unwind Protection from C longjmp's, like those used in R error handling
@@ -280,5 +204,145 @@ template <typename... Args>
 void warning(const std::string& fmt, Args... args) {
   safe[Rf_warning](fmt.c_str(), args...);
 }
+
+/// A doubly-linked list of preserved objects, allowing O(1) insertion/release of
+/// objects compared to O(N preserved) with R_PreserveObject.
+static struct {
+  SEXP insert(SEXP obj) {
+    if (obj == R_NilValue) {
+      return R_NilValue;
+    }
+
+#ifdef CPP11_USE_PRESERVE_OBJECT
+    PROTECT(obj);
+    R_PreserveObject(obj);
+    UNPROTECT(1);
+    return obj;
+#endif
+
+    PROTECT(obj);
+
+    // Add a new cell that points to the previous end.
+    SEXP cell = PROTECT(Rf_cons(list_, CDR(list_)));
+
+    SET_TAG(cell, obj);
+
+    SETCDR(list_, cell);
+
+    if (CDR(cell) != R_NilValue) {
+      SETCAR(CDR(cell), cell);
+    }
+
+    UNPROTECT(2);
+
+    return cell;
+  }
+
+  void print() {
+    for (SEXP head = list_; head != R_NilValue; head = CDR(head)) {
+      REprintf("%x CAR: %x CDR: %x TAG: %x\n", head, CAR(head), CDR(head), TAG(head));
+    }
+    REprintf("---\n");
+  }
+
+  // This is currently unused, but client packages could use it to free leaked resources
+  // in older R versions if needed
+  void release_all() {
+#if !defined(CPP11_USE_PRESERVE_OBJECT)
+    SEXP first = CDR(list_);
+    if (first != R_NilValue) {
+      SETCAR(first, R_NilValue);
+      SETCDR(list_, R_NilValue);
+    }
+#endif
+  }
+
+  void release(SEXP token) {
+    if (token == R_NilValue) {
+      return;
+    }
+
+#ifdef CPP11_USE_PRESERVE_OBJECT
+    R_ReleaseObject(token);
+    return;
+#endif
+
+    SEXP before = CAR(token);
+
+    SEXP after = CDR(token);
+
+    if (before == R_NilValue && after == R_NilValue) {
+      Rf_error("should never happen");
+    }
+
+    SETCDR(before, after);
+
+    if (after != R_NilValue) {
+      SETCAR(after, before);
+    }
+  }
+
+ private:
+  // We deliberately avoid using safe[] in the below code, as this code runs
+  // when the shared library is loaded and will not be wrapped by
+  // `CPP11_UNWIND`, so if an error occurs we will not catch the C++ exception
+  // that safe emits.
+  static void set_option(SEXP name, SEXP value) {
+    SEXP opt = SYMVALUE(Rf_install(".Options"));
+    SEXP t = opt;
+    while (CDR(t) != R_NilValue) {
+      t = CDR(t);
+    }
+    SETCDR(t, Rf_allocList(1));
+    opt = CDR(t);
+    SET_TAG(opt, name);
+    SETCAR(opt, value);
+  }
+
+  static SEXP new_environment() {
+    SEXP new_env_sym = Rf_install("new.env");
+    SEXP new_env_fun = Rf_findFun(new_env_sym, R_BaseEnv);
+    SEXP call = PROTECT(Rf_allocVector(LANGSXP, 1));
+    SETCAR(call, new_env_fun);
+    SEXP res = Rf_eval(call, R_GlobalEnv);
+    UNPROTECT(1);
+    return res;
+  }
+
+  // The preserve_env singleton is stored in an environment within an R global option.
+  //
+  // It is not constructed as a static variable directly since many
+  // translation units may be compiled, resulting in unrelated instances of each
+  // static variable.
+  //
+  // We cannot store it in the cpp11 namespace, as cpp11 likely will not be loaded by
+  // packages.
+  // We cannot store it in R's global environment, as that is against CRAN
+  // policies.
+  // We need to use a environment as option() and getOption duplicates their
+  // values, and duplicating the preserve pairlist causes the protection stack to
+  // overflow.
+  static SEXP get_preserve_env() {
+    static SEXP preserve_env = R_NilValue;
+
+    if (preserve_env == R_NilValue) {
+      SEXP preserve_env_sym = Rf_install("cpp11_preserve_env");
+
+      preserve_env = Rf_GetOption1(preserve_env_sym);
+
+      if (preserve_env == R_NilValue) {
+        preserve_env = new_environment();
+
+        SEXP preserve_list_sym = Rf_install("cpp11_preserve_list");
+        Rf_defineVar(preserve_list_sym, Rf_cons(R_NilValue, R_NilValue), preserve_env);
+        set_option(preserve_env_sym, preserve_env);
+      }
+    }
+
+    return preserve_env;
+  }
+
+  SEXP list_ = Rf_findVarInFrame(get_preserve_env(), Rf_install("cpp11_preserve_list"));
+} preserved;
 
 }  // namespace cpp11

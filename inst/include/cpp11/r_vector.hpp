@@ -15,7 +15,7 @@
 
 #include "cpp11/R.hpp"                // for R_xlen_t, SEXP, SEXPREC, Rf_xle...
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
-#include "cpp11/protect.hpp"          // for protect_sexp, release_protect
+#include "cpp11/protect.hpp"          // for preserved
 #include "cpp11/r_string.hpp"         // for r_string
 #include "cpp11/sexp.hpp"             // for sexp
 
@@ -80,12 +80,12 @@ class r_vector {
     SEXP old_protect = protect_;
 
     data_ = rhs.data_;
-    protect_ = protect_sexp(data_);
+    protect_ = preserved.insert(data_);
     is_altrep_ = rhs.is_altrep_;
     data_p_ = rhs.data_p_;
     length_ = rhs.length_;
 
-    release_protect(old_protect);
+    preserved.release(old_protect);
 
     return *this;
   };
@@ -94,12 +94,12 @@ class r_vector {
     SEXP old_protect = protect_;
 
     data_ = rhs.data_;
-    protect_ = protect_sexp(data_);
+    protect_ = preserved.insert(data_);
     is_altrep_ = rhs.is_altrep_;
     data_p_ = rhs.data_p_;
     length_ = rhs.length_;
 
-    release_protect(old_protect);
+    preserved.release(old_protect);
   };
 
   bool is_altrep() const;
@@ -178,7 +178,7 @@ class r_vector {
 
   const_iterator find(const r_string& name) const;
 
-  ~r_vector() { release_protect(protect_); }
+  ~r_vector() { preserved.release(protect_); }
 
  private:
   SEXP data_ = R_NilValue;
@@ -359,7 +359,7 @@ class r_vector : public cpp11::r_vector<T> {
 template <typename T>
 inline r_vector<T>::r_vector(const SEXP data)
     : data_(valid_type(data)),
-      protect_(protect_sexp(data)),
+      protect_(preserved.insert(data)),
       is_altrep_(ALTREP(data)),
       data_p_(get_p(ALTREP(data), data)),
       length_(Rf_xlength(data)) {}
@@ -367,7 +367,7 @@ inline r_vector<T>::r_vector(const SEXP data)
 template <typename T>
 inline r_vector<T>::r_vector(const SEXP data, bool is_altrep)
     : data_(valid_type(data)),
-      protect_(protect_sexp(data)),
+      protect_(preserved.insert(data)),
       is_altrep_(is_altrep),
       data_p_(get_p(is_altrep, data)),
       length_(Rf_xlength(data)) {}
@@ -630,23 +630,23 @@ inline typename r_vector<T>::iterator r_vector<T>::end() const {
 template <typename T>
 inline r_vector<T>::r_vector(const SEXP& data)
     : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](data)),
-      protect_(protect_sexp(data_)),
+      protect_(preserved.insert(data_)),
       capacity_(length_) {}
 
 template <typename T>
 inline r_vector<T>::r_vector(const SEXP& data, bool is_altrep)
     : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](data), is_altrep),
-      protect_(protect_sexp(data_)),
+      protect_(preserved.insert(data_)),
       capacity_(length_) {}
 
 template <typename T>
 inline r_vector<T>::r_vector(SEXP&& data)
-    : cpp11::r_vector<T>(data), protect_(protect_sexp(data_)), capacity_(length_) {}
+    : cpp11::r_vector<T>(data), protect_(preserved.insert(data_)), capacity_(length_) {}
 
 template <typename T>
 inline r_vector<T>::r_vector(SEXP&& data, bool is_altrep)
     : cpp11::r_vector<T>(data, is_altrep),
-      protect_(protect_sexp(data_)),
+      protect_(preserved.insert(data_)),
       capacity_(length_) {}
 
 template <typename T>
@@ -678,7 +678,7 @@ inline r_vector<T>::r_vector(R_xlen_t size) : r_vector() {
 
 template <typename T>
 inline r_vector<T>::~r_vector() {
-  release_protect(protect_);
+  preserved.release(protect_);
 }
 
 #ifdef LONG_VECTOR_SUPPORT
@@ -761,12 +761,14 @@ inline typename r_vector<T>::iterator r_vector<T>::find(const r_string& name) co
 template <typename T>
 inline r_vector<T>::r_vector(const r_vector<T>& rhs)
     : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs)),
-      protect_(protect_sexp(data_)),
+      protect_(preserved.insert(data_)),
       capacity_(rhs.capacity_) {}
 
 template <typename T>
 inline r_vector<T>::r_vector(r_vector<T>&& rhs)
-    : cpp11::r_vector<T>(rhs), protect_(protect_sexp(data_)), capacity_(rhs.capacity_) {
+    : cpp11::r_vector<T>(rhs),
+      protect_(preserved.insert(data_)),
+      capacity_(rhs.capacity_) {
   rhs.data_ = R_NilValue;
   rhs.protect_ = R_NilValue;
 }
@@ -774,7 +776,7 @@ inline r_vector<T>::r_vector(r_vector<T>&& rhs)
 template <typename T>
 inline r_vector<T>::r_vector(const cpp11::r_vector<T>& rhs)
     : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs)),
-      protect_(protect_sexp(data_)),
+      protect_(preserved.insert(data_)),
       capacity_(rhs.length_) {}
 
 // We don't release the old object until the end in case we throw an exception
@@ -790,9 +792,9 @@ inline r_vector<T>& r_vector<T>::operator=(const r_vector<T>& rhs) {
   auto old_protect = protect_;
 
   data_ = safe[Rf_shallow_duplicate](rhs.data_);
-  protect_ = protect_sexp(data_);
+  protect_ = preserved.insert(data_);
 
-  release_protect(old_protect);
+  preserved.release(old_protect);
 
   capacity_ = rhs.capacity_;
 
@@ -810,9 +812,9 @@ inline r_vector<T>& r_vector<T>::operator=(r_vector<T>&& rhs) {
   SEXP old_protect = protect_;
 
   data_ = rhs.data_;
-  protect_ = protect_sexp(data_);
+  protect_ = preserved.insert(data_);
 
-  release_protect(old_protect);
+  preserved.release(old_protect);
 
   capacity_ = rhs.capacity_;
 

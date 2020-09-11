@@ -15,6 +15,7 @@ context("sexp-C++") {
 
     expect_true(Rf_inherits(out, "data.frame"));
   }
+
   test_that("scalar constructors work") {
     using namespace cpp11::literals;
     cpp11::writable::list out({
