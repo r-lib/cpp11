@@ -92,19 +92,29 @@
 <h2 class="hasAnchor">
 <a href="#initial-setup-and-dev-workflow" class="anchor"></a>Initial setup and dev workflow</h2>
 <p>First install any dependencies needed for development.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"remotes"</span>)
-<span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_deps.html">install_deps</a></span>(<span class="kw">dependencies</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"remotes"</span>)
+<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_deps.html">install_deps</a></span>(dependencies = <span class="fl">TRUE</span>)
+</pre></div>
 <p>You can load the package in an interactive R session</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu">load_all</span>()</pre></body></html></div>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="kw">devtools</span>::<span class="fu">load_all</span>()
+</pre></div>
 <p>Or run the tests with</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu">test</span>()</pre></body></html></div>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="kw">devtools</span>::<span class="fu">test</span>()
+</pre></div>
 <p><code>test()</code> will also re-compile the package if needed, so you do not always have to run <code>load_all()</code>.</p>
 <p>If you change the cpp11 headers you will need to clean and recompile the cpp11test package</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu">clean_dll</span>()
-<span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu">load_all</span>()</pre></body></html></div>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="kw">devtools</span>::<span class="fu">clean_dll</span>()
+<span class="kw">devtools</span>::<span class="fu">load_all</span>()
+</pre></div>
 <p>Generally when developing the C++ headers I run R with its working directory in the <code>cpp11test</code> directory and use <code>devtools::test()</code> to run the cpp11tests.</p>
 <p>To calculate code coverage of the cpp11 package run the following from the <code>cpp11</code> root directory.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="kw pkg">covr</span><span class="kw ns">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/report.html">report</a></span>(<span class="fu">cpp11_coverage</span>())</pre></body></html></div>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="kw">covr</span>::<span class="fu"><a href="http://covr.r-lib.org/reference/report.html">report</a></span>(<span class="fu">cpp11_coverage</span>())
+</pre></div>
 </div>
 <div id="code-formatting" class="section level2">
 <h2 class="hasAnchor">
@@ -159,7 +169,7 @@
 <a href="#protect-list" class="anchor"></a>Protect list</h3>
 <p>cpp11 uses an idea proposed by <a href="https://github.com/RcppCore/Rcpp/issues/1081#issuecomment-630330838">Luke Tierney</a> to use a double linked list with the head preserved to protect objects cpp11 is protecting.</p>
 <p>Each node in the list uses the head (<code>CAR</code>) part to point to the previous node, and the <code>CDR</code> part to point to the next node. The <code>TAG</code> is used to point to the object being protected. The head and tail of the list have <code>R_NilValue</code> as their <code>CAR</code> and <code>CDR</code> pointers respectively.</p>
-<p>Calling <code>protect_sexp()</code> with a regular R object will add a new node to the list and return a protect token corresponding to the node added. Calling <code>release_protect()</code> on this returned token will release the protection by unlinking the node from the linked list.</p>
+<p>Calling <code>preserved.insert()</code> with a regular R object will add a new node to the list and return a protect token corresponding to the node added. Calling <code>preserved.release()</code> on this returned token will release the protection by unlinking the node from the linked list.</p>
 <p>This scheme scales in O(1) time to release or insert an object vs O(N) or worse time with <code>R_PreserveObject()</code> / <code>R_ReleaseObject()</code>.</p>
 <p>These functions are defined in <a href="https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/protect.hpp">protect.hpp</a></p>
 </div>
@@ -181,7 +191,7 @@
 <li>Was ruled out partially because the implementation would be somewhat tricky and more because performance would suffer greatly.</li>
 <li>is what we now do in cpp11. It leaks protected objects when there are R API errors.</li>
 </ol>
-<p>If packages are concerned about the leaked memory they can call <code>cpp11::release_existing_protections()</code> as needed to release the current protections for all objects managed by cpp11. This is not done automatically because in some cases the protections should persist beyond the <code><a href="https://rdrr.io/r/base/CallExternal.html">.Call()</a></code> boundry, e.g. in vroom altrep objects for example.</p>
+<p>If packages are concerned about the leaked memory they can call <code>cpp11::preserved.release_all()</code> as needed to release the current protections for all objects managed by cpp11. This is not done automatically because in some cases the protections should persist beyond the <code><a href="https://rdrr.io/r/base/CallExternal.html">.Call()</a></code> boundry, e.g. in vroom altrep objects for example.</p>
 </div>
 </div>
   </div>
@@ -201,7 +211,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

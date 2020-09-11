@@ -1,12 +1,8 @@
 pandoc: 2.7.3
-pkgdown: 1.5.1
+pkgdown: 1.6.0
 pkgdown_sha: ~
-articles:
-  converting: converting.html
-  cpp11: cpp11.html
-  internals: internals.html
-  motivations: motivations.html
-last_built: 2020-08-21T15:00Z
+articles: []
+last_built: 2020-09-11T19:50Z
 urls:
   reference: https://cpp11.r-lib.org/reference
   article: https://cpp11.r-lib.org/articles
