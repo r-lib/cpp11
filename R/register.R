@@ -32,7 +32,7 @@
 #' # cleanup
 #' unlink(dir, recursive = TRUE)
 cpp_register <- function(path = ".", quiet = FALSE) {
-  stop_unless_installed(c("brio", "cli", "decor", "desc", "glue", "tibble", "vctrs"))
+  stop_unless_installed(get_cpp_register_needs())
 
   r_path <- file.path(path, "R", "cpp11.R")
   cpp_path <- file.path(path, "src", "cpp11.cpp")
@@ -261,4 +261,9 @@ pkg_links_to_rcpp <- function(path) {
   deps <- desc::desc_get_deps(file.path(path, "DESCRIPTION"))
 
   any(deps$type == "LinkingTo" & deps$package == "Rcpp")
+}
+
+get_cpp_register_needs <- function() {
+  res <- read.dcf(system.file("DESCRIPTION", package = "cpp11"))[, "Config/Needs/cpp11/cpp_register"]
+  strsplit(res, "[[:space:]]*,[[:space:]]*")[[1]]
 }

@@ -47,6 +47,14 @@ Suggests:
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3
+Config/Needs/cpp11/cpp_register: 
+    brio,
+    cli,
+    decor,
+    desc,
+    glue,
+    tibble,
+    vctrs
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
