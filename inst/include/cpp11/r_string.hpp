@@ -68,12 +68,10 @@ inline SEXP as_sexp(std::initializer_list<r_string> il) {
 
 inline bool is_na(const r_string& x) { return x == NA_STRING; }
 
-template <typename T, typename R = void>
-using enable_if_r_string = enable_if_t<std::is_same<T, cpp11::r_string>::value, R>;
-
-template <typename T>
-enable_if_r_string<T, SEXP> as_sexp(T from) {
+// override as_sexp so that r_strings convert to single element vectors
+inline SEXP as_sexp(r_string from) {
   r_string str(from);
+
   sexp res;
   unwind_protect([&] {
     res = Rf_allocVector(STRSXP, 1);

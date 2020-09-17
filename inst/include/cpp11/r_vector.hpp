@@ -922,42 +922,6 @@ inline void r_vector<T>::proxy::operator++() {
 
 }  // namespace writable
 
-// TODO: is there a better condition we could use, e.g. assert something true
-// rather than three things false?
-template <typename C, typename T>
-using is_container_but_not_sexp_or_string = typename std::enable_if<
-    !std::is_constructible<C, SEXP>::value &&
-        !std::is_same<typename std::decay<C>::type, std::string>::value &&
-        !std::is_same<typename std::decay<T>::type, std::string>::value,
-    typename std::decay<C>::type>::type;
-
-template <typename C, typename T = typename std::decay<C>::type::value_type>
-// typename T = typename C::value_type>
-is_container_but_not_sexp_or_string<C, T> as_cpp(SEXP from) {
-  auto obj = cpp11::r_vector<T>(from);
-  return {obj.begin(), obj.end()};
-}
-
-// TODO: could we make this generalize outside of std::string?
-template <typename C, typename T = C>
-using is_vector_of_strings = typename std::enable_if<
-    std::is_same<typename std::decay<T>::type, std::string>::value,
-    typename std::decay<C>::type>::type;
-
-template <typename C, typename T = typename std::decay<C>::type::value_type>
-// typename T = typename C::value_type>
-is_vector_of_strings<C, T> as_cpp(SEXP from) {
-  auto obj = cpp11::r_vector<cpp11::r_string>(from);
-  typename std::decay<C>::type res;
-  auto it = obj.begin();
-  while (it != obj.end()) {
-    r_string s = *it;
-    res.emplace_back(static_cast<std::string>(s));
-    ++it;
-  }
-  return res;
-}
-
 template <typename T>
 bool operator==(const r_vector<T>& lhs, const r_vector<T>& rhs) {
   if (lhs.size() != rhs.size()) {
