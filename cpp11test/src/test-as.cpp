@@ -239,19 +239,24 @@ context("as_cpp-C++") {
     UNPROTECT(1);
   }
 
+#if defined(__APPLE__) && defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
   test_that("as_cpp<std::vector>(ALTREP_INTSXP)") {
     SEXP r = PROTECT(R_compact_intrange(1, 5));
 
+    expect_true(ALTREP(r));
     auto x1 = cpp11::as_cpp<std::vector<int>>(r);
+    expect_true(ALTREP(r));
+
     expect_true(x1.size() == 5);
-    expect_true(x1[0] == 1);
-    expect_true(x1[1] == 2);
-    expect_true(x1[2] == 3);
-    expect_true(x1[3] == 4);
-    expect_true(x1[5] == 5);
+    int expected = 1;
+    for (int actual : x1) {
+      expect_true(actual == expected);
+      ++expected;
+    }
 
     UNPROTECT(1);
   }
+#endif
 
   test_that("as_cpp<std::vector<std::string>>()") {
     SEXP r = PROTECT(Rf_allocVector(STRSXP, 3));
