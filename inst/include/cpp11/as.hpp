@@ -45,7 +45,7 @@ struct as_cpp_impl;
 template <typename T>
 enable_if_t<is_constructible_from_sexp<T>::value, T> as_cpp(SEXP from) {
   static_assert(std::is_same<decay_t<T>, T>::value, "");
-  return T{from};
+  return T(from);
 }
 
 template <typename T, typename = enable_if_t<!is_constructible_from_sexp<T>::value>>
