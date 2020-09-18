@@ -95,9 +95,8 @@ jobs:
 
       - name: Install cpp11 and cpp11test
         if: matrix.config.custom != 'no-cpp11test'
-        env:
-          R_REMOTES_NO_ERRORS_FROM_WARNINGS: false
         run: |
+          options(warn = 2)
           install.packages(".", repos = NULL, type = "source")
           pak::local_install_dev_deps("cpp11test")
           install.packages("cpp11test", repos = NULL, INSTALL_opts = "--install-tests", type = "source")
