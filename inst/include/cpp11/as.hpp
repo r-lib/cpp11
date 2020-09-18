@@ -69,6 +69,11 @@ enable_if_t<is_convertible_to_sexp<T>::value, SEXP> as_sexp(const T& from) {
   return static_cast<SEXP>(from);
 }
 
+/// Override as_sexp so that as_sexp(r_string(...)) results in a single element vector
+/// instead of a CHRSXP
+class r_string;
+inline SEXP as_sexp(r_string from);
+
 template <typename T, typename = enable_if_t<!is_convertible_to_sexp<T>::value>>
 auto as_sexp(const T& from) -> decltype(as_sexp_impl<decay_t<T>>::convert(from)) {
   return as_sexp_impl<decay_t<T>>::convert(from);

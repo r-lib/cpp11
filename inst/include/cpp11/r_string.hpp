@@ -68,7 +68,6 @@ inline SEXP as_sexp(std::initializer_list<r_string> il) {
 
 inline bool is_na(const r_string& x) { return x == NA_STRING; }
 
-// override as_sexp so that r_strings convert to single element vectors
 inline SEXP as_sexp(r_string from) {
   r_string str(from);
 
