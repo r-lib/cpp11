@@ -100,7 +100,28 @@ This is definitely the most complex part of the cpp11 code, with extensive use o
 In particular the [substitution failure is not an error (SFINAE)](https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error) technique is used to control overloading of the functions.
 If we could use C++20 a lot of this code would be made simpler with [Concepts](https://en.cppreference.com/w/cpp/language/constraints), but alas.
 
-The most common C++ types are included in the test suite and should work without issues, as more exotic types are used in real projects additional issues may arise.
+A range of common C++ types are included in the test suite and should work without issues.
+To add custom coercion behavior, define `operator SEXP()` and a constructor which takes an SEXP.
+These will be used by `as_sexp()` and `as_cpp<>()` respectively, if available.
+If constructors or conversion operators cannot be defined, coercion behavior can be customized by specializing the trait structs `as_sexp_impl` and `as_cpp_impl` respectively.
+(cpp11's own coercion logic for STL containers is defined by specializing these traits since we can't add members to `std::vector`.)
+For example, to define coercion from SEXP to `struct Vec3 { double x,y,z; };`:
+
+```c++
+namespace cpp11 {
+template <>
+struct as_cpp_impl<Vec3> {
+  static Vec3 convert(SEXP from) {
+    if (Rf_isReal(from) && Rf_xlength(from) == 3) {
+      return Vec3{REAL_ELT(from, 0), REAL_ELT(from, 1), REAL_ELT(from, 2)};
+    }
+    stop("Expected three double values");
+  }
+};
+}
+```
+
+Note that specializing `as_sexp_impl` will never override an explicit conversion operator to SEXP, nor will specializing `as_cpp_impl` override a constructor from SEXP.
 
 Some useful links on SFINAE
 
