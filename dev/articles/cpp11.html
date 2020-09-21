@@ -254,9 +254,9 @@
 <span class="co">#&gt; # A tibble: 3 x 6</span>
 <span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 sum(x)       1.61µs   1.77µs   431538.        0B        0</span>
-<span class="co">#&gt; 2 sum_cpp(x)   6.23µs   6.68µs   137025.        0B        0</span>
-<span class="co">#&gt; 3 sum_r(x)    32.08µs  33.35µs    28814.    3.96MB        0</span>
+<span class="co">#&gt; 1 sum(x)       4.69µs   8.38µs   119259.        0B        0</span>
+<span class="co">#&gt; 2 sum_cpp(x)  18.21µs  20.86µs    35490.        0B        0</span>
+<span class="co">#&gt; 3 sum_r(x)      108µs 121.89µs     6898.    3.96MB        0</span>
 </pre></div>
 </div>
 <div id="vector-input-vector-output" class="section level3">
@@ -296,8 +296,8 @@
 <span class="co">#&gt; # A tibble: 2 x 6</span>
 <span class="co">#&gt;   expression             min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt;        &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 pdist_r(0.5, y)     6.63ms   7.42ms      130.    7.63MB     63.0</span>
-<span class="co">#&gt; 2 pdist_cpp(0.5, y)   3.98ms   4.33ms      210.    7.63MB    129.</span>
+<span class="co">#&gt; 1 pdist_r(0.5, y)     19.2ms     20ms      44.6    7.63MB     24.0</span>
+<span class="co">#&gt; 2 pdist_cpp(0.5, y)   11.9ms   12.8ms      67.3    7.63MB     56.1</span>
 </pre></div>
 <p>On my computer, it takes around 5 ms with a 1 million element <code>y</code> vector. The C++ function is about 2.5 times faster, ~2 ms, but assuming it took you 10 minutes to write the C++ function, you’d need to run it ~200,000 times to make rewriting worthwhile. The reason why the C++ function is faster is subtle, and relates to memory management. The R version needs to create an intermediate vector the same length as y (<code>x - ys</code>), and allocating memory is an expensive operation. The C++ function avoids this overhead because it uses an intermediate scalar.</p>
 </div>
@@ -844,8 +844,8 @@ SEXP table_cpp(doubles x) {
 <span class="co">#&gt; # A tibble: 2 x 6</span>
 <span class="co">#&gt;   expression   min median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 r           35.1   39.9       1       1314.      Inf</span>
-<span class="co">#&gt; 2 cpp          1      1        39.0        1       NaN</span>
+<span class="co">#&gt; 1 r           40.8   48.5       1       1314.      Inf</span>
+<span class="co">#&gt; 2 cpp          1      1        44.7        1       NaN</span>
 </pre></div>
 </div>
 <div id="r-vectorisation-versus-c-vectorisation" class="section level3">
@@ -930,9 +930,9 @@ SEXP table_cpp(doubles x) {
 <span class="co">#&gt; # A tibble: 3 x 6</span>
 <span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 vacc1        2.64ms   2.84ms      304.    7.86KB    18.3 </span>
-<span class="co">#&gt; 2 vacc2       78.86µs  87.98µs     9905.  148.85KB    18.2 </span>
-<span class="co">#&gt; 3 vacc3       22.39µs  23.43µs    35817.   14.03KB     7.16</span>
+<span class="co">#&gt; 1 vacc1         8.1ms   9.89ms      89.6    7.86KB     6.72</span>
+<span class="co">#&gt; 2 vacc2       229.7µs  301.8µs    3140.   148.85KB     9.24</span>
+<span class="co">#&gt; 3 vacc3        68.6µs  72.95µs   12818.    14.03KB     2.04</span>
 </pre></div>
 <p>Not surprisingly, our original approach with loops is very slow. Vectorising in R gives a huge speedup, and we can eke out even more performance (about ten times) with the C++ loop. I was a little surprised that the C++ was so much faster, but it is because the R version has to create 11 vectors to store intermediate results, where the C++ code only needs to create 1.</p>
 </div>
