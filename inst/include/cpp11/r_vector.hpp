@@ -869,7 +869,14 @@ inline void r_vector<T>::clear() {
 template <typename T>
 inline r_vector<T>::operator SEXP() const {
   if (length_ < capacity_) {
+#if R_VERSION >= R_Version(3, 4, 0)
     SETLENGTH(data_, length_);
+    SET_TRUELENGTH(data_, capacity_);
+    SET_GROWABLE_BIT(data_);
+#else
+    auto* p = const_cast<r_vector<T>*>(this);
+    p->data_ = safe[Rf_lengthgets](data_, length_);
+#endif
   }
   return data_;
 }
