@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* `r_bool` added as an adapter between `bool` and `Rboolean` values (#57, @bkietz)
+
 * `data_frame()` objects now have the number of rows correctly set as real length, not the reserved length (#91)
 
 * Fixed potential memory leak in cpp11::writable classes.
@@ -27,8 +29,6 @@
 * `list::const_iterator::operator*()` added so iterators could be used on list objects (#60, @romainfrancois)
 
 * `safe[]` can now work with functions that return any type (#70, @bkietz)
-
-* `writable::logicals::operator=()` now allows C++ boolean values (#57, @romainfrancois)
 
 * The `END_CPP` macro now includes a `catch(...)` block to catch all C++ exceptions that do not inherit from `std::exception` (#47).
 
