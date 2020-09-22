@@ -139,6 +139,26 @@ This ensures that if any C++ code calls the R API functions `unif_rand()`, `norm
 cpp11 does _not_ do this, so you must include the calls to `GetRNGstate()` and `PutRNGstate()` _yourself_ if you use any of those functions in your C++ code.
 See [R-exts 6.3 - Random number generation](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Random-numbers) for details on these functions.
 
+One convenient way to do safely is to use a simple class:
+
+```cpp
+class local_rng {
+public:
+  local_rng() {
+    GetRNGstate();
+  }
+
+  ~local_rng(){
+    PutRNGstate();
+  }
+};
+
+void foo() {
+  local_rng();
+  /* my code using the RNG */
+}
+```
+
 ## Mechanics of converting a package from Rcpp
 
 1. Add cpp11 to `LinkingTo`
