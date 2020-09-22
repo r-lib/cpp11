@@ -6,6 +6,10 @@
 #include "cpp11/raws.hpp"
 #include "cpp11/strings.hpp"
 
+namespace cpp11 {
+std::ostream& operator<<(std::ostream& os, r_bool b) { return os << int(b); }
+}  // namespace cpp11
+
 context("list-C++") {
   test_that("list.push_back()") {
     cpp11::writable::list x;
@@ -36,10 +40,10 @@ context("list-C++") {
     expect_true(third[0] == "foo");
     expect_true(third[1] == "bar");
 
-    cpp11::logicals forth(x[3]);
-    expect_true(forth[0] == TRUE);
-    expect_true(forth[1] == FALSE);
-    expect_true(forth[2] == TRUE);
+    cpp11::logicals fourth(x[3]);
+    expect_true(fourth[0] == TRUE);
+    expect_true(fourth[1] == FALSE);
+    expect_true(fourth[2] == TRUE);
 
     cpp11::raws fifth(x[4]);
     expect_true(fifth[0] == 'a');
