@@ -57,7 +57,7 @@ using enable_if_r_bool = enable_if_t<std::is_same<T, r_bool>::value, R>;
 template <typename T>
 enable_if_r_bool<T, SEXP> as_sexp(T from) {
   sexp res = Rf_allocVector(LGLSXP, 1);
-  safe[SET_LOGICAL_ELT](res.data(), 0, static_cast<Rboolean>(from));
+  unwind_protect([&] { SET_LOGICAL_ELT(res.data(), 0, static_cast<Rboolean>(from)); });
   return res;
 }
 
