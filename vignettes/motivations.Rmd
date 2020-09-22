@@ -326,7 +326,7 @@ Doing this universally avoids many locale specific issues when dealing with Unic
 
 Concretely cpp11 always uses `Rf_translateCharUTF8()` when obtaining `const char*` from `CHRSXP` objects and uses `Rf_mkCharCE(, CE_UTF8)` when creating new `CHRSXP` objects from `const char*` inputs.
 
-TODO: unicode examples?
+<!--TODO: unicode examples?-->
 
 ## C++11 features
 
@@ -374,7 +374,7 @@ In contrast the headers in cpp11 contain only 1,734 lines of code in 19 files.
 
 This reduction in complexity should make cpp11 an easier project to maintain and ensure correctness, particularly around interactions with the R garbage collector.
 
-TODO: mention rchk compatibility here?
+<!--TODO: mention rchk compatibility here?-->
 
 ## Compilation speed
 
