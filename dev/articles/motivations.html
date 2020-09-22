@@ -449,7 +449,7 @@
 <p>R has complicated support for Unicode strings and non-ASCII code pages, whose behavior often differs substantially on different operating systems, particularly Windows. Correctly dealing with this is challenging and often feels like whack a mole.</p>
 <p>To combat this complexity cpp11 uses the <a href="http://utf8everywhere.org/">UTF-8 everywhere</a> philosophy. This means that whenever text data is converted from R data structures to C++ data structures by cpp11 the data is translated into UTF-8. Conversely any text data coming from C++ code is assumed to be UTF-8 and marked as such for R. Doing this universally avoids many locale specific issues when dealing with Unicode text.</p>
 <p>Concretely cpp11 always uses <code>Rf_translateCharUTF8()</code> when obtaining <code>const char*</code> from <code>CHRSXP</code> objects and uses <code>Rf_mkCharCE(, CE_UTF8)</code> when creating new <code>CHRSXP</code> objects from <code>const char*</code> inputs.</p>
-<p>TODO: unicode examples?</p>
+<!--TODO: unicode examples?-->
 </div>
 <div id="c11-features" class="section level2">
 <h2 class="hasAnchor">
@@ -471,7 +471,7 @@
 <p>cpp11 takes a more limited scope, providing only the set of r_vector wrappers for R vector types, coercion methods to and from C++ and the limited attributes necessary to support use in R packages.</p>
 <p>This limited scope allows the implementation to be much simpler, the headers in Rcpp 1.0.4 have 74,658 lines of code (excluding blank or commented lines) in 379 files. Some headers in Rcpp are automatically generated, removing these still gives you 25,249 lines of code in 357 files. In contrast the headers in cpp11 contain only 1,734 lines of code in 19 files.</p>
 <p>This reduction in complexity should make cpp11 an easier project to maintain and ensure correctness, particularly around interactions with the R garbage collector.</p>
-<p>TODO: mention rchk compatibility here?</p>
+<!--TODO: mention rchk compatibility here?-->
 </div>
 <div id="compilation-speed" class="section level2">
 <h2 class="hasAnchor">

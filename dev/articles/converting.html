@@ -367,6 +367,22 @@
 <h2 class="hasAnchor">
 <a href="#random-number-behavior" class="anchor"></a>Random Number behavior</h2>
 <p>Rcpp unconditionally includes calls to <code>GetRNGstate()</code> and <code>PutRNGstate()</code> before each wrapped function. This ensures that if any C++ code calls the R API functions <code>unif_rand()</code>, <code>norm_rand()</code>, <code>exp_rand()</code> or <code>R_unif_index()</code> the random seed state is set accordingly. cpp11 does <em>not</em> do this, so you must include the calls to <code>GetRNGstate()</code> and <code>PutRNGstate()</code> <em>yourself</em> if you use any of those functions in your C++ code. See <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Random-numbers">R-exts 6.3 - Random number generation</a> for details on these functions.</p>
+<p>One convenient way to do safely is to use a simple class:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">class</span> local_rng {</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">public</span>:</span>
+<span id="cb4-3"><a href="#cb4-3"></a>  local_rng() {</span>
+<span id="cb4-4"><a href="#cb4-4"></a>    GetRNGstate();</span>
+<span id="cb4-5"><a href="#cb4-5"></a>  }</span>
+<span id="cb4-6"><a href="#cb4-6"></a></span>
+<span id="cb4-7"><a href="#cb4-7"></a>  ~local_rng(){</span>
+<span id="cb4-8"><a href="#cb4-8"></a>    PutRNGstate();</span>
+<span id="cb4-9"><a href="#cb4-9"></a>  }</span>
+<span id="cb4-10"><a href="#cb4-10"></a>};</span>
+<span id="cb4-11"><a href="#cb4-11"></a></span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="dt">void</span> foo() {</span>
+<span id="cb4-13"><a href="#cb4-13"></a>  local_rng();</span>
+<span id="cb4-14"><a href="#cb4-14"></a>  <span class="co">/* my code using the RNG */</span></span>
+<span id="cb4-15"><a href="#cb4-15"></a>}</span></code></pre></div>
 </div>
 <div id="mechanics-of-converting-a-package-from-rcpp" class="section level2">
 <h2 class="hasAnchor">
