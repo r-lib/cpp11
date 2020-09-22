@@ -417,6 +417,17 @@
 <a href="#r-api-includes" class="anchor"></a>R API includes</h3>
 <p>cpp11 defines a compatible but different version of the Rboolean enum. This means that you must ensure that at least one cpp11 header is included <em>before</em> any R headers. One easy way to ensure this is to replace <code>#include &lt;Rinternals.h&gt;</code> with <code>#include &lt;cpp11/R.hpp&gt;</code>.</p>
 </div>
+<div id="type-aliases" class="section level3">
+<h3 class="hasAnchor">
+<a href="#type-aliases" class="anchor"></a>Type aliases</h3>
+<p>If you use typedefs for cpp11 types or define custom types you will need to define them in a <code>pkgname_types.hpp</code> file so that <code><a href="../reference/cpp_register.html">cpp_register()</a></code> can include it in the generated code.</p>
+</div>
+<div id="cpp11stop-and-cpp11warning-with-stdstring" class="section level3">
+<h3 class="hasAnchor">
+<a href="#cpp11stop-and-cpp11warning-with-stdstring" class="anchor"></a><code>cpp11::stop()</code> and <code>cpp11::warning()</code> with <code>std::string</code>
+</h3>
+<p><code><a href="https://rdrr.io/r/base/stop.html">cpp11::stop()</a></code> and <code><a href="https://rdrr.io/r/base/warning.html">cpp11::warning()</a></code> are thin wrappers around <code>Rf_stop()</code> and <code>Rf_warning()</code>. These are simple C functions with a <code>printf()</code> API, so do not understand C++ objects like <code>std::string</code>. Therefore you need to call <code>obj.c_str()</code> when passing character data to them.</p>
+</div>
 </div>
   </div>
 
