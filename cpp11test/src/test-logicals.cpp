@@ -126,11 +126,11 @@ context("logicals-C++") {
 
     UNPROTECT(1);
   }
-  test_that("is_na(Rboolean)") {
-    Rboolean x = TRUE;
+  test_that("is_na(r_bool)") {
+    cpp11::r_bool x = TRUE;
     expect_true(!cpp11::is_na(x));
 
-    Rboolean y = NA_LOGICAL;
+    cpp11::r_bool y = NA_LOGICAL;
     expect_true(cpp11::is_na(y));
   }
 

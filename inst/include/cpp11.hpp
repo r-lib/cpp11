@@ -16,6 +16,7 @@
 #include "cpp11/matrix.hpp"
 #include "cpp11/named_arg.hpp"
 #include "cpp11/protect.hpp"
+#include "cpp11/r_bool.hpp"
 #include "cpp11/r_string.hpp"
 #include "cpp11/r_vector.hpp"
 #include "cpp11/raws.hpp"

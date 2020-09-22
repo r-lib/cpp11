@@ -4,10 +4,11 @@
 #include <array>             // for array
 #include <initializer_list>  // for initializer_list
 
-#include "cpp11/R.hpp"                // for Rboolean, SEXP, SEXPREC, Rf_all...
+#include "cpp11/R.hpp"                // for SEXP, SEXPREC, Rf_all...
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/named_arg.hpp"        // for named_arg
 #include "cpp11/protect.hpp"          // for preserved
+#include "cpp11/r_bool.hpp"           // for r_bool
 #include "cpp11/r_vector.hpp"         // for r_vector, r_vector<>::proxy
 #include "cpp11/sexp.hpp"             // for sexp
 
@@ -16,7 +17,7 @@
 namespace cpp11 {
 
 template <>
-inline SEXP r_vector<Rboolean>::valid_type(SEXP data) {
+inline SEXP r_vector<r_bool>::valid_type(SEXP data) {
   if (TYPEOF(data) != LGLSXP) {
     throw type_error(LGLSXP, TYPEOF(data));
   }
@@ -24,33 +25,33 @@ inline SEXP r_vector<Rboolean>::valid_type(SEXP data) {
 }
 
 template <>
-inline Rboolean r_vector<Rboolean>::operator[](const R_xlen_t pos) const {
-  return is_altrep_ ? static_cast<Rboolean>(LOGICAL_ELT(data_, pos)) : data_p_[pos];
+inline r_bool r_vector<r_bool>::operator[](const R_xlen_t pos) const {
+  return is_altrep_ ? static_cast<r_bool>(LOGICAL_ELT(data_, pos)) : data_p_[pos];
 }
 
 template <>
-inline Rboolean* r_vector<Rboolean>::get_p(bool is_altrep, SEXP data) {
+inline r_bool* r_vector<r_bool>::get_p(bool is_altrep, SEXP data) {
   if (is_altrep) {
     return nullptr;
   } else {
-    return reinterpret_cast<Rboolean*>(LOGICAL(data));
+    return reinterpret_cast<r_bool*>(LOGICAL(data));
   }
 }
 
 template <>
-inline void r_vector<Rboolean>::const_iterator::fill_buf(R_xlen_t pos) {
+inline void r_vector<r_bool>::const_iterator::fill_buf(R_xlen_t pos) {
   length_ = std::min(64_xl, data_->size() - pos);
   LOGICAL_GET_REGION(data_->data_, pos, length_, reinterpret_cast<int*>(buf_.data()));
   block_start_ = pos;
 }
 
-typedef r_vector<Rboolean> logicals;
+typedef r_vector<r_bool> logicals;
 
 namespace writable {
 
 template <>
-inline typename r_vector<Rboolean>::proxy& r_vector<Rboolean>::proxy::operator=(
-    const Rboolean& rhs) {
+inline typename r_vector<r_bool>::proxy& r_vector<r_bool>::proxy::operator=(
+    const r_bool& rhs) {
   if (is_altrep_) {
     SET_LOGICAL_ELT(data_, index_, rhs);
   } else {
@@ -60,17 +61,21 @@ inline typename r_vector<Rboolean>::proxy& r_vector<Rboolean>::proxy::operator=(
 }
 
 template <>
-inline r_vector<Rboolean>::proxy::operator Rboolean() const {
+inline r_vector<r_bool>::proxy::operator r_bool() const {
   if (p_ == nullptr) {
-    return static_cast<Rboolean>(LOGICAL_ELT(data_, index_));
+    return static_cast<r_bool>(LOGICAL_ELT(data_, index_));
   } else {
     return *p_;
   }
 }
 
+inline bool operator==(const r_vector<r_bool>::proxy& lhs, r_bool rhs) {
+  return static_cast<r_bool>(lhs).operator==(rhs);
+}
+
 template <>
-inline r_vector<Rboolean>::r_vector(std::initializer_list<Rboolean> il)
-    : cpp11::r_vector<Rboolean>(Rf_allocVector(LGLSXP, il.size())), capacity_(il.size()) {
+inline r_vector<r_bool>::r_vector(std::initializer_list<r_bool> il)
+    : cpp11::r_vector<r_bool>(Rf_allocVector(LGLSXP, il.size())), capacity_(il.size()) {
   protect_ = preserved.insert(data_);
   auto it = il.begin();
   for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
@@ -79,8 +84,8 @@ inline r_vector<Rboolean>::r_vector(std::initializer_list<Rboolean> il)
 }
 
 template <>
-inline r_vector<Rboolean>::r_vector(std::initializer_list<named_arg> il)
-    : cpp11::r_vector<Rboolean>(safe[Rf_allocVector](LGLSXP, il.size())),
+inline r_vector<r_bool>::r_vector(std::initializer_list<named_arg> il)
+    : cpp11::r_vector<r_bool>(safe[Rf_allocVector](LGLSXP, il.size())),
       capacity_(il.size()) {
   protect_ = preserved.insert(data_);
   int n_protected = 0;
@@ -92,7 +97,7 @@ inline r_vector<Rboolean>::r_vector(std::initializer_list<named_arg> il)
       ++n_protected;
       auto it = il.begin();
       for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
-        data_p_[i] = static_cast<Rboolean>(LOGICAL_ELT(it->value(), 0));
+        data_p_[i] = static_cast<r_bool>(LOGICAL_ELT(it->value(), 0));
         SET_STRING_ELT(names, i, Rf_mkCharCE(it->name(), CE_UTF8));
       }
       UNPROTECT(n_protected);
@@ -105,7 +110,7 @@ inline r_vector<Rboolean>::r_vector(std::initializer_list<named_arg> il)
 }
 
 template <>
-inline void r_vector<Rboolean>::reserve(R_xlen_t new_capacity) {
+inline void r_vector<r_bool>::reserve(R_xlen_t new_capacity) {
   data_ = data_ == R_NilValue ? safe[Rf_allocVector](LGLSXP, new_capacity)
                               : safe[Rf_xlengthgets](data_, new_capacity);
   SEXP old_protect = protect_;
@@ -113,12 +118,12 @@ inline void r_vector<Rboolean>::reserve(R_xlen_t new_capacity) {
 
   preserved.release(old_protect);
 
-  data_p_ = reinterpret_cast<Rboolean*>(LOGICAL(data_));
+  data_p_ = reinterpret_cast<r_bool*>(LOGICAL(data_));
   capacity_ = new_capacity;
 }
 
 template <>
-inline void r_vector<Rboolean>::push_back(Rboolean value) {
+inline void r_vector<r_bool>::push_back(r_bool value) {
   while (length_ >= capacity_) {
     reserve(capacity_ == 0 ? 1 : capacity_ *= 2);
   }
@@ -130,9 +135,7 @@ inline void r_vector<Rboolean>::push_back(Rboolean value) {
   ++length_;
 }
 
-typedef r_vector<Rboolean> logicals;
+typedef r_vector<r_bool> logicals;
 
 }  // namespace writable
-
-inline bool is_na(Rboolean x) { return x == NA_LOGICAL; }
 }  // namespace cpp11

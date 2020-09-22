@@ -2,7 +2,8 @@
 
 #include <string>  // for string
 
-#include "cpp11/R.hpp"         // for SEXP, SEXPREC, R_xlen_t, Rboolean, INT...
+#include "cpp11/R.hpp"         // for SEXP, SEXPREC, R_xlen_t, INT...
+#include "cpp11/r_bool.hpp"    // for r_bool
 #include "cpp11/r_string.hpp"  // for r_string
 #include "cpp11/r_vector.hpp"  // for r_vector
 #include "cpp11/sexp.hpp"      // for sexp
@@ -95,13 +96,13 @@ class matrix {
 
 using doubles_matrix = matrix<r_vector<double>, double>;
 using integers_matrix = matrix<r_vector<int>, int>;
-using logicals_matrix = matrix<r_vector<Rboolean>, Rboolean>;
+using logicals_matrix = matrix<r_vector<r_bool>, r_bool>;
 using strings_matrix = matrix<r_vector<r_string>, r_string>;
 
 namespace writable {
 using doubles_matrix = matrix<r_vector<double>, r_vector<double>::proxy>;
 using integers_matrix = matrix<r_vector<int>, r_vector<int>::proxy>;
-using logicals_matrix = matrix<r_vector<Rboolean>, r_vector<Rboolean>::proxy>;
+using logicals_matrix = matrix<r_vector<r_bool>, r_vector<r_bool>::proxy>;
 using strings_matrix = matrix<r_vector<r_string>, r_vector<r_string>::proxy>;
 }  // namespace writable
 
