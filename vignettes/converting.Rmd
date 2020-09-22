@@ -174,3 +174,7 @@ You will need to include the appropriate STL header, in this case `<string>`.
 cpp11 defines a compatible but different version of the Rboolean enum.
 This means that you must ensure that at least one cpp11 header is included _before_ any R headers.
 One easy way to ensure this is to replace `#include <Rinternals.h>` with `#include <cpp11/R.hpp>`.
+
+### Type aliases
+
+If you use typedefs for cpp11 types or define custom types you will need to define them in a `pkgname_types.hpp` file so that `cpp_register()` can include it in the generated code.

@@ -84,11 +84,15 @@ cpp_register <- function(path = ".", quiet = FALSE) {
 
   pkg_types <- c(
     file.path(path, "src", paste0(package, "_types.h")),
-    file.path(path, "inst", "include", paste0(package, "_types.h"))
+    file.path(path, "src", paste0(package, "_types.hpp")),
+    file.path(path, "inst", "include", paste0(package, "_types.h")),
+    file.path(path, "inst", "include", paste0(package, "_types.hpp"))
   )
-  if (any(file.exists(pkg_types))) {
+
+  pkg_types_exist <- file.exists(pkg_types)
+  if (any(pkg_types_exist)) {
     extra_includes <- c(
-      sprintf('#include "%s"', basename(pkg_types[[1]])),
+      sprintf('#include "%s"', basename(pkg_types[pkg_types_exist])),
       extra_includes
     )
   }
