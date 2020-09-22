@@ -178,3 +178,9 @@ One easy way to ensure this is to replace `#include <Rinternals.h>` with `#inclu
 ### Type aliases
 
 If you use typedefs for cpp11 types or define custom types you will need to define them in a `pkgname_types.hpp` file so that `cpp_register()` can include it in the generated code.
+
+### `cpp11::stop()` and `cpp11::warning()` with `std::string`
+
+`cpp11::stop()` and `cpp11::warning()` are thin wrappers around `Rf_stop()` and `Rf_warning()`.
+These are simple C functions with a `printf()` API, so do not understand C++ objects like `std::string`.
+Therefore you need to call `obj.c_str()` when passing character data to them.
