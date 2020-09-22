@@ -6,6 +6,7 @@
 
 #include "cpp11/R.hpp"         // for SEXP, SEXPREC, TYPEOF, R_NilValue, R_C...
 #include "cpp11/protect.hpp"   // for protect, safe, protect::function
+#include "cpp11/r_bool.hpp"    // for r_bool
 #include "cpp11/r_vector.hpp"  // for type_error
 #include "cpp11/sexp.hpp"      // for sexp
 
@@ -54,7 +55,7 @@ class external_pointer {
   external_pointer(pointer p, bool use_deleter = true, bool finalize_on_exit = true)
       : data_(safe[R_MakeExternalPtr]((void*)p, R_NilValue, R_NilValue)) {
     if (use_deleter) {
-      R_RegisterCFinalizerEx(data_, r_deleter, static_cast<Rboolean>(finalize_on_exit));
+      R_RegisterCFinalizerEx(data_, r_deleter, static_cast<r_bool>(finalize_on_exit));
     }
   }
 

@@ -858,7 +858,7 @@ logicals duplicated_cpp(integers x) {
   int n = x.size();
   writable::logicals out(n);
   for (int i = 0; i < n; ++i) {
-    out[i] = static_cast<Rboolean>(!seen.insert(x[i]).second);
+    out[i] = !seen.insert(x[i]).second;
   }
   return out;
 }

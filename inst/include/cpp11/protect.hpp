@@ -6,13 +6,14 @@
 #include <string>     // for string, basic_string
 #include <tuple>      // for tuple, make_tuple
 
-// NB: cpp11/R.hpp must precede R_ext includes so our definition of Rboolean is used
+// NB: cpp11/R.hpp must precede R_ext/Error.h to ensure R_NO_REMAP is defined
 #include "cpp11/R.hpp"  // for SEXP, SEXPREC, CDR, R_NilValue, CAR, R_Pres...
 
-#include "R_ext/Error.h"  // for Rf_error, Rf_warning
-#include "R_ext/Print.h"  // for REprintf
-#include "R_ext/Utils.h"  // for R_CheckUserInterrupt
-#include "Rversion.h"     // for R_VERSION, R_Version
+#include "R_ext/Boolean.h"  // for Rboolean
+#include "R_ext/Error.h"    // for Rf_error, Rf_warning
+#include "R_ext/Print.h"    // for REprintf
+#include "R_ext/Utils.h"    // for R_CheckUserInterrupt
+#include "Rversion.h"       // for R_VERSION, R_Version
 
 #if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
 #define HAS_UNWIND_PROTECT
@@ -51,7 +52,7 @@ SEXP unwind_protect(Fun&& code) {
       },
       &code,
       [](void* jmpbuf, Rboolean jump) {
-        if (jump) {
+        if (jump == TRUE) {
           // We need to first jump back into the C++ stacks because you can't safely throw
           // exceptions from C stack frames.
           longjmp(*static_cast<std::jmp_buf*>(jmpbuf), 1);

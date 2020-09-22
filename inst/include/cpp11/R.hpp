@@ -1,28 +1,16 @@
 #pragma once
 
-#include <limits>
-
-#include "R_ext/Arith.h"
-
-#undef FALSE
-#undef TRUE
-#undef NA_LOGICAL
-
-extern "C" {
-typedef enum {
-  FALSE = 0,
-  TRUE = 1,
-  NA_LOGICAL = std::numeric_limits<int>::min()
-} Rboolean;
-}
-
-#define R_EXT_BOOLEAN_H_
+#ifdef R_INTERNALS_H_
+#if !(defined(R_NO_REMAP) && defined(STRICT_R_HEADERS))
+#error R headers were included before cpp11 headers \
+  and at least one of R_NO_REMAP or STRICT_R_HEADERS \
+  was not defined.
+#endif
+#endif
 
 #define R_NO_REMAP
 #define STRICT_R_HEADERS
 #include "Rinternals.h"
-#undef STRICT_R_HEADERS
-#undef R_NO_REMAP
 
 // clang-format off
 #ifdef __clang__

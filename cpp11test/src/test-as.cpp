@@ -331,8 +331,6 @@ context("as_cpp-C++") {
   test_that("as_sexp(bool)") {
     SEXP l1 = PROTECT(cpp11::as_sexp(true));
     SEXP l2 = PROTECT(cpp11::as_sexp(false));
-    /* TODO: handle NA_LOGICAL, possibly need a separate enum class rather than relying
-     * on bool or R's Rboolean */
 
     expect_true(Rf_isLogical(l1));
     expect_true(Rf_xlength(l1) == 1);
@@ -343,6 +341,26 @@ context("as_cpp-C++") {
     expect_true(LOGICAL(l2)[0] == FALSE);
 
     UNPROTECT(2);
+  }
+
+  test_that("as_sexp(r_bool)") {
+    SEXP l1 = PROTECT(cpp11::as_sexp(cpp11::r_bool(true)));
+    SEXP l2 = PROTECT(cpp11::as_sexp(cpp11::r_bool(false)));
+    SEXP l3 = PROTECT(cpp11::as_sexp(cpp11::r_bool()));
+
+    expect_true(Rf_isLogical(l1));
+    expect_true(Rf_xlength(l1) == 1);
+    expect_true(LOGICAL(l1)[0] == TRUE);
+
+    expect_true(Rf_isLogical(l2));
+    expect_true(Rf_xlength(l2) == 1);
+    expect_true(LOGICAL(l2)[0] == FALSE);
+
+    expect_true(Rf_isLogical(l3));
+    expect_true(Rf_xlength(l3) == 1);
+    expect_true(LOGICAL(l3)[0] == NA_LOGICAL);
+
+    UNPROTECT(3);
   }
 
   test_that("as_sexp(raws)") {
