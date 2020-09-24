@@ -126,12 +126,21 @@ context("logicals-C++") {
 
     UNPROTECT(1);
   }
+
   test_that("is_na(r_bool)") {
     cpp11::r_bool x = TRUE;
     expect_true(!cpp11::is_na(x));
 
     cpp11::r_bool y = NA_LOGICAL;
     expect_true(cpp11::is_na(y));
+  }
+
+  test_that("writable::logicals(initializer_list)") {
+    cpp11::writable::logicals l1({FALSE});
+    expect_true(l1.size() == 1 && l1[0] == FALSE);
+
+    cpp11::writable::logicals l2{FALSE};
+    expect_true(l2.size() == 1 && l2[0] == FALSE);
   }
 
   // test_that("writable::logicals(ALTREP_SEXP)") {
