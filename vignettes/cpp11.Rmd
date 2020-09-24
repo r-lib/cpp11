@@ -608,7 +608,7 @@ list missing_sampler() {
   return writable::list({
     writable::doubles({NA_REAL}),
     writable::integers({NA_INTEGER}),
-    writable::logicals({NA_LOGICAL}),
+    writable::logicals({r_bool(NA_LOGICAL)}),
     writable::strings({NA_STRING})
   });
 }
