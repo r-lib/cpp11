@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
       </span>
     </div>
 
@@ -120,9 +120,19 @@
       <small>Source: <a href='https://github.com/r-lib/cpp11/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="cpp11-022" class="section level1">
+<h1 class="page-header" data-toc-text="0.2.2">
+<a href="#cpp11-022" class="anchor"></a>cpp11 0.2.2<small> Unreleased </small>
+</h1>
+<ul>
+<li><p><code>r_bool</code> added as an adapter between <code>bool</code> and <code>Rboolean</code> values (<a href='https://github.com/r-lib/cpp11/issues/57'>#57</a>, <a href='https://github.com/bkietz'>@bkietz</a>)</p></li>
+<li><p><code>data_frame()</code> objects now have the number of rows correctly set as real length, not the reserved length (<a href='https://github.com/r-lib/cpp11/issues/91'>#91</a>)</p></li>
+<li><p>Fixed potential memory leak in cpp11::writable classes.</p></li>
+</ul>
+</div>
     <div id="cpp11-021" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.1">
-<a href="#cpp11-021" class="anchor"></a>cpp11 0.2.1<small> Unreleased </small>
+<a href="#cpp11-021" class="anchor"></a>cpp11 0.2.1<small> 2020-08-11 </small>
 </h1>
 <ul>
 <li><p>Ensures backwards compatibility with code generation from cpp11 0.1.0 (<a href='https://github.com/r-lib/cpp11/issues/88'>#88</a>)</p></li>
@@ -149,7 +159,6 @@
 <li><p><code>as_cpp&lt;int&gt;()</code> and <code>as_cpp&lt;double&gt;()</code> now implicitly coerce between all 3 types of single NA values (<a href='https://github.com/r-lib/cpp11/issues/53'>#53</a>).</p></li>
 <li><p><code>list::const_iterator::operator*()</code> added so iterators could be used on list objects (<a href='https://github.com/r-lib/cpp11/issues/60'>#60</a>, <a href='https://github.com/romainfrancois'>@romainfrancois</a>)</p></li>
 <li><p><code>safe[]</code> can now work with functions that return any type (<a href='https://github.com/r-lib/cpp11/issues/70'>#70</a>, <a href='https://github.com/bkietz'>@bkietz</a>)</p></li>
-<li><p><code>writable::logicals::operator=()</code> now allows C++ boolean values (<a href='https://github.com/r-lib/cpp11/issues/57'>#57</a>, <a href='https://github.com/romainfrancois'>@romainfrancois</a>)</p></li>
 <li><p>The <code>END_CPP</code> macro now includes a <code>catch(...)</code> block to catch all C++ exceptions that do not inherit from <code>std::exception</code> (<a href='https://github.com/r-lib/cpp11/issues/47'>#47</a>).</p></li>
 <li><p>Improve consistency of inserting NA values in r_string objects (<a href='https://github.com/r-lib/cpp11/issues/45'>#45</a>)</p></li>
 <li><p>Added a <code>NEWS.md</code> file to track changes to the package.</p></li>
@@ -181,7 +190,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
       </span>
     </div>
 
@@ -227,21 +227,23 @@
 <a href="#appending-behavior" class="anchor"></a>Appending behavior</h2>
 <p>One major difference in Rcpp and cpp11 is how vectors are grown. Rcpp vectors have a <code>push_back()</code> method, but unlike <code>std::vector()</code> no additional space is reserved when pushing. This makes calling <code>push_back()</code> repeatably very expensive, as the entire vector has to be copied each call.</p>
 <p>In contrast <code>cpp11</code> vectors grow efficiently, reserving extra space. Because of this you can do ~10,000,000 vector appends with cpp11 in approximately the same amount of time that Rcpp does 10,000, as this benchmark demonstrates.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">cpp11test</span>)
-<span class="no">grid</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span>(<span class="kw">len</span> <span class="kw">=</span> <span class="fl">10</span> ^ (<span class="fl">0</span>:<span class="fl">7</span>), <span class="kw">pkg</span> <span class="kw">=</span> <span class="st">"cpp11"</span>, <span class="kw">stringsAsFactors</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-<span class="no">grid</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(
-  <span class="no">grid</span>,
-  <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span>(<span class="kw">len</span> <span class="kw">=</span> <span class="fl">10</span> ^ (<span class="fl">0</span>:<span class="fl">4</span>), <span class="kw">pkg</span> <span class="kw">=</span> <span class="st">"rcpp"</span>, <span class="kw">stringsAsFactors</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">cpp11test</span>)
+<span class="kw">grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span>(len = <span class="fl">10</span> <span class="op">^</span> (<span class="fl">0</span><span class="op">:</span><span class="fl">7</span>), pkg = <span class="st">"cpp11"</span>, stringsAsFactors = <span class="fl">FALSE</span>)
+<span class="kw">grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(
+  <span class="kw">grid</span>,
+  <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span>(len = <span class="fl">10</span> <span class="op">^</span> (<span class="fl">0</span><span class="op">:</span><span class="fl">4</span>), pkg = <span class="st">"rcpp"</span>, stringsAsFactors = <span class="fl">FALSE</span>)
 )
-<span class="no">b_grow</span> <span class="kw">&lt;-</span> <span class="kw pkg">bench</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/press.html">press</a></span>(<span class="kw">.grid</span> <span class="kw">=</span> <span class="no">grid</span>,
+<span class="kw">b_grow</span> <span class="op">&lt;-</span> <span class="kw">bench</span>::<span class="fu"><a href="https://rdrr.io/pkg/bench/man/press.html">press</a></span>(.grid = <span class="kw">grid</span>,
   {
-    <span class="no">fun</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/match.fun.html">match.fun</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"%sgrow_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">pkg</span> <span class="kw">==</span> <span class="st">"cpp11"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">pkg</span>, <span class="st">"_"</span>))))
-    <span class="kw pkg">bench</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/mark.html">mark</a></span>(
-      <span class="fu">fun</span>(<span class="no">len</span>)
+    <span class="kw">fun</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/match.fun.html">match.fun</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"%sgrow_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="kw">pkg</span> <span class="op">==</span> <span class="st">"cpp11"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="kw">pkg</span>, <span class="st">"_"</span>))))
+    <span class="kw">bench</span>::<span class="fu"><a href="https://rdrr.io/pkg/bench/man/mark.html">mark</a></span>(
+      <span class="fu">fun</span>(<span class="kw">len</span>)
     )
   }
 )[<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"len"</span>, <span class="st">"pkg"</span>, <span class="st">"min"</span>, <span class="st">"mem_alloc"</span>, <span class="st">"n_itr"</span>, <span class="st">"n_gc"</span>)]
-<span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span>(<span class="no">b_grow</span>, <span class="st">"growth.Rds"</span>, <span class="kw">version</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span>(<span class="kw">b_grow</span>, <span class="st">"growth.Rds"</span>, version = <span class="fl">2</span>)
+</pre></div>
 <p><img src="converting_files/figure-html/unnamed-chunk-3-1.svg" width="700"></p>
 <table class="table">
 <thead><tr class="header">
@@ -364,6 +366,22 @@
 <h2 class="hasAnchor">
 <a href="#random-number-behavior" class="anchor"></a>Random Number behavior</h2>
 <p>Rcpp unconditionally includes calls to <code>GetRNGstate()</code> and <code>PutRNGstate()</code> before each wrapped function. This ensures that if any C++ code calls the R API functions <code>unif_rand()</code>, <code>norm_rand()</code>, <code>exp_rand()</code> or <code>R_unif_index()</code> the random seed state is set accordingly. cpp11 does <em>not</em> do this, so you must include the calls to <code>GetRNGstate()</code> and <code>PutRNGstate()</code> <em>yourself</em> if you use any of those functions in your C++ code. See <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Random-numbers">R-exts 6.3 - Random number generation</a> for details on these functions.</p>
+<p>One convenient way to do safely is to use a simple class:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">class</span> local_rng {</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">public</span>:</span>
+<span id="cb4-3"><a href="#cb4-3"></a>  local_rng() {</span>
+<span id="cb4-4"><a href="#cb4-4"></a>    GetRNGstate();</span>
+<span id="cb4-5"><a href="#cb4-5"></a>  }</span>
+<span id="cb4-6"><a href="#cb4-6"></a></span>
+<span id="cb4-7"><a href="#cb4-7"></a>  ~local_rng(){</span>
+<span id="cb4-8"><a href="#cb4-8"></a>    PutRNGstate();</span>
+<span id="cb4-9"><a href="#cb4-9"></a>  }</span>
+<span id="cb4-10"><a href="#cb4-10"></a>};</span>
+<span id="cb4-11"><a href="#cb4-11"></a></span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="dt">void</span> foo() {</span>
+<span id="cb4-13"><a href="#cb4-13"></a>  local_rng();</span>
+<span id="cb4-14"><a href="#cb4-14"></a>  <span class="co">/* my code using the RNG */</span></span>
+<span id="cb4-15"><a href="#cb4-15"></a>}</span></code></pre></div>
 </div>
 <div id="mechanics-of-converting-a-package-from-rcpp" class="section level2">
 <h2 class="hasAnchor">
@@ -391,15 +409,6 @@
 <div id="common-issues-when-converting" class="section level2">
 <h2 class="hasAnchor">
 <a href="#common-issues-when-converting" class="anchor"></a>Common issues when converting</h2>
-<div id="include-order" class="section level3">
-<h3 class="hasAnchor">
-<a href="#include-order" class="anchor"></a>Include order</h3>
-<p>Due to cpp11 redefining the Rboolean enum any cpp11 header needs to come <em>before</em> any Rcpp or Rinternals.h include. Errors like</p>
-<blockquote>
-<p>error: redefinition of enumerator ‘FALSE’</p>
-</blockquote>
-<p>Indicate this is a problem and can be resolved by ensuring the cpp11 headers are included first.</p>
-</div>
 <div id="stl-includes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#stl-includes" class="anchor"></a>STL includes</h3>
@@ -412,7 +421,35 @@
 <div id="r-api-includes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#r-api-includes" class="anchor"></a>R API includes</h3>
-<p>cpp11 defines a compatible but different version of the Rboolean enum. This means that you must ensure that at least one cpp11 header is included <em>before</em> any R headers. One easy way to ensure this is to replace <code>#include &lt;Rinternals.h&gt;</code> with <code>#include &lt;cpp11/R.hpp&gt;</code>.</p>
+<p>cpp11 conflicts with macros declared by some R headers unless the macros <code>R_NO_REMAP</code> and <code>STRICT_R_HEADERS</code> are defined. If you inlcude <code>cpp11/R.hpp</code> before any R headers these macros will be defined appropriately, otherwise you may see errors like</p>
+<blockquote>
+<p>R headers were included before cpp11 headers and at least one of R_NO_REMAP or STRICT_R_HEADERS was not defined.</p>
+</blockquote>
+<p>Which indicate that you must either change your include order or add preprocessor definitions for <code>R_NO_REMAP</code> and <code>STRICT_R_HEADERS</code>. Note that transitive includes of R headers (for example, those included by <code>Rcpp.h</code>) can also introduce the conflicting macros.</p>
+</div>
+<div id="type-aliases" class="section level3">
+<h3 class="hasAnchor">
+<a href="#type-aliases" class="anchor"></a>Type aliases</h3>
+<p>If you use typedefs for cpp11 types or define custom types you will need to define them in a <code>pkgname_types.hpp</code> file so that <code><a href="../reference/cpp_register.html">cpp_register()</a></code> can include it in the generated code.</p>
+</div>
+<div id="cpp11stop-and-cpp11warning-with-stdstring" class="section level3">
+<h3 class="hasAnchor">
+<a href="#cpp11stop-and-cpp11warning-with-stdstring" class="anchor"></a><code>cpp11::stop()</code> and <code>cpp11::warning()</code> with <code>std::string</code>
+</h3>
+<p><code><a href="https://rdrr.io/r/base/stop.html">cpp11::stop()</a></code> and <code><a href="https://rdrr.io/r/base/warning.html">cpp11::warning()</a></code> are thin wrappers around <code>Rf_stop()</code> and <code>Rf_warning()</code>. These are simple C functions with a <code>printf()</code> API, so do not understand C++ objects like <code>std::string</code>. Therefore you need to call <code>obj.c_str()</code> when passing character data to them.</p>
+</div>
+<div id="logical-vector-construction" class="section level3">
+<h3 class="hasAnchor">
+<a href="#logical-vector-construction" class="anchor"></a>Logical vector construction</h3>
+<p>If you are constructing a length 1 logical vector you may need to explicitly use a <code>r_bool()</code> object in the initializer list rather than <code>TRUE</code>, <code>FALSE</code> or <code>NA_INTEGER</code>. This issue only occurs with the clang compiler, not gcc. When constructing vectors with more than one element this is not an issue</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">// bad</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>cpp11::writable::logcials({FALSE});</span>
+<span id="cb5-3"><a href="#cb5-3"></a></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co">// good</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>cpp11::writable::logcials({r_bool(FALSE)});</span>
+<span id="cb5-6"><a href="#cb5-6"></a></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="co">// good</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a>cpp11::writable::logcials({FALSE, NA_LOGICAL});</span></code></pre></div>
 </div>
 </div>
   </div>
@@ -432,7 +469,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
