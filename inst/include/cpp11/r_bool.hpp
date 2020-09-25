@@ -28,7 +28,7 @@ class r_bool {
   r_bool(Rboolean value) : value_(value) {}
   r_bool(int value) : value_(from_int(value)) {}
 
-  explicit operator bool() const { return value_ == TRUE; }
+  operator bool() const { return value_ == TRUE; }
   operator int() const { return value_; }
   operator Rboolean() const { return value_; }
 
