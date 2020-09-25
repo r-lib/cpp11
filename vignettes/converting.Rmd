@@ -200,3 +200,20 @@ If you use typedefs for cpp11 types or define custom types you will need to defi
 `cpp11::stop()` and `cpp11::warning()` are thin wrappers around `Rf_stop()` and `Rf_warning()`.
 These are simple C functions with a `printf()` API, so do not understand C++ objects like `std::string`.
 Therefore you need to call `obj.c_str()` when passing character data to them.
+
+### Logical vector construction
+
+If you are constructing a length 1 logical vector you may need to explicitly use a `r_bool()` object in the initializer list rather than `TRUE`, `FALSE` or `NA_INTEGER`.
+This issue only occurs with the clang compiler, not gcc.
+When constructing vectors with more than one element this is not an issue
+
+```cpp
+// bad
+cpp11::writable::logcials({FALSE});
+
+// good
+cpp11::writable::logcials({r_bool(FALSE)});
+
+// good
+cpp11::writable::logcials({FALSE, NA_LOGICAL});
+```
