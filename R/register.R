@@ -54,7 +54,7 @@ cpp_register <- function(path = ".", quiet = FALSE) {
 
   init <- generate_init_functions(get_registered_functions(all_decorations, "cpp11::init", quiet))
 
-  r_functions <- generate_r_functions(funs, package)
+  r_functions <- generate_r_functions(funs, package, use_package = TRUE)
 
   dir.create(dirname(r_path), recursive = TRUE, showWarnings = FALSE)
 
