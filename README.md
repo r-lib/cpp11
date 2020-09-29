@@ -34,7 +34,7 @@ See [vignette("cpp11")](https://cpp11.r-lib.org/articles/cpp11.html) to get star
 ## Motivations
 
 [Rcpp](https://cran.r-project.org/package=Rcpp) has been a widely successful project, however over the years a number of issues and additional C++ features have arisen.
-Adding these features to Rcpp would require a great deal work, or in some cases would be impossible without severely breaking backwards compatibility.
+Adding these features to Rcpp would require a great deal of work, or in some cases would be impossible without severely breaking backwards compatibility.
 
 **cpp11** is a ground up rewrite of C++ bindings to R with different design trade-offs and features.
 
