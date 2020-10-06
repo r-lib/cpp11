@@ -1,3 +1,5 @@
+# cpp11 (development version)
+
 # cpp11 0.2.2
 
 * `r_bool` added as an adapter between `bool` and `Rboolean` values (#57, @bkietz)
