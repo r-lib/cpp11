@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.2.1.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.2.2.9000</span>
       </span>
     </div>
 
@@ -410,15 +410,6 @@
 <div id="common-issues-when-converting" class="section level2">
 <h2 class="hasAnchor">
 <a href="#common-issues-when-converting" class="anchor"></a>Common issues when converting</h2>
-<div id="include-order" class="section level3">
-<h3 class="hasAnchor">
-<a href="#include-order" class="anchor"></a>Include order</h3>
-<p>Due to cpp11 redefining the Rboolean enum any cpp11 header needs to come <em>before</em> any Rcpp or Rinternals.h include. Errors like</p>
-<blockquote>
-<p>error: redefinition of enumerator ‘FALSE’</p>
-</blockquote>
-<p>Indicate this is a problem and can be resolved by ensuring the cpp11 headers are included first.</p>
-</div>
 <div id="stl-includes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#stl-includes" class="anchor"></a>STL includes</h3>
@@ -431,7 +422,11 @@
 <div id="r-api-includes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#r-api-includes" class="anchor"></a>R API includes</h3>
-<p>cpp11 defines a compatible but different version of the Rboolean enum. This means that you must ensure that at least one cpp11 header is included <em>before</em> any R headers. One easy way to ensure this is to replace <code>#include &lt;Rinternals.h&gt;</code> with <code>#include &lt;cpp11/R.hpp&gt;</code>.</p>
+<p>cpp11 conflicts with macros declared by some R headers unless the macros <code>R_NO_REMAP</code> and <code>STRICT_R_HEADERS</code> are defined. If you inlcude <code>cpp11/R.hpp</code> before any R headers these macros will be defined appropriately, otherwise you may see errors like</p>
+<blockquote>
+<p>R headers were included before cpp11 headers and at least one of R_NO_REMAP or STRICT_R_HEADERS was not defined.</p>
+</blockquote>
+<p>Which indicate that you must either change your include order or add preprocessor definitions for <code>R_NO_REMAP</code> and <code>STRICT_R_HEADERS</code>. Note that transitive includes of R headers (for example, those included by <code>Rcpp.h</code>) can also introduce the conflicting macros.</p>
 </div>
 <div id="type-aliases" class="section level3">
 <h3 class="hasAnchor">
@@ -443,6 +438,19 @@
 <a href="#cpp11stop-and-cpp11warning-with-stdstring" class="anchor"></a><code>cpp11::stop()</code> and <code>cpp11::warning()</code> with <code>std::string</code>
 </h3>
 <p><code><a href="https://rdrr.io/r/base/stop.html">cpp11::stop()</a></code> and <code><a href="https://rdrr.io/r/base/warning.html">cpp11::warning()</a></code> are thin wrappers around <code>Rf_stop()</code> and <code>Rf_warning()</code>. These are simple C functions with a <code>printf()</code> API, so do not understand C++ objects like <code>std::string</code>. Therefore you need to call <code>obj.c_str()</code> when passing character data to them.</p>
+</div>
+<div id="logical-vector-construction" class="section level3">
+<h3 class="hasAnchor">
+<a href="#logical-vector-construction" class="anchor"></a>Logical vector construction</h3>
+<p>If you are constructing a length 1 logical vector you may need to explicitly use a <code>r_bool()</code> object in the initializer list rather than <code>TRUE</code>, <code>FALSE</code> or <code>NA_INTEGER</code>. This issue only occurs with the clang compiler, not gcc. When constructing vectors with more than one element this is not an issue</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">// bad</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>cpp11::writable::logcials({FALSE});</span>
+<span id="cb5-3"><a href="#cb5-3"></a></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co">// good</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>cpp11::writable::logcials({r_bool(FALSE)});</span>
+<span id="cb5-6"><a href="#cb5-6"></a></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="co">// good</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a>cpp11::writable::logcials({FALSE, NA_LOGICAL});</span></code></pre></div>
 </div>
 </div>
   </div>

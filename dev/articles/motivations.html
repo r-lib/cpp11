@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.2.1.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.2.2.9000</span>
       </span>
     </div>
 
@@ -91,7 +91,7 @@
 <h1 class="hasAnchor">
 <a href="#motivations" class="anchor"></a>Motivations</h1>
 <p>R and S have a long history of interacting with compiled languages. In fact the original version of S written in the late 1970s was mainly a wrapper around FORTRAN routines. <a href="https://www.r-project.org/conferences/useR-2006/Slides/Chambers.pdf">(History-of-S)</a> Released in 2000, the <a href="https://cran.r-project.org/package=cxx">cxx</a> package was an early prototype of C++ bindings to R. <a href="https://cran.r-project.org/package=Rcpp">Rcpp</a> was first published to CRAN in 2008, and <a href="https://cran.r-project.org/package=Rcpp11">Rcpp11</a> in 2014. Of these <code>Rcpp</code> has by far the widest adoption, with over 2000 reverse dependencies as of 2020.</p>
-<p>Rcpp has been a widely successful project, however over the years a number of issues and additional C++ features have arisen. Adding these features to Rcpp would require a great deal work, or in some cases would be impossible without severely breaking backwards compatibility.</p>
+<p>Rcpp has been a widely successful project, however over the years a number of issues and additional C++ features have arisen. Adding these features to Rcpp would require a great deal of work, or in some cases would be impossible without severely breaking backwards compatibility.</p>
 <p>cpp11 is a ground up rewrite of C++ bindings to R with different design trade-offs and features.</p>
 <p>Changes that motivated cpp11 include:</p>
 <ul>
@@ -449,7 +449,7 @@
 <p>R has complicated support for Unicode strings and non-ASCII code pages, whose behavior often differs substantially on different operating systems, particularly Windows. Correctly dealing with this is challenging and often feels like whack a mole.</p>
 <p>To combat this complexity cpp11 uses the <a href="http://utf8everywhere.org/">UTF-8 everywhere</a> philosophy. This means that whenever text data is converted from R data structures to C++ data structures by cpp11 the data is translated into UTF-8. Conversely any text data coming from C++ code is assumed to be UTF-8 and marked as such for R. Doing this universally avoids many locale specific issues when dealing with Unicode text.</p>
 <p>Concretely cpp11 always uses <code>Rf_translateCharUTF8()</code> when obtaining <code>const char*</code> from <code>CHRSXP</code> objects and uses <code>Rf_mkCharCE(, CE_UTF8)</code> when creating new <code>CHRSXP</code> objects from <code>const char*</code> inputs.</p>
-<p>TODO: unicode examples?</p>
+<!--TODO: unicode examples?-->
 </div>
 <div id="c11-features" class="section level2">
 <h2 class="hasAnchor">
@@ -471,7 +471,7 @@
 <p>cpp11 takes a more limited scope, providing only the set of r_vector wrappers for R vector types, coercion methods to and from C++ and the limited attributes necessary to support use in R packages.</p>
 <p>This limited scope allows the implementation to be much simpler, the headers in Rcpp 1.0.4 have 74,658 lines of code (excluding blank or commented lines) in 379 files. Some headers in Rcpp are automatically generated, removing these still gives you 25,249 lines of code in 357 files. In contrast the headers in cpp11 contain only 1,734 lines of code in 19 files.</p>
 <p>This reduction in complexity should make cpp11 an easier project to maintain and ensure correctness, particularly around interactions with the R garbage collector.</p>
-<p>TODO: mention rchk compatibility here?</p>
+<!--TODO: mention rchk compatibility here?-->
 </div>
 <div id="compilation-speed" class="section level2">
 <h2 class="hasAnchor">
