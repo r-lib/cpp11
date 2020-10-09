@@ -155,7 +155,7 @@ class r_vector {
     inline bool operator!=(const const_iterator& other) const;
     inline bool operator==(const const_iterator& other) const;
 
-    inline T operator*();
+    inline T operator*() const;
 
     friend class writable::r_vector<T>::iterator;
 
@@ -265,7 +265,7 @@ class r_vector : public cpp11::r_vector<T> {
 
     inline iterator& operator++();
 
-    inline proxy operator*();
+    inline proxy operator*() const;
 
     using cpp11::r_vector<T>::const_iterator::operator!=;
 
@@ -554,7 +554,7 @@ inline typename cpp11::r_vector<T>::const_iterator cpp11::r_vector<T>::find(
 }
 
 template <typename T>
-inline T r_vector<T>::const_iterator::operator*() {
+inline T r_vector<T>::const_iterator::operator*() const {
   if (data_->is_altrep()) {
     return buf_[pos_ - block_start_];
   } else {
@@ -586,7 +586,7 @@ r_vector<T>::proxy::proxy(SEXP data, const R_xlen_t index, T* const p, bool is_a
     : data_(data), index_(index), p_(p), is_altrep_(is_altrep) {}
 
 template <typename T>
-inline typename r_vector<T>::proxy r_vector<T>::iterator::operator*() {
+inline typename r_vector<T>::proxy r_vector<T>::iterator::operator*() const {
   if (data_.is_altrep()) {
     return proxy(data_.data(), pos_, &buf_[pos_ - block_start_], true);
   } else {

@@ -41,7 +41,7 @@ inline void r_vector<r_string>::const_iterator::fill_buf(R_xlen_t) {
 }
 
 template <>
-inline r_string r_vector<r_string>::const_iterator::operator*() {
+inline r_string r_vector<r_string>::const_iterator::operator*() const {
   return STRING_ELT(data_->data(), pos_);
 }
 

@@ -52,7 +52,7 @@ inline void r_vector<SEXP>::const_iterator::fill_buf(R_xlen_t) {
 }
 
 template <>
-inline SEXP r_vector<SEXP>::const_iterator::operator*() {
+inline SEXP r_vector<SEXP>::const_iterator::operator*() const {
   return VECTOR_ELT(data_->data(), pos_);
 }
 
