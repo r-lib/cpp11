@@ -588,7 +588,7 @@ r_vector<T>::proxy::proxy(SEXP data, const R_xlen_t index, T* const p, bool is_a
 template <typename T>
 inline typename r_vector<T>::proxy r_vector<T>::iterator::operator*() const {
   if (data_.is_altrep()) {
-    return proxy(data_.data(), pos_, &buf_[pos_ - block_start_], true);
+    return proxy(data_.data(), pos_, const_cast<T*>(&buf_[pos_ - block_start_]), true);
   } else {
     return proxy(data_.data(), pos_,
                  data_.data_p_ != nullptr ? &data_.data_p_[pos_] : nullptr, false);
