@@ -300,17 +300,7 @@ static struct {
     SETCAR(opt, value);
   }
 
-  static SEXP new_environment() {
-    SEXP new_env_sym = Rf_install("new.env");
-    SEXP new_env_fun = Rf_findFun(new_env_sym, R_BaseEnv);
-    SEXP call = PROTECT(Rf_allocVector(LANGSXP, 1));
-    SETCAR(call, new_env_fun);
-    SEXP res = Rf_eval(call, R_GlobalEnv);
-    UNPROTECT(1);
-    return res;
-  }
-
-  // The preserve_env singleton is stored in an environment within an R global option.
+  // The list_ singleton is stored in a XPtr within an R global option.
   //
   // It is not constructed as a static variable directly since many
   // translation units may be compiled, resulting in unrelated instances of each
@@ -320,30 +310,27 @@ static struct {
   // packages.
   // We cannot store it in R's global environment, as that is against CRAN
   // policies.
-  // We need to use a environment as option() and getOption duplicates their
-  // values, and duplicating the preserve pairlist causes the protection stack to
-  // overflow.
-  static SEXP get_preserve_env() {
-    static SEXP preserve_env = R_NilValue;
+  // We instead store it as an XPtr in the global options, which avoids issues
+  // both copying and serializing.
+  static SEXP get_preserve_xptr() {
+    static SEXP preserve_xptr = R_NilValue;
 
-    if (preserve_env == R_NilValue) {
-      SEXP preserve_env_sym = Rf_install("cpp11_preserve_env");
+    if (preserve_xptr == R_NilValue) {
+      SEXP preserve_xptr_sym = Rf_install("cpp11_preserve_xptr");
 
-      preserve_env = Rf_GetOption1(preserve_env_sym);
+      preserve_xptr = Rf_GetOption1(preserve_xptr_sym);
 
-      if (preserve_env == R_NilValue) {
-        preserve_env = new_environment();
-
-        SEXP preserve_list_sym = Rf_install("cpp11_preserve_list");
-        Rf_defineVar(preserve_list_sym, Rf_cons(R_NilValue, R_NilValue), preserve_env);
-        set_option(preserve_env_sym, preserve_env);
+      if (preserve_xptr == R_NilValue) {
+        SEXP preserve_list = Rf_cons(R_NilValue, R_NilValue);
+        R_PreserveObject(preserve_list);
+        preserve_xptr = R_MakeExternalPtr(preserve_list, R_NilValue, R_NilValue);
+        set_option(preserve_xptr_sym, preserve_xptr);
       }
     }
 
-    return preserve_env;
+    return preserve_xptr;
   }
 
-  SEXP list_ = Rf_findVarInFrame(get_preserve_env(), Rf_install("cpp11_preserve_list"));
+  SEXP list_ = static_cast<SEXP>(R_ExternalPtrAddr(get_preserve_xptr()));
 } preserved;
-
 }  // namespace cpp11
