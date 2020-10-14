@@ -1,4 +1,4 @@
-# cpp11 (development version)
+# cpp11 0.2.3
 
 * `r_vector::const_iterator::operator*` is now a const method (#113, @bkietz, @xhochy)
 * The preserve list is now stored in an XPtr, rather than an environment, to avoid issues when serializing the preserve environment, which happens implicitly when RStudio or RStudio Cloud saves all options when resuming a session (#116)
