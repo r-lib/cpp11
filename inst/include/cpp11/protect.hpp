@@ -223,6 +223,10 @@ static struct {
 
     PROTECT(obj);
 
+    if (TYPEOF(list_) != LISTSXP) {
+      list_ = get_preserve_list();
+    }
+
     // Add a new cell that points to the previous end.
     SEXP cell = PROTECT(Rf_cons(list_, CDR(list_)));
 
@@ -289,9 +293,15 @@ static struct {
   // `CPP11_UNWIND`, so if an error occurs we will not catch the C++ exception
   // that safe emits.
   static void set_option(SEXP name, SEXP value) {
-    SEXP opt = SYMVALUE(Rf_install(".Options"));
+    static SEXP opt = SYMVALUE(Rf_install(".Options"));
     SEXP t = opt;
     while (CDR(t) != R_NilValue) {
+      if (TAG(CDR(t)) == name) {
+        opt = CDR(t);
+        SET_TAG(opt, name);
+        SETCAR(opt, value);
+        return;
+      }
       t = CDR(t);
     }
     SETCDR(t, Rf_allocList(1));
@@ -312,25 +322,44 @@ static struct {
   // policies.
   // We instead store it as an XPtr in the global options, which avoids issues
   // both copying and serializing.
-  static SEXP get_preserve_xptr() {
-    static SEXP preserve_xptr = R_NilValue;
+  static SEXP get_preserve_xptr_addr() {
+    static SEXP preserve_xptr_sym = Rf_install("cpp11_preserve_xptr");
+    SEXP preserve_xptr = Rf_GetOption1(preserve_xptr_sym);
 
-    if (preserve_xptr == R_NilValue) {
-      SEXP preserve_xptr_sym = Rf_install("cpp11_preserve_xptr");
+    if (TYPEOF(preserve_xptr) != EXTPTRSXP) {
+      return R_NilValue;
+    }
+    auto addr = R_ExternalPtrAddr(preserve_xptr);
+    if (addr == nullptr) {
+      return R_NilValue;
+    }
+    return static_cast<SEXP>(addr);
+  }
 
-      preserve_xptr = Rf_GetOption1(preserve_xptr_sym);
+  static void set_preserve_xptr(SEXP value) {
+    static SEXP preserve_xptr_sym = Rf_install("cpp11_preserve_xptr");
 
-      if (preserve_xptr == R_NilValue) {
-        SEXP preserve_list = Rf_cons(R_NilValue, R_NilValue);
+    SEXP xptr = PROTECT(R_MakeExternalPtr(value, R_NilValue, R_NilValue));
+    set_option(preserve_xptr_sym, xptr);
+    UNPROTECT(1);
+  }
+
+  static SEXP get_preserve_list() {
+    static SEXP preserve_list = R_NilValue;
+
+    if (TYPEOF(preserve_list) != LISTSXP) {
+      preserve_list = get_preserve_xptr_addr();
+      if (TYPEOF(preserve_list) != LISTSXP) {
+        preserve_list = Rf_cons(R_NilValue, R_NilValue);
         R_PreserveObject(preserve_list);
-        preserve_xptr = R_MakeExternalPtr(preserve_list, R_NilValue, R_NilValue);
-        set_option(preserve_xptr_sym, preserve_xptr);
+        set_preserve_xptr(preserve_list);
       }
     }
 
-    return preserve_xptr;
+    return preserve_list;
   }
 
-  SEXP list_ = static_cast<SEXP>(R_ExternalPtrAddr(get_preserve_xptr()));
-} preserved;
+  SEXP list_ = get_preserve_list();
+}  // namespace cpp11
+preserved;
 }  // namespace cpp11
