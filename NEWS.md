@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* The preserve list is now more robust to invalid values, such as when the XPtr has no address or if non-xptr's are stored in the option. This fixes errors when reloading packages using cpp11 and RStudio's session restores.
+
 # cpp11 0.2.3
 
 * `r_vector::const_iterator::operator*` is now a const method (#113, @bkietz, @xhochy)
