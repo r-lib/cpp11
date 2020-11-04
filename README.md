@@ -31,6 +31,10 @@ This ensures the headers will remain unchanged until you explicitly update them.
 
 See [vignette("cpp11")](https://cpp11.r-lib.org/articles/cpp11.html) to get started using cpp11 in your scripts, particularly if you are new to C++ programming.
 
+## Getting help [![RStudio community](https://img.shields.io/badge/community-cpp11-blue?style=social&logo=rstudio&logoColor=75AADB)](https://community.rstudio.com/new-topic?category=Package%20development&tags=cpp11)
+
+[RStudio community](https://community.rstudio.com/new-topic?category=Package%20development&tags=cpp11) with the `cpp11` tag is the best place to ask for help using cpp11 or interfacing C++ with R.
+
 ## Motivations
 
 [Rcpp](https://cran.r-project.org/package=Rcpp) has been a widely successful project, however over the years a number of issues and additional C++ features have arisen.
