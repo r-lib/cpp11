@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.4</span>
       </span>
     </div>
 
@@ -73,7 +73,8 @@
 
       
 
-      </header><script src="internals_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="internals_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="internals_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="internals_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>cpp11 internals</h1>
@@ -92,28 +93,23 @@
 <a href="#initial-setup-and-dev-workflow" class="anchor"></a>Initial setup and dev workflow</h2>
 <p>First install any dependencies needed for development.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"remotes"</span>)
-<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_deps.html">install_deps</a></span>(dependencies = <span class="fl">TRUE</span>)
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_deps.html">install_deps</a></span><span class="op">(</span>dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
 <p>You can load the package in an interactive R session</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="kw">devtools</span>::<span class="fu">load_all</span>()
-</pre></div>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></pre></div>
 <p>Or run the tests with</p>
 <div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw">devtools</span>::<span class="fu">test</span>()
-</pre></div>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu">test</span><span class="op">(</span><span class="op">)</span></pre></div>
 <p><code>test()</code> will also re-compile the package if needed, so you do not always have to run <code>load_all()</code>.</p>
 <p>If you change the cpp11 headers you will need to clean and recompile the cpp11test package</p>
 <div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="kw">devtools</span>::<span class="fu">clean_dll</span>()
-<span class="kw">devtools</span>::<span class="fu">load_all</span>()
-</pre></div>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu">clean_dll</span><span class="op">(</span><span class="op">)</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></pre></div>
 <p>Generally when developing the C++ headers I run R with its working directory in the <code>cpp11test</code> directory and use <code>devtools::test()</code> to run the cpp11tests.</p>
 <p>To calculate code coverage of the cpp11 package run the following from the <code>cpp11</code> root directory.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="kw">covr</span>::<span class="fu"><a href="http://covr.r-lib.org/reference/report.html">report</a></span>(<span class="fu">cpp11_coverage</span>())
-</pre></div>
+<span class="fu">covr</span><span class="fu">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/report.html">report</a></span><span class="op">(</span><span class="fu">cpp11_coverage</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></pre></div>
 </div>
 <div id="code-formatting" class="section level2">
 <h2 class="hasAnchor">
