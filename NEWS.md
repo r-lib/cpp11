@@ -1,4 +1,4 @@
-# cpp11 (development version)
+# cpp11 0.2.4
 
 * The preserve list is now more robust to invalid values, such as when the XPtr has no address or if non-xptr's are stored in the option. This fixes errors when reloading packages using cpp11 and RStudio's session restores.
 * The preserve list is now more robust to invalid values, such as null pointers when the XPtr is serialized. This situation occurs during 'Install and Restart' in RStudio (#121)
