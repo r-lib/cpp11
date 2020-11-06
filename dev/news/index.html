@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.2.3.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.2.4.9000</span>
       </span>
     </div>
 
@@ -124,8 +124,14 @@
 <h1 class="page-header" data-toc-text="development version">
 <a href="#cpp11-development-version" class="anchor"></a>cpp11 (development version)<small> Unreleased </small>
 </h1>
+</div>
+    <div id="cpp11-024" class="section level1">
+<h1 class="page-header" data-toc-text="0.2.4">
+<a href="#cpp11-024" class="anchor"></a>cpp11 0.2.4<small> 2020-11-05 </small>
+</h1>
 <ul>
 <li>The preserve list is now more robust to invalid values, such as when the XPtr has no address or if non-xptr’s are stored in the option. This fixes errors when reloading packages using cpp11 and RStudio’s session restores.</li>
+<li>The preserve list is now more robust to invalid values, such as null pointers when the XPtr is serialized. This situation occurs during ‘Install and Restart’ in RStudio (<a href='https://github.com/r-lib/cpp11/issues/121'>#121</a>)</li>
 </ul>
 </div>
     <div id="cpp11-023" class="section level1">
