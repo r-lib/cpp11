@@ -209,11 +209,11 @@ When constructing vectors with more than one element this is not an issue
 
 ```cpp
 // bad
-cpp11::writable::logcials({FALSE});
+cpp11::writable::logicals({FALSE});
 
 // good
-cpp11::writable::logcials({r_bool(FALSE)});
+cpp11::writable::logicals({r_bool(FALSE)});
 
 // good
-cpp11::writable::logcials({FALSE, NA_LOGICAL});
+cpp11::writable::logicals({FALSE, NA_LOGICAL});
 ```
