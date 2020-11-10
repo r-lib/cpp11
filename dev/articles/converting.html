@@ -444,13 +444,13 @@
 <a href="#logical-vector-construction" class="anchor"></a>Logical vector construction</h3>
 <p>If you are constructing a length 1 logical vector you may need to explicitly use a <code>r_bool()</code> object in the initializer list rather than <code>TRUE</code>, <code>FALSE</code> or <code>NA_INTEGER</code>. This issue only occurs with the clang compiler, not gcc. When constructing vectors with more than one element this is not an issue</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">// bad</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a>cpp11::writable::logcials({FALSE});</span>
+<span id="cb5-2"><a href="#cb5-2"></a>cpp11::writable::logicals({FALSE});</span>
 <span id="cb5-3"><a href="#cb5-3"></a></span>
 <span id="cb5-4"><a href="#cb5-4"></a><span class="co">// good</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a>cpp11::writable::logcials({r_bool(FALSE)});</span>
+<span id="cb5-5"><a href="#cb5-5"></a>cpp11::writable::logicals({r_bool(FALSE)});</span>
 <span id="cb5-6"><a href="#cb5-6"></a></span>
 <span id="cb5-7"><a href="#cb5-7"></a><span class="co">// good</span></span>
-<span id="cb5-8"><a href="#cb5-8"></a>cpp11::writable::logcials({FALSE, NA_LOGICAL});</span></code></pre></div>
+<span id="cb5-8"><a href="#cb5-8"></a>cpp11::writable::logicals({FALSE, NA_LOGICAL});</span></code></pre></div>
 </div>
 </div>
   </div>
