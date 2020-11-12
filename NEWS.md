@@ -2,6 +2,7 @@
 
 * `cpp11::named_arg` now explicitly protect their values, avoiding protection issues when using large inputs. [tidyverse/readr#1145](https://github.com/tidyverse/readr/issues/1145)
 * `cpp_source()` now throws an error if the code fails to compile, as intended (#125).
+* `cpp11::r_string(std::string)` now uses `Rf_mkCharLenCE()` instead of `Rf_mkChar()`, which avoids the performance cost of checking the string length.
 
 # cpp11 0.2.4
 

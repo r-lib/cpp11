@@ -15,7 +15,8 @@ class r_string {
   r_string() = default;
   r_string(SEXP data) : data_(data) {}
   r_string(const char* data) : data_(safe[Rf_mkCharCE](data, CE_UTF8)) {}
-  r_string(const std::string& data) : data_(safe[Rf_mkCharCE](data.c_str(), CE_UTF8)) {}
+  r_string(const std::string& data)
+      : data_(safe[Rf_mkCharLenCE](data.c_str(), data.size(), CE_UTF8)) {}
 
   operator SEXP() const { return data_; }
   operator sexp() const { return data_; }
