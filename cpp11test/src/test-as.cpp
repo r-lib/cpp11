@@ -8,6 +8,24 @@
 
 #include "Rcpp.h"
 
+struct Vec3 {
+  double x, y, z;
+};
+
+namespace cpp11 {
+template <>
+struct as_cpp_impl<Vec3> {
+  static Vec3 convert(SEXP from) {
+    if (Rf_isReal(from)) {
+      if (Rf_xlength(from) == 3) {
+        return {REAL_ELT(from, 0), REAL_ELT(from, 1), REAL_ELT(from, 2)};
+      }
+    }
+    stop("Expected three double values");
+  }
+};
+}  // namespace cpp11
+
 context("as_cpp-C++") {
   test_that("as_cpp<integer>(INTSEXP)") {
     SEXP r = PROTECT(Rf_allocVector(INTSXP, 1));
@@ -55,6 +73,18 @@ context("as_cpp-C++") {
 #endif
 
     UNPROTECT(1);
+  }
+
+  test_that("as_cpp<Vec3>(REALSXP)") {
+    SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+    REAL(r)[0] = 1;
+    REAL(r)[1] = 2;
+    REAL(r)[2] = 4;
+
+    Vec3 v = cpp11::as_cpp<Vec3>(r);
+    expect_true(v.x == 1);
+    expect_true(v.y == 2);
+    expect_true(v.z == 4);
   }
 
   test_that("as_cpp<integer>(NA)") {
@@ -208,6 +238,25 @@ context("as_cpp-C++") {
 
     UNPROTECT(1);
   }
+
+#if defined(__APPLE__) && defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
+  test_that("as_cpp<std::vector>(ALTREP_INTSXP)") {
+    SEXP r = PROTECT(R_compact_intrange(1, 5));
+
+    expect_true(ALTREP(r));
+    auto x1 = cpp11::as_cpp<std::vector<int>>(r);
+    expect_true(ALTREP(r));
+
+    expect_true(x1.size() == 5);
+    int expected = 1;
+    for (int actual : x1) {
+      expect_true(actual == expected);
+      ++expected;
+    }
+
+    UNPROTECT(1);
+  }
+#endif
 
   test_that("as_cpp<std::vector<std::string>>()") {
     SEXP r = PROTECT(Rf_allocVector(STRSXP, 3));
