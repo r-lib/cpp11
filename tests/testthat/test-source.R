@@ -36,3 +36,24 @@ test_that("cpp_source works with the `file` parameter", {
 
   expect_true(always_true())
 })
+
+test_that("cpp_source lets you set the C++ standard", {
+  skip_on_os("solaris")
+  skip_on_os("windows") # Older windows toolchains do not support C++14
+  tf <- tempfile(fileext = ".cpp")
+  writeLines(
+    '#include <string>
+    using namespace std::string_literals;
+    [[cpp11::register]]
+    std::string fun() {
+      auto str = "hello_world"s;
+      return str;
+    }
+    ', tf)
+  on.exit(unlink(tf))
+
+  dll_info <- cpp_source(tf, clean = TRUE, quiet = TRUE, cxx_std = "CXX14")
+  on.exit(dyn.unload(dll_info[["path"]]), add = TRUE)
+
+  expect_equal(fun(), "hello_world")
+})

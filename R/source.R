@@ -13,6 +13,7 @@
 #' @param env The R environment where the R wrapping functions should be defined.
 #' @param clean If `TRUE`, cleanup the files after sourcing
 #' @param quiet If 'TRUE`, do not show compiler output
+#' @param cxx_std The C++ standard to use, the `CXX_STD` make macro is set to this value.
 #' @return For [cpp_source()] and `[cpp_function()]` the results of
 #'   [dyn.load()] (invisibly). For `[cpp_eval()]` the results of the evaluated
 #'   expression.
@@ -60,7 +61,7 @@
 #' }
 #' }
 #' @export
-cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE) {
+cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = "CXX11") {
   stop_unless_installed(c("brio", "callr", "cli", "decor", "desc", "glue", "tibble", "vctrs"))
 
   dir <- tempfile()
@@ -103,12 +104,12 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
 
   r_functions <- generate_r_functions(funs, package = package, use_package = TRUE)
 
-  makevars_content <- generate_makevars(includes)
+  makevars_content <- generate_makevars(includes, cxx_std)
 
   brio::write_lines(makevars_content, file.path(dir, "src", "Makevars"))
 
   source_files <- normalizePath(c(file, cpp_path), winslash = "/")
-  callr::rcmd("SHLIB", source_files, user_profile = TRUE, show = !quiet, wd = file.path(dir, "src"))
+  callr::rcmd("SHLIB", source_files, user_profile = TRUE, show = !quiet, wd = file.path(dir, "src"), fail_on_status = TRUE)
 
   shared_lib <- file.path(dir, "src", paste0(tools::file_path_sans_ext(basename(file)), .Platform$dynlib.ext))
 
@@ -134,13 +135,13 @@ generate_include_paths <- function(packages) {
   out
 }
 
-generate_makevars <- function(includes) {
-  c("CXX_STD=CXX11", sprintf("PKG_CPPFLAGS=%s", paste0(includes, collapse = " ")))
+generate_makevars <- function(includes, cxx_std) {
+  c(sprintf("CXX_STD=%s", cxx_std), sprintf("PKG_CPPFLAGS=%s", paste0(includes, collapse = " ")))
 }
 
 #' @rdname cpp_source
 #' @export
-cpp_function <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE) {
+cpp_function <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = "CXX11") {
   cpp_source(code = paste(c('#include "cpp11.hpp"',
         "using namespace cpp11;",
         "namespace writable = cpp11::writable;",
@@ -149,7 +150,8 @@ cpp_function <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE)
       collapse = "\n"),
     env = env,
     clean = clean,
-    quiet = quiet
+    quiet = quiet,
+    cxx_std = cxx_std
   )
 }
 
@@ -157,7 +159,7 @@ utils::globalVariables("f")
 
 #' @rdname cpp_source
 #' @export
-cpp_eval <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE) {
+cpp_eval <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = "CXX11") {
   cpp_source(code = paste(c('#include "cpp11.hpp"',
         "using namespace cpp11;",
         "namespace writable = cpp11::writable;",
@@ -169,7 +171,9 @@ cpp_eval <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE) {
       collapse = "\n"),
     env = env,
     clean = clean,
-    quiet = quiet)
+    quiet = quiet,
+    cxx_std = cxx_std
+  )
   f()
 }
 

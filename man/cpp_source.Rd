@@ -6,11 +6,30 @@
 \alias{cpp_eval}
 \title{Compile C++ code}
 \usage{
-cpp_source(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE)
+cpp_source(
+  file,
+  code = NULL,
+  env = parent.frame(),
+  clean = TRUE,
+  quiet = TRUE,
+  cxx_std = "CXX11"
+)
 
-cpp_function(code, env = parent.frame(), clean = TRUE, quiet = TRUE)
+cpp_function(
+  code,
+  env = parent.frame(),
+  clean = TRUE,
+  quiet = TRUE,
+  cxx_std = "CXX11"
+)
 
-cpp_eval(code, env = parent.frame(), clean = TRUE, quiet = TRUE)
+cpp_eval(
+  code,
+  env = parent.frame(),
+  clean = TRUE,
+  quiet = TRUE,
+  cxx_std = "CXX11"
+)
 }
 \arguments{
 \item{file}{A file containing C++ code to compile}
@@ -22,6 +41,8 @@ cpp_eval(code, env = parent.frame(), clean = TRUE, quiet = TRUE)
 \item{clean}{If \code{TRUE}, cleanup the files after sourcing}
 
 \item{quiet}{If 'TRUE`, do not show compiler output}
+
+\item{cxx_std}{The C++ standard to use, the \code{CXX_STD} make macro is set to this value.}
 }
 \value{
 For \code{\link[=cpp_source]{cpp_source()}} and \verb{[cpp_function()]} the results of
