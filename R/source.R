@@ -13,7 +13,9 @@
 #' @param env The R environment where the R wrapping functions should be defined.
 #' @param clean If `TRUE`, cleanup the files after sourcing
 #' @param quiet If 'TRUE`, do not show compiler output
-#' @param cxx_std The C++ standard to use, the `CXX_STD` make macro is set to this value.
+#' @param cxx_std The C++ standard to use, the `CXX_STD` make macro is set to
+#'   this value. The default value queries the `CXX_STD` environment variable, or
+#'   uses 'CXX11' if unset.
 #' @return For [cpp_source()] and `[cpp_function()]` the results of
 #'   [dyn.load()] (invisibly). For `[cpp_eval()]` the results of the evaluated
 #'   expression.
@@ -61,7 +63,7 @@
 #' }
 #' }
 #' @export
-cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = "CXX11") {
+cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11")) {
   stop_unless_installed(c("brio", "callr", "cli", "decor", "desc", "glue", "tibble", "vctrs"))
 
   dir <- tempfile()
@@ -141,7 +143,7 @@ generate_makevars <- function(includes, cxx_std) {
 
 #' @rdname cpp_source
 #' @export
-cpp_function <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = "CXX11") {
+cpp_function <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11")) {
   cpp_source(code = paste(c('#include "cpp11.hpp"',
         "using namespace cpp11;",
         "namespace writable = cpp11::writable;",
@@ -159,7 +161,7 @@ utils::globalVariables("f")
 
 #' @rdname cpp_source
 #' @export
-cpp_eval <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = "CXX11") {
+cpp_eval <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11")) {
   cpp_source(code = paste(c('#include "cpp11.hpp"',
         "using namespace cpp11;",
         "namespace writable = cpp11::writable;",

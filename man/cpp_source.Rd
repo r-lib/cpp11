@@ -12,7 +12,7 @@ cpp_source(
   env = parent.frame(),
   clean = TRUE,
   quiet = TRUE,
-  cxx_std = "CXX11"
+  cxx_std = Sys.getenv("CXX_STD", "CXX11")
 )
 
 cpp_function(
@@ -20,7 +20,7 @@ cpp_function(
   env = parent.frame(),
   clean = TRUE,
   quiet = TRUE,
-  cxx_std = "CXX11"
+  cxx_std = Sys.getenv("CXX_STD", "CXX11")
 )
 
 cpp_eval(
@@ -28,7 +28,7 @@ cpp_eval(
   env = parent.frame(),
   clean = TRUE,
   quiet = TRUE,
-  cxx_std = "CXX11"
+  cxx_std = Sys.getenv("CXX_STD", "CXX11")
 )
 }
 \arguments{
@@ -42,7 +42,9 @@ cpp_eval(
 
 \item{quiet}{If 'TRUE`, do not show compiler output}
 
-\item{cxx_std}{The C++ standard to use, the \code{CXX_STD} make macro is set to this value.}
+\item{cxx_std}{The C++ standard to use, the \code{CXX_STD} make macro is set to
+this value. The default value queries the \code{CXX_STD} environment variable, or
+uses 'CXX11' if unset.}
 }
 \value{
 For \code{\link[=cpp_source]{cpp_source()}} and \verb{[cpp_function()]} the results of
