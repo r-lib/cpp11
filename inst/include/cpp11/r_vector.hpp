@@ -102,6 +102,8 @@ class r_vector {
     preserved.release(old_protect);
   };
 
+  r_vector(const writable::r_vector<T>& rhs) : r_vector(static_cast<SEXP>(rhs)) {}
+
   bool is_altrep() const;
 
   R_xlen_t size() const;

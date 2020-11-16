@@ -454,4 +454,13 @@ context("doubles-C++") {
     --x0;
     expect_true(x0 == 2);
   }
+  test_that("writable::doubles convert to doubles with correct size (#128)") {
+    cpp11::writable::doubles foo;
+    foo.push_back(1.);
+    foo.push_back(2.);
+    foo.push_back(3.);
+
+    cpp11::doubles bar(foo);
+    expect_true(Rf_xlength(bar) == 3);
+  }
 }
