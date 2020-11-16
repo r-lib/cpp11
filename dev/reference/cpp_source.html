@@ -130,11 +130,30 @@ cpp_eval() evaluates a single C++ expression and returns the result." />
 <code>cpp_eval()</code> evaluates a single C++ expression and returns the result.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cpp_source</span><span class='op'>(</span><span class='va'>file</span>, code <span class='op'>=</span> <span class='cn'>NULL</span>, env <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span><span class='op'>(</span><span class='op'>)</span>, clean <span class='op'>=</span> <span class='cn'>TRUE</span>, quiet <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>cpp_source</span><span class='op'>(</span>
+  <span class='va'>file</span>,
+  code <span class='op'>=</span> <span class='cn'>NULL</span>,
+  env <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span><span class='op'>(</span><span class='op'>)</span>,
+  clean <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  quiet <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  cxx_std <span class='op'>=</span> <span class='st'>"CXX11"</span>
+<span class='op'>)</span>
 
-<span class='fu'>cpp_function</span><span class='op'>(</span><span class='va'>code</span>, env <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span><span class='op'>(</span><span class='op'>)</span>, clean <span class='op'>=</span> <span class='cn'>TRUE</span>, quiet <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'>cpp_function</span><span class='op'>(</span>
+  <span class='va'>code</span>,
+  env <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span><span class='op'>(</span><span class='op'>)</span>,
+  clean <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  quiet <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  cxx_std <span class='op'>=</span> <span class='st'>"CXX11"</span>
+<span class='op'>)</span>
 
-<span class='fu'>cpp_eval</span><span class='op'>(</span><span class='va'>code</span>, env <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span><span class='op'>(</span><span class='op'>)</span>, clean <span class='op'>=</span> <span class='cn'>TRUE</span>, quiet <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+<span class='fu'>cpp_eval</span><span class='op'>(</span>
+  <span class='va'>code</span>,
+  env <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span><span class='op'>(</span><span class='op'>)</span>,
+  clean <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  quiet <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  cxx_std <span class='op'>=</span> <span class='st'>"CXX11"</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -158,6 +177,10 @@ cpp_eval() evaluates a single C++ expression and returns the result." />
     <tr>
       <th>quiet</th>
       <td><p>If 'TRUE`, do not show compiler output</p></td>
+    </tr>
+    <tr>
+      <th>cxx_std</th>
+      <td><p>The C++ standard to use, the <code>CXX_STD</code> make macro is set to this value.</p></td>
     </tr>
     </table>
 

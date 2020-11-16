@@ -130,6 +130,10 @@
 </li>
 <li>
 <code><a href="../reference/cpp_source.html">cpp_source()</a></code> now throws an error if the code fails to compile, as intended (<a href='https://github.com/r-lib/cpp11/issues/125'>#125</a>).</li>
+<li>
+<code>cpp11::r_string(std::string)</code> now uses <code>Rf_mkCharLenCE()</code> instead of <code>Rf_mkChar()</code>, which avoids the performance cost of checking the string length.</li>
+<li>
+<code><a href="../reference/cpp_source.html">cpp_source()</a></code> gains a <code>cxx_std</code> argument to control which C++ standard is used. This allows you to use code from <code>C++14</code> and later standards with cpp_source(). (<a href='https://github.com/r-lib/cpp11/issues/100'>#100</a>)</li>
 </ul>
 </div>
     <div id="cpp11-024" class="section level1">
