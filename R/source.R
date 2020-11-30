@@ -93,7 +93,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   )
   cpp_functions_definitions <- generate_cpp_functions(funs, package = package)
 
-  cpp_path <- file.path(dir, "src", "cpp11.cpp")
+  cpp_path <- generate_cpp_path(dir)
   brio::write_lines(c('#include "cpp11/declarations.hpp"', "using namespace cpp11;", cpp_functions_definitions), cpp_path)
 
   linking_to <- union(get_linking_to(all_decorations), "cpp11")
@@ -124,6 +124,16 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
 
 the <- new.env(parent = emptyenv())
 the$count <- 0L
+
+generate_cpp_path <- function(dir) {
+  cpp_path <- file.path(dir, "src", "cpp11.cpp")
+  count <- 2
+  while(file.exists(cpp_path)) {
+    cpp_path <- sprintf("%s/cpp11-%i.cpp", dirname(cpp_path), count)
+    count <- count + 1
+  }
+  cpp_path
+}
 
 generate_include_paths <- function(packages) {
   out <- character(length(packages))

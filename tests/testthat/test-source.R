@@ -57,3 +57,29 @@ test_that("cpp_source lets you set the C++ standard", {
 
   expect_equal(fun(), "hello_world")
 })
+
+test_that("generate_cpp_path works", {
+  d <- tempfile()
+  dir.create(d)
+  on.exit(unlink(d, recursive = TRUE))
+
+  expect_equal(
+    generate_cpp_path(d),
+    file.path(d, "src", "cpp11.cpp")
+  )
+
+  dir.create(file.path(d, "src"))
+  file.create(file.path(d, "src", "cpp11.cpp"))
+
+  expect_equal(
+    generate_cpp_path(d),
+    file.path(d, "src", "cpp11-2.cpp")
+  )
+
+  file.create(file.path(d, "src", "cpp11-2.cpp"))
+
+  expect_equal(
+    generate_cpp_path(d),
+    file.path(d, "src", "cpp11-3.cpp")
+  )
+})
