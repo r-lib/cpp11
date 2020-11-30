@@ -119,8 +119,8 @@
 <h3 class="hasAnchor">
 <a href="#prerequisites" class="anchor"></a>Prerequisites</h3>
 <p>We’ll use <a href="https://github.com/r-lib/cpp11">cpp11</a> to call C++ from R:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lib/cpp11">cpp11</a></span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lib/cpp11">cpp11</a></span><span class="op">)</span></code></pre></div>
 <p>You’ll also need a working C++ compiler. To get it:</p>
 <ul>
 <li>On Windows, install <a href="https://CRAN.R-project.org/bin/windows/Rtools/">Rtools</a>.</li>
@@ -133,8 +133,8 @@
 <h2 class="hasAnchor">
 <a href="#intro" class="anchor"></a>Getting started with C++</h2>
 <p><code><a href="../reference/cpp_source.html">cpp_function()</a></code> allows you to write C++ functions in R:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu"><a href="../reference/cpp_source.html">cpp_function</a></span><span class="op">(</span><span class="st">'int add(int x, int y, int z) {
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/cpp_source.html">cpp_function</a></span><span class="op">(</span><span class="st">'int add(int x, int y, int z) {
   int sum = x + y + z;
   return sum;
 }'</span><span class="op">)</span>
@@ -145,7 +145,7 @@
 <span class="co">#&gt;     .Call("_code_0_add", x, y, z, PACKAGE = "code_0")</span>
 <span class="co">#&gt; }</span>
 <span class="fu">add</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>
-<span class="co">#&gt; [1] 6</span></pre></div>
+<span class="co">#&gt; [1] 6</span></code></pre></div>
 <p>When you run the avove code, cpp11 will compile the C++ code and construct an R function that connects to the compiled C++ function. There’s a lot going on underneath the hood but cpp11 takes care of all the details so you don’t need to worry about them.</p>
 <p>The following sections will teach you the basics by translating simple R functions to their C++ equivalents. We’ll start simple with a function that has no inputs and a scalar output, and then make it progressively more complicated:</p>
 <ul>
@@ -158,17 +158,17 @@
 <h3 class="hasAnchor">
 <a href="#no-inputs-scalar-output" class="anchor"></a>No inputs, scalar output</h3>
 <p>Let’s start with a very simple function. It has no arguments and always returns the integer 1:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="va">one</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fl">1L</span></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">one</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fl">1L</span></code></pre></div>
 <p>The equivalent C++ function is:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1"></a><span class="dt">int</span> one() {</span>
 <span id="cb4-2"><a href="#cb4-2"></a>  <span class="cf">return</span> <span class="dv">1</span>;</span>
 <span id="cb4-3"><a href="#cb4-3"></a>}</span></code></pre></div>
 <p>We can compile and use this from R with <code><a href="../reference/cpp_source.html">cpp_function()</a></code></p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="fu"><a href="../reference/cpp_source.html">cpp_function</a></span><span class="op">(</span><span class="st">'int one() {
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/cpp_source.html">cpp_function</a></span><span class="op">(</span><span class="st">'int one() {
   return 1;
-}'</span><span class="op">)</span></pre></div>
+}'</span><span class="op">)</span></code></pre></div>
 <p>This small function illustrates a number of important differences between R and C++:</p>
 <ul>
 <li><p>The syntax to create a function looks like the syntax to call a function; you don’t use assignment to create functions as you do in R.</p></li>
@@ -182,8 +182,8 @@
 <h3 class="hasAnchor">
 <a href="#scalar-input-scalar-output" class="anchor"></a>Scalar input, scalar output</h3>
 <p>The next example function implements a scalar version of the <code><a href="https://rdrr.io/r/base/sign.html">sign()</a></code> function which returns 1 if the input is positive, and -1 if it’s negative:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="va">sign_r</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sign_r</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
   <span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span>
     <span class="fl">1</span>
   <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span>
@@ -200,7 +200,7 @@
   } else {
     return -1;
   }
-}'</span><span class="op">)</span></pre></div>
+}'</span><span class="op">)</span></code></pre></div>
 <p>In the C++ version:</p>
 <ul>
 <li><p>We declare the type of each input in the same way we declare the type of the output. While this makes the code a little more verbose, it also makes clear the type of input the function needs.</p></li>
@@ -211,24 +211,24 @@
 <h3 class="hasAnchor">
 <a href="#vector-input-scalar-output" class="anchor"></a>Vector input, scalar output</h3>
 <p>One big difference between R and C++ is that the cost of loops is much lower in C++. For example, we could implement the <code>sum</code> function in R using a loop. If you’ve been programming in R a while, you’ll probably have a visceral reaction to this function!</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="va">sum_r</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sum_r</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">total</span> <span class="op">&lt;-</span> <span class="fl">0</span>
   <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
     <span class="va">total</span> <span class="op">&lt;-</span> <span class="va">total</span> <span class="op">+</span> <span class="va">x</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>
   <span class="op">}</span>
   <span class="va">total</span>
-<span class="op">}</span></pre></div>
+<span class="op">}</span></code></pre></div>
 <p>In C++, loops have very little overhead, so it’s fine to use them. In Section <a href="#stl">stl</a>, you’ll see alternatives to <code>for</code> loops that more clearly express your intent; they’re not faster, but they can make your code easier to understand.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="fu"><a href="../reference/cpp_source.html">cpp_function</a></span><span class="op">(</span><span class="st">'double sum_cpp(doubles x) {
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/cpp_source.html">cpp_function</a></span><span class="op">(</span><span class="st">'double sum_cpp(doubles x) {
   int n = x.size();
   double total = 0;
   for(int i = 0; i &lt; n; ++i) {
     total += x[i];
   }
   return total;
-}'</span><span class="op">)</span></pre></div>
+}'</span><span class="op">)</span></code></pre></div>
 <p>The C++ version is similar, but:</p>
 <ul>
 <li><p>To find the length of the vector, we use the <code>.size()</code> method, which returns an integer. C++ methods are called with <code>.</code> (i.e., a full stop).</p></li>
@@ -238,8 +238,8 @@
 <li><p>C++ provides operators that modify in-place: <code>total += x[i]</code> is equivalent to <code>total = total + x[i]</code>. Similar in-place operators are <code>-=</code>, <code>*=</code>, and <code>/=</code>.</p></li>
 </ul>
 <p>This is a good example of where C++ is much more efficient than R. As shown by the following microbenchmark, <code>sumC()</code> is competitive with the built-in (and highly optimised) <code><a href="https://rdrr.io/r/base/sum.html">sum()</a></code>, while <code>sumR()</code> is several orders of magnitude slower.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">1e3</span><span class="op">)</span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">1e3</span><span class="op">)</span>
 <span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/mark.html">mark</a></span><span class="op">(</span>
   <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,
   <span class="fu">sum_cpp</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,
@@ -248,29 +248,29 @@
 <span class="co">#&gt; # A tibble: 3 x 6</span>
 <span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 sum(x)       1.57µs   1.77µs   554517.        0B        0</span>
-<span class="co">#&gt; 2 sum_cpp(x)    5.8µs   6.26µs   151457.        0B        0</span>
-<span class="co">#&gt; 3 sum_r(x)    32.27µs  33.49µs    28980.    3.96MB        0</span></pre></div>
+<span class="co">#&gt; 1 sum(x)       1.48µs   1.71µs   477694.        0B        0</span>
+<span class="co">#&gt; 2 sum_cpp(x)   6.17µs   6.87µs   137796.        0B        0</span>
+<span class="co">#&gt; 3 sum_r(x)    33.01µs  33.63µs    27704.    3.96MB        0</span></code></pre></div>
 </div>
 <div id="vector-input-vector-output" class="section level3">
 <h3 class="hasAnchor">
 <a href="#vector-input-vector-output" class="anchor"></a>Vector input, vector output</h3>
 <!-- FIXME: come up with better example. Also fix in two other places it occurs -->
 <p>Next we’ll create a function that computes the Euclidean distance between a value and a vector of values:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="va">pdist_r</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">ys</span><span class="op">)</span> <span class="op">{</span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">pdist_r</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">ys</span><span class="op">)</span> <span class="op">{</span>
   <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="va">ys</span><span class="op">)</span> <span class="op">^</span> <span class="fl">2</span><span class="op">)</span>
-<span class="op">}</span></pre></div>
+<span class="op">}</span></code></pre></div>
 <p>In R, it’s not obvious that we want <code>x</code> to be a scalar from the function definition, and we’d need to make that clear in the documentation. That’s not a problem in the C++ version because we have to be explicit about types:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="fu"><a href="../reference/cpp_source.html">cpp_function</a></span><span class="op">(</span><span class="st">'doubles pdist_cpp(double x, doubles ys) {
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/cpp_source.html">cpp_function</a></span><span class="op">(</span><span class="st">'doubles pdist_cpp(double x, doubles ys) {
   int n = ys.size();
   writable::doubles out(n);
   for(int i = 0; i &lt; n; ++i) {
     out[i] = sqrt(pow(ys[i] - x, 2.0));
   }
   return out;
-}'</span><span class="op">)</span></pre></div>
+}'</span><span class="op">)</span></code></pre></div>
 <p>This function introduces a few new concepts:</p>
 <ul>
 <li><p>Because we are creating a new vector we need to use <code>writable::doubles</code> rather than the read-only <code>doubles</code>.</p></li>
@@ -278,8 +278,8 @@
 <li><p>C++ uses <code>pow()</code>, not <code><a href="https://rdrr.io/r/base/Arithmetic.html">^</a></code>, for exponentiation.</p></li>
 </ul>
 <p>Note that because the R version is fully vectorised, it’s already going to be fast.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">1e6</span><span class="op">)</span>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">1e6</span><span class="op">)</span>
 <span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/mark.html">mark</a></span><span class="op">(</span>
   <span class="fu">pdist_r</span><span class="op">(</span><span class="fl">0.5</span>, <span class="va">y</span><span class="op">)</span>,
   <span class="fu">pdist_cpp</span><span class="op">(</span><span class="fl">0.5</span>, <span class="va">y</span><span class="op">)</span>
@@ -287,8 +287,8 @@
 <span class="co">#&gt; # A tibble: 2 x 6</span>
 <span class="co">#&gt;   expression             min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt;        &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 pdist_r(0.5, y)     6.37ms   6.84ms      142.    7.63MB     69.0</span>
-<span class="co">#&gt; 2 pdist_cpp(0.5, y)   3.94ms   4.33ms      226.    7.63MB    131.</span></pre></div>
+<span class="co">#&gt; 1 pdist_r(0.5, y)      6.5ms   6.98ms      141.    7.63MB     70.7</span>
+<span class="co">#&gt; 2 pdist_cpp(0.5, y)   3.99ms   4.04ms      221.    7.63MB    138.</span></code></pre></div>
 <p>On my computer, it takes around 5 ms with a 1 million element <code>y</code> vector. The C++ function is about 2.5 times faster, ~2 ms, but assuming it took you 10 minutes to write the C++ function, you’d need to run it ~200,000 times to make rewriting worthwhile. The reason why the C++ function is faster is subtle, and relates to memory management. The R version needs to create an intermediate vector the same length as y (<code>x - ys</code>), and allocating memory is an expensive operation. The C++ function avoids this overhead because it uses an intermediate scalar.</p>
 </div>
 <div id="cpp-source" class="section level3">
@@ -417,10 +417,10 @@
 <span id="cb17-15"><a href="#cb17-15"></a>  }</span>
 <span id="cb17-16"><a href="#cb17-16"></a>  <span class="cf">return</span> err / n;</span>
 <span id="cb17-17"><a href="#cb17-17"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span>
 <span class="fu">mpe</span><span class="op">(</span><span class="va">mod</span><span class="op">)</span>
-<span class="co">#&gt; [1] -0.01541615</span></pre></div>
+<span class="co">#&gt; [1] -0.01541615</span></code></pre></div>
 </div>
 <div id="functions-cpp11" class="section level3">
 <h3 class="hasAnchor">
@@ -434,11 +434,11 @@
 <span id="cb19-6"><a href="#cb19-6"></a>sexp call_with_one(function f) {</span>
 <span id="cb19-7"><a href="#cb19-7"></a>  <span class="cf">return</span> f(<span class="dv">1</span>);</span>
 <span id="cb19-8"><a href="#cb19-8"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb20"><pre class="downlit">
-<span class="fu">call_with_one</span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">call_with_one</span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>
 <span class="co">#&gt; [1] 2</span>
 <span class="fu">call_with_one</span><span class="op">(</span><span class="va">paste</span><span class="op">)</span>
-<span class="co">#&gt; [1] "1"</span></pre></div>
+<span class="co">#&gt; [1] "1"</span></code></pre></div>
 <p>Calling R functions with positional arguments is obvious:</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb21-1"><a href="#cb21-1"></a>f(<span class="st">"y"</span>, <span class="dv">1</span>);</span></code></pre></div>
 <p>But you need a special syntax for named arguments:</p>
@@ -483,13 +483,13 @@
 <span id="cb24-9"><a href="#cb24-9"></a>  <span class="dt">double</span> num_s = NA_REAL;</span>
 <span id="cb24-10"><a href="#cb24-10"></a>  <span class="cf">return</span> writable::list({as_sexp(int_s), as_sexp(chr_s), as_sexp(lgl_s), as_sexp(num_s)});</span>
 <span id="cb24-11"><a href="#cb24-11"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb25"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu">scalar_missings</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu">scalar_missings</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; List of 4</span>
 <span class="co">#&gt;  $ : int NA</span>
 <span class="co">#&gt;  $ : chr NA</span>
 <span class="co">#&gt;  $ : logi TRUE</span>
-<span class="co">#&gt;  $ : num NA</span></pre></div>
+<span class="co">#&gt;  $ : num NA</span></code></pre></div>
 <p>With the exception of <code>bool</code>, things look pretty good here: all of the missing values have been preserved. However, as we’ll see in the following sections, things are not quite as straightforward as they seem.</p>
 <div id="integers" class="section level4">
 <h4 class="hasAnchor">
@@ -501,31 +501,31 @@
 <h4 class="hasAnchor">
 <a href="#doubles" class="anchor"></a>Doubles</h4>
 <p>With doubles, you may be able to get away with ignoring missing values and working with NaNs (not a number). This is because R’s NA is a special type of IEEE 754 floating point number NaN. So any logical expression that involves a NaN (or in C++, NAN) always evaluates as FALSE:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit">
-<span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span><span class="op">(</span><span class="st">"NAN == 1"</span><span class="op">)</span>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span><span class="op">(</span><span class="st">"NAN == 1"</span><span class="op">)</span>
 <span class="co">#&gt; [1] FALSE</span>
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span><span class="op">(</span><span class="st">"NAN &lt; 1"</span><span class="op">)</span>
 <span class="co">#&gt; [1] FALSE</span>
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span><span class="op">(</span><span class="st">"NAN &gt; 1"</span><span class="op">)</span>
 <span class="co">#&gt; [1] FALSE</span>
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span><span class="op">(</span><span class="st">"NAN == NAN"</span><span class="op">)</span>
-<span class="co">#&gt; [1] FALSE</span></pre></div>
+<span class="co">#&gt; [1] FALSE</span></code></pre></div>
 <p>(Here I’m using <code><a href="../reference/cpp_source.html">cpp_eval()</a></code> which allows you to see the result of running a single C++ expression, making it excellent for this sort of interactive experimentation.) But be careful when combining them with Boolean values:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit">
-<span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span><span class="op">(</span><span class="st">"NAN &amp;&amp; TRUE"</span><span class="op">)</span>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span><span class="op">(</span><span class="st">"NAN &amp;&amp; TRUE"</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span>
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span><span class="op">(</span><span class="st">"NAN || FALSE"</span><span class="op">)</span>
-<span class="co">#&gt; [1] TRUE</span></pre></div>
+<span class="co">#&gt; [1] TRUE</span></code></pre></div>
 <p>However, in numeric contexts NaNs will propagate NAs:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit">
-<span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span><span class="op">(</span><span class="st">"NAN + 1"</span><span class="op">)</span>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span><span class="op">(</span><span class="st">"NAN + 1"</span><span class="op">)</span>
 <span class="co">#&gt; [1] NaN</span>
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span><span class="op">(</span><span class="st">"NAN - 1"</span><span class="op">)</span>
 <span class="co">#&gt; [1] NaN</span>
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span><span class="op">(</span><span class="st">"NAN / 1"</span><span class="op">)</span>
 <span class="co">#&gt; [1] NaN</span>
 <span class="fu"><a href="../reference/cpp_source.html">cpp_eval</a></span><span class="op">(</span><span class="st">"NAN * 1"</span><span class="op">)</span>
-<span class="co">#&gt; [1] NaN</span></pre></div>
+<span class="co">#&gt; [1] NaN</span></code></pre></div>
 </div>
 </div>
 <div id="strings" class="section level3">
@@ -555,13 +555,13 @@
 <span id="cb29-11"><a href="#cb29-11"></a>    writable::strings({NA_STRING})</span>
 <span id="cb29-12"><a href="#cb29-12"></a>  });</span>
 <span id="cb29-13"><a href="#cb29-13"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb30"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu">missing_sampler</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu">missing_sampler</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; List of 4</span>
 <span class="co">#&gt;  $ : num NA</span>
 <span class="co">#&gt;  $ : int NA</span>
 <span class="co">#&gt;  $ : logi NA</span>
-<span class="co">#&gt;  $ : chr NA</span></pre></div>
+<span class="co">#&gt;  $ : chr NA</span></code></pre></div>
 </div>
 <div id="exercises-1" class="section level3">
 <h3 class="hasAnchor">
@@ -771,8 +771,8 @@ SEXP table_cpp(doubles x) {
 <!-- FIXME: needs more context? -->
 <p>The following case study updates an example <a href="http://dirk.eddelbuettel.com/blog/2011/07/14/">blogged about</a> by Dirk Eddelbuettel, illustrating the conversion of a Gibbs sampler in R to C++. The R and C++ code shown below is very similar (it only took a few minutes to convert the R version to the C++ version), but runs about 30 times faster on my computer. Dirk’s blog post also shows another way to make it even faster: using the faster random number generator functions in GSL (easily accessible from R through the RcppGSL package) can make it another two to three times faster.</p>
 <p>The R code is as follows:</p>
-<div class="sourceCode" id="cb37"><pre class="downlit">
-<span class="va">gibbs_r</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">N</span>, <span class="va">thin</span><span class="op">)</span> <span class="op">{</span>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">gibbs_r</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">N</span>, <span class="va">thin</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span>nrow <span class="op">=</span> <span class="va">N</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
   <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">&lt;-</span> <span class="fl">0</span>
   <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">N</span><span class="op">)</span> <span class="op">{</span>
@@ -783,7 +783,7 @@ SEXP table_cpp(doubles x) {
     <span class="va">mat</span><span class="op">[</span><span class="va">i</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span>
   <span class="op">}</span>
   <span class="va">mat</span>
-<span class="op">}</span></pre></div>
+<span class="op">}</span></code></pre></div>
 <p>This is relatively straightforward to convert to C++. We:</p>
 <ul>
 <li><p>Add type declarations to all variables.</p></li>
@@ -810,8 +810,8 @@ SEXP table_cpp(doubles x) {
 <span id="cb38-18"><a href="#cb38-18"></a>  <span class="cf">return</span> mat;</span>
 <span id="cb38-19"><a href="#cb38-19"></a>}</span></code></pre></div>
 <p>Benchmarking the two implementations yields a significant speedup for running the loops in C++:</p>
-<div class="sourceCode" id="cb39"><pre class="downlit">
-<span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/mark.html">mark</a></span><span class="op">(</span>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/mark.html">mark</a></span><span class="op">(</span>
   r <span class="op">=</span> <span class="op">{</span>
     <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span>
     <span class="fu">gibbs_r</span><span class="op">(</span><span class="fl">100</span>, <span class="fl">10</span><span class="op">)</span>
@@ -826,42 +826,42 @@ SEXP table_cpp(doubles x) {
 <span class="co">#&gt; # A tibble: 2 x 6</span>
 <span class="co">#&gt;   expression   min median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 r           34.4   34.8       1       1314.      Inf</span>
-<span class="co">#&gt; 2 cpp          1      1        38.0        1       NaN</span></pre></div>
+<span class="co">#&gt; 1 r           34.5   35.5       1       1314.      Inf</span>
+<span class="co">#&gt; 2 cpp          1      1        40.0        1       NaN</span></code></pre></div>
 </div>
 <div id="r-vectorisation-versus-c-vectorisation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#r-vectorisation-versus-c-vectorisation" class="anchor"></a>R vectorisation versus C++ vectorisation</h3>
 <!-- FIXME: needs more context? -->
 <p>This example is adapted from <a href="https://gweissman.github.io/post/rcpp-is-smoking-fast-for-agent-based-models-in-data-frames/">“Rcpp is smoking fast for agent-based models in data frames”</a>. The challenge is to predict a model response from three inputs. The basic R version of the predictor looks like:</p>
-<div class="sourceCode" id="cb40"><pre class="downlit">
-<span class="va">vacc1a</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">age</span>, <span class="va">female</span>, <span class="va">ily</span><span class="op">)</span> <span class="op">{</span>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">vacc1a</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">age</span>, <span class="va">female</span>, <span class="va">ily</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">p</span> <span class="op">&lt;-</span> <span class="fl">0.25</span> <span class="op">+</span> <span class="fl">0.3</span> <span class="op">*</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="fl">0.04</span> <span class="op">*</span> <span class="va">age</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.1</span> <span class="op">*</span> <span class="va">ily</span>
   <span class="va">p</span> <span class="op">&lt;-</span> <span class="va">p</span> <span class="op">*</span> <span class="kw">if</span> <span class="op">(</span><span class="va">female</span><span class="op">)</span> <span class="fl">1.25</span> <span class="kw">else</span> <span class="fl">0.75</span>
   <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">p</span><span class="op">)</span>
   <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">p</span><span class="op">)</span>
   <span class="va">p</span>
-<span class="op">}</span></pre></div>
+<span class="op">}</span></code></pre></div>
 <p>We want to be able to apply this function to many inputs, so we might write a vector-input version using a for loop.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit">
-<span class="va">vacc1</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">age</span>, <span class="va">female</span>, <span class="va">ily</span><span class="op">)</span> <span class="op">{</span>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">vacc1</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">age</span>, <span class="va">female</span>, <span class="va">ily</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span>
   <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>
   <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
     <span class="va">out</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">vacc1a</span><span class="op">(</span><span class="va">age</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="va">female</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="va">ily</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>
   <span class="op">}</span>
   <span class="va">out</span>
-<span class="op">}</span></pre></div>
+<span class="op">}</span></code></pre></div>
 <p>If you’re familiar with R, you’ll have a gut feeling that this will be slow, and indeed it is. There are two ways we could attack this problem. If you have a good R vocabulary, you might immediately see how to vectorise the function (using <code><a href="https://rdrr.io/r/base/ifelse.html">ifelse()</a></code>, <code><a href="https://rdrr.io/r/base/Extremes.html">pmin()</a></code>, and <code><a href="https://rdrr.io/r/base/Extremes.html">pmax()</a></code>). Alternatively, we could rewrite <code>vacc1a()</code> and <code>vacc1()</code> in C++, using our knowledge that loops and function calls have much lower overhead in C++.</p>
 <p>Either approach is fairly straightforward. In R:</p>
-<div class="sourceCode" id="cb42"><pre class="downlit">
-<span class="va">vacc2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">age</span>, <span class="va">female</span>, <span class="va">ily</span><span class="op">)</span> <span class="op">{</span>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">vacc2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">age</span>, <span class="va">female</span>, <span class="va">ily</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">p</span> <span class="op">&lt;-</span> <span class="fl">0.25</span> <span class="op">+</span> <span class="fl">0.3</span> <span class="op">*</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="fl">0.04</span> <span class="op">*</span> <span class="va">age</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.1</span> <span class="op">*</span> <span class="va">ily</span>
   <span class="va">p</span> <span class="op">&lt;-</span> <span class="va">p</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">female</span>, <span class="fl">1.25</span>, <span class="fl">0.75</span><span class="op">)</span>
   <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">p</span><span class="op">)</span>
   <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmin</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">p</span><span class="op">)</span>
   <span class="va">p</span>
-<span class="op">}</span></pre></div>
+<span class="op">}</span></code></pre></div>
 <p>(If you’ve worked R a lot you might recognise some potential bottlenecks in this code: <code>ifelse</code>, <code>pmin</code>, and <code>pmax</code> are known to be slow, and could be replaced with <code>p * 0.75 + p * 0.5 * female</code>, <code>p[p &lt; 0] &lt;- 0</code>, <code>p[p &gt; 1] &lt;- 1</code>. You might want to try timing those variations.)</p>
 <p>Or in C++:</p>
 <div class="sourceCode" id="cb43"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb43-1"><a href="#cb43-1"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
@@ -888,18 +888,18 @@ SEXP table_cpp(doubles x) {
 <span id="cb43-22"><a href="#cb43-22"></a>  <span class="cf">return</span> out;</span>
 <span id="cb43-23"><a href="#cb43-23"></a>}</span></code></pre></div>
 <p>We next generate some sample data, and check that all three versions return the same values:</p>
-<div class="sourceCode" id="cb44"><pre class="downlit">
-<span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span>
 <span class="va">age</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">n</span>, mean <span class="op">=</span> <span class="fl">50</span>, sd <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>
 <span class="va">female</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="cn">T</span>, <span class="cn">F</span><span class="op">)</span>, <span class="va">n</span>, rep <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="va">ily</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="cn">T</span>, <span class="cn">F</span><span class="op">)</span>, <span class="va">n</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.8</span>, <span class="fl">0.2</span><span class="op">)</span>, rep <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot</a></span><span class="op">(</span>
   <span class="fu"><a href="https://rdrr.io/r/base/all.equal.html">all.equal</a></span><span class="op">(</span><span class="fu">vacc1</span><span class="op">(</span><span class="va">age</span>, <span class="va">female</span>, <span class="va">ily</span><span class="op">)</span>, <span class="fu">vacc2</span><span class="op">(</span><span class="va">age</span>, <span class="va">female</span>, <span class="va">ily</span><span class="op">)</span><span class="op">)</span>,
   <span class="fu"><a href="https://rdrr.io/r/base/all.equal.html">all.equal</a></span><span class="op">(</span><span class="fu">vacc1</span><span class="op">(</span><span class="va">age</span>, <span class="va">female</span>, <span class="va">ily</span><span class="op">)</span>, <span class="fu">vacc3</span><span class="op">(</span><span class="va">age</span>, <span class="va">female</span>, <span class="va">ily</span><span class="op">)</span><span class="op">)</span>
-<span class="op">)</span></pre></div>
+<span class="op">)</span></code></pre></div>
 <p>The original blog post forgot to do this, and introduced a bug in the C++ version: it used <code>0.004</code> instead of <code>0.04</code>. Finally, we can benchmark our three approaches:</p>
-<div class="sourceCode" id="cb45"><pre class="downlit">
-<span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/mark.html">mark</a></span><span class="op">(</span>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/mark.html">mark</a></span><span class="op">(</span>
   vacc1 <span class="op">=</span> <span class="fu">vacc1</span><span class="op">(</span><span class="va">age</span>, <span class="va">female</span>, <span class="va">ily</span><span class="op">)</span>,
   vacc2 <span class="op">=</span> <span class="fu">vacc2</span><span class="op">(</span><span class="va">age</span>, <span class="va">female</span>, <span class="va">ily</span><span class="op">)</span>,
   vacc3 <span class="op">=</span> <span class="fu">vacc3</span><span class="op">(</span><span class="va">age</span>, <span class="va">female</span>, <span class="va">ily</span><span class="op">)</span>
@@ -907,9 +907,9 @@ SEXP table_cpp(doubles x) {
 <span class="co">#&gt; # A tibble: 3 x 6</span>
 <span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 vacc1        2.58ms   2.72ms      359.    7.86KB    22.7 </span>
-<span class="co">#&gt; 2 vacc2       77.55µs  85.98µs    10872.  148.85KB    18.6 </span>
-<span class="co">#&gt; 3 vacc3        21.4µs  22.53µs    41895.   14.03KB     8.38</span></pre></div>
+<span class="co">#&gt; 1 vacc1        2.64ms    2.8ms      351.    7.86KB    23.4 </span>
+<span class="co">#&gt; 2 vacc2       79.73µs   87.7µs    10322.  148.85KB    18.6 </span>
+<span class="co">#&gt; 3 vacc3        22.2µs   23.2µs    41074.   14.03KB     8.22</span></code></pre></div>
 <p>Not surprisingly, our original approach with loops is very slow. Vectorising in R gives a huge speedup, and we can eke out even more performance (about ten times) with the C++ loop. I was a little surprised that the C++ was so much faster, but it is because the R version has to create 11 vectors to store intermediate results, where the C++ code only needs to create 1.</p>
 </div>
 </div>
