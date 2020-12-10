@@ -1,5 +1,6 @@
 # cpp11 (development version)
 
+* Errors when running `tools::package_native_routine_registration_skeleton()` are no longer swallowed (#134)
 * `cpp_source()` can now accept a source file called `cpp11.cpp` (#133)
 * Writable vector classes now properly set their lengths as intended when being copied to a read only class (#128).
 * `cpp11::named_arg` now explicitly protect their values, avoiding protection issues when using large inputs. [tidyverse/readr#1145](https://github.com/tidyverse/readr/issues/1145)

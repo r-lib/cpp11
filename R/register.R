@@ -241,13 +241,10 @@ wrap_call <- function(name, return_type, args) {
 get_call_entries <- function(path) {
   con <- textConnection("res", local = TRUE, open = "w")
 
-  try(
-    tools::package_native_routine_registration_skeleton(path,
-      con,
-      character_only = FALSE,
-      include_declarations = TRUE
-    ),
-    silent = TRUE
+  tools::package_native_routine_registration_skeleton(path,
+    con,
+    character_only = FALSE,
+    include_declarations = TRUE
   )
 
   close(con)
