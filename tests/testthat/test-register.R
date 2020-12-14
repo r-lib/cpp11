@@ -35,7 +35,7 @@ describe("get_call_entries", {
     expect_equal(get_call_entries(pkg_path(pkg)), "")
   })
 
-  it("returns an empty string for packages without NAMESPACE files", {
+  it("Errors for invalid packages", {
     # local_package adds a NAMESPACE file
     pkg <- tempfile()
     dir.create(pkg)
@@ -44,7 +44,7 @@ describe("get_call_entries", {
     writeLines("Package: testPkg", file.path(pkg, "DESCRIPTION"))
     dir.create(file.path(pkg, "R"))
     writeLines('foo <- function() .Call("bar")', file.path(pkg, "R", "foo.R"))
-    expect_equal(get_call_entries(pkg), "")
+    expect_error(get_call_entries(pkg), "has no 'NAMESPACE' file")
   })
 
   it("returns an empty string for packages with .Call entries and NAMESPACE files", {
