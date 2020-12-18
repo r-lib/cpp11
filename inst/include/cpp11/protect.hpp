@@ -188,22 +188,22 @@ inline void check_user_interrupt() { safe[R_CheckUserInterrupt](); }
 
 template <typename... Args>
 void stop [[noreturn]] (const char* fmt, Args... args) {
-  safe.noreturn(Rf_error)(fmt, args...);
+  safe.noreturn(Rf_errorcall)(R_NilValue, fmt, args...);
 }
 
 template <typename... Args>
 void stop [[noreturn]] (const std::string& fmt, Args... args) {
-  safe.noreturn(Rf_error)(fmt.c_str(), args...);
+  safe.noreturn(Rf_errorcall)(R_NilValue, fmt.c_str(), args...);
 }
 
 template <typename... Args>
 void warning(const char* fmt, Args... args) {
-  safe[Rf_warning](fmt, args...);
+  safe[Rf_warningcall](R_NilValue, fmt, args...);
 }
 
 template <typename... Args>
 void warning(const std::string& fmt, Args... args) {
-  safe[Rf_warning](fmt.c_str(), args...);
+  safe[Rf_warningcall](R_NilValue, fmt.c_str(), args...);
 }
 
 /// A doubly-linked list of preserved objects, allowing O(1) insertion/release of

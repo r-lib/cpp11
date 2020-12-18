@@ -44,7 +44,7 @@ T& unmove(T&& t) {
     strncpy(buf, "C++ error (unknown cause)", ERROR_SIZE - 1); \
   }                                                            \
   if (buf[0] != '\0') {                                        \
-    Rf_error("%s", buf);                                       \
+    Rf_errorcall(R_NilValue, "%s", buf);                       \
   } else if (err != R_NilValue) {                              \
     CPP11_UNWIND                                               \
   }                                                            \
