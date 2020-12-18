@@ -132,7 +132,7 @@ generate_cpp_path <- function(dir) {
     cpp_path <- sprintf("%s/cpp11-%i.cpp", dirname(cpp_path), count)
     count <- count + 1
   }
-  cpp_path
+  normalizePath(cpp_path, mustWork = FALSE)
 }
 
 generate_include_paths <- function(packages) {

@@ -65,7 +65,7 @@ test_that("generate_cpp_path works", {
 
   expect_equal(
     generate_cpp_path(d),
-    file.path(d, "src", "cpp11.cpp")
+    normalizePath(file.path(d, "src", "cpp11.cpp"), mustWork = FALSE)
   )
 
   dir.create(file.path(d, "src"))
@@ -73,13 +73,13 @@ test_that("generate_cpp_path works", {
 
   expect_equal(
     generate_cpp_path(d),
-    file.path(d, "src", "cpp11-2.cpp")
+    normalizePath(file.path(d, "src", "cpp11-2.cpp"), mustWork = FALSE)
   )
 
   file.create(file.path(d, "src", "cpp11-2.cpp"))
 
   expect_equal(
     generate_cpp_path(d),
-    file.path(d, "src", "cpp11-3.cpp")
+    normalizePath(file.path(d, "src", "cpp11-3.cpp"), mustWork = FALSE)
   )
 })
