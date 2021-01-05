@@ -22,6 +22,16 @@
   return Rf_ScalarReal(sum);
 }
 
+[[cpp11::register]] SEXP rcpp_sum_int_for_(SEXP x_sxp) {
+  Rcpp::IntegerVector x(x_sxp);
+  R_xlen_t n = x.size();
+  double sum = 0.;
+  for (R_xlen_t i = 0; i < n; ++i) {
+    sum += x[i];
+  }
+  return Rf_ScalarReal(sum);
+}
+
 [[cpp11::register]] SEXP rcpp_sum_dbl_foreach_(SEXP x_sxp) {
   Rcpp::NumericVector x(x_sxp);
   double sum = 0.;

@@ -112,8 +112,24 @@ sum_int_for_ <- function(x) {
   .Call("_cpp11test_sum_int_for_", x, PACKAGE = "cpp11test")
 }
 
+sum_int_for2_ <- function(x_) {
+  .Call("_cpp11test_sum_int_for2_", x_, PACKAGE = "cpp11test")
+}
+
+sum_int_foreach_ <- function(x) {
+  .Call("_cpp11test_sum_int_foreach_", x, PACKAGE = "cpp11test")
+}
+
+sum_int_accumulate_ <- function(x) {
+  .Call("_cpp11test_sum_int_accumulate_", x, PACKAGE = "cpp11test")
+}
+
 rcpp_sum_dbl_for_ <- function(x_sxp) {
   .Call("_cpp11test_rcpp_sum_dbl_for_", x_sxp, PACKAGE = "cpp11test")
+}
+
+rcpp_sum_int_for_ <- function(x_sxp) {
+  .Call("_cpp11test_rcpp_sum_int_for_", x_sxp, PACKAGE = "cpp11test")
 }
 
 rcpp_sum_dbl_foreach_ <- function(x_sxp) {
