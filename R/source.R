@@ -72,18 +72,19 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   dir.create(file.path(dir, "src"))
 
   if (!is.null(code)) {
-    file <- file.path(dir, "src", sprintf("code_%s.cpp", the$count))
+    file <- tempfile(pattern = "code_", fileext = ".cpp")
+    on.exit(unlink(file))
     brio::write_lines(code, file)
-    the$count <- the$count + 1L
-  } else {
-    if (!any(tools::file_ext(file) %in% c("cpp", "cc"))) {
-      stop("`file` must have a `.cpp` or `.cc` extension")
-    }
-    file.copy(file, file.path(dir, "src", basename(file)))
-    file <- file.path(dir, "src", basename(file))
+  }
+  if (!any(tools::file_ext(file) %in% c("cpp", "cc"))) {
+    stop("`file` must have a `.cpp` or `.cc` extension")
   }
 
-  package <- tools::file_path_sans_ext(basename(file))
+  new_file <- generate_cpp_name(file)
+  package <- tools::file_path_sans_ext(new_file)
+
+  file.copy(file, file.path(dir, "src", new_file))
+  file <- file.path(dir, "src", new_file)
 
   suppressWarnings(
     all_decorations <- decor::cpp_decorations(dir, is_attribute = TRUE)
@@ -93,7 +94,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   )
   cpp_functions_definitions <- generate_cpp_functions(funs, package = package)
 
-  cpp_path <- generate_cpp_path(dir)
+  cpp_path <- file.path(dirname(file), "cpp11.cpp")
   brio::write_lines(c('#include "cpp11/declarations.hpp"', "using namespace cpp11;", cpp_functions_definitions), cpp_path)
 
   linking_to <- union(get_linking_to(all_decorations), "cpp11")
@@ -101,7 +102,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   includes <- generate_include_paths(linking_to)
 
   if (isTRUE(clean)) {
-    on.exit(unlink(dir, recursive = TRUE))
+    on.exit(unlink(dir, recursive = TRUE), add = TRUE)
   }
 
   r_functions <- generate_r_functions(funs, package = package, use_package = TRUE)
@@ -125,14 +126,16 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
 the <- new.env(parent = emptyenv())
 the$count <- 0L
 
-generate_cpp_path <- function(dir) {
-  cpp_path <- file.path(dir, "src", "cpp11.cpp")
+generate_cpp_name <- function(name, loaded_dlls = c("cpp11", names(getLoadedDLLs()))) {
+  ext <- tools::file_ext(name)
+  root <- tools::file_path_sans_ext(basename(name))
   count <- 2
-  while(file.exists(cpp_path)) {
-    cpp_path <- sprintf("%s/cpp11-%i.cpp", dirname(cpp_path), count)
+  new_name <- root
+  while(new_name %in% loaded_dlls) {
+    new_name <- sprintf("%s_%i", root, count)
     count <- count + 1
   }
-  normalizePath(cpp_path, mustWork = FALSE)
+  sprintf("%s.%s", new_name, ext)
 }
 
 generate_include_paths <- function(packages) {

@@ -1,5 +1,6 @@
 # cpp11 (development version)
 
+* `cpp_source()` now uses a unique name for the DLL, so works when run multiple times on the same source file on Windows (#143)
 * Errors when running `tools::package_native_routine_registration_skeleton()` are no longer swallowed (#134)
 * `cpp_source()` can now accept a source file called `cpp11.cpp` (#133)
 * Writable vector classes now properly set their lengths as intended when being copied to a read only class (#128).

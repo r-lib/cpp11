@@ -37,6 +37,23 @@ test_that("cpp_source works with the `file` parameter", {
   expect_true(always_true())
 })
 
+test_that("cpp_source works with files called `cpp11.cpp`", {
+  skip_on_os("solaris")
+  tf <- file.path(tempdir(), "cpp11.cpp")
+  writeLines(
+    "[[cpp11::register]]
+    bool always_true() {
+      return true;
+    }
+    ", tf)
+  on.exit(unlink(tf))
+
+  dll_info <- cpp_source(tf, clean = TRUE, quiet = TRUE)
+  on.exit(dyn.unload(dll_info[["path"]]), add = TRUE)
+
+  expect_true(always_true())
+})
+
 test_that("cpp_source lets you set the C++ standard", {
   skip_on_os("solaris")
   skip_on_os("windows") # Older windows toolchains do not support C++14
@@ -58,28 +75,19 @@ test_that("cpp_source lets you set the C++ standard", {
   expect_equal(fun(), "hello_world")
 })
 
-test_that("generate_cpp_path works", {
-  d <- tempfile()
-  dir.create(d)
-  on.exit(unlink(d, recursive = TRUE))
-
+test_that("generate_cpp_name works", {
   expect_equal(
-    generate_cpp_path(d),
-    normalizePath(file.path(d, "src", "cpp11.cpp"), mustWork = FALSE)
+    generate_cpp_name("foo.cpp"),
+    "foo.cpp"
   )
 
-  dir.create(file.path(d, "src"))
-  file.create(file.path(d, "src", "cpp11.cpp"))
-
   expect_equal(
-    generate_cpp_path(d),
-    normalizePath(file.path(d, "src", "cpp11-2.cpp"), mustWork = FALSE)
+    generate_cpp_name("foo.cpp", loaded_dlls = "foo"),
+    "foo_2.cpp"
   )
 
-  file.create(file.path(d, "src", "cpp11-2.cpp"))
-
-  expect_equal(
-    generate_cpp_path(d),
-    normalizePath(file.path(d, "src", "cpp11-3.cpp"), mustWork = FALSE)
+expect_equal(
+  generate_cpp_name("foo.cpp", loaded_dlls = c("foo", "foo_2")),
+  "foo_3.cpp"
   )
 })
