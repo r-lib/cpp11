@@ -141,7 +141,7 @@
 <span class="va">add</span>
 <span class="co">#&gt; function (x, y, z) </span>
 <span class="co">#&gt; {</span>
-<span class="co">#&gt;     .Call("_code_0_add", x, y, z, PACKAGE = "code_0")</span>
+<span class="co">#&gt;     .Call("_code_a7c563b74a2_add", x, y, z, PACKAGE = "code_a7c563b74a2")</span>
 <span class="co">#&gt; }</span>
 <span class="fu">add</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>
 <span class="co">#&gt; [1] 6</span></code></pre></div>
@@ -247,9 +247,9 @@
 <span class="co">#&gt; # A tibble: 3 x 6</span>
 <span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 sum(x)       1.35µs   1.56µs   626149.        0B        0</span>
-<span class="co">#&gt; 2 sum_cpp(x)   5.46µs   6.12µs   147547.        0B        0</span>
-<span class="co">#&gt; 3 sum_r(x)    30.48µs  32.69µs    29049.    3.96MB        0</span></code></pre></div>
+<span class="co">#&gt; 1 sum(x)       1.45µs   1.62µs   604245.        0B        0</span>
+<span class="co">#&gt; 2 sum_cpp(x)    5.8µs   6.41µs   150311.        0B        0</span>
+<span class="co">#&gt; 3 sum_r(x)    32.42µs  33.38µs    29500.    3.96MB        0</span></code></pre></div>
 </div>
 <div id="vector-input-vector-output" class="section level3">
 <h3 class="hasAnchor">
@@ -286,8 +286,8 @@
 <span class="co">#&gt; # A tibble: 2 x 6</span>
 <span class="co">#&gt;   expression             min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt;        &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 pdist_r(0.5, y)     6.38ms   6.77ms      143.    7.63MB     73.2</span>
-<span class="co">#&gt; 2 pdist_cpp(0.5, y)   3.77ms   4.09ms      230.    7.63MB    127.</span></code></pre></div>
+<span class="co">#&gt; 1 pdist_r(0.5, y)     6.44ms   6.82ms      142.    7.63MB     72.8</span>
+<span class="co">#&gt; 2 pdist_cpp(0.5, y)   3.91ms   4.28ms      223.    7.63MB    123.</span></code></pre></div>
 <p>On my computer, it takes around 5 ms with a 1 million element <code>y</code> vector. The C++ function is about 2.5 times faster, ~2 ms, but assuming it took you 10 minutes to write the C++ function, you’d need to run it ~200,000 times to make rewriting worthwhile. The reason why the C++ function is faster is subtle, and relates to memory management. The R version needs to create an intermediate vector the same length as y (<code>x - ys</code>), and allocating memory is an expensive operation. The C++ function avoids this overhead because it uses an intermediate scalar.</p>
 </div>
 <div id="cpp-source" class="section level3">
@@ -825,8 +825,8 @@ SEXP table_cpp(doubles x) {
 <span class="co">#&gt; # A tibble: 2 x 6</span>
 <span class="co">#&gt;   expression   min median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 r           35.6   36.9       1       1314.      Inf</span>
-<span class="co">#&gt; 2 cpp          1      1        40.4        1       NaN</span></code></pre></div>
+<span class="co">#&gt; 1 r           36.9   37.7       1       1314.     11.4</span>
+<span class="co">#&gt; 2 cpp          1      1        40.7        1       1</span></code></pre></div>
 </div>
 <div id="r-vectorisation-versus-c-vectorisation" class="section level3">
 <h3 class="hasAnchor">
@@ -906,9 +906,9 @@ SEXP table_cpp(doubles x) {
 <span class="co">#&gt; # A tibble: 3 x 6</span>
 <span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 vacc1        2.46ms   2.69ms      355.    7.86KB    22.9 </span>
-<span class="co">#&gt; 2 vacc2       77.69µs  85.32µs    10811.  148.85KB    18.5 </span>
-<span class="co">#&gt; 3 vacc3       21.22µs  22.49µs    43120.   14.03KB     8.63</span></code></pre></div>
+<span class="co">#&gt; 1 vacc1        2.48ms   2.72ms      366.    7.86KB    22.6 </span>
+<span class="co">#&gt; 2 vacc2       72.87µs  83.98µs    11287.  148.85KB    20.7 </span>
+<span class="co">#&gt; 3 vacc3       20.84µs  22.89µs    43071.   14.03KB     8.62</span></code></pre></div>
 <p>Not surprisingly, our original approach with loops is very slow. Vectorising in R gives a huge speedup, and we can eke out even more performance (about ten times) with the C++ loop. I was a little surprised that the C++ was so much faster, but it is because the R version has to create 11 vectors to store intermediate results, where the C++ code only needs to create 1.</p>
 </div>
 </div>
