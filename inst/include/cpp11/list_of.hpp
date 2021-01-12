@@ -30,20 +30,40 @@ class list_of : public writable::list {
   list_of(const list& data) : writable::list(data) {}
   list_of(R_xlen_t n) : writable::list(n) {}
 
+  class proxy {
+   private:
+    writable::list::proxy data_;
+
+   public:
+    proxy(const writable::list::proxy& data) : data_(data) {}
+
+    operator T() const { return static_cast<SEXP>(*this); }
+    operator SEXP() const { return static_cast<SEXP>(data_); }
 #ifdef LONG_VECTOR_SUPPORT
-  T operator[](int pos) { return operator[](static_cast<R_xlen_t>(pos)); }
+    typename T::proxy operator[](int pos) { return static_cast<T>(data_)[pos]; }
+#endif
+    typename T::proxy operator[](R_xlen_t pos) { return static_cast<T>(data_)[pos]; }
+    proxy operator[](const char* pos) { static_cast<T>(data_)[pos]; }
+    proxy operator[](const std::string& pos) { return static_cast<T>(data_)[pos]; }
+    proxy& operator=(const T& rhs) {
+      data_ = rhs;
+
+      return *this;
+    }
+  };
+
+#ifdef LONG_VECTOR_SUPPORT
+  proxy operator[](int pos) {
+    return {writable::list::operator[](static_cast<R_xlen_t>(pos))};
+  }
 #endif
 
-  T operator[](R_xlen_t pos) {
-    return static_cast<SEXP>(writable::list::operator[](pos));
-  }
+  proxy operator[](R_xlen_t pos) { return writable::list::operator[](pos); }
 
-  T operator[](const char* pos) {
-    return static_cast<SEXP>(writable::list::operator[](pos));
-  }
+  proxy operator[](const char* pos) { return {writable::list::operator[](pos)}; }
 
-  T operator[](const std::string& pos) {
-    return static_cast<SEXP>(writable::list::operator[](pos.c_str()));
+  proxy operator[](const std::string& pos) {
+    return writable::list::operator[](pos.c_str());
   }
 };
 }  // namespace writable

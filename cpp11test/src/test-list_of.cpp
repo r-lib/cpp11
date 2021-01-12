@@ -36,5 +36,14 @@ context("list_of-C++") {
     res[0][0] = 2.;
 
     expect_true(REAL(VECTOR_ELT(res, 0))[0] == 2.);
+
+    res[1] = cpp11::writable::doubles({7., 8., 9.});
+
+    expect_true(REAL(res[1])[0] == 7.);
+    expect_true(REAL(res[1])[1] == 8.);
+    expect_true(REAL(res[1])[2] == 9.);
+
+    res["x"][0] = 4;
+    expect_true(REAL(res[0])[0] == 4.);
   }
 }

@@ -1,5 +1,6 @@
 # cpp11 (development version)
 
+* `writable::list_of<T>` now supports modification of vectors as intended (#131).
 * `cpp_source()` now has much more informative error messages when compilation fails (#139)
 * `cpp_source()` now uses a unique name for the DLL, so works when run multiple times on the same source file on Windows (#143)
 * The cpp11 knitr engine now allows you to set the `cxx_std` chunk option to control the C++ standard used.
