@@ -30,7 +30,7 @@ class r_bool {
 
   operator bool() const { return value_ == TRUE; }
   operator int() const { return value_; }
-  operator Rboolean() const { return value_; }
+  operator Rboolean() const { return value_ ? TRUE : FALSE; }
 
   bool operator==(r_bool rhs) const { return value_ == rhs.value_; }
   bool operator==(bool rhs) const { return operator==(r_bool(rhs)); }
@@ -38,15 +38,15 @@ class r_bool {
   bool operator==(int rhs) const { return operator==(r_bool(rhs)); }
 
  private:
-  static constexpr Rboolean na = static_cast<Rboolean>(std::numeric_limits<int>::min());
+  static constexpr int na = std::numeric_limits<int>::min();
 
-  static Rboolean from_int(int value) {
+  static int from_int(int value) {
     if (value == static_cast<int>(FALSE)) return FALSE;
     if (value == static_cast<int>(na)) return na;
     return TRUE;
   }
 
-  Rboolean value_ = na;
+  int value_ = na;
 };
 
 inline bool is_na(r_bool x) { return x == r_bool(); }
@@ -57,7 +57,7 @@ using enable_if_r_bool = enable_if_t<std::is_same<T, r_bool>::value, R>;
 template <typename T>
 enable_if_r_bool<T, SEXP> as_sexp(T from) {
   sexp res = Rf_allocVector(LGLSXP, 1);
-  unwind_protect([&] { SET_LOGICAL_ELT(res.data(), 0, static_cast<Rboolean>(from)); });
+  unwind_protect([&] { SET_LOGICAL_ELT(res.data(), 0, from); });
   return res;
 }
 
