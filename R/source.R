@@ -112,7 +112,11 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   brio::write_lines(makevars_content, file.path(dir, "src", "Makevars"))
 
   source_files <- normalizePath(c(file, cpp_path), winslash = "/")
-  callr::rcmd("SHLIB", source_files, user_profile = TRUE, show = !quiet, wd = file.path(dir, "src"), fail_on_status = TRUE)
+  res <- callr::rcmd("SHLIB", source_files, user_profile = TRUE, show = !quiet, wd = file.path(dir, "src"))
+  if (res$status != 0) {
+    cat(res$stderr)
+    stop("Compilation failed.", call. = FALSE)
+  }
 
   shared_lib <- file.path(dir, "src", paste0(tools::file_path_sans_ext(basename(file)), .Platform$dynlib.ext))
 
