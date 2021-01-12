@@ -1,17 +1,16 @@
 # cpp11 (development version)
 
-* `writable::list_of<T>` now supports modification of vectors as intended (#131).
-* `cpp_source()` now has much more informative error messages when compilation fails (#139)
-* `cpp_source()` now uses a unique name for the DLL, so works when run multiple times on the same source file on Windows (#143)
-* The cpp11 knitr engine now allows you to set the `cxx_std` chunk option to control the C++ standard used.
-* Errors when running `tools::package_native_routine_registration_skeleton()` are no longer swallowed (#134)
-* `cpp_source()` can now accept a source file called `cpp11.cpp` (#133)
-* Writable vector classes now properly set their lengths as intended when being copied to a read only class (#128).
-* `cpp11::named_arg` now explicitly protect their values, avoiding protection issues when using large inputs. [tidyverse/readr#1145](https://github.com/tidyverse/readr/issues/1145)
-* `cpp_source()` now throws an error if the code fails to compile, as intended (#125).
-* `cpp11::r_string(std::string)` now uses `Rf_mkCharLenCE()` instead of `Rf_mkChar()`, which avoids the performance cost of checking the string length.
 * `cpp_source()` gains a `cxx_std` argument to control which C++ standard is used.
   This allows you to use code from `C++14` and later standards with cpp_source(). (#100)
+* The cpp11 knitr engine now allows you to set the `cxx_std` chunk option to control the C++ standard used.
+* `cpp_source()` now has much more informative error messages when compilation fails (#125, #139)
+* `cpp_source()` now uses a unique name for the DLL, so works when run multiple times on the same source file on Windows (#143)
+* `writable::list_of<T>` now supports modification of vectors as intended (#131).
+* Errors when running `tools::package_native_routine_registration_skeleton()` are no longer swallowed (#134)
+* `cpp_source()` can now accept a source file called `cpp11.cpp` (#133)
+* `named_arg` now explicitly protect their values, avoiding protection issues when using large inputs. [tidyverse/readr#1145](https://github.com/tidyverse/readr/issues/1145)
+* `r_string(std::string)` now uses `Rf_mkCharLenCE()` instead of `Rf_mkChar()`, which avoids the performance cost of checking the string length.
+* Writable vector classes now properly set their lengths as intended when being copied to a read only class (#128).
 
 # cpp11 0.2.4
 
