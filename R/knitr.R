@@ -4,7 +4,8 @@ eng_cpp11 <- function(options) {
       code = options$code,
       env = knitr::knit_global(),
       clean = options$clean %||% TRUE,
-      quiet = options$quiet %||% FALSE
+      quiet = options$quiet %||% FALSE,
+      cxx_std = options$cxx_std %||% Sys.getenv("CXX_STD", "CXX11")
     )
   }
 
