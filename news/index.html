@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.5</span>
       </span>
     </div>
 
@@ -99,7 +99,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/r-lib/cpp11/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -120,9 +120,34 @@
       <small>Source: <a href='https://github.com/r-lib/cpp11/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="cpp11-025" class="section level1">
+<h1 class="page-header" data-toc-text="0.2.5">
+<a href="#cpp11-025" class="anchor"></a>cpp11 0.2.5<small> Unreleased </small>
+</h1>
+<ul>
+<li>
+<code><a href="../reference/cpp_source.html">cpp_source()</a></code> gains a <code>cxx_std</code> argument to control which C++ standard is used. This allows you to use code from <code>C++14</code> and later standards with cpp_source(). (<a href='https://github.com/r-lib/cpp11/issues/100'>#100</a>)</li>
+<li>The cpp11 knitr engine now allows you to set the <code>cxx_std</code> chunk option to control the C++ standard used.</li>
+<li>
+<code><a href="../reference/cpp_source.html">cpp_source()</a></code> now has much more informative error messages when compilation fails (<a href='https://github.com/r-lib/cpp11/issues/125'>#125</a>, <a href='https://github.com/r-lib/cpp11/issues/139'>#139</a>)</li>
+<li>
+<code><a href="../reference/cpp_source.html">cpp_source()</a></code> now uses a unique name for the DLL, so works when run multiple times on the same source file on Windows (<a href='https://github.com/r-lib/cpp11/issues/143'>#143</a>)</li>
+<li>
+<code>writable::list_of&lt;T&gt;</code> now supports modification of vectors as intended (<a href='https://github.com/r-lib/cpp11/issues/131'>#131</a>).</li>
+<li>Errors when running <code><a href="https://rdrr.io/r/tools/package_native_routine_registration_skeleton.html">tools::package_native_routine_registration_skeleton()</a></code> are no longer swallowed (<a href='https://github.com/r-lib/cpp11/issues/134'>#134</a>)</li>
+<li>
+<code><a href="../reference/cpp_source.html">cpp_source()</a></code> can now accept a source file called <code>cpp11.cpp</code> (<a href='https://github.com/r-lib/cpp11/issues/133'>#133</a>)</li>
+<li>
+<code>named_arg</code> now explicitly protect their values, avoiding protection issues when using large inputs. <a href="https://github.com/tidyverse/readr/issues/1145">tidyverse/readr<a href='https://github.com/r-lib/cpp11/issues/1145'>#1145</a></a>
+</li>
+<li>
+<code>r_string(std::string)</code> now uses <code>Rf_mkCharLenCE()</code> instead of <code>Rf_mkChar()</code>, which avoids the performance cost of checking the string length.</li>
+<li>Writable vector classes now properly set their lengths as intended when being copied to a read only class (<a href='https://github.com/r-lib/cpp11/issues/128'>#128</a>).</li>
+</ul>
+</div>
     <div id="cpp11-024" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.4">
-<a href="#cpp11-024" class="anchor"></a>cpp11 0.2.4<small> Unreleased </small>
+<a href="#cpp11-024" class="anchor"></a>cpp11 0.2.4<small> 2020-11-05 </small>
 </h1>
 <ul>
 <li>The preserve list is now more robust to invalid values, such as when the XPtr has no address or if non-xptr’s are stored in the option. This fixes errors when reloading packages using cpp11 and RStudio’s session restores.</li>
