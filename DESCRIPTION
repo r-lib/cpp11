@@ -1,6 +1,6 @@
 Package: cpp11
 Title: A C++11 Interface for R's C Interface
-Version: 0.2.4.9000
+Version: 0.2.5
 Authors@R: 
     c(person(given = "Jim",
              family = "Hester",
