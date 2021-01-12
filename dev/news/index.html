@@ -127,6 +127,7 @@
 <ul>
 <li>
 <code><a href="../reference/cpp_source.html">cpp_source()</a></code> now uses a unique name for the DLL, so works when run multiple times on the same source file on Windows (<a href='https://github.com/r-lib/cpp11/issues/143'>#143</a>)</li>
+<li>The cpp11 knitr engine now allows you to set the <code>cxx_std</code> chunk option to control the C++ standard used.</li>
 <li>Errors when running <code><a href="https://rdrr.io/r/tools/package_native_routine_registration_skeleton.html">tools::package_native_routine_registration_skeleton()</a></code> are no longer swallowed (<a href='https://github.com/r-lib/cpp11/issues/134'>#134</a>)</li>
 <li>
 <code><a href="../reference/cpp_source.html">cpp_source()</a></code> can now accept a source file called <code>cpp11.cpp</code> (<a href='https://github.com/r-lib/cpp11/issues/133'>#133</a>)</li>
