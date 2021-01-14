@@ -1099,11 +1099,19 @@ There are several benefits of moving code from a stand-alone C++ source file to 
 
 1. Packages provide additional infrastructure for testing, documentation, and consistency.
 
-To add `cpp11` to an existing package, you put your C++ files in the `src/` directory and add the following to your `DESCRIPTION` file.
+To add `cpp11` to an existing package, you put your C++ files in the `src/` directory, add the following to your `DESCRIPTION` file:
 
     ```
     LinkingTo: cpp11
     ```
+
+and the following to your `R/<mypakage>` file:
+
+    ```
+    useDynLib <mypackage>, .registration = TRUE
+    ```
+
+You'll then need to run [`devtools::document()`](https://devtools.r-lib.org/reference/document.html) to update your `NAMESPACE` file to include the `useDynLib` statement.
 
 The easiest way to set this up automatically is to call `usethis::use_cpp11()`.
 
