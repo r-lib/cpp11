@@ -140,7 +140,7 @@
 <span class="va">add</span>
 <span class="co">#&gt; function (x, y, z) </span>
 <span class="co">#&gt; {</span>
-<span class="co">#&gt;     .Call("_code_d014f43e671_add", x, y, z, PACKAGE = "code_d014f43e671")</span>
+<span class="co">#&gt;     .Call("_code_cc01d92f77b_add", x, y, z, PACKAGE = "code_cc01d92f77b")</span>
 <span class="co">#&gt; }</span>
 <span class="fu">add</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>
 <span class="co">#&gt; [1] 6</span></code></pre></div>
@@ -246,9 +246,9 @@
 <span class="co">#&gt; # A tibble: 3 x 6</span>
 <span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 sum(x)       1.38µs   1.54µs   625396.        0B        0</span>
-<span class="co">#&gt; 2 sum_cpp(x)   6.01µs   6.75µs   139651.        0B        0</span>
-<span class="co">#&gt; 3 sum_r(x)    31.88µs   33.3µs    29603.    3.96MB        0</span></code></pre></div>
+<span class="co">#&gt; 1 sum(x)       1.45µs    1.6µs   614139.        0B        0</span>
+<span class="co">#&gt; 2 sum_cpp(x)   5.65µs    6.2µs   153402.        0B        0</span>
+<span class="co">#&gt; 3 sum_r(x)    31.82µs     33µs    29995.    3.96MB        0</span></code></pre></div>
 </div>
 <div id="vector-input-vector-output" class="section level3">
 <h3 class="hasAnchor">
@@ -285,8 +285,8 @@
 <span class="co">#&gt; # A tibble: 2 x 6</span>
 <span class="co">#&gt;   expression             min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt;        &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 pdist_r(0.5, y)     6.94ms   7.28ms      133.    7.63MB     68.2</span>
-<span class="co">#&gt; 2 pdist_cpp(0.5, y)   3.96ms   4.28ms      220.    7.63MB    132.</span></code></pre></div>
+<span class="co">#&gt; 1 pdist_r(0.5, y)     6.46ms   6.88ms      141.    7.63MB     72.1</span>
+<span class="co">#&gt; 2 pdist_cpp(0.5, y)   3.87ms   4.19ms      227.    7.63MB    125.</span></code></pre></div>
 <p>On my computer, it takes around 5 ms with a 1 million element <code>y</code> vector. The C++ function is about 2.5 times faster, ~2 ms, but assuming it took you 10 minutes to write the C++ function, you’d need to run it ~200,000 times to make rewriting worthwhile. The reason why the C++ function is faster is subtle, and relates to memory management. The R version needs to create an intermediate vector the same length as y (<code>x - ys</code>), and allocating memory is an expensive operation. The C++ function avoids this overhead because it uses an intermediate scalar.</p>
 </div>
 <div id="cpp-source" class="section level3">
@@ -824,8 +824,8 @@ SEXP table_cpp(doubles x) {
 <span class="co">#&gt; # A tibble: 2 x 6</span>
 <span class="co">#&gt;   expression   min median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 r           36.1   36.8       1       1314.      Inf</span>
-<span class="co">#&gt; 2 cpp          1      1        39.2        1       NaN</span></code></pre></div>
+<span class="co">#&gt; 1 r           34.3   35.0       1       1314.      Inf</span>
+<span class="co">#&gt; 2 cpp          1      1        38.0        1       NaN</span></code></pre></div>
 </div>
 <div id="r-vectorisation-versus-c-vectorisation" class="section level3">
 <h3 class="hasAnchor">
@@ -905,9 +905,9 @@ SEXP table_cpp(doubles x) {
 <span class="co">#&gt; # A tibble: 3 x 6</span>
 <span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span>
 <span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 vacc1        2.64ms    2.8ms      354.    7.86KB    23.3 </span>
-<span class="co">#&gt; 2 vacc2       80.48µs     88µs    10676.  148.85KB    20.4 </span>
-<span class="co">#&gt; 3 vacc3       21.99µs   23.4µs    41968.   14.03KB     4.20</span></code></pre></div>
+<span class="co">#&gt; 1 vacc1        2.56ms   2.72ms      364.    7.86KB    22.8 </span>
+<span class="co">#&gt; 2 vacc2       76.94µs  85.16µs    10942.  148.85KB    20.8 </span>
+<span class="co">#&gt; 3 vacc3       21.33µs  22.64µs    43593.   14.03KB     4.36</span></code></pre></div>
 <p>Not surprisingly, our original approach with loops is very slow. Vectorising in R gives a huge speedup, and we can eke out even more performance (about ten times) with the C++ loop. I was a little surprised that the C++ was so much faster, but it is because the R version has to create 11 vectors to store intermediate results, where the C++ code only needs to create 1.</p>
 </div>
 </div>
@@ -920,16 +920,17 @@ SEXP table_cpp(doubles x) {
 <li><p>Multiple source files and their dependencies are handled automatically by the R package build system.</p></li>
 <li><p>Packages provide additional infrastructure for testing, documentation, and consistency.</p></li>
 </ol>
-<p>To add <code>cpp11</code> to an existing package, you put your C++ files in the <code>src/</code> directory, add the following to your <code>DESCRIPTION</code> file:</p>
+<p>To add <code>cpp11</code> to an existing package first put your C++ files in the <code>src/</code> directory of your package. Then add the following to your <code>DESCRIPTION</code> file:</p>
 <pre><code>```
 LinkingTo: cpp11
+SystemRequirements: C++11
 ```</code></pre>
-<p>and the following to your <code>R/&lt;mypakage&gt;</code> file:</p>
+<p>and add the following <a href="https://roxygen2.r-lib.org/">roxygen</a> directive somewhere in your package’s R files. (A common location is <code>R/pkgname-package.R</code>)</p>
 <pre><code>```
-useDynLib &lt;mypackage&gt;, .registration = TRUE
+#' @useDynLib pkgname, .registration = TRUE
 ```</code></pre>
 <p>You’ll then need to run <a href="https://devtools.r-lib.org/reference/document.html"><code>devtools::document()</code></a> to update your <code>NAMESPACE</code> file to include the <code>useDynLib</code> statement.</p>
-<p>The easiest way to set this up automatically is to call <code>usethis::use_cpp11()</code>.</p>
+<p>The easiest way to set this up is to call <code>usethis::use_cpp11()</code>, which will do the above steps for your automatically.</p>
 <p>Before building the package, you’ll need to run <code><a href="../reference/cpp_register.html">cpp11::cpp_register()</a></code>. This function scans the C++ files for <code>[[cpp11::register]]</code> attributes and generates the binding code required to make the functions available in R. Re-run <code><a href="../reference/cpp_register.html">cpp11::cpp_register()</a></code> whenever functions are added, removed, or have their signatures changed. If you are using <code>devtools</code> to develop your package this is done automatically by the pkgbuild package when your package has <code>LinkingTo: cpp11</code> in its DESCRIPTION file.</p>
 </div>
 <div id="more" class="section level2">
