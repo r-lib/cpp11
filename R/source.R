@@ -72,8 +72,11 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   dir.create(file.path(dir, "src"))
 
   if (!is.null(code)) {
-    file <- tempfile(pattern = "code_", fileext = ".cpp")
-    on.exit(unlink(file))
+    tf <- tempfile(pattern = "code_", fileext = ".cpp")
+    file <- tf
+    if (isTRUE(clean)) {
+      on.exit(unlink(tf))
+    }
     brio::write_lines(code, file)
   }
   if (!any(tools::file_ext(file) %in% c("cpp", "cc"))) {

@@ -54,7 +54,7 @@ cpp_register <- function(path = ".", quiet = FALSE) {
 
   init <- generate_init_functions(get_registered_functions(all_decorations, "cpp11::init", quiet))
 
-  r_functions <- generate_r_functions(funs, package, use_package = TRUE)
+  r_functions <- generate_r_functions(funs, package, use_package = FALSE)
 
   dir.create(dirname(r_path), recursive = TRUE, showWarnings = FALSE)
 
@@ -115,6 +115,7 @@ cpp_register <- function(path = ".", quiet = FALSE) {
       extern "C" void R_init_{package}(DllInfo* dll){{
         R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
         R_useDynamicSymbols(dll, FALSE);{init$calls}
+        R_forceSymbols(dll, TRUE);
       }}
       ',
       call_entries = glue::glue_collapse(call_entries, "\n")
@@ -203,21 +204,24 @@ generate_init_functions <- function(funs) {
 }
 
 generate_r_functions <- function(funs, package = "cpp11", use_package = FALSE) {
+  funs <- funs[c("name", "return_type", "args")]
+
   if (use_package) {
     package_call <- glue::glue(', PACKAGE = "{package}"')
+    package_names <- glue::glue_data(funs, '"_{package}_{name}"')
   } else {
+    package_names <- glue::glue_data(funs, '`_{package}_{name}`')
     package_call <- ""
   }
 
-  funs <- funs[c("name", "return_type", "args")]
   funs$package <- package
   funs$package_call <- package_call
   funs$list_params <- vcapply(funs$args, glue_collapse_data, "{name}")
   funs$params <- vcapply(funs$list_params, function(x) if (nzchar(x)) paste0(", ", x) else x)
   is_void <- funs$return_type == "void"
   funs$calls <- ifelse(is_void,
-    glue::glue_data(funs, 'invisible(.Call("_{package}_{name}"{params}{package_call}))'),
-    glue::glue_data(funs, '.Call("_{package}_{name}"{params}{package_call})')
+    glue::glue_data(funs, 'invisible(.Call({package_names}{params}{package_call}))'),
+    glue::glue_data(funs, '.Call({package_names}{params}{package_call})')
   )
 
   out <- glue::glue_data(funs, '
