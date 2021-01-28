@@ -1,4 +1,4 @@
-# cpp11 (development version)
+# cpp11 0.2.6
 
 * `cpp_register()` now uses symbols exclusively in the `.Call()` interface. This allows it to be more robust in interactive use with the pkgload package.
 
