@@ -427,7 +427,7 @@ However, vendoring can be appropriate for certain situations.
 ## Protection
 
 cpp11 uses a custom double linked list data structure to track objects it is
-managing. This struture is much more efficient for large numbers of objects
+managing. This structure is much more efficient for large numbers of objects
 than using `R_PreserveObject()` / `R_ReleaseObjects()` as is done in Rcpp.
 
 ```{r, message = FALSE, eval = should_run_benchmarks()}
