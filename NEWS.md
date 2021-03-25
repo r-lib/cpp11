@@ -1,4 +1,4 @@
-# cpp11 (development version)
+# cpp11 0.2.7
 
 * Fix a transient memory leak for functions that return values from `cpp11::unwind_protect()` and `cpp11::safe` (#154)
 
