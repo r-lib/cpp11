@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* Fix a transient memory leak for functions that return values from `cpp11::unwind_protect()` and `cpp11::safe` (#154)
+
 # cpp11 0.2.6
 
 * `cpp_register()` now uses symbols exclusively in the `.Call()` interface. This allows it to be more robust in interactive use with the pkgload package.

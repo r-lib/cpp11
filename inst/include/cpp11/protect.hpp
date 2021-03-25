@@ -45,7 +45,7 @@ SEXP unwind_protect(Fun&& code) {
     throw unwind_exception(token);
   }
 
-  return R_UnwindProtect(
+  SEXP res = R_UnwindProtect(
       [](void* data) -> SEXP {
         auto callback = static_cast<decltype(&code)>(data);
         return static_cast<Fun&&>(*callback)();
@@ -59,6 +59,14 @@ SEXP unwind_protect(Fun&& code) {
         }
       },
       &jmpbuf, token);
+
+  // R_UnwindProtect adds the result to the CAR of the continuation token,
+  // which implicitly protects the result. However if there is no error and
+  // R_UwindProtect does a normal exit the memory shouldn't be protected, so we
+  // unset it here before returning the value ourselves.
+  SETCAR(token, R_NilValue);
+
+  return res;
 }
 
 template <typename Fun, typename = typename std::enable_if<std::is_same<

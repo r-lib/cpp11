@@ -23,8 +23,9 @@ class function {
     R_xlen_t num_args = sizeof...(args) + 1;
 
     sexp call(safe[Rf_allocVector](LANGSXP, num_args));
+    SETCAR(call, data_);
 
-    construct_call(call, data_, std::forward<Args>(args)...);
+    construct_call(call, std::forward<Args>(args)...);
 
     return safe[Rf_eval](call, R_GlobalEnv);
   }
