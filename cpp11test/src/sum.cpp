@@ -35,7 +35,7 @@
 
 [[cpp11::register]] double sum_dbl_foreach_(cpp11::doubles x) {
   double sum = 0.;
-  for (const auto& val : x) {
+  for (const auto&& val : x) {
     sum += val;
   }
   return sum;
@@ -44,7 +44,7 @@
 [[cpp11::register]] double sum_dbl_foreach2_(SEXP x_sxp) {
   const cpp11::doubles x(x_sxp, false);
   double sum = 0.;
-  for (const auto& val : x) {
+  for (const auto&& val : x) {
     sum += val;
   }
   return sum;
