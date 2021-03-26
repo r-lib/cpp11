@@ -16,6 +16,8 @@
 #' @param cxx_std The C++ standard to use, the `CXX_STD` make macro is set to
 #'   this value. The default value queries the `CXX_STD` environment variable, or
 #'   uses 'CXX11' if unset.
+#' @param dir The directory to store the generated source files. `tempfile()` is
+#'   used by default. The directory will be removed if `clean` is `TRUE`.
 #' @return For [cpp_source()] and `[cpp_function()]` the results of
 #'   [dyn.load()] (invisibly). For `[cpp_eval()]` the results of the evaluated
 #'   expression.
@@ -63,13 +65,12 @@
 #' }
 #' }
 #' @export
-cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11")) {
+cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11"), dir = tempfile()) {
   stop_unless_installed(c("brio", "callr", "cli", "decor", "desc", "glue", "tibble", "vctrs"))
 
-  dir <- tempfile()
-  dir.create(dir)
-  dir.create(file.path(dir, "R"))
-  dir.create(file.path(dir, "src"))
+  dir.create(dir, showWarnings = FALSE, recursive = TRUE)
+  dir.create(file.path(dir, "R"), showWarnings = FALSE)
+  dir.create(file.path(dir, "src"), showWarnings = FALSE)
 
   if (!is.null(code)) {
     tf <- tempfile(pattern = "code_", fileext = ".cpp")

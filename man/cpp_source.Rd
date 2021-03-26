@@ -12,7 +12,8 @@ cpp_source(
   env = parent.frame(),
   clean = TRUE,
   quiet = TRUE,
-  cxx_std = Sys.getenv("CXX_STD", "CXX11")
+  cxx_std = Sys.getenv("CXX_STD", "CXX11"),
+  dir = tempfile()
 )
 
 cpp_function(
@@ -45,6 +46,9 @@ cpp_eval(
 \item{cxx_std}{The C++ standard to use, the \code{CXX_STD} make macro is set to
 this value. The default value queries the \code{CXX_STD} environment variable, or
 uses 'CXX11' if unset.}
+
+\item{dir}{The directory to store the generated source files. \code{tempfile()} is
+used by default. The directory will be removed if \code{clean} is \code{TRUE}.}
 }
 \value{
 For \code{\link[=cpp_source]{cpp_source()}} and \verb{[cpp_function()]} the results of

@@ -1,6 +1,8 @@
 # cpp11 0.2.7
 
 * Fix a transient memory leak for functions that return values from `cpp11::unwind_protect()` and `cpp11::safe` (#154)
+* `cpp_source()` now gets an argument `dir` to allow customized temporary directory to store generated source files.
+  It makes it easier to debug C++ source files in non-package project via source mapping. (@renkun-ken, #156)
 
 # cpp11 0.2.6
 
