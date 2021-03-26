@@ -126,6 +126,8 @@
 </h1>
 <ul>
 <li>Fix a transient memory leak for functions that return values from <code>cpp11::unwind_protect()</code> and <code>cpp11::safe</code> (<a href='https://github.com/r-lib/cpp11/issues/154'>#154</a>)</li>
+<li>
+<code><a href="../reference/cpp_source.html">cpp_source()</a></code> now gets an argument <code>dir</code> to allow customized temporary directory to store generated source files. It makes it easier to debug C++ source files in non-package project via source mapping. (<a href='https://github.com/renkun-ken'>@renkun-ken</a>, <a href='https://github.com/r-lib/cpp11/issues/156'>#156</a>)</li>
 </ul>
 </div>
     <div id="cpp11-026" class="section level1">

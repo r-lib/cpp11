@@ -136,7 +136,8 @@ cpp_eval() evaluates a single C++ expression and returns the result." />
   env <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span><span class='op'>(</span><span class='op'>)</span>,
   clean <span class='op'>=</span> <span class='cn'>TRUE</span>,
   quiet <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  cxx_std <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span><span class='op'>(</span><span class='st'>"CXX_STD"</span>, <span class='st'>"CXX11"</span><span class='op'>)</span>
+  cxx_std <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span><span class='op'>(</span><span class='st'>"CXX_STD"</span>, <span class='st'>"CXX11"</span><span class='op'>)</span>,
+  dir <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>)</span>
 
 <span class='fu'>cpp_function</span><span class='op'>(</span>
@@ -183,6 +184,11 @@ cpp_eval() evaluates a single C++ expression and returns the result." />
       <td><p>The C++ standard to use, the <code>CXX_STD</code> make macro is set to
 this value. The default value queries the <code>CXX_STD</code> environment variable, or
 uses 'CXX11' if unset.</p></td>
+    </tr>
+    <tr>
+      <th>dir</th>
+      <td><p>The directory to store the generated source files. <code><a href='https://rdrr.io/r/base/tempfile.html'>tempfile()</a></code> is
+used by default. The directory will be removed if <code>clean</code> is <code>TRUE</code>.</p></td>
     </tr>
     </table>
 
