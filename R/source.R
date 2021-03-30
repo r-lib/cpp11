@@ -159,6 +159,7 @@ generate_include_paths <- function(packages) {
 }
 
 generate_makevars <- function(includes, cxx_std) {
+  includes <- gsub(" ", "\\ ", includes)
   c(sprintf("CXX_STD=%s", cxx_std), sprintf("PKG_CPPFLAGS=%s", paste0(includes, collapse = " ")))
 }
 
