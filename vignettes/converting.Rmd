@@ -154,7 +154,7 @@ public:
 };
 
 void foo() {
-  local_rng();
+  local_rng rng_state;
   /* my code using the RNG */
 }
 ```
