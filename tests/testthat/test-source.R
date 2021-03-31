@@ -91,3 +91,13 @@ expect_equal(
   "foo_3.cpp"
   )
 })
+
+test_that("generate_include_paths handles paths with spaces", {
+  if (is_windows()) {
+    mockery::stub(generate_include_paths, "system.file", "C:\\a path with spaces\\cpp11")
+    expect_equal(generate_include_paths("cpp11"), "-I\"C:\\a path with spaces\\cpp11\"")
+  } else {
+    mockery::stub(generate_include_paths, "system.file", "/a path with spaces/cpp11")
+    expect_equal(generate_include_paths("cpp11"), "-I'/a path with spaces/cpp11'")
+  }
+})
