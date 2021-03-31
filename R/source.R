@@ -153,7 +153,7 @@ generate_include_paths <- function(packages) {
     if (is_windows()) {
       path <- shQuote(utils::shortPathName(path))
     }
-    out[[i]] <- paste0("-I'", path, "'")
+    out[[i]] <- paste0("-I", shQuote(path))
   }
   out
 }
