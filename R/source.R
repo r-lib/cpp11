@@ -151,15 +151,14 @@ generate_include_paths <- function(packages) {
   for (i in seq_along(packages)) {
     path <- system.file(package = packages[[i]], "include")
     if (is_windows()) {
-      path <- shQuote(utils::shortPathName(path))
+      path <- utils::shortPathName(path)
     }
-    out[[i]] <- paste0("-I", path)
+    out[[i]] <- paste0("-I", shQuote(path))
   }
   out
 }
 
 generate_makevars <- function(includes, cxx_std) {
-  includes <- gsub(" ", "\\\\ ", includes)
   c(sprintf("CXX_STD=%s", cxx_std), sprintf("PKG_CPPFLAGS=%s", paste0(includes, collapse = " ")))
 }
 
