@@ -39,6 +39,7 @@ Suggests:
     progress,
     rmarkdown,
     scales,
+    Rcpp,
     testthat,
     tibble,
     utils,
