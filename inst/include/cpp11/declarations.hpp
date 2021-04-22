@@ -30,6 +30,7 @@ T& unmove(T&& t) {
 #define BEGIN_CPP11 \
   SEXP err;         \
   char buf[8192];   \
+  buf[0] = '\0';    \
   try {
 #define END_CPP11                                        \
   }                                                      \
