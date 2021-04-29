@@ -12,6 +12,27 @@
 #include "cpp11/sexp.hpp"       // for sexp
 
 namespace cpp11 {
+namespace internal {
+inline SEXP new_function(SEXP formals, SEXP body, SEXP env) {
+  SEXP fn = Rf_allocSExp(CLOSXP);
+  SET_FORMALS(fn, formals);
+  SET_BODY(fn, body);
+  SET_CLOENV(fn, env);
+  return fn;
+}
+
+inline sexp construct_current_frame_call() {
+  sexp body(safe[Rf_lang2](Rf_install("sys.frame"), Rf_ScalarInteger(-1)));
+  sexp fn = new_function(R_NilValue, body, R_BaseEnv);
+
+  return Rf_lang1(fn);
+}
+
+static sexp current_frame_call = construct_current_frame_call();
+
+inline SEXP peek_frame() { return Rf_eval(current_frame_call, R_EmptyEnv); }
+
+}  // namespace internal
 
 class function {
  public:
@@ -26,7 +47,9 @@ class function {
 
     construct_call(call, data_, std::forward<Args>(args)...);
 
-    return safe[Rf_eval](call, R_GlobalEnv);
+    SEXP env = internal::peek_frame();
+
+    return safe[Rf_eval](call, env);
   }
 
  private:
