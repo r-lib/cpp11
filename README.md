@@ -62,6 +62,11 @@ See [vignette("motivations")](https://cpp11.r-lib.org/articles/motivations.html)
 
 See [vignette("converting")](https://cpp11.r-lib.org/articles/converting.html) if you are already familiar with Rcpp or have an existing package that uses Rcpp and want to convert it to use cpp11.
 
+## Learning More
+
+- [Welding R and C++](https://www.youtube.com/watch?v=_kq0N0FNIjA) - Presentation at SatRday Columbus [(slides)](https://speakerdeck.com/jimhester/cpp11-welding-r-and-c-plus-plus)
+
+
 ## Internals
 
 See [vignette("internals")](https://cpp11.r-lib.org/articles/internals.html) for details on the cpp11 implementation or if you would like to contribute to cpp11.
