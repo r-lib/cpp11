@@ -12,3 +12,4 @@ vignettes/*_cache
 compile_commands.json
 revdep/*/
 talk/
+TAGS

@@ -84,11 +84,11 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     stop("`file` must have a `.cpp` or `.cc` extension")
   }
 
-  new_file <- generate_cpp_name(file)
-  package <- tools::file_path_sans_ext(new_file)
+  name <- basename(file)
+  package <- tools::file_path_sans_ext(generate_cpp_name(file))
 
-  file.copy(file, file.path(dir, "src", new_file))
-  file <- file.path(dir, "src", new_file)
+  file.copy(file, file.path(dir, "src", name))
+  file <- file.path(dir, "src", name)
 
   suppressWarnings(
     all_decorations <- decor::cpp_decorations(dir, is_attribute = TRUE)
@@ -122,13 +122,14 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     stop("Compilation failed.", call. = FALSE)
   }
 
-  shared_lib <- file.path(dir, "src", paste0(tools::file_path_sans_ext(basename(file)), .Platform$dynlib.ext))
-
+  slib1 <- file.path(dir, "src", paste0(tools::file_path_sans_ext(name), .Platform$dynlib.ext))
+  slib2 <- file.path(dir, "src", paste0(package, .Platform$dynlib.ext))
+  file.rename(slib1, slib2)
   r_path <- file.path(dir, "R", "cpp11.R")
   brio::write_lines(r_functions, r_path)
   source(r_path, local = env)
 
-  dyn.load(shared_lib, local = TRUE, now = TRUE)
+  dyn.load(slib2, local = TRUE, now = TRUE)
 }
 
 the <- new.env(parent = emptyenv())
