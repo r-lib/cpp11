@@ -14,6 +14,38 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(cpp11)
+
+
+
+* What are the underlying types of cpp11 objects?
+
+vector   | element
+---      | ---
+integers |	int
+doubles	 | double
+logicals | r_bool
+strings	 | r_string
+raws	   | uint8_t
+list	   | SEXP
+
+* How do I create a new empty list?
 ```
+cpp11::writable::list x;
+```
+
+* How do I retrieve (named) elements from a named vector/list?
+
+```
+x["foo"]
+```
+
+* How can I tell whether a vector is named?
+```
+x.names() == R_NilValue;
+```
+
+
+
+
+
+
