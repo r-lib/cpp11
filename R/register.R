@@ -245,7 +245,7 @@ wrap_call <- function(name, return_type, args) {
 get_call_entries <- function(path) {
   con <- textConnection("res", local = TRUE, open = "w")
 
-  withr::with_collate('C',
+  withr::with_collate("C",
     tools::package_native_routine_registration_skeleton(path,
       con,
       character_only = FALSE,
