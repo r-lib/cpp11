@@ -136,6 +136,11 @@ get_registered_functions <- function(decorations, tag, quiet = FALSE) {
   }
 
   out <- decorations[decorations$decoration == tag, ]
+
+  if (NROW(out) != NROW(decorations)) {
+    stop("Incorrect cpp11 decorator")
+  }
+
   out$functions <- lapply(out$context, decor::parse_cpp_function, is_attribute = TRUE)
   out <- vctrs::vec_cbind(out, vctrs::vec_rbind(!!!out$functions))
 
