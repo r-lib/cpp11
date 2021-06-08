@@ -14,37 +14,51 @@ knitr::opts_chunk$set(
 )
 ```
 
+Intended to answer common questions about the usage of cpp11 objects
 
-
+##FAQ
 
 * What are the underlying types of cpp11 objects?
 
-vector   | element
----      | ---
-integers |	int
-doubles	 | double
-logicals | r_bool
-strings	 | r_string
-raws	   | uint8_t
-list	   | SEXP
+    vector   | element
+    ---      | ---
+    integers |	int
+    doubles	 | double
+    logicals | r_bool
+    strings	 | r_string
+    raws	   | uint8_t
+    list	   | SEXP
 
 * How do I create a new empty list?
-```
-cpp11::writable::list x;
-```
+
+    `cpp11::writable::list x;`
 
 * How do I retrieve (named) elements from a named vector/list?
 
-```
-x["foo"]
-```
+    `x["foo"]`
 
 * How can I tell whether a vector is named?
-```
-x.names() == R_NilValue;
-```
 
+    `x.names() == R_NilValue;`
 
+* What are the types for C++ iterators?
+
+  * Iterators are internal classes. An example of an iterator for
+  doubles would be `cpp11::doubles::iterator`
+  
+* How do I return cpp11::writable::logicals() objects?
+  
+  * Use brace initialization:
+  
+    ```
+    cpp11::cpp_function(code = '
+    cpp11::writable::logicals fn2() {
+      return {false};
+    }')
+    fn2()
+    #> FALSE
+    ```
+    
 
 
 
