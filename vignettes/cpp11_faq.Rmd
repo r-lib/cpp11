@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 Intended to answer common questions about the usage of cpp11 objects
 
-##FAQ
+## FAQ
 
 * What are the underlying types of cpp11 objects?
 
@@ -52,13 +52,23 @@ Intended to answer common questions about the usage of cpp11 objects
   
     ```
     cpp11::cpp_function(code = '
-    cpp11::writable::logicals fn2() {
-      return {false};
-    }')
+      cpp11::writable::logicals fn2() {
+        return {false};
+      }')
     fn2()
     #> FALSE
     ```
     
+  * Otherwise this will return a 0 length logical vector:
+    
+    ```
+    cpp11::cpp_function(code = '
+      cpp11::writable::logicals fn() {
+        return false;
+      }')
+    fn()
+    #> logical(0)
+    ```
 
 
 
