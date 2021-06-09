@@ -1,5 +1,6 @@
 # cpp11 (development version)
 
+* Fix memory leak when move constructing vectors (#173)
 * Fix handling of spaces in Makevars include filenames (@klmr, #160)
 
 # cpp11 0.2.7
