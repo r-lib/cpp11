@@ -137,8 +137,17 @@ get_registered_functions <- function(decorations, tag, quiet = FALSE) {
 
   out <- decorations[decorations$decoration == tag, ]
 
-  if (NROW(out) != NROW(decorations)) {
-    stop("Incorrect cpp11 decorator")
+  if(any(!decorations$decoration %in% c("cpp11::register", "cpp11::init"))) {
+    errors <- decorations[which(!decorations$decoration %in% c("cpp11::register", "cpp11::init")),]
+    lines <- errors$line
+    decors <- errors$decoration
+    if(length(lines) > 1) {
+      stop(call. = FALSE, paste0("Can't capture cpp11 decorators on lines ",
+                                 paste(lines, sep = " ", collapse = ", "), "."))
+    }
+    stop(call. = FALSE, paste0("Can't capture cpp11 decorator on line ",
+                               lines))
+
   }
 
   out$functions <- lapply(out$context, decor::parse_cpp_function, is_attribute = TRUE)
