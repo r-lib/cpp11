@@ -74,6 +74,28 @@ Intended to answer common questions about the usage of cpp11 objects
 
   * cpp11 does not support default arguments at this time. Instead cpp11 registered functions can be wrapped in an R function for default argument support
   
+  ```
+  cpp11::cpp_function(code = '
+       std::string fn(bool length) {
+        if(length) {
+          return ("length");
+        }
+        return ("width");
+      }')
+
+
+  full_fn <- function(length = FALSE) {
+    fn(length)
+  }
+  full_fn(TRUE)
+  #> "length"
+  full_fn()
+  #> "width"
+
+  ```
+  
+  * Why do I have to 
+  
 
 
 
