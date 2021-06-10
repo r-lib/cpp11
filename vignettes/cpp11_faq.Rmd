@@ -69,6 +69,12 @@ Intended to answer common questions about the usage of cpp11 objects
     fn()
     #> logical(0)
     ```
+    
+* Does cpp11 support default arguments?
+
+  * cpp11 does not support default arguments at this time. Instead cpp11 registered functions can be wrapped in an R function for default argument support
+  
+
 
 
 
