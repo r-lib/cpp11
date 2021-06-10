@@ -46,6 +46,8 @@ cpp_register <- function(path = ".", quiet = FALSE) {
     return(invisible(character()))
   }
 
+  check_valid_attributes(all_decorations)
+
   funs <- get_registered_functions(all_decorations, "cpp11::register", quiet)
 
   package <- desc::desc_get("Package", file = file.path(path, "DESCRIPTION"))
@@ -136,18 +138,6 @@ get_registered_functions <- function(decorations, tag, quiet = FALSE) {
   }
 
   out <- decorations[decorations$decoration == tag, ]
-
-  if(any(!decorations$decoration %in% c("cpp11::register", "cpp11::init"))) {
-    lines <- decorations$line[which(!decorations$decoration %in% c("cpp11::register", "cpp11::init"))]
-    if(length(lines) > 1) {
-      stop(call. = FALSE, paste0("Can't capture cpp11 decorators on lines ",
-                                 paste(lines, sep = " ", collapse = ", "), "."))
-    }
-    stop(call. = FALSE, paste0("Can't capture cpp11 decorator on line ",
-                               lines))
-
-  }
-
   out$functions <- lapply(out$context, decor::parse_cpp_function, is_attribute = TRUE)
   out <- vctrs::vec_cbind(out, vctrs::vec_rbind(!!!out$functions))
 
@@ -285,4 +275,23 @@ pkg_links_to_rcpp <- function(path) {
 get_cpp_register_needs <- function() {
   res <- read.dcf(system.file("DESCRIPTION", package = "cpp11"))[, "Config/Needs/cpp11/cpp_register"]
   strsplit(res, "[[:space:]]*,[[:space:]]*")[[1]]
+}
+
+check_valid_attributes <- function(decorations) {
+
+  bad_decor <- !decorations$decoration %in% c("cpp11::register", "cpp11::init")
+
+  if(any(bad_decor)) {
+    lines <- decorations$line[bad_decor]
+    file <- decorations$file[bad_decor]
+    names <- decorations$decoration[bad_decor]
+    bad_lines <- glue::glue_collapse(glue::glue("- Invalid attribute `{names}` on
+                 line {lines} in file '{file}'."), "\n")
+
+    msg <- glue::glue("cpp11 attributes must be either `cpp11::register` or `cpp11::init`:
+      {bad_lines}
+      ")
+    stop(msg, call. = FALSE)
+
+  }
 }

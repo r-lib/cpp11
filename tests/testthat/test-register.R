@@ -703,3 +703,36 @@ describe("generate_init_functions", {
     expect_equal(generate_init_functions(funs), list(declarations = "\nvoid foo(DllInfo* dll);\nvoid bar(DllInfo* dll);\n", calls = "\n  foo(dll);\n  bar(dll);"))
   })
 })
+
+test_that("check_valid_attributes does not return an error if all registers are correct", {
+  pkg <- local_package()
+  p <- pkg_path(pkg)
+  dir.create(file.path(p, "src"))
+  file.copy(test_path("single.cpp"), file.path(p, "src", "single.cpp"))
+
+  expect_error_free(cpp_register(p))
+
+  pkg <- local_package()
+  p <- pkg_path(pkg)
+  dir.create(file.path(p, "src"))
+  file.copy(test_path("multiple.cpp"), file.path(p, "src", "multiple.cpp"))
+
+  expect_error_free(cpp_register(p))
+})
+
+
+test_that("check_valid_attributes returns an error if one or more registers is incorrect", {
+  pkg <- local_package()
+  p <- pkg_path(pkg)
+  dir.create(file.path(p, "src"))
+  file.copy(test_path("single_incorrect.cpp"), file.path(p, "src", "single_incorrect.cpp"))
+
+  expect_error(cpp_register(p))
+
+  pkg <- local_package()
+  p <- pkg_path(pkg)
+  dir.create(file.path(p, "src"))
+  file.copy(test_path("multiple_incorrect.cpp"), file.path(p, "src", "multiple_incorrect.cpp"))
+
+  expect_error(cpp_register(p))
+})
