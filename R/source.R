@@ -156,6 +156,20 @@ generate_cpp_name <- function(name, loaded_dlls = c("cpp11", names(getLoadedDLLs
   sprintf("%s.%s", new_name, ext)
 }
 
+generate_cpp_name2 <- function(name, loaded_dlls = c("cpp11", names(getLoadedDLLs()))) {
+  ext <- tools::file_ext(name)
+  root <- tools::file_path_sans_ext(basename(name))
+  count <- 2
+  new_name <- root
+  while(new_name %in% loaded_dlls) {
+    new_name <- sprintf("%s_%i", root, count)
+    count <- count + 1
+  }
+  sprintf("%s.%s", new_name, ext)
+}
+
+
+
 generate_include_paths <- function(packages) {
   out <- character(length(packages))
   for (i in seq_along(packages)) {
