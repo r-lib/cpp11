@@ -84,11 +84,20 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     stop("`file` must have a `.cpp` or `.cc` extension")
   }
 
-  name <- basename(file)
-  package <- tools::file_path_sans_ext(generate_cpp_name(file))
+
+
+  if (basename(file) %in% "cpp11.cpp") {
+    name <- generate_cpp_name(file)
+    package <- tools::file_path_sans_ext(name)
+  }
+  else {
+    name <- basename(file)
+    package <- tools::file_path_sans_ext(generate_cpp_name(file))
+  }
 
   file.copy(file, file.path(dir, "src", name))
   file <- file.path(dir, "src", name)
+
 
   suppressWarnings(
     all_decorations <- decor::cpp_decorations(dir, is_attribute = TRUE)
