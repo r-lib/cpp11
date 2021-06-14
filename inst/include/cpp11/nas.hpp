@@ -15,8 +15,8 @@ namespace cpp11 {
   template <> struct na<int> { const static int value; };
   const int na<int>::value = NA_INTEGER;
 
-  template <> struct na<r_bool> { const static r_bool val; };
-  const r_bool na<r_bool>::value = NA_STRING;
+  template <> struct na<r_bool> { const static r_bool value; };
+  const r_bool na<r_bool>::value = NA_LOGICAL;
 
   template <> struct na<r_string> { const static r_string value; };
   const r_string na<r_string>::value = NA_STRING;

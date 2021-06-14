@@ -2,6 +2,7 @@
 
 #include <limits>       // for numeric_limits
 #include <type_traits>  // for is_convertible, enable_if
+#include <ostream>
 
 #include "R_ext/Boolean.h"    // for Rboolean
 #include "cpp11/R.hpp"        // for SEXP, SEXPREC, ...
@@ -37,6 +38,7 @@ class r_bool {
   bool operator==(Rboolean rhs) const { return operator==(r_bool(rhs)); }
   bool operator==(int rhs) const { return operator==(r_bool(rhs)); }
 
+
  private:
   static constexpr int na = std::numeric_limits<int>::min();
 
@@ -48,6 +50,11 @@ class r_bool {
 
   int value_ = na;
 };
+
+inline std::ostream& operator << ( std::ostream& os, r_bool const& value ) {
+  os << ((value == TRUE) ? "TRUE" : "FALSE");
+  return os;
+}
 
 inline bool is_na(r_bool x) { return x == r_bool(); }
 

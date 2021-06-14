@@ -15,7 +15,6 @@ context("nas-C++") {
   }
   test_that("na bool") {
     expect_true(cpp11::na<cpp11::r_bool>::value == NA_LOGICAL);
-
   }
   test_that("na string") {
     expect_true(cpp11::na<cpp11::r_string>::value == NA_STRING);
