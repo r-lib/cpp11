@@ -23,22 +23,62 @@ Intended to answer common questions about the usage of cpp11 objects
   * Using `writable::` will always make a copy, but it has a move constructor, so you can use `cpp11::writable::integers(std::move(x))` and it won't make a copy of the data.
 
 * How do I add elements to a named list?
+  
+  ```
+  cpp11::cpp_source(code = '#include <cpp11.hpp>
+  using namespace cpp11::literals;
+  [[cpp11::register]]
+  cpp11::list fn() {
+    cpp11::writable::list x;
+    x.push_back({"foo"_nm = 1});
+    return x;
+  }')
+  fn()
+  #> $foo
+  #> [1] 1
+  ```
 
 * How do I create a new empty environment?
 
-* What happens if I try to get a value that doesn't exist?
+  ```
+  auto new_env = cpp11::package("base")["new.env"];
+  cpp11::environment my_env(new_env());
+  ```
+
+* How do I assign and retrieve values in an environment? What happens if I try to get a value that doesn't exist?
+
+  ```
+  my_env["foo"] = 1;
+  my_env["foo"] == 1;
+
+  my_env["bar"] == R_UnboundValue;
+  ```
 
 * How can I create a `cpp11:raws` from a `std::string`?
 
-* What are the differences between `cpp11::sexp` and `SEXP`?
-
+  * Push back the contents individually
+  ```
+  cpp11::cpp_source(code = '#include <cpp11.hpp>
+    [[cpp11::register]]
+    cpp11::raws fn() {
+      std::string x("hi");
+      cpp11::writable::raws out;
+      for (auto c : x) {
+        out.push_back(c);
+      }
+      return out;
+    }')
+  fn()
+  #> [1] 68 69
+  ```
+  
 * What are the underlying types of cpp11 objects?
 
     vector   | element
     ---      | ---
     integers |	int
     doubles	 | double
-    logicals | r_bool
+    logical  | r_bool
     strings	 | r_string
     raws	   | uint8_t
     list	   | SEXP
@@ -83,6 +123,8 @@ Intended to answer common questions about the usage of cpp11 objects
     fn()
     #> logical(0)
     ```
+    
+  * This happens because the first case uses the R_xlen_t size constructor and the second uses the std::initializer_list<>() constructor.
     
 * Does cpp11 support default arguments?
 
