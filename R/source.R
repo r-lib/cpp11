@@ -84,10 +84,10 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     stop("`file` must have a `.cpp` or `.cc` extension")
   }
 
+  base_cpp <- (basename(file) %in% "cpp11.cpp")
 
-
-  if (basename(file) %in% "cpp11.cpp") {
-    name <- generate_cpp_name(file)
+  if (base_cpp) {
+    name <- set_cpp_name(file)
     package <- tools::file_path_sans_ext(name)
   }
   else {
@@ -131,32 +131,32 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     stop("Compilation failed.", call. = FALSE)
   }
 
-  slib1 <- file.path(dir, "src", paste0(tools::file_path_sans_ext(name), .Platform$dynlib.ext))
-  slib2 <- file.path(dir, "src", paste0(package, .Platform$dynlib.ext))
-  file.rename(slib1, slib2)
+  if (base_cpp) {
+    shared_lib <- file.path(dir, "src", paste0(tools::file_path_sans_ext(basename(file)), .Platform$dynlib.ext))
+  }
+  else {
+    shared_lib <- file.path(dir, "src", paste0(package, .Platform$dynlib.ext))
+  }
+
   r_path <- file.path(dir, "R", "cpp11.R")
   brio::write_lines(r_functions, r_path)
   source(r_path, local = env)
 
-  dyn.load(slib2, local = TRUE, now = TRUE)
+  dyn.load(shared_lib, local = TRUE, now = TRUE)
 }
 
 the <- new.env(parent = emptyenv())
 the$count <- 0L
 
-generate_cpp_name <- function(name, loaded_dlls = c("cpp11", names(getLoadedDLLs()))) {
+set_cpp_name <- function(name) {
   ext <- tools::file_ext(name)
   root <- tools::file_path_sans_ext(basename(name))
   count <- 2
-  new_name <- root
-  while(new_name %in% loaded_dlls) {
-    new_name <- sprintf("%s_%i", root, count)
-    count <- count + 1
-  }
+  new_name <- sprintf("%s_%i", root, count)
   sprintf("%s.%s", new_name, ext)
 }
 
-generate_cpp_name2 <- function(name, loaded_dlls = c("cpp11", names(getLoadedDLLs()))) {
+generate_cpp_name <- function(name, loaded_dlls = c("cpp11", names(getLoadedDLLs()))) {
   ext <- tools::file_ext(name)
   root <- tools::file_path_sans_ext(basename(name))
   count <- 2

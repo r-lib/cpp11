@@ -101,3 +101,7 @@ test_that("generate_include_paths handles paths with spaces", {
     expect_equal(generate_include_paths("cpp11"), "-I'/a path with spaces/cpp11'")
   }
 })
+
+test_that("", {
+
+})
