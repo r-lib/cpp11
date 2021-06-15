@@ -102,6 +102,3 @@ test_that("generate_include_paths handles paths with spaces", {
   }
 })
 
-test_that("", {
-
-})
