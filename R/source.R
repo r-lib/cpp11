@@ -91,11 +91,14 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     package <- tools::file_path_sans_ext(name)
   }
   else {
+    # name and package might be different if cpp_source was called multiple times
     name <- basename(file)
     package <- tools::file_path_sans_ext(generate_cpp_name(file))
   }
 
+  # file not points to another location
   file.copy(file, file.path(dir, "src", name))
+  #change variable name to reflect this
   file <- file.path(dir, "src", name)
 
 
@@ -131,13 +134,8 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     stop("Compilation failed.", call. = FALSE)
   }
 
-  if (base_cpp) {
-    shared_lib <- file.path(dir, "src", paste0(tools::file_path_sans_ext(basename(file)), .Platform$dynlib.ext))
-  }
-  else {
-    shared_lib <- file.path(dir, "src", paste0(package, .Platform$dynlib.ext))
-  }
 
+  shared_lib <- file.path(dir, "src", paste0(tools::file_path_sans_ext(basename(file)), .Platform$dynlib.ext))
   r_path <- file.path(dir, "R", "cpp11.R")
   brio::write_lines(r_functions, r_path)
   source(r_path, local = env)
