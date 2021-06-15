@@ -5,6 +5,7 @@
 
 # cpp11 0.2.7
 
+* Add NA struct for different R objects (@sbearrows, #179)
 * Fix spurious diffs from `tools::package_native_routine_registration_skeleton()` by temporarily using C collation (@sbearrows, #171)
 * Fix a transient memory leak for functions that return values from `cpp11::unwind_protect()` and `cpp11::safe` (#154)
 * `cpp_source()` now gets an argument `dir` to allow customized temporary directory to store generated source files.
