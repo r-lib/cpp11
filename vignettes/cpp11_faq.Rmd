@@ -18,14 +18,11 @@ Intended to answer common questions about the usage of cpp11 objects
 
 ## FAQ
 
-* How do I modify a vector in place?
+#### 1. How do I add elements to a named list?
 
-  * Using `writable::` will always make a copy, but it has a move constructor, so you can use `cpp11::writable::integers(std::move(x))` and it won't make a copy of the data.
-
-* How do I add elements to a named list?
+  * 
   
-  ```
-  cpp11::cpp_source(code = '#include <cpp11.hpp>
+  ```{cpp11}
   using namespace cpp11::literals;
   [[cpp11::register]]
   cpp11::list fn() {
@@ -38,7 +35,7 @@ Intended to answer common questions about the usage of cpp11 objects
   #> [1] 1
   ```
 
-* How do I create a new empty environment?
+#### 2. How do I create a new empty environment?
 
   ```
   auto new_env = cpp11::package("base")["new.env"];
@@ -177,7 +174,9 @@ Intended to answer common questions about the usage of cpp11 objects
     }
     ')
     ```
+* How do I modify a vector in place?
 
+  * Using `writable::` will always make a copy, but it has a move constructor, so you can use `cpp11::writable::integers(std::move(x))` and it won't make a copy of the data.
 
 
 
