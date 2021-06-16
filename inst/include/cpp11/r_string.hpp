@@ -8,6 +8,8 @@
 #include "cpp11/as.hpp"       // for as_sexp
 #include "cpp11/protect.hpp"  // for unwind_protect, protect, protect::function
 #include "cpp11/sexp.hpp"     // for sexp
+
+
 namespace cpp11 {
 
 class r_string {
@@ -88,4 +90,9 @@ enable_if_r_string<T, SEXP> as_sexp(T from) {
 
   return res;
 }
+
+template <typename T> struct na{};
+
+template <> struct na<r_string> { const r_string value = NA_STRING; };
+
 }  // namespace cpp11

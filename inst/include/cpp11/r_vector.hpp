@@ -990,4 +990,7 @@ bool operator!=(const r_vector<T>& lhs, const r_vector<T>& rhs) {
   return !(lhs == rhs);
 }
 
+
+
+
 }  // namespace cpp11

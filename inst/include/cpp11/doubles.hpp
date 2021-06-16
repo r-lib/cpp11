@@ -11,6 +11,7 @@
 #include "cpp11/protect.hpp"    // for SEXP, SEXPREC, REAL_ELT, R_Preserve...
 #include "cpp11/r_vector.hpp"   // for vector, vector<>::proxy, vector<>::...
 #include "cpp11/sexp.hpp"       // for sexp
+
 // Specializations for doubles
 
 namespace cpp11 {
@@ -129,6 +130,9 @@ inline void r_vector<double>::push_back(double value) {
 typedef r_vector<double> doubles;
 
 }  // namespace writable
+
+
+template <> struct na<double> { const double value = NA_REAL; };
 
 inline bool is_na(double x) { return ISNA(x); }
 }  // namespace cpp11

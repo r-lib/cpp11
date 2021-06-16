@@ -13,6 +13,7 @@
 #include "cpp11/r_vector.hpp"         // for r_vector, r_vector<>::proxy
 #include "cpp11/sexp.hpp"             // for sexp
 
+
 // Specializations for integers
 
 namespace cpp11 {
@@ -135,6 +136,9 @@ inline void r_vector<int>::push_back(int value) {
 typedef r_vector<int> integers;
 
 }  // namespace writable
+
+template <> struct na<int> { const static int value; };
+const int na<int>::value = NA_INTEGER;
 
 inline bool is_na(int x) { return x == NA_INTEGER; }
 }  // namespace cpp11

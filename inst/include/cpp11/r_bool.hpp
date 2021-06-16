@@ -9,6 +9,7 @@
 #include "cpp11/as.hpp"       // for as_sexp
 #include "cpp11/protect.hpp"  // for unwind_protect, preserved
 #include "cpp11/sexp.hpp"     // for sexp
+#include "cpp11/r_vector.hpp"
 
 namespace cpp11 {
 
@@ -67,5 +68,9 @@ enable_if_r_bool<T, SEXP> as_sexp(T from) {
   unwind_protect([&] { SET_LOGICAL_ELT(res.data(), 0, from); });
   return res;
 }
+
+
+template <> struct na<r_bool> { const static r_bool value; };
+const r_bool na<r_bool>::value = NA_LOGICAL;
 
 }  // namespace cpp11
