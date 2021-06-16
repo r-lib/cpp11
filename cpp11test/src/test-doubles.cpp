@@ -5,6 +5,9 @@
 #include "cpp11/strings.hpp"
 
 context("doubles-C++") {
+  test_that("NA double") {
+    expect_true(ISNA(cpp11::na<double>::value));
+  }
   test_that("doubles::r_vector(SEXP)") {
     cpp11::doubles x(Rf_allocVector(REALSXP, 2));
     expect_true(x.size() == 2);

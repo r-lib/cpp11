@@ -2,6 +2,9 @@
 #include "cpp11/logicals.hpp"
 
 context("logicals-C++") {
+  test_that("NA logicals") {
+    expect_true(cpp11::na<cpp11::r_bool>::value == NA_LOGICAL);
+  }
   test_that("logicals.push_back()") {
     cpp11::writable::logicals x;
     x.push_back(TRUE);
