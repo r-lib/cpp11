@@ -105,6 +105,9 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   suppressWarnings(
     all_decorations <- decor::cpp_decorations(dir, is_attribute = TRUE)
   )
+
+  check_valid_attributes(all_decorations)
+
   cli_suppress(
     funs <- get_registered_functions(all_decorations, "cpp11::register")
   )

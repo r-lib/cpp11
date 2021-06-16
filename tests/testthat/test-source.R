@@ -102,3 +102,54 @@ test_that("generate_include_paths handles paths with spaces", {
   }
 })
 
+test_that("check_valid_attributes does not return an error if all registers are correct", {
+  expect_error_free(
+    cpp11::cpp_source(code = '#include <cpp11.hpp>
+  using namespace cpp11::literals;
+  [[cpp11::register]]
+  cpp11::list fn() {
+    cpp11::writable::list x;
+    x.push_back({"foo"_nm = 1});
+    return x;
+  }
+ [[cpp11::register]]
+  cpp11::list fn2() {
+    cpp11::writable::list x;
+    x.push_back({"foo"_nm = 1});
+    return x;
+  }'))
+})
+
+test_that("check_valid_attributes returns an error if one or more registers is incorrect", {
+  expect_error(
+    cpp11::cpp_source(code = '#include <cpp11.hpp>
+  using namespace cpp11::literals;
+  [[cpp11:register]]
+  cpp11::list fn() {
+    cpp11::writable::list x;
+    x.push_back({"foo"_nm = 1});
+    return x;
+  }
+ [[cpp11::register]]
+  cpp11::list fn2() {
+    cpp11::writable::list x;
+    x.push_back({"foo"_nm = 1});
+    return x;
+  }'))
+
+  expect_error(
+    cpp11::cpp_source(code = '#include <cpp11.hpp>
+  using namespace cpp11::literals;
+  [[cpp11:register]]
+  cpp11::list fn() {
+    cpp11::writable::list x;
+    x.push_back({"foo"_nm = 1});
+    return x;
+  }
+ [[cpp11::egister]]
+  cpp11::list fn2() {
+    cpp11::writable::list x;
+    x.push_back({"foo"_nm = 1});
+    return x;
+  }'))
+})
