@@ -33,3 +33,7 @@ navbar:
       href: articles/internals.html
     - text: Reference
       href: reference/index.html
+    - text: News
+      menu:
+      - text: "Change log"
+        href: news/index.html

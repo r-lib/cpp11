@@ -84,11 +84,23 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     stop("`file` must have a `.cpp` or `.cc` extension")
   }
 
-  new_file <- generate_cpp_name(file)
-  package <- tools::file_path_sans_ext(new_file)
+  base_cpp <- (basename(file) %in% "cpp11.cpp")
 
-  file.copy(file, file.path(dir, "src", new_file))
-  file <- file.path(dir, "src", new_file)
+  if (base_cpp) {
+    name <- set_cpp_name(file)
+    package <- tools::file_path_sans_ext(name)
+  }
+  else {
+    # name and package might be different if cpp_source was called multiple times
+    name <- basename(file)
+    package <- tools::file_path_sans_ext(generate_cpp_name(file))
+  }
+
+  # file not points to another location
+  file.copy(file, file.path(dir, "src", name))
+  #change variable name to reflect this
+  file <- file.path(dir, "src", name)
+
 
   suppressWarnings(
     all_decorations <- decor::cpp_decorations(dir, is_attribute = TRUE)
@@ -125,8 +137,8 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     stop("Compilation failed.", call. = FALSE)
   }
 
-  shared_lib <- file.path(dir, "src", paste0(tools::file_path_sans_ext(basename(file)), .Platform$dynlib.ext))
 
+  shared_lib <- file.path(dir, "src", paste0(tools::file_path_sans_ext(basename(file)), .Platform$dynlib.ext))
   r_path <- file.path(dir, "R", "cpp11.R")
   brio::write_lines(r_functions, r_path)
   source(r_path, local = env)
@@ -136,6 +148,14 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
 
 the <- new.env(parent = emptyenv())
 the$count <- 0L
+
+set_cpp_name <- function(name) {
+  ext <- tools::file_ext(name)
+  root <- tools::file_path_sans_ext(basename(name))
+  count <- 2
+  new_name <- sprintf("%s_%i", root, count)
+  sprintf("%s.%s", new_name, ext)
+}
 
 generate_cpp_name <- function(name, loaded_dlls = c("cpp11", names(getLoadedDLLs()))) {
   ext <- tools::file_ext(name)
@@ -148,6 +168,8 @@ generate_cpp_name <- function(name, loaded_dlls = c("cpp11", names(getLoadedDLLs
   }
   sprintf("%s.%s", new_name, ext)
 }
+
+
 
 generate_include_paths <- function(packages) {
   out <- character(length(packages))
