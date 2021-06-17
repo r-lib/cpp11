@@ -6,7 +6,7 @@ articles:
   cpp11: cpp11.html
   internals: internals.html
   motivations: motivations.html
-last_built: 2021-06-16T20:30Z
+last_built: 2021-06-17T16:34Z
 urls:
   reference: https://cpp11.r-lib.org/reference
   article: https://cpp11.r-lib.org/articles

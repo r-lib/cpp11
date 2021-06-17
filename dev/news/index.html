@@ -137,8 +137,11 @@
 <a href="#cpp11-development-version" class="anchor"></a>cpp11 (development version)<small> Unreleased </small>
 </h1>
 <ul>
-<li>Fix memory leak when move constructing vectors (<a href='https://github.com/r-lib/cpp11/issues/173'>#173</a>)</li>
-<li>Fix handling of spaces in Makevars include filenames (<a href='https://github.com/klmr'>@klmr</a>, <a href='https://github.com/r-lib/cpp11/issues/160'>#160</a>)</li>
+<li>New <code>cpp11::na()</code> function to return the NA sentinals for R objects(<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/179'>#179</a>)</li>
+<li>Incorrectly formatted cpp11 decorators now output a more informative error message (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/127'>#127</a>)</li>
+<li>Generated registration code now uses C collation to avoid spurious diffs from <code><a href="https://rdrr.io/r/tools/package_native_routine_registration_skeleton.html">tools::package_native_routine_registration_skeleton()</a></code> (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/171'>#171</a>)</li>
+<li>Memory lo longer leaks when move constructing vectors (<a href='https://github.com/r-lib/cpp11/issues/173'>#173</a>)</li>
+<li>Makevars which include filenames now handle spaces in paths properly (<a href='https://github.com/klmr'>@klmr</a>, <a href='https://github.com/r-lib/cpp11/issues/160'>#160</a>)</li>
 </ul>
 </div>
     <div id="cpp11-027" class="section level1">
@@ -146,8 +149,6 @@
 <a href="#cpp11-027" class="anchor"></a>cpp11 0.2.7<small> 2021-03-29 </small>
 </h1>
 <ul>
-<li>Outputting more informative error message when cpp11 decorators are incorrectly formatted (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/127'>#127</a>)</li>
-<li>Fix spurious diffs from <code><a href="https://rdrr.io/r/tools/package_native_routine_registration_skeleton.html">tools::package_native_routine_registration_skeleton()</a></code> by temporarily using C collation (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/171'>#171</a>)</li>
 <li>Fix a transient memory leak for functions that return values from <code>cpp11::unwind_protect()</code> and <code>cpp11::safe</code> (<a href='https://github.com/r-lib/cpp11/issues/154'>#154</a>)</li>
 <li>
 <code><a href="../reference/cpp_source.html">cpp_source()</a></code> now gets an argument <code>dir</code> to allow customized temporary directory to store generated source files. It makes it easier to debug C++ source files in non-package project via source mapping. (<a href='https://github.com/renkun-ken'>@renkun-ken</a>, <a href='https://github.com/r-lib/cpp11/issues/156'>#156</a>)</li>
