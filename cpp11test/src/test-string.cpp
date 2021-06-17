@@ -9,7 +9,4 @@ context("string-C++") {
     cpp11::r_string y(NA_STRING);
     expect_true(cpp11::is_na(y));
   }
-  test_that("NA for string") {
-    expect_true(cpp11::na<cpp11::r_string>::value == NA_STRING);
-  }
 }

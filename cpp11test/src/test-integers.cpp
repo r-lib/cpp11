@@ -3,9 +3,6 @@
 #include "cpp11/integers.hpp"
 
 context("integers-C++") {
-  test_that("NA integer") {
-    expect_true(cpp11::na<int>::value == NA_INTEGER);
-  }
   test_that("integers.push_back()") {
     cpp11::writable::integers x;
     x.push_back(1);

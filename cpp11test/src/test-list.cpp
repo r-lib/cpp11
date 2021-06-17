@@ -6,9 +6,9 @@
 #include "cpp11/raws.hpp"
 #include "cpp11/strings.hpp"
 
-//namespace cpp11 {
-//std::ostream& operator<<(std::ostream& os, r_bool b) { return os << int(b); }
-//}  // namespace cpp11
+namespace cpp11 {
+std::ostream& operator<<(std::ostream& os, r_bool b) { return os << int(b); }
+}  // namespace cpp11
 
 context("list-C++") {
   test_that("list.push_back()") {
