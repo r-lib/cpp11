@@ -1,13 +1,13 @@
 # cpp11 (development version)
 
-* Fix memory leak when move constructing vectors (#173)
-* Fix handling of spaces in Makevars include filenames (@klmr, #160)
+* New `cpp11::na()` function to return the NA sentinals for R objects(@sbearrows, #179)
+* Incorrectly formatted cpp11 decorators now output a more informative error message (@sbearrows, #127)
+* Generated registration code now uses C collation to avoid spurious diffs from `tools::package_native_routine_registration_skeleton()` (@sbearrows, #171)
+* Memory lo longer leaks when move constructing vectors (#173)
+* Makevars which include filenames now handle spaces in paths properly (@klmr, #160)
 
 # cpp11 0.2.7
 
-* Add NA struct for different R objects (@sbearrows, #179)
-* Outputting more informative error message when cpp11 decorators are incorrectly formatted (@sbearrows, #127)
-* Fix spurious diffs from `tools::package_native_routine_registration_skeleton()` by temporarily using C collation (@sbearrows, #171)
 * Fix a transient memory leak for functions that return values from `cpp11::unwind_protect()` and `cpp11::safe` (#154)
 * `cpp_source()` now gets an argument `dir` to allow customized temporary directory to store generated source files.
   It makes it easier to debug C++ source files in non-package project via source mapping. (@renkun-ken, #156)
