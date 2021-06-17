@@ -32,4 +32,13 @@ namespace literals {
 constexpr R_xlen_t operator"" _xl(unsigned long long int value) { return value; }
 
 }  // namespace literals
+
+template <typename T>
+inline T na();
+
+template <typename T>
+inline bool is_na(const T& value) {
+  return value == na<T>();
+}
+
 }  // namespace cpp11

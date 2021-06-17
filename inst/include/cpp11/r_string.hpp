@@ -9,7 +9,6 @@
 #include "cpp11/protect.hpp"  // for unwind_protect, protect, protect::function
 #include "cpp11/sexp.hpp"     // for sexp
 
-
 namespace cpp11 {
 
 class r_string {
@@ -69,8 +68,6 @@ inline SEXP as_sexp(std::initializer_list<r_string> il) {
   return data;
 }
 
-inline bool is_na(const r_string& x) { return x == NA_STRING; }
-
 template <typename T, typename R = void>
 using enable_if_r_string = enable_if_t<std::is_same<T, cpp11::r_string>::value, R>;
 
@@ -91,8 +88,9 @@ enable_if_r_string<T, SEXP> as_sexp(T from) {
   return res;
 }
 
-template <typename T> struct na{};
-
-template <> struct na<r_string> { const r_string value = NA_STRING; };
+template <>
+inline r_string na() {
+  return NA_STRING;
+}
 
 }  // namespace cpp11

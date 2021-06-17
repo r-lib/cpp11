@@ -131,8 +131,13 @@ typedef r_vector<double> doubles;
 
 }  // namespace writable
 
+template <>
+inline double na() {
+  return NA_REAL;
+}
 
-template <> struct na<double> { const double value = NA_REAL; };
-
-inline bool is_na(double x) { return ISNA(x); }
+template <>
+inline bool is_na(const double& x) {
+  return ISNA(x);
+}
 }  // namespace cpp11
