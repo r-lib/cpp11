@@ -106,6 +106,8 @@ class r_vector {
 
   bool is_altrep() const;
 
+  bool named() const;
+
   R_xlen_t size() const;
 
   operator SEXP() const;
@@ -378,6 +380,12 @@ template <typename T>
 inline bool r_vector<T>::is_altrep() const {
   return is_altrep_;
 }
+
+template <typename T>
+inline bool r_vector<T>::named() const {
+  return ((this->names() == R_NilValue));
+}
+
 
 template <typename T>
 inline R_xlen_t r_vector<T>::size() const {
