@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+library(cpp11)
 ```
 
 Intended to answer common questions about the usage of cpp11 objects
@@ -38,6 +39,8 @@ cpp11::list fn() {
 
 #### 2. How do I create a new empty environment?
 
+  * Use the C++ `auto` keyword with R's `new.env` to return a new empty environment. This should then be passed to `cpp11::environment` before use
+
 ```{cpp11}
 #include <cpp11.hpp>
 
@@ -54,26 +57,40 @@ cpp11::environment get_environment() {
 
 #### 3. How do I assign and retrieve values in an environment? What happens if I try to get a value that doesn't exist?
 
+  * To assign and retrieve values in an environment use brackets to access values in your environment by name.
+  * To check if a named value exists use `my_env["bar"] == R_UnboundValue` which returns `TRUE` if the value is unassigned and NULL.
+
 ```{cpp11}
 #include <cpp11.hpp>
 
 using namespace cpp11;
 [[cpp11::register]]
-cpp11::r_bool is_foo(){
+cpp11::r_bool foo_exists(){
   auto new_env = cpp11::package("base")["new.env"];
   cpp11::environment my_env(new_env());
   
   my_env["foo"] = 5;
-  cpp11::logicals fofo = (as_cpp<int>(my_env["foo"]) == 1);
+  cpp11::r_bool fofo = (as_cpp<int>(my_env["foo"]) == 5);
   
-  if (my_env["bar"] == R_UnboundValue) {
-    std::printf(fofo);
-    return (my_env["bar"] == R_UnboundValue);
-  }
-
-  
+  return (fofo);
 }
+```
 
+```{cpp11}
+#include <cpp11.hpp>
+
+using namespace cpp11;
+
+[[cpp11::register]]
+cpp11::r_bool bar_exists(){
+  auto new_env = cpp11::package("base")["new.env"];
+  cpp11::environment my_env(new_env());
+  
+  
+  cpp11::r_bool barbar = (my_env["bar"] == R_UnboundValue);
+  
+  return (!barbar);
+}
 ```
 
 #### 4. How can I create a `cpp11:raws` from a `std::string`?
@@ -83,48 +100,43 @@ cpp11::r_bool is_foo(){
 ```{cpp11}
 #include <cpp11.hpp>
 
-
-
 using namespace cpp11;
 [[cpp11::register]]
 cpp11::raws push() {
+  
     std::string x("hi");
     cpp11::writable::raws out;
+  
     for (auto c : x) {
       out.push_back(c);
     }
+  
     return out;
   }
 ```
   
 #### 5. What are the underlying types of cpp11 objects?
 
-    vector   | element
-    ---      | ---
-    integers |	int
-    doubles	 | double
-    logical  | r_bool
-    strings	 | r_string
-    raws	   | uint8_t
-    list	   | SEXP
+   | vector   | element
+   | ---      | ---
+   | integers |	int
+   | doubles	| double
+   | logical  | r_bool
+   | strings	| r_string
+   | raws	    | uint8_t
+   |  list	  | SEXP
 
 #### 6. How do I create a new empty list?
 
-```{cpp11}
-cpp11::writable::list x;
-```
+`cpp11::writable::list x;`
 
 #### 7. How do I retrieve (named) elements from a named vector/list?
 
-```{cpp11}
-x["foo"]
-```
+`x["foo"]`
 
 #### 8. How can I tell whether a vector is named?
 
-```{cpp11}
-x.names() == R_NilValue;
-```
+  TODO    
 
 #### 9. What are the types for C++ iterators?
 
@@ -136,6 +148,10 @@ x.names() == R_NilValue;
   * Use brace initialization:
   
 ```{cpp11}
+#include <cpp11.hpp>
+
+using namespace cpp11;
+[[cpp11::register]]
 cpp11::writable::logicals fn2() {
   return {false};
 }
@@ -144,6 +160,10 @@ cpp11::writable::logicals fn2() {
   * Otherwise this will return a 0 length logical vector:
     
 ```{cpp11}
+#include <cpp11.hpp>
+
+using namespace cpp11;
+[[cpp11::register]]
 cpp11::writable::logicals fn() {
   return false;
 }
@@ -153,7 +173,7 @@ cpp11::writable::logicals fn() {
     
 #### 11. Does cpp11 support default arguments?
 
-  * cpp11 does not support default arguments at this time. Instead cpp11 registered functions can be wrapped in an R function for default argument support
+  * cpp11 does not support default arguments. Instead cpp11 registered functions can be wrapped in an R function for default argument support
   
 ```{cpp11}
 #include <cpp11.hpp>
