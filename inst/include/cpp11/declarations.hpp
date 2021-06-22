@@ -27,10 +27,10 @@ T& unmove(T&& t) {
   } while (false);
 #endif
 
-#define BEGIN_CPP11 \
-  SEXP err;         \
-  char buf[8192];   \
-  buf[0] = '\0';    \
+#define BEGIN_CPP11      \
+  SEXP err = R_NilValue; \
+  char buf[8192];        \
+  buf[0] = '\0';         \
   try {
 #define END_CPP11                                        \
   }                                                      \
