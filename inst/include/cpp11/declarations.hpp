@@ -29,8 +29,7 @@ T& unmove(T&& t) {
 
 #define BEGIN_CPP11      \
   SEXP err = R_NilValue; \
-  char buf[8192];        \
-  buf[0] = '\0';         \
+  char buf[8192] = "";   \
   try {
 #define END_CPP11                                        \
   }                                                      \
