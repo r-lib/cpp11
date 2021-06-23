@@ -56,9 +56,14 @@ covr::report(cpp11_coverage())
 
 ## Code formatting
 
-This project uses [clang-format](https://clang.llvm.org/docs/ClangFormat.html) to automatically format the c++ code.
+This project uses [clang-format](https://clang.llvm.org/docs/ClangFormat.html) (version 10) to automatically format the c++ code.
 
-You can run `make format` to re-format all code in the project. Alternatively many IDEs support automatically running `clang-format` every time files are written.
+You can run `make format` to re-format all code in the project. If your system does not have `clang-format` version 10, this can be installed using a homebrew tap available at [r-lib/homebrew-taps](https://github.com/r-lib/homebrew-taps).
+
+
+Alternatively many IDEs support automatically running `clang-format` every time files are written.
+
+
 
 ## Code organization
 
