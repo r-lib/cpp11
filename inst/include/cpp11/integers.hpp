@@ -136,5 +136,9 @@ typedef r_vector<int> integers;
 
 }  // namespace writable
 
-inline bool is_na(int x) { return x == NA_INTEGER; }
+template <>
+inline int na() {
+  return NA_INTEGER;
+}
+
 }  // namespace cpp11
