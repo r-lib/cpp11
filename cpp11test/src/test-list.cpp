@@ -6,8 +6,6 @@
 #include "cpp11/raws.hpp"
 #include "cpp11/strings.hpp"
 
-
-
 context("list-C++") {
   test_that("list.push_back()") {
     cpp11::writable::list x;
@@ -131,7 +129,5 @@ context("list-C++") {
 
     cpp11::writable::list y(1);
     expect_false(y.named());
-
   }
-
 }

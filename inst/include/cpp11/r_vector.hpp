@@ -386,7 +386,6 @@ inline bool r_vector<T>::named() const {
   return ((this->names()) != R_NilValue);
 }
 
-
 template <typename T>
 inline R_xlen_t r_vector<T>::size() const {
   return length_;
