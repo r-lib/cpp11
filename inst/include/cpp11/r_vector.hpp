@@ -396,7 +396,6 @@ inline bool r_vector<T>::empty() const {
   return (!(this->size() > 0));
 }
 
-
 template <typename T>
 inline r_vector<T>::operator sexp() const {
   return data_;

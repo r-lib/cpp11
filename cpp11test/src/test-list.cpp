@@ -132,5 +132,4 @@ context("list-C++") {
 
     expect_false(y.empty());
   }
-
 }
