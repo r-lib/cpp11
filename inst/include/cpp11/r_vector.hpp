@@ -394,7 +394,6 @@ inline r_vector<T>::operator sexp() const {
   return data_;
 }
 
-
 /// Provide access to the underlying data, mainly for interface
 /// compatibility with std::vector
 template <typename T>
