@@ -112,6 +112,8 @@ class r_vector {
 
   operator sexp() const;
 
+  bool empty() const;
+
   /// Provide access to the underlying data, mainly for interface
   /// compatibility with std::vector
   SEXP data() const;
@@ -388,6 +390,12 @@ template <typename T>
 inline r_vector<T>::operator SEXP() const {
   return data_;
 }
+
+template <typename T>
+inline bool r_vector<T>::empty() const {
+  return (!(this->size() > 0));
+}
+
 
 template <typename T>
 inline r_vector<T>::operator sexp() const {
