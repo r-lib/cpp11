@@ -6,10 +6,6 @@
 #include "cpp11/raws.hpp"
 #include "cpp11/strings.hpp"
 
-namespace cpp11 {
-std::ostream& operator<<(std::ostream& os, r_bool b) { return os << int(b); }
-}
-
 
 
 context("list-C++") {
