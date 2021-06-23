@@ -5,7 +5,6 @@
 
 # cpp11 0.2.7
 
-* Added empty() and named() methods for r_vector classes, returning true if empty/named (@sbearrows, #182, #186)
 * Outputting more informative error message when cpp11 decorators are incorrectly formatted (@sbearrows, #127)
 * Fix spurious diffs from `tools::package_native_routine_registration_skeleton()` by temporarily using C collation (@sbearrows, #171)
 * Fix a transient memory leak for functions that return values from `cpp11::unwind_protect()` and `cpp11::safe` (#154)
