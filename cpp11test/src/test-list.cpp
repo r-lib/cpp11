@@ -126,4 +126,15 @@ context("list-C++") {
     expect_true(first[0] == 1);
     expect_true(first[1] == 2);
   }
+
+  test_that("empty() works") {
+    cpp11::writable::list x;
+
+    expect_true(x.empty());
+
+    cpp11::writable::list y(1);
+
+    expect_false(y.empty());
+  }
+
 }
