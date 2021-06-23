@@ -383,7 +383,7 @@ inline bool r_vector<T>::is_altrep() const {
 
 template <typename T>
 inline bool r_vector<T>::named() const {
-  return ((this->names() == R_NilValue));
+  return ((this->names()) != R_NilValue);
 }
 
 

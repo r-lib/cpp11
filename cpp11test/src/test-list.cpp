@@ -126,16 +126,12 @@ context("list-C++") {
   }
 
   test_that("list.named() works") {
-    cpp11::writable::list x;
-    x.push_back({"bar"_nm = 2});
-
-
+    cpp11::writable::list x({"bar"_nm = 2});
     expect_true(x.named());
 
     cpp11::writable::list y(1);
-    y.push_back(cpp11::writable::integers(2));
-
     expect_false(y.named());
+
   }
 
 }
