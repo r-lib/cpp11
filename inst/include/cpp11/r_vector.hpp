@@ -106,11 +106,15 @@ class r_vector {
 
   bool is_altrep() const;
 
+  bool named() const;
+
   R_xlen_t size() const;
 
   operator SEXP() const;
 
   operator sexp() const;
+
+  bool empty() const;
 
   /// Provide access to the underlying data, mainly for interface
   /// compatibility with std::vector
@@ -380,6 +384,11 @@ inline bool r_vector<T>::is_altrep() const {
 }
 
 template <typename T>
+inline bool r_vector<T>::named() const {
+  return ((this->names()) != R_NilValue);
+}
+
+template <typename T>
 inline R_xlen_t r_vector<T>::size() const {
   return length_;
 }
@@ -387,6 +396,11 @@ inline R_xlen_t r_vector<T>::size() const {
 template <typename T>
 inline r_vector<T>::operator SEXP() const {
   return data_;
+}
+
+template <typename T>
+inline bool r_vector<T>::empty() const {
+  return (!(this->size() > 0));
 }
 
 template <typename T>
