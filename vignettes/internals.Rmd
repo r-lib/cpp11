@@ -60,7 +60,7 @@ This project uses [clang-format](https://clang.llvm.org/docs/ClangFormat.html) (
 
 You can run `make format` to re-format all code in the project. If your system does not have `clang-format` version 10, this can be installed using a [homebrew tap](https://github.com/r-lib/homebrew-taps) at the command line with `brew install r-lib/taps/clang-format@10`.
 
-You may need to unlink your previous version of `clang-format` and link the newly installed version 10. To do so, run `brew unlink clang-format` followed by `brew link clang-format@10`.
+You may need to link the newly installed version 10. To do so, run `brew unlink clang-format` followed by `brew link clang-format@10`.
 
 Alternatively many IDEs support automatically running `clang-format` every time files are written.
 
