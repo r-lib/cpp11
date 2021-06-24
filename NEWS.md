@@ -1,5 +1,6 @@
 # cpp11 (development version)
 
+* Added `x.empty()` method to check if a vector is empty (@sbearrows, #182)
 * New `cpp11::na()` function to return the NA sentinals for R objects(@sbearrows, #179)
 * Incorrectly formatted cpp11 decorators now output a more informative error message (@sbearrows, #127)
 * Generated registration code now uses C collation to avoid spurious diffs from `tools::package_native_routine_registration_skeleton()` (@sbearrows, #171)
