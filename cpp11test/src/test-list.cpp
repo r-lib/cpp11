@@ -130,4 +130,14 @@ context("list-C++") {
     cpp11::writable::list y(1);
     expect_false(y.named());
   }
+  
+  test_that("list.empty() works") {
+    cpp11::writable::list x;
+
+    expect_true(x.empty());
+
+    cpp11::writable::list y(1);
+
+    expect_false(y.empty());
+  }
 }
