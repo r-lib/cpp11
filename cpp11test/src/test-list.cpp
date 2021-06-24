@@ -123,7 +123,15 @@ context("list-C++") {
     expect_true(first[1] == 2);
   }
 
-  test_that("empty() works") {
+  test_that("list.named() works") {
+    cpp11::writable::list x({"bar"_nm = 2});
+    expect_true(x.named());
+
+    cpp11::writable::list y(1);
+    expect_false(y.named());
+  }
+  
+  test_that("list.empty() works") {
     cpp11::writable::list x;
 
     expect_true(x.empty());
