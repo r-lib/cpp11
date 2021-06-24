@@ -1,13 +1,17 @@
 # cpp11 (development version)
 
-* New `x.named()` method to check if a vector is named (@sbearrows, #186)
+## New functions and features
 * New `x.empty()` method to check if a vector is empty (@sbearrows, #182)
-* New `cpp11::na()` function to return the NA sentinals for R objects(@sbearrows, #179)
-* New `cpp11::na()` function to return the NA sentinels for R objects(@sbearrows, #179)
-* Memory no longer leaks when move constructing vectors (#173)
+* New `x.named()` method to check if a vector is named (@sbearrows, #186)
+* New `na()` free function to return the NA sentinels for R objects (@sbearrows, #179)
+
+## Major fixes
+* Memory no longer inadvertently leaks when move constructing vectors (#173)
+
+## minor improvements and fixes
 * Incorrectly formatted cpp11 decorators now output a more informative error message (@sbearrows, #127)
-* Generated registration code now uses C collation to avoid spurious diffs from `tools::package_native_routine_registration_skeleton()` (@sbearrows, #171)
-* Makevars which include filenames now handle spaces in paths properly (@klmr, #160)
+* Generated registration code now uses C collation to avoid spurious changes from `tools::package_native_routine_registration_skeleton()` (@sbearrows, #171)
+* Makevars files which include filenames now handle spaces in paths properly (@klmr, #160)
 
 # cpp11 0.2.7
 
