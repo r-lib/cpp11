@@ -126,8 +126,10 @@
 <div id="code-formatting" class="section level2">
 <h2 class="hasAnchor">
 <a href="#code-formatting" class="anchor"></a>Code formatting</h2>
-<p>This project uses <a href="https://clang.llvm.org/docs/ClangFormat.html">clang-format</a> to automatically format the c++ code.</p>
-<p>You can run <code>make format</code> to re-format all code in the project. Alternatively many IDEs support automatically running <code>clang-format</code> every time files are written.</p>
+<p>This project uses <a href="https://clang.llvm.org/docs/ClangFormat.html">clang-format</a> (version 10) to automatically format the c++ code.</p>
+<p>You can run <code>make format</code> to re-format all code in the project. If your system does not have <code>clang-format</code> version 10, this can be installed using a <a href="https://github.com/r-lib/homebrew-taps">homebrew tap</a> at the command line with <code>brew install r-lib/taps/clang-format@10</code>.</p>
+<p>You may need to link the newly installed version 10. To do so, run <code>brew unlink clang-format</code> followed by <code>brew link clang-format@10</code>.</p>
+<p>Alternatively many IDEs support automatically running <code>clang-format</code> every time files are written.</p>
 </div>
 <div id="code-organization" class="section level2">
 <h2 class="hasAnchor">
