@@ -1,4 +1,4 @@
-# cpp11 (development version)
+# cpp11 0.3.0
 
 ## New functions and features
 * New `x.empty()` method to check if a vector is empty (@sbearrows, #182)
