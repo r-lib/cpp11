@@ -132,6 +132,19 @@ context("strings-C++") {
     UNPROTECT(1);
   }
 
+  test_that("std::initializer_list<const char*>") {
+    cpp11::writable::strings x{"foo"};
+    expect_true(x.size() == 1);
+    expect_true(x[0] == "foo");
+  }
+
+  test_that("std::initializer_list<std::string>") {
+    std::string str("foo");
+    cpp11::writable::strings x{str};
+    expect_true(x.size() == 1);
+    expect_true(x[0] == "foo");
+  }
+
   test_that("NA_STRING constructor") {
     cpp11::writable::strings x({NA_STRING});
 

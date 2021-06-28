@@ -285,8 +285,6 @@ class r_vector : public cpp11::r_vector<T> {
   r_vector(SEXP&& data, bool is_altrep);
   r_vector(std::initializer_list<T> il);
   r_vector(std::initializer_list<named_arg> il);
-  r_vector(std::initializer_list<const char*> il);
-  r_vector(std::initializer_list<std::string> il);
 
   template <typename Iter>
   r_vector(Iter first, Iter last);
@@ -294,7 +292,7 @@ class r_vector : public cpp11::r_vector<T> {
   template <typename V, typename W = has_begin_fun<V>>
   r_vector(const V& obj);
 
-  r_vector(const R_xlen_t size);
+  explicit r_vector(const R_xlen_t size);
 
   ~r_vector();
 
@@ -688,7 +686,7 @@ inline r_vector<T>::r_vector(const V& obj) : r_vector() {
 }
 
 template <typename T>
-inline r_vector<T>::r_vector(R_xlen_t size) : r_vector() {
+inline r_vector<T>::r_vector(const R_xlen_t size) : r_vector() {
   resize(size);
 }
 
