@@ -57,10 +57,7 @@ describe("get_call_entries", {
     writeLines('foo <- function() .Call("bar")', file.path(pkg_path(pkg), "R", "foo.R"))
     expect_equal(
       get_call_entries(pkg_path(pkg)),
-      c("/* .Call calls */",
-        "extern SEXP bar();",
-        "",
-        "static const R_CallMethodDef CallEntries[] = {",
+      c("static const R_CallMethodDef CallEntries[] = {",
         "    {\"bar\", (DL_FUNC) &bar, 0},",
         "    {NULL, NULL, 0}",
         "};"
@@ -533,9 +530,6 @@ extern \"C\" SEXP _testPkg_foo() {
 }
 
 extern \"C\" {
-/* .Call calls */
-extern SEXP _testPkg_foo();
-
 static const R_CallMethodDef CallEntries[] = {
     {\"_testPkg_foo\", (DL_FUNC) &_testPkg_foo, 0},
     {NULL, NULL, 0}

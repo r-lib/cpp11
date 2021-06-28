@@ -257,13 +257,24 @@ get_call_entries <- function(path) {
 
   close(con)
 
-  start <- grep("/* .Call calls */", res, fixed = TRUE)
+
+  tests <- grep("extern SEXP run_testthat_tests(SEXP);", res, fixed = TRUE)
+
+  start <- ifelse((length(tests) == 0), grep("static const R_CallMethodDef", res, fixed = TRUE),
+                  grep("/* .Call calls */", res, fixed = TRUE))
+
   end <- grep("};", res, fixed = TRUE)
 
   if (length(start) == 0) {
     return("")
   }
-  res[seq(start, end)]
+  if (length(tests) == 0) {
+    res[seq(start, end)]
+  }
+  else {
+    res[c(start, seq(tests, end))]
+  }
+
 }
 
 pkg_links_to_rcpp <- function(path) {
