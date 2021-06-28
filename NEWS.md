@@ -2,6 +2,8 @@
 
 # cpp11 0.3.1
 
+* Fix stringop-truncation warning from generated wrapping code.
+
 # cpp11 0.3.0
 
 ## New functions and features
