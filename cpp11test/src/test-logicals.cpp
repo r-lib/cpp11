@@ -134,6 +134,16 @@ context("logicals-C++") {
     expect_true(cpp11::is_na(y));
   }
 
+  test_that("FALSE and false") {
+    cpp11::writable::logicals x{FALSE};
+    expect_true(x.size() == 1);
+    expect_true(x[0] == FALSE);
+
+    cpp11::writable::logicals y{false};
+    expect_true(y.size() == 1);
+    expect_true(y[0] == FALSE);
+  }
+
   // test_that("writable::logicals(ALTREP_SEXP)") {
   // SEXP x = PROTECT(R_compact_intrange(1, 5));
   //// Need to find (or create) an altrep class that implements duplicate.

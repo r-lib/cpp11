@@ -138,4 +138,5 @@ inline void r_vector<r_bool>::push_back(r_bool value) {
 typedef r_vector<r_bool> logicals;
 
 }  // namespace writable
+
 }  // namespace cpp11
