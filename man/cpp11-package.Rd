@@ -15,6 +15,7 @@ Provides a header only, C++11 interface to R's C
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://cpp11.r-lib.org}
   \item \url{https://github.com/r-lib/cpp11}
   \item Report bugs at \url{https://github.com/r-lib/cpp11/issues}
 }
