@@ -70,7 +70,8 @@ cpp_register <- function(path = ".", quiet = FALSE) {
     cli::cli_alert_success("generated file {.file {basename(r_path)}}")
   }
 
-  call_entries <- get_call_entries(path)
+
+  call_entries <- get_call_entries(path, funs, package)
 
   cpp_function_registration <- glue::glue_data(funs, '    {{
     "_cpp11_{name}", (DL_FUNC) &_{package}_{name}, {n_args}}}, ',
@@ -244,8 +245,9 @@ wrap_call <- function(name, return_type, args) {
   }
 }
 
-get_call_entries <- function(path) {
+get_call_entries <- function(path, funs, package) {
   con <- textConnection("res", local = TRUE, open = "w")
+
 
   withr::with_collate("C",
     tools::package_native_routine_registration_skeleton(path,
@@ -257,24 +259,21 @@ get_call_entries <- function(path) {
 
   close(con)
 
-
-  tests <- grep("extern SEXP run_testthat_tests(SEXP);", res, fixed = TRUE)
-
-  start <- ifelse((length(tests) == 0), grep("static const R_CallMethodDef", res, fixed = TRUE),
-                  grep("/* .Call calls */", res, fixed = TRUE))
+  start <- grep("/* .Call calls */", res, fixed = TRUE)
 
   end <- grep("};", res, fixed = TRUE)
 
   if (length(start) == 0) {
     return("")
   }
-  if (length(tests) == 0) {
-    res[seq(start, end)]
-  }
-  else {
-    res[c(start, seq(tests, end))]
-  }
 
+  funs$package <- package
+
+  redundant <- as.character(glue_collapse_data(funs, 'extern SEXP _{package}_{name}', sep = '|'))
+
+  res <- res[seq(start, end)]
+
+  res[!grepl(redundant, res)]
 }
 
 pkg_links_to_rcpp <- function(path) {

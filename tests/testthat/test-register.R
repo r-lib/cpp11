@@ -25,14 +25,16 @@ describe("pkg_links_to_rcpp", {
 describe("get_call_entries", {
   it("returns an empty string if there are no R files", {
     pkg <- local_package()
-    expect_equal(get_call_entries(pkg_path(pkg)), "")
+    path <- pkg_path(pkg)
+    expect_equal(get_call_entries(path, get_funs(path), get_package_name(path)), "")
   })
 
   it("returns an empty string if there are no .Call calls", {
     pkg <- local_package()
-    dir.create(file.path(pkg_path(pkg), "R"))
-    writeLines("foo <- function() 1", file.path(pkg_path(pkg), "R", "foo.R"))
-    expect_equal(get_call_entries(pkg_path(pkg)), "")
+    path <- pkg_path(pkg)
+    dir.create(file.path(path, "R"))
+    writeLines("foo <- function() 1", file.path(path, "R", "foo.R"))
+    expect_equal(get_call_entries(path, get_funs(path), get_package_name(path)), "")
   })
 
   it("Errors for invalid packages", {
@@ -44,7 +46,7 @@ describe("get_call_entries", {
     writeLines("Package: testPkg", file.path(pkg, "DESCRIPTION"))
     dir.create(file.path(pkg, "R"))
     writeLines('foo <- function() .Call("bar")', file.path(pkg, "R", "foo.R"))
-    expect_error(get_call_entries(pkg), "has no 'NAMESPACE' file")
+    expect_error(get_call_entries(pkg, get_funs(pkg), get_package_name(pkg)), "has no 'NAMESPACE' file")
   })
 
   it("returns an empty string for packages with .Call entries and NAMESPACE files", {
@@ -53,10 +55,11 @@ describe("get_call_entries", {
     skip_if(getRversion() < "3.4")
 
     pkg <- local_package()
-    dir.create(file.path(pkg_path(pkg), "R"))
-    writeLines('foo <- function() .Call("bar")', file.path(pkg_path(pkg), "R", "foo.R"))
+    path <- pkg_path(pkg)
+    dir.create(file.path(path, "R"))
+    writeLines('foo <- function() .Call("bar")', file.path(path, "R", "foo.R"))
     expect_equal(
-      get_call_entries(pkg_path(pkg)),
+      get_call_entries(path, get_funs(path), get_package_name(path)),
       c("static const R_CallMethodDef CallEntries[] = {",
         "    {\"bar\", (DL_FUNC) &bar, 0},",
         "    {NULL, NULL, 0}",
@@ -530,6 +533,8 @@ extern \"C\" SEXP _testPkg_foo() {
 }
 
 extern \"C\" {
+/* .Call calls */
+
 static const R_CallMethodDef CallEntries[] = {
     {\"_testPkg_foo\", (DL_FUNC) &_testPkg_foo, 0},
     {NULL, NULL, 0}
