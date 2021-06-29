@@ -33,20 +33,20 @@ T& unmove(T&& t) {
   SEXP err = R_NilValue;              \
   char buf[CPP11_ERROR_BUFSIZE] = ""; \
   try {
-#define END_CPP11                                           \
-  }                                                         \
-  catch (cpp11::unwind_exception & e) {                     \
-    err = e.token;                                          \
-  }                                                         \
-  catch (std::exception & e) {                              \
-    strncpy(buf, e.what(), sizeof(buf));                    \
-  }                                                         \
-  catch (...) {                                             \
-    strncpy(buf, "C++ error (unknown cause)", sizeof(buf)); \
-  }                                                         \
-  if (buf[0] != '\0') {                                     \
-    Rf_errorcall(R_NilValue, "%s", buf);                    \
-  } else if (err != R_NilValue) {                           \
-    CPP11_UNWIND                                            \
-  }                                                         \
+#define END_CPP11                                               \
+  }                                                             \
+  catch (cpp11::unwind_exception & e) {                         \
+    err = e.token;                                              \
+  }                                                             \
+  catch (std::exception & e) {                                  \
+    strncpy(buf, e.what(), sizeof(buf) - 1);                    \
+  }                                                             \
+  catch (...) {                                                 \
+    strncpy(buf, "C++ error (unknown cause)", sizeof(buf) - 1); \
+  }                                                             \
+  if (buf[0] != '\0') {                                         \
+    Rf_errorcall(R_NilValue, "%s", buf);                        \
+  } else if (err != R_NilValue) {                               \
+    CPP11_UNWIND                                                \
+  }                                                             \
   return R_NilValue;
