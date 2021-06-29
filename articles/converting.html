@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
       </span>
     </div>
 
@@ -55,6 +55,18 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    News
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="../news/index.html">Change log</a>
+    </li>
+  </ul>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -73,7 +85,7 @@
 
       
 
-      </header><script src="converting_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="converting_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Converting from Rcpp</h1>
@@ -215,12 +227,12 @@
 <h2 class="hasAnchor">
 <a href="#calling-r-functions-from-c" class="anchor"></a>Calling R functions from C++</h2>
 <p>Calling R functions from C++ is similar to using Rcpp.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1"></a>Rcpp::Function as_tibble(<span class="st">"as_tibble"</span>, Rcpp::Environment::namespace_env(<span class="st">"tibble"</span>));</span>
-<span id="cb1-2"><a href="#cb1-2"></a>as_tibble(x, Rcpp::Named(<span class="st">".rows"</span>, num_rows), Rcpp::Named(<span class="st">".name_repair"</span>, name_repair));</span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11::literals; <span class="co">// so we can use ""_nm syntax</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a></span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">auto</span> as_tibble = cpp11::package(<span class="st">"tibble"</span>)[<span class="st">"as_tibble"</span>];</span>
-<span id="cb2-4"><a href="#cb2-4"></a>as_tibble(x, <span class="st">".rows"_nm</span> = num_rows, <span class="st">".name_repair"_nm</span> = name_repair);</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Rcpp<span class="op">::</span>Function as_tibble<span class="op">(</span><span class="st">"as_tibble"</span><span class="op">,</span> Rcpp<span class="op">::</span>Environment<span class="op">::</span>namespace_env<span class="op">(</span><span class="st">"tibble"</span><span class="op">));</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>as_tibble<span class="op">(</span>x<span class="op">,</span> Rcpp<span class="op">::</span>Named<span class="op">(</span><span class="st">".rows"</span><span class="op">,</span> num_rows<span class="op">),</span> Rcpp<span class="op">::</span>Named<span class="op">(</span><span class="st">".name_repair"</span><span class="op">,</span> name_repair<span class="op">));</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> cpp11<span class="op">::</span>literals<span class="op">;</span> <span class="co">// so we can use ""_nm syntax</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> as_tibble <span class="op">=</span> cpp11<span class="op">::</span>package<span class="op">(</span><span class="st">"tibble"</span><span class="op">)[</span><span class="st">"as_tibble"</span><span class="op">];</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>as_tibble<span class="op">(</span>x<span class="op">,</span> <span class="st">".rows"_nm</span> <span class="op">=</span> num_rows<span class="op">,</span> <span class="st">".name_repair"_nm</span> <span class="op">=</span> name_repair<span class="op">);</span></span></code></pre></div>
 </div>
 <div id="appending-behavior" class="section level2">
 <h2 class="hasAnchor">
@@ -366,21 +378,21 @@
 <a href="#random-number-behavior" class="anchor"></a>Random Number behavior</h2>
 <p>Rcpp unconditionally includes calls to <code>GetRNGstate()</code> and <code>PutRNGstate()</code> before each wrapped function. This ensures that if any C++ code calls the R API functions <code>unif_rand()</code>, <code>norm_rand()</code>, <code>exp_rand()</code> or <code>R_unif_index()</code> the random seed state is set accordingly. cpp11 does <em>not</em> do this, so you must include the calls to <code>GetRNGstate()</code> and <code>PutRNGstate()</code> <em>yourself</em> if you use any of those functions in your C++ code. See <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Random-numbers">R-exts 6.3 - Random number generation</a> for details on these functions.</p>
 <p>One convenient way to do safely is to use a simple class:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">class</span> local_rng {</span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">public</span>:</span>
-<span id="cb4-3"><a href="#cb4-3"></a>  local_rng() {</span>
-<span id="cb4-4"><a href="#cb4-4"></a>    GetRNGstate();</span>
-<span id="cb4-5"><a href="#cb4-5"></a>  }</span>
-<span id="cb4-6"><a href="#cb4-6"></a></span>
-<span id="cb4-7"><a href="#cb4-7"></a>  ~local_rng(){</span>
-<span id="cb4-8"><a href="#cb4-8"></a>    PutRNGstate();</span>
-<span id="cb4-9"><a href="#cb4-9"></a>  }</span>
-<span id="cb4-10"><a href="#cb4-10"></a>};</span>
-<span id="cb4-11"><a href="#cb4-11"></a></span>
-<span id="cb4-12"><a href="#cb4-12"></a><span class="dt">void</span> foo() {</span>
-<span id="cb4-13"><a href="#cb4-13"></a>  local_rng rng_state;</span>
-<span id="cb4-14"><a href="#cb4-14"></a>  <span class="co">/* my code using the RNG */</span></span>
-<span id="cb4-15"><a href="#cb4-15"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> local_rng <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  local_rng<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    GetRNGstate<span class="op">();</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">~</span>local_rng<span class="op">(){</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    PutRNGstate<span class="op">();</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> foo<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  local_rng rng_state<span class="op">;</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* my code using the RNG */</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 </div>
 <div id="mechanics-of-converting-a-package-from-rcpp" class="section level2">
 <h2 class="hasAnchor">
@@ -394,7 +406,7 @@
 </li>
 <li>Clean and recompile the package, e.g. <code><a href="https://rdrr.io/pkg/pkgbuild/man/clean_dll.html">pkgbuild::clean_dll()</a></code> <code><a href="https://rdrr.io/pkg/pkgload/man/load_all.html">pkgload::load_all()</a></code>
 </li>
-<li>Run tests <code>devtools::test()</code>
+<li>Run tests <code><a href="https://devtools.r-lib.org//reference/test.html">devtools::test()</a></code>
 </li>
 <li>Start converting function by function
 <ul>
@@ -441,14 +453,14 @@
 <h3 class="hasAnchor">
 <a href="#logical-vector-construction" class="anchor"></a>Logical vector construction</h3>
 <p>If you are constructing a length 1 logical vector you may need to explicitly use a <code>r_bool()</code> object in the initializer list rather than <code>TRUE</code>, <code>FALSE</code> or <code>NA_INTEGER</code>. This issue only occurs with the clang compiler, not gcc. When constructing vectors with more than one element this is not an issue</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">// bad</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a>cpp11::writable::logicals({FALSE});</span>
-<span id="cb5-3"><a href="#cb5-3"></a></span>
-<span id="cb5-4"><a href="#cb5-4"></a><span class="co">// good</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a>cpp11::writable::logicals({r_bool(FALSE)});</span>
-<span id="cb5-6"><a href="#cb5-6"></a></span>
-<span id="cb5-7"><a href="#cb5-7"></a><span class="co">// good</span></span>
-<span id="cb5-8"><a href="#cb5-8"></a>cpp11::writable::logicals({FALSE, NA_LOGICAL});</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// bad</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>cpp11<span class="op">::</span>writable<span class="op">::</span>logicals<span class="op">({</span>FALSE<span class="op">});</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">// good</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>cpp11<span class="op">::</span>writable<span class="op">::</span>logicals<span class="op">({</span>r_bool<span class="op">(</span>FALSE<span class="op">)});</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">// good</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>cpp11<span class="op">::</span>writable<span class="op">::</span>logicals<span class="op">({</span>FALSE<span class="op">,</span> NA_LOGICAL<span class="op">});</span></span></code></pre></div>
 </div>
 </div>
   </div>

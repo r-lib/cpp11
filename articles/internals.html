@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
       </span>
     </div>
 
@@ -55,6 +55,18 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    News
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="../news/index.html">Change log</a>
+    </li>
+  </ul>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -73,7 +85,7 @@
 
       
 
-      </header><script src="internals_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="internals_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>cpp11 internals</h1>
@@ -96,16 +108,16 @@
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_deps.html">install_deps</a></span><span class="op">(</span>dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p>You can load the package in an interactive R session</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/load_all.html">load_all</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>Or run the tests with</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu">test</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/test.html">test</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><code>test()</code> will also re-compile the package if needed, so you do not always have to run <code>load_all()</code>.</p>
 <p>If you change the cpp11 headers you will need to clean and recompile the cpp11test package</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu">clean_dll</span><span class="op">(</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p>Generally when developing the C++ headers I run R with its working directory in the <code>cpp11test</code> directory and use <code>devtools::test()</code> to run the cpp11tests.</p>
+<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pkgbuild/man/clean_dll.html">clean_dll</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/load_all.html">load_all</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p>Generally when developing the C++ headers I run R with its working directory in the <code>cpp11test</code> directory and use <code><a href="https://devtools.r-lib.org//reference/test.html">devtools::test()</a></code> to run the cpp11tests.</p>
 <p>To calculate code coverage of the cpp11 package run the following from the <code>cpp11</code> root directory.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">covr</span><span class="fu">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/report.html">report</a></span><span class="op">(</span><span class="fu">cpp11_coverage</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
@@ -113,8 +125,10 @@
 <div id="code-formatting" class="section level2">
 <h2 class="hasAnchor">
 <a href="#code-formatting" class="anchor"></a>Code formatting</h2>
-<p>This project uses <a href="https://clang.llvm.org/docs/ClangFormat.html">clang-format</a> to automatically format the c++ code.</p>
-<p>You can run <code>make format</code> to re-format all code in the project. Alternatively many IDEs support automatically running <code>clang-format</code> every time files are written.</p>
+<p>This project uses <a href="https://clang.llvm.org/docs/ClangFormat.html">clang-format</a> (version 10) to automatically format the c++ code.</p>
+<p>You can run <code>make format</code> to re-format all code in the project. If your system does not have <code>clang-format</code> version 10, this can be installed using a <a href="https://github.com/r-lib/homebrew-taps">homebrew tap</a> at the command line with <code>brew install r-lib/taps/clang-format@10</code>.</p>
+<p>You may need to link the newly installed version 10. To do so, run <code>brew unlink clang-format</code> followed by <code>brew link clang-format@10</code>.</p>
+<p>Alternatively many IDEs support automatically running <code>clang-format</code> every time files are written.</p>
 </div>
 <div id="code-organization" class="section level2">
 <h2 class="hasAnchor">
