@@ -1,6 +1,10 @@
 on:
   push:
-    branches: master
+    branches:
+      - main
+      - master
+    tags:
+      -'*'
 
 name: pkgdown
 
