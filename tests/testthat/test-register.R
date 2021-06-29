@@ -60,7 +60,10 @@ describe("get_call_entries", {
     writeLines('foo <- function() .Call("bar")', file.path(path, "R", "foo.R"))
     expect_equal(
       get_call_entries(path, get_funs(path), get_package_name(path)),
-      c("static const R_CallMethodDef CallEntries[] = {",
+      c("/* .Call calls */",
+        "extern SEXP bar();",
+        "",
+        "static const R_CallMethodDef CallEntries[] = {",
         "    {\"bar\", (DL_FUNC) &bar, 0},",
         "    {NULL, NULL, 0}",
         "};"

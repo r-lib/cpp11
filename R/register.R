@@ -273,7 +273,11 @@ get_call_entries <- function(path, funs, package) {
 
   res <- res[seq(start, end)]
 
-  res[!grepl(redundant, res)]
+  if (nchar(redundant) > 0) {
+    res <- res[!grepl(redundant, res)]
+  }
+
+  return(res)
 }
 
 pkg_links_to_rcpp <- function(path) {
