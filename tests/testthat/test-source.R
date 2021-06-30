@@ -126,7 +126,7 @@ test_that("check_valid_attributes does not return an error if all registers are 
               [[cpp11::linking_to("progress")]]
 
               [[cpp11::register]] void show_progress() {
-                RProgress::RProgress pb("Downloading [:bar] ETA: :eta");
+                RProgress::RProgress pb("Processing [:bar] ETA: :eta");
 
                 pb.tick(0);
                 for (int i = 0; i < 100; i++) {
@@ -188,7 +188,7 @@ test_that("check_valid_attributes returns an error if one or more registers is i
       #include <RProgress.h>
       [[cpp11::link_to("progress")]]
       [[cpp11::register]] void show_progress() {
-        RProgress::RProgress pb("Downloading [:bar] ETA: :eta");
+        RProgress::RProgress pb("Processing [:bar] ETA: :eta");
         pb.tick(0);
         for (int i = 0; i < 100; i++) {
           usleep(2.0 / 100 * 1000000);

@@ -2,7 +2,7 @@
 
 [[cpp11::register]] void
 show_progress() {
-  RProgress::RProgress pb("Downloading [:bar] ETA: :eta");
+  RProgress::RProgress pb("Processing [:bar] ETA: :eta");
 
   pb.tick(0);
   for (int i = 0; i < 100; i++) {
