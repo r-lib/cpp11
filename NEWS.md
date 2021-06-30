@@ -1,4 +1,5 @@
 # cpp11 (development version)
+* Allow cpp11 decorators of the form `cpp11::linking_to` (@sbearrows, #193)
 
 # cpp11 0.3.1
 

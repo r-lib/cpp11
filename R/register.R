@@ -279,7 +279,7 @@ get_cpp_register_needs <- function() {
 
 check_valid_attributes <- function(decorations) {
 
-  bad_decor <- grepl("cpp11::", decorations$decoration) & (!decorations$decoration %in% c("cpp11::register",
+  bad_decor <- startsWith(decorations$decoration, "cpp11::") & (!decorations$decoration %in% c("cpp11::register",
                                                                                          "cpp11::init",
                                                                                          "cpp11::linking_to"))
 
