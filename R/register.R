@@ -290,7 +290,7 @@ check_valid_attributes <- function(decorations) {
     bad_lines <- glue::glue_collapse(glue::glue("- Invalid attribute `{names}` on
                  line {lines} in file '{file}'."), "\n")
 
-    msg <- glue::glue("cpp11 attributes must be either `cpp11::register`, `cpp11::init` or `cpp11::linking_to`:
+    msg <- glue::glue("cpp11 attributes must be one of `cpp11::register`, `cpp11::init` or `cpp11::linking_to`:
       {bad_lines}
       ")
     stop(msg, call. = FALSE)
