@@ -96,11 +96,14 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     package <- tools::file_path_sans_ext(generate_cpp_name(file))
   }
 
-  # file not points to another location
-  file.copy(file, file.path(dir, "src", name))
-  #change variable name to reflect this
-  file <- file.path(dir, "src", name)
+  orig_path <- normalizePath(dirname(file))
+  new_path <- normalizePath(file.path(dir, "src"))
+  
+  # file now points to another location
+  file.copy(file, file.path(new_path, name))
 
+  #change variable name to reflect this
+  file <- file.path(new_path, name)
 
   suppressWarnings(
     all_decorations <- decor::cpp_decorations(dir, is_attribute = TRUE)
@@ -128,12 +131,16 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
 
   makevars_content <- generate_makevars(includes, cxx_std)
 
-  brio::write_lines(makevars_content, file.path(dir, "src", "Makevars"))
+  brio::write_lines(makevars_content, file.path(new_path, "Makevars"))
 
   source_files <- normalizePath(c(file, cpp_path), winslash = "/")
-  res <- callr::rcmd("SHLIB", source_files, user_profile = TRUE, show = !quiet, wd = file.path(dir, "src"))
+  res <- callr::rcmd("SHLIB", source_files, user_profile = TRUE, show = !quiet, wd = new_path)
   if (res$status != 0) {
-    cat(res$stderr)
+    error_messages <- res$stderr
+
+    # Substitue temporary file path with original file path
+    error_messages <- gsub(file.path(new_path, basename(file)), file.path(orig_path, basename(file)), error_messages, fixed = TRUE)
+    cat(error_messages)
     stop("Compilation failed.", call. = FALSE)
   }
 
