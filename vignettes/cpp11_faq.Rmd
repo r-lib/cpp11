@@ -136,7 +136,20 @@ cpp11::raws push() {
 
 #### 8. How can I tell whether a vector is named?
 
-  TODO    
+  * Use the `named()` method for vector classes
+  
+```{cpp11}
+#include <cpp11.hpp>
+
+using namespace cpp11;
+[[cpp11::register]]
+cpp11::r_bool is_named() {
+    cpp11::writable::list x;
+    x.push_back({writable::integers ({1})});
+    #returns false
+    return(x.named());
+  }
+```
 
 #### 9. What are the types for C++ iterators?
 
