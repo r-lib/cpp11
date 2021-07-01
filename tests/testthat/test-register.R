@@ -536,12 +536,11 @@ extern \"C\" SEXP _testPkg_foo() {
 }
 
 extern \"C\" {
-/* .Call calls */
-
 static const R_CallMethodDef CallEntries[] = {
     {\"_testPkg_foo\", (DL_FUNC) &_testPkg_foo, 0},
     {NULL, NULL, 0}
 };
+
 }
 
 extern \"C\" void R_init_testPkg(DllInfo* dll){

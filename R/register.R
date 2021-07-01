@@ -261,8 +261,6 @@ get_call_entries <- function(path, funs, package) {
 
   start <- grep("/* .Call calls */", res, fixed = TRUE)
 
-  mid <- grep("static const R_CallMethodDef CallEntries[] = {", res, fixed = TRUE)
-
   end <- grep("};", res, fixed = TRUE)
 
   if (length(start) == 0) {
@@ -274,13 +272,15 @@ get_call_entries <- function(path, funs, package) {
   redundant <- as.character(glue_collapse_data(funs, 'extern SEXP _{package}_{name}', sep = '|'))
 
   if (nchar(redundant) > 0) {
-    res <- res[seq(start, end)]
-    res <- res[!grepl(redundant, res)]
+    res <- res[!startsWith(res, redundant)]
   }
+
+  mid <- grep("static const R_CallMethodDef CallEntries[] = {", res, fixed = TRUE)
+
 
   # if no extern SEXP between start and mid return mid to end
 
-  check_calls <- grepl("extern SEXP", res[seq(start, mid)])
+  check_calls <- startsWith(res, "extern SEXP")
 
   if(any(check_calls)) {
     return(res[seq(start, end)])
