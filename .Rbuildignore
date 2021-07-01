@@ -23,3 +23,4 @@ script.R
 ^CRAN-RELEASE$
 ^revdep$
 ^talk$
+\.cache$

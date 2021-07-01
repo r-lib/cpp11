@@ -13,3 +13,4 @@ compile_commands.json
 revdep/*/
 talk/
 TAGS
+.cache/

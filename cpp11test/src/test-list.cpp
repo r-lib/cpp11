@@ -6,10 +6,6 @@
 #include "cpp11/raws.hpp"
 #include "cpp11/strings.hpp"
 
-namespace cpp11 {
-std::ostream& operator<<(std::ostream& os, r_bool b) { return os << int(b); }
-}  // namespace cpp11
-
 context("list-C++") {
   test_that("list.push_back()") {
     cpp11::writable::list x;
@@ -125,5 +121,23 @@ context("list-C++") {
     cpp11::integers first(*x.begin());
     expect_true(first[0] == 1);
     expect_true(first[1] == 2);
+  }
+
+  test_that("list.named() works") {
+    cpp11::writable::list x({"bar"_nm = 2});
+    expect_true(x.named());
+
+    cpp11::writable::list y(1);
+    expect_false(y.named());
+  }
+
+  test_that("list.empty() works") {
+    cpp11::writable::list x;
+
+    expect_true(x.empty());
+
+    cpp11::writable::list y(1);
+
+    expect_false(y.empty());
   }
 }
