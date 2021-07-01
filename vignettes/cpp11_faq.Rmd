@@ -144,10 +144,9 @@ cpp11::raws push() {
 using namespace cpp11;
 [[cpp11::register]]
 cpp11::r_bool is_named() {
-    cpp11::writable::list x;
-    x.push_back({writable::integers ({1})});
-    #returns false
-    return(x.named());
+    cpp11::writable::list s;
+    s.push_back({writable::integers ({1})});
+    return(s.named());
   }
 ```
 
@@ -170,9 +169,9 @@ cpp11::writable::logicals fn2() {
 }
 ```
     
-  * Otherwise this will return a 0 length logical vector:
+  * Otherwise this will fail to compile:
     
-```{cpp11}
+```{cpp11, eval = FALSE}
 #include <cpp11.hpp>
 
 using namespace cpp11;
