@@ -158,23 +158,20 @@
 <div id="does-cpp11-support-default-arguments" class="section level4">
 <h4 class="hasAnchor">
 <a href="#does-cpp11-support-default-arguments" class="anchor"></a>3. Does cpp11 support default arguments?</h4>
-<p>cpp11 does not support default arguments, while convenient they would require more complexity to support than is currently worthwhile. If you need default argument support you can use a wrapper function around your cpp11 registered function.</p>
+<p>cpp11 does not support default arguments, while convenient they would require more complexity to support than is currently worthwhile. If you need default argument support you can use a wrapper function around your cpp11 registered function. A common convention is to name the internal function with a trailing <code>_</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
 <span id="cb2-2"><a href="#cb2-2"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="bu">std::</span>string dims(<span class="dt">bool</span> length) {</span>
-<span id="cb2-4"><a href="#cb2-4"></a>  <span class="cf">if</span>(length) {</span>
-<span id="cb2-5"><a href="#cb2-5"></a>    <span class="cf">return</span> (<span class="st">"length"</span>);</span>
-<span id="cb2-6"><a href="#cb2-6"></a>  }</span>
-<span id="cb2-7"><a href="#cb2-7"></a>  <span class="cf">return</span> (<span class="st">"width"</span>);</span>
-<span id="cb2-8"><a href="#cb2-8"></a>}</span></code></pre></div>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="dt">double</span> <span class="va">add_some_</span>(<span class="dt">double</span> x, <span class="dt">double</span> amount) {</span>
+<span id="cb2-4"><a href="#cb2-4"></a>  <span class="cf">return</span> x + amount;</span>
+<span id="cb2-5"><a href="#cb2-5"></a>}</span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">full_dims</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">length</span> <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu">dims</span><span class="op">(</span><span class="va">length</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">add_some</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">amount</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span>
+  <span class="fu">add_some_</span><span class="op">(</span><span class="va">x</span>, <span class="va">amount</span><span class="op">)</span>
 <span class="op">}</span>
-<span class="fu">full_dims</span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; [1] "length"</span>
-<span class="fu">full_dims</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] "width"</span></code></pre></div>
+<span class="fu">add_some</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
+<span class="co">#&gt; [1] 2</span>
+<span class="fu">add_some</span><span class="op">(</span><span class="fl">1</span>, amount <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
+<span class="co">#&gt; [1] 6</span></code></pre></div>
 </div>
 <div id="how-do-i-create-a-new-empty-list" class="section level4">
 <h4 class="hasAnchor">
@@ -341,10 +338,10 @@
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fl">2L</span>, <span class="fl">3L</span>, <span class="fl">4L</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Internal.html">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; @7ff1134bcac8 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span>
+<span class="co">#&gt; @7f8afb101d48 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span>
 <span class="fu">add_one</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Internal.html">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; @7ff1134bcac8 13 INTSXP g0c2 [REF(6)] (len=4, tl=0) 2,3,4,5</span>
+<span class="co">#&gt; @7f8afb101d48 13 INTSXP g0c2 [REF(6)] (len=4, tl=0) 2,3,4,5</span>
 <span class="va">x</span>
 <span class="co">#&gt; [1] 2 3 4 5</span></code></pre></div>
 </div>
