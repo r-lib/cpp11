@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 library(cpp11)
 ```
 
-Here are some Frequently Asked Questions and answers about cpp11.
+Below are some Frequently Asked Questions about cpp11.
 If you have a question that you think would fit well here please [open an issue](https://github.com/r-lib/cpp11/issues/new/choose).
 
 #### 1. What are the underlying types of cpp11 objects?
@@ -102,9 +102,9 @@ is_named("foo")
 is_named(c(x = "foo"))
 ```
 
-#### 7. How do I return a cpp11::writable::logicals object with only a false value?
+#### 7. How do I return a `cpp11::writable::logicals` object with only a `FALSE` value?
 
-You need to use [list initialization](https://en.cppreference.com/w/cpp/language/list_initialization) to create the object.
+You need to use [list initialization](https://en.cppreference.com/w/cpp/language/list_initialization) with `{}` to create the object.
 
 ```{cpp11}
 #include <cpp11.hpp>
@@ -137,7 +137,7 @@ my_both()
 #### 8. How do I create a new empty environment?
 
 To do this you need to call the `base::new.env()` function from C++.
-This can be done by creating a cpp11::function object and then calling it to generate the new environment.
+This can be done by creating a `cpp11::function` object and then calling it to generate the new environment.
 
 ```{cpp11}
 #include <cpp11.hpp>
@@ -181,7 +181,7 @@ foo_exists(x)
 #### 10. How can I create a `cpp11:raws` from a `std::string`?
 
 There is no built in way to do this.
-One method would be to `push_back()` the contents of the string individually.
+One method would be to `push_back()` each element of the string individually.
 
 ```{cpp11}
 #include <cpp11.hpp>
@@ -210,7 +210,7 @@ For example the iterator for `cpp11::doubles` would be `cpp11::doubles::iterator
 
 #### 12. My code has `using namespace std`, why do I still have to include `std::` in the signatures of `[[cpp11::register]]` functions?
 
-The `using namespace std` will not be included in the generated code of the function signatures, so they need to be fully qualified.
+The `using namespace std` directive will not be included in the generated code of the function signatures, so they still need to be fully qualified.
 However you will _not_ need to qualify the type names within those functions.
 
 The following won't compile
@@ -245,7 +245,7 @@ std::string foobar() {
 In place modification breaks the normal semantics of R code.
 In general it should be avoided, which is why `cpp11::writable` classes always copy their data when constructed.
 
-However if you are sure in-place modification is necessary you can use the move constructor.
+However if you are _positive_ in-place modification is necessary for your use case you can use the move constructor to do this.
 
 ```{cpp11}
 #include <cpp11.hpp>
