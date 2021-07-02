@@ -1,4 +1,5 @@
 # cpp11 (development version)
+* Removed redundant `.Call calls` in cpp11.cpp file (@sbearrows, #170)
 * Allow cpp11 decorators of the form `cpp11::linking_to` (@sbearrows, #193)
 
 # cpp11 0.3.1
@@ -6,6 +7,7 @@
 * Fix stringop-truncation warning from generated wrapping code.
 
 # cpp11 0.3.0
+
 
 ## New functions and features
 * New `x.empty()` method to check if a vector is empty (@sbearrows, #182)

@@ -12,6 +12,15 @@ pkg_path <- function(pkg) {
   dirname(pkg$.__enclos_env__$private$path)
 }
 
+get_funs <- function(path) {
+  all_decorations <- decor::cpp_decorations(path, is_attribute = TRUE)
+  get_registered_functions(all_decorations, "cpp11::register", quiet = FALSE)
+}
+
+get_package_name <- function(path) {
+  desc::desc_get("Package", file = file.path(path, "DESCRIPTION"))
+}
+
 glue_str <- function(...) {
   glue::as_glue(unlist(list(...)))
 }
