@@ -771,6 +771,13 @@ test_that("check_valid_attributes does not return an error if all registers are 
   file.copy(test_path("multiple.cpp"), file.path(p, "src", "multiple.cpp"))
 
   expect_error_free(cpp_register(p))
+
+  pkg <- local_package()
+  p <- pkg_path(pkg)
+  dir.create(file.path(p, "src"))
+  file.copy(test_path("linking_to_registers.cpp"), file.path(p, "src", "linking_to_registers.cpp"))
+
+  expect_error_free(cpp_register(p))
 })
 
 
@@ -786,6 +793,13 @@ test_that("check_valid_attributes returns an error if one or more registers is i
   p <- pkg_path(pkg)
   dir.create(file.path(p, "src"))
   file.copy(test_path("multiple_incorrect.cpp"), file.path(p, "src", "multiple_incorrect.cpp"))
+
+  expect_error(cpp_register(p))
+
+  pkg <- local_package()
+  p <- pkg_path(pkg)
+  dir.create(file.path(p, "src"))
+  file.copy(test_path("linking_to_incorrect_registers.cpp"), file.path(p, "src", "linking_to_incorrect_registers.cpp"))
 
   expect_error(cpp_register(p))
 })

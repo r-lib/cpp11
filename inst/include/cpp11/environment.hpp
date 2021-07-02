@@ -40,7 +40,8 @@ class environment {
 
  public:
   environment(SEXP env) : env_(env) {}
-  proxy operator[](SEXP name) const { return {env_, name}; }
+  environment(sexp env) : env_(env) {}
+  proxy operator[](const SEXP name) const { return {env_, name}; }
   proxy operator[](const char* name) const { return operator[](safe[Rf_install](name)); }
   proxy operator[](const std::string& name) const { return operator[](name.c_str()); }
 

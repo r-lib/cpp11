@@ -299,7 +299,8 @@ get_cpp_register_needs <- function() {
 
 check_valid_attributes <- function(decorations) {
 
-  bad_decor <- !decorations$decoration %in% c("cpp11::register", "cpp11::init")
+  bad_decor <- startsWith(decorations$decoration, "cpp11::") &
+    (!decorations$decoration %in% c("cpp11::register", "cpp11::init", "cpp11::linking_to"))
 
   if(any(bad_decor)) {
     lines <- decorations$line[bad_decor]
@@ -308,7 +309,7 @@ check_valid_attributes <- function(decorations) {
     bad_lines <- glue::glue_collapse(glue::glue("- Invalid attribute `{names}` on
                  line {lines} in file '{file}'."), "\n")
 
-    msg <- glue::glue("cpp11 attributes must be either `cpp11::register` or `cpp11::init`:
+    msg <- glue::glue("cpp11 attributes must be one of `cpp11::register`, `cpp11::init` or `cpp11::linking_to`:
       {bad_lines}
       ")
     stop(msg, call. = FALSE)
