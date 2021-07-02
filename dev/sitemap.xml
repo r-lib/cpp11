@@ -16,13 +16,13 @@
     <loc>https://cpp11.r-lib.org/reference/cpp_vendor.html</loc>
   </url>
   <url>
+    <loc>https://cpp11.r-lib.org/articles/FAQ.html</loc>
+  </url>
+  <url>
     <loc>https://cpp11.r-lib.org/articles/converting.html</loc>
   </url>
   <url>
     <loc>https://cpp11.r-lib.org/articles/cpp11.html</loc>
-  </url>
-  <url>
-    <loc>https://cpp11.r-lib.org/articles/cpp11_faq.html</loc>
   </url>
   <url>
     <loc>https://cpp11.r-lib.org/articles/internals.html</loc>
