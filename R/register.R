@@ -71,7 +71,7 @@ cpp_register <- function(path = ".", quiet = FALSE) {
   }
 
 
-  call_entries <- get_call_entries(path, funs, package)
+  call_entries <- get_call_entries(path, funs$name, package)
 
   cpp_function_registration <- glue::glue_data(funs, '    {{
     "_cpp11_{name}", (DL_FUNC) &_{package}_{name}, {n_args}}}, ',
@@ -245,9 +245,8 @@ wrap_call <- function(name, return_type, args) {
   }
 }
 
-get_call_entries <- function(path, funs, package) {
+get_call_entries <- function(path, names, package) {
   con <- textConnection("res", local = TRUE, open = "w")
-
 
   withr::with_collate("C",
     tools::package_native_routine_registration_skeleton(path,
@@ -267,24 +266,22 @@ get_call_entries <- function(path, funs, package) {
     return("")
   }
 
-  funs$package <- package
+  redundant <- glue::glue_collapse(glue::glue('extern SEXP _{package}_{names}'), sep = '|')
 
-  redundant <- as.character(glue_collapse_data(funs, 'extern SEXP _{package}_{name}', sep = '|'))
+  if (length(redundant) > 0) {
+    redundant <- paste0("^", redundant)
+    res <- res[!grepl(redundant, res)]
+  }
 
-  if (nchar(redundant) > 0) {
-    res <- res[!startsWith(res, redundant)]
+  end <- grep("};", res, fixed = TRUE)
+
+  call_calls <- startsWith(res, "extern SEXP")
+
+  if(any(call_calls)) {
+    return(res[seq(start, end)])
   }
 
   mid <- grep("static const R_CallMethodDef CallEntries[] = {", res, fixed = TRUE)
-
-
-  # if no extern SEXP between start and mid return mid to end
-
-  check_calls <- startsWith(res, "extern SEXP")
-
-  if(any(check_calls)) {
-    return(res[seq(start, end)])
-  }
 
   res[seq(mid, end)]
 }

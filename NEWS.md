@@ -1,4 +1,5 @@
 # cpp11 (development version)
+* Removed redundant `.Call calls` in cpp11.cpp file (@sbearrows, #170)
 
 ## New functions and features
 * New `x.empty()` method to check if a vector is empty (@sbearrows, #182)

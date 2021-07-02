@@ -15,7 +15,6 @@ pkg_path <- function(pkg) {
 get_funs <- function(path) {
   all_decorations <- decor::cpp_decorations(path, is_attribute = TRUE)
   get_registered_functions(all_decorations, "cpp11::register", quiet = FALSE)
-
 }
 
 get_package_name <- function(path) {
