@@ -53,24 +53,22 @@ cpp11::list foo_push() {
 
 cpp11 does not support default arguments, while convenient they would require more complexity to support than is currently worthwhile.
 If you need default argument support you can use a wrapper function around your cpp11 registered function.
+A common convention is to name the internal function with a trailing `_`.
 
 ```{cpp11}
 #include <cpp11.hpp>
 [[cpp11::register]]
-std::string dims(bool length) {
-  if(length) {
-    return ("length");
-  }
-  return ("width");
+double add_some_(double x, double amount) {
+  return x + amount;
 }
 ```
 
 ```{r}
-full_dims <- function(length = FALSE) {
-  dims(length)
+add_some <- function(x, amount = 1) {
+  add_some_(x, amount)
 }
-full_dims(TRUE)
-full_dims()
+add_some(1)
+add_some(1, amount = 5)
 ```
 
 #### 4. How do I create a new empty list?
