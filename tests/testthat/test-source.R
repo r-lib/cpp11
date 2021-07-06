@@ -54,6 +54,13 @@ test_that("cpp_source works with files called `cpp11.cpp`", {
   expect_true(always_true())
 })
 
+test_that("cpp_source returns original file name on error", {
+
+  expect_error(cpp_source(test_path("single_incorrect.cpp"), clean = TRUE, quiet = TRUE),
+               normalizePath(test_path("single_incorrect.cpp")))
+
+})
+
 test_that("cpp_source lets you set the C++ standard", {
   skip_on_os("solaris")
   skip_on_os("windows") # Older windows toolchains do not support C++14

@@ -98,7 +98,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
 
   orig_path <- normalizePath(dirname(file))
   new_path <- normalizePath(file.path(dir, "src"))
-  
+
   # file now points to another location
   file.copy(file, file.path(new_path, name))
 
@@ -109,7 +109,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     all_decorations <- decor::cpp_decorations(dir, is_attribute = TRUE)
   )
 
-  check_valid_attributes(all_decorations)
+  check_valid_attributes(all_decorations, file = file.path(orig_path, basename(file)))
 
   cli_suppress(
     funs <- get_registered_functions(all_decorations, "cpp11::register")
