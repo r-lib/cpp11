@@ -22,7 +22,7 @@
 #'   [dyn.load()] (invisibly). For `[cpp_eval()]` the results of the evaluated
 #'   expression.
 #' @examples
-#' \dontrun{
+#'
 #' cpp_source(
 #'   code = '#include "cpp11/integers.hpp"
 #'
@@ -51,7 +51,7 @@
 #'
 #' [[cpp11::register]] void
 #' show_progress() {
-#'   RProgress::RProgress pb("Downloading [:bar] ETA: :eta");
+#'   RProgress::RProgress pb("Processing [:bar] ETA: :eta");
 #'
 #'   pb.tick(0);
 #'   for (int i = 0; i < 100; i++) {
@@ -63,7 +63,7 @@
 #'
 #' show_progress()
 #' }
-#' }
+#'
 #' @export
 cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11"), dir = tempfile()) {
   stop_unless_installed(c("brio", "callr", "cli", "decor", "desc", "glue", "tibble", "vctrs"))

@@ -29,6 +29,8 @@ navbar:
       href: articles/motivations.html
     - text: Converting
       href: articles/converting.html
+    - text: FAQ
+      href: articles/FAQ.html
     - text: Internals
       href: articles/internals.html
     - text: Reference
