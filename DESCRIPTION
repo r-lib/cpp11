@@ -21,7 +21,7 @@ Description: Provides a header only, C++11 interface to R's C
     to normal R function semantics and supports interaction with 'ALTREP'
     vectors.
 License: MIT + file LICENSE
-URL: https://github.com/r-lib/cpp11
+URL: https://cpp11.r-lib.org, https://github.com/r-lib/cpp11
 BugReports: https://github.com/r-lib/cpp11/issues
 Suggests:
     bench,

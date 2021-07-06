@@ -129,13 +129,31 @@ test_that("check_valid_attributes does not return an error if all registers are 
     x.push_back({"foo"_nm = 1});
     return x;
   }'))
+  expect_error_free(
+    cpp11::cpp_source(
+      code = '#include <cpp11/R.hpp>
+              #include <RProgress.h>
+
+              [[cpp11::linking_to("progress")]]
+
+              [[cpp11::register]] void show_progress() {
+                RProgress::RProgress pb("Processing [:bar] ETA: :eta");
+
+                pb.tick(0);
+                for (int i = 0; i < 100; i++) {
+                  usleep(2.0 / 100 * 1000000);
+                  pb.tick();
+                }
+              }
+              ')
+  )
 })
 
 test_that("check_valid_attributes returns an error if one or more registers is incorrect", {
   expect_error(
     cpp11::cpp_source(code = '#include <cpp11.hpp>
   using namespace cpp11::literals;
-  [[cpp11:register]]
+  [[cpp11::reg]]
   cpp11::list fn() {
     cpp11::writable::list x;
     x.push_back({"foo"_nm = 1});
@@ -151,7 +169,17 @@ test_that("check_valid_attributes returns an error if one or more registers is i
   expect_error(
     cpp11::cpp_source(code = '#include <cpp11.hpp>
   using namespace cpp11::literals;
-  [[cpp11:register]]
+  [[cpp11::reg]]
+  cpp11::list fn() {
+    cpp11::writable::list x;
+    x.push_back({"foo"_nm = 1});
+    return x;
+  }'))
+
+  expect_error(
+    cpp11::cpp_source(code = '#include <cpp11.hpp>
+  using namespace cpp11::literals;
+  [[cpp11::reg]]
   cpp11::list fn() {
     cpp11::writable::list x;
     x.push_back({"foo"_nm = 1});
@@ -163,4 +191,24 @@ test_that("check_valid_attributes returns an error if one or more registers is i
     x.push_back({"foo"_nm = 1});
     return x;
   }'))
+
+
+
+  expect_error(
+    cpp11::cpp_source(
+      code = '
+      #include <cpp11/R.hpp>
+      #include <RProgress.h>
+      [[cpp11::link_to("progress")]]
+      [[cpp11::register]] void show_progress() {
+        RProgress::RProgress pb("Processing [:bar] ETA: :eta");
+        pb.tick(0);
+        for (int i = 0; i < 100; i++) {
+          usleep(2.0 / 100 * 1000000);
+          pb.tick();
+        }
+      }
+')
+  )
+
 })
