@@ -1,6 +1,7 @@
 #include <testthat.h>
 #include <cstring>
 #include "cpp11/doubles.hpp"
+#include "cpp11/integers.hpp"
 #include "cpp11/sexp.hpp"
 #include "cpp11/strings.hpp"
 
@@ -357,6 +358,25 @@ context("doubles-C++") {
 
     double y = NA_REAL;
     expect_true(cpp11::is_na(y));
+  }
+
+  test_that("as_double(integers)") {
+    cpp11::writable::integers y;
+    y.push_back(10);
+    y.push_back(13616);
+    y.push_back(124);
+    y.push_back(899);
+    cpp11::doubles i(cpp11::as_double(y));
+    expect_true(i[0] == 10);
+    expect_true(i[1] == 13616);
+    expect_true(i[2] == 124);
+    expect_true(i[3] == 899);
+    expect_true(TYPEOF(i) == REALSXP);
+
+    cpp11::writable::strings e;
+    e.push_back("a");
+    e.push_back("b");
+    expect_error(cpp11::as_double(e));
   }
 
   test_that("doubles operator[] and at") {

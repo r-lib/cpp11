@@ -1,4 +1,5 @@
 # cpp11 (development version)
+* added `as_double()` and `as_integer()` method to coerce integers to doubles and doubles to integers to doubles (@sbearrows, #46)
 
 # cpp11 0.3.1
 

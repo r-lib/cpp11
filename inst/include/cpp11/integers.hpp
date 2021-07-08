@@ -141,4 +141,30 @@ inline int na() {
   return NA_INTEGER;
 }
 
+// forward declaration
+
+typedef r_vector<double> doubles;
+
+inline integers as_integer(sexp x) {
+  if (TYPEOF(x) == INTSXP) {
+    return as_cpp<integers>(x);
+  } else if (TYPEOF(x) == REALSXP) {
+    doubles xn = as_cpp<doubles>(x);
+    size_t len = (xn.size());
+    writable::integers ret = writable::integers(len);
+    for (size_t i = 0; i < len; ++i) {
+      double el = xn[i];
+      if (!is_convertable_without_loss_to_integer(el)) {
+        stop("All elements must be integer-like");
+      }
+      ret[i] = (static_cast<int>(el));
+    }
+
+    return ret;
+  }
+
+  // else
+  stop("Expected a numeric vector");
+}
+
 }  // namespace cpp11
