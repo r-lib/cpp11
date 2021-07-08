@@ -57,11 +57,11 @@ test_that("cpp_source works with files called `cpp11.cpp`", {
 test_that("cpp_source returns original file name on error", {
 
   expect_output(try(cpp_source(test_path("single_error.cpp")), silent = TRUE),
-               normalizePath(test_path("single_error.cpp")), fixed = TRUE)
+               normalizePath(test_path("single_error.cpp"), winslash = "/"), fixed = TRUE)
 
   #error generate for attributes is separate from compilation errors
   expect_error(cpp_source(test_path("single_incorrect.cpp")),
-                normalizePath(test_path("single_incorrect.cpp")), fixed = TRUE)
+                normalizePath(test_path("single_incorrect.cpp"), winslash = "/"), fixed = TRUE)
 
 })
 
