@@ -155,7 +155,7 @@ inline integers as_integers(sexp x) {
     for (size_t i = 0; i < len; ++i) {
       double el = xn[i];
       if (!is_convertable_without_loss_to_integer(el)) {
-        stop("All elements must be integer-like");
+        throw std::runtime_error("All elements must be integer-like");
       }
       ret[i] = (static_cast<int>(el));
     }
@@ -163,8 +163,7 @@ inline integers as_integers(sexp x) {
     return ret;
   }
 
-  // else
-  stop("Expected a numeric vector");
+  throw type_error(REALSXP, TYPEOF(x));
 }
 
 }  // namespace cpp11
