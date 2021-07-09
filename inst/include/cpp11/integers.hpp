@@ -145,7 +145,7 @@ inline int na() {
 
 typedef r_vector<double> doubles;
 
-inline integers as_integer(sexp x) {
+inline integers as_integers(sexp x) {
   if (TYPEOF(x) == INTSXP) {
     return as_cpp<integers>(x);
   } else if (TYPEOF(x) == REALSXP) {

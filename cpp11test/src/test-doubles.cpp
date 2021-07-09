@@ -360,13 +360,13 @@ context("doubles-C++") {
     expect_true(cpp11::is_na(y));
   }
 
-  test_that("as_double(integers)") {
+  test_that("as_doubles(integers)") {
     cpp11::writable::integers y;
     y.push_back(10);
     y.push_back(13616);
     y.push_back(124);
     y.push_back(899);
-    cpp11::doubles i(cpp11::as_double(y));
+    cpp11::doubles i(cpp11::as_doubles(y));
     expect_true(i[0] == 10);
     expect_true(i[1] == 13616);
     expect_true(i[2] == 124);
@@ -376,7 +376,7 @@ context("doubles-C++") {
     cpp11::writable::strings e;
     e.push_back("a");
     e.push_back("b");
-    expect_error(cpp11::as_double(e));
+    expect_error(cpp11::as_doubles(e));
   }
 
   test_that("doubles operator[] and at") {
