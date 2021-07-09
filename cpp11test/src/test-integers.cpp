@@ -1,8 +1,41 @@
 #include <testthat.h>
 #include "Rversion.h"
+#include "cpp11/doubles.hpp"
 #include "cpp11/integers.hpp"
+#include "cpp11/strings.hpp"
 
 context("integers-C++") {
+  test_that("as_integers(doubles)") {
+    // TYPEOF(x) == INTSXP
+    cpp11::writable::doubles y;
+    y.push_back(10.00);
+    cpp11::writable::integers i(cpp11::as_integers(y));
+    expect_true(i[0] == 10);
+    expect_true(TYPEOF(i) == INTSXP);
+
+    cpp11::writable::doubles x;
+    x.push_back(10.01);
+    expect_error(cpp11::as_integers(x));
+
+    cpp11::writable::strings e;
+    e.push_back("a");
+    e.push_back("b");
+    expect_error(cpp11::as_integers(e));
+
+    cpp11::writable::doubles z;
+    z.push_back(10);
+    z.push_back(1000);
+    z.push_back(100000);
+    z.push_back(100000.00);
+
+    cpp11::writable::integers t((cpp11::as_integers(z)));
+    expect_true(t[0] == 10);
+    expect_true(t[1] == 1000);
+    expect_true(t[2] == 100000);
+    expect_true(t[3] == 100000);
+    expect_true(TYPEOF(t) == INTSXP);
+  }
+
   test_that("integers.push_back()") {
     cpp11::writable::integers x;
     x.push_back(1);
