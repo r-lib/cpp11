@@ -70,7 +70,8 @@ cpp_register <- function(path = ".", quiet = FALSE) {
     cli::cli_alert_success("generated file {.file {basename(r_path)}}")
   }
 
-  call_entries <- get_call_entries(path)
+
+  call_entries <- get_call_entries(path, funs$name, package)
 
   cpp_function_registration <- glue::glue_data(funs, '    {{
     "_cpp11_{name}", (DL_FUNC) &_{package}_{name}, {n_args}}}, ',
@@ -244,7 +245,7 @@ wrap_call <- function(name, return_type, args) {
   }
 }
 
-get_call_entries <- function(path) {
+get_call_entries <- function(path, names, package) {
   con <- textConnection("res", local = TRUE, open = "w")
 
   withr::with_collate("C",
@@ -258,12 +259,31 @@ get_call_entries <- function(path) {
   close(con)
 
   start <- grep("/* .Call calls */", res, fixed = TRUE)
+
   end <- grep("};", res, fixed = TRUE)
 
   if (length(start) == 0) {
     return("")
   }
-  res[seq(start, end)]
+
+  redundant <- glue::glue_collapse(glue::glue('extern SEXP _{package}_{names}'), sep = '|')
+
+  if (length(redundant) > 0) {
+    redundant <- paste0("^", redundant)
+    res <- res[!grepl(redundant, res)]
+  }
+
+  end <- grep("};", res, fixed = TRUE)
+
+  call_calls <- startsWith(res, "extern SEXP")
+
+  if(any(call_calls)) {
+    return(res[seq(start, end)])
+  }
+
+  mid <- grep("static const R_CallMethodDef CallEntries[] = {", res, fixed = TRUE)
+
+  res[seq(mid, end)]
 }
 
 pkg_links_to_rcpp <- function(path) {
@@ -279,7 +299,8 @@ get_cpp_register_needs <- function() {
 
 check_valid_attributes <- function(decorations) {
 
-  bad_decor <- !decorations$decoration %in% c("cpp11::register", "cpp11::init")
+  bad_decor <- startsWith(decorations$decoration, "cpp11::") &
+    (!decorations$decoration %in% c("cpp11::register", "cpp11::init", "cpp11::linking_to"))
 
   if(any(bad_decor)) {
     lines <- decorations$line[bad_decor]
@@ -288,7 +309,7 @@ check_valid_attributes <- function(decorations) {
     bad_lines <- glue::glue_collapse(glue::glue("- Invalid attribute `{names}` on
                  line {lines} in file '{file}'."), "\n")
 
-    msg <- glue::glue("cpp11 attributes must be either `cpp11::register` or `cpp11::init`:
+    msg <- glue::glue("cpp11 attributes must be one of `cpp11::register`, `cpp11::init` or `cpp11::linking_to`:
       {bad_lines}
       ")
     stop(msg, call. = FALSE)

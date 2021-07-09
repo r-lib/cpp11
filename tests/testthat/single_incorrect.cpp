@@ -1,1 +1,1 @@
-[[cpp11:register]] int foo() { return 1; }
+[[cpp11::registe]] int foo() { return 1; }
