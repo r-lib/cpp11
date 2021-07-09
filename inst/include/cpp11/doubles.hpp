@@ -148,8 +148,7 @@ inline doubles as_double(sexp x) {
     return ret;
   }
 
-  // else
-  stop("Expected a numeric vector for");
+  throw type_error(INTSXP, TYPEOF(x));
 }
 
 template <>

@@ -367,6 +367,7 @@ context("doubles-C++") {
     y.push_back(124);
     y.push_back(899);
     cpp11::doubles i(cpp11::as_double(y));
+
     expect_true(i[0] == 10);
     expect_true(i[1] == 13616);
     expect_true(i[2] == 124);

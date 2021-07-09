@@ -35,6 +35,7 @@ context("integers-C++") {
     expect_true(t[3] == 100000);
     expect_true(TYPEOF(t) == INTSXP);
   }
+
   test_that("integers.push_back()") {
     cpp11::writable::integers x;
     x.push_back(1);
