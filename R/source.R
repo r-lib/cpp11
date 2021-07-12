@@ -84,17 +84,8 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     stop("`file` must have a `.cpp` or `.cc` extension")
   }
 
-  base_cpp <- (basename(file) %in% "cpp11.cpp")
-
-  if (base_cpp) {
-    name <- set_cpp_name(file)
-    package <- tools::file_path_sans_ext(name)
-  }
-  else {
-    # name and package might be different if cpp_source was called multiple times
-    name <- basename(file)
-    package <- tools::file_path_sans_ext(generate_cpp_name(file))
-  }
+  name <- generate_cpp_name(file)
+  package <- tools::file_path_sans_ext(name)
 
   orig_path <- normalizePath(dirname(file))
   new_path <- normalizePath(file.path(dir, "src"))
@@ -109,6 +100,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     all_decorations <- decor::cpp_decorations(dir, is_attribute = TRUE)
   )
 
+  #provide original path for error messages
   check_valid_attributes(all_decorations, file = file.path(orig_path, basename(file)))
 
   cli_suppress(
@@ -138,12 +130,11 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   if (res$status != 0) {
     error_messages <- res$stderr
 
-    # Substitue temporary file path with original file path
+    # Substitute temporary file path with original file path
     error_messages <- gsub(file.path(new_path, basename(file)), file.path(orig_path, basename(file)), error_messages, fixed = TRUE)
     cat(error_messages)
     stop("Compilation failed.", call. = FALSE)
   }
-
 
   shared_lib <- file.path(dir, "src", paste0(tools::file_path_sans_ext(basename(file)), .Platform$dynlib.ext))
   r_path <- file.path(dir, "R", "cpp11.R")

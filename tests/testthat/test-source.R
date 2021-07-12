@@ -212,3 +212,10 @@ test_that("check_valid_attributes returns an error if one or more registers is i
   )
 
 })
+
+test_that("cpp_source(d) functions work after sourcing file more than once", {
+  cpp11::cpp_source(test_path("single.cpp"))
+  expect_equal(foo(), 1)
+  cpp11::cpp_source(test_path("single.cpp"))
+  expect_equal(foo(), 1)
+})

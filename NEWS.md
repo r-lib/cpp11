@@ -1,6 +1,8 @@
 # cpp11 (development version)
 * Removed redundant `.Call calls` in cpp11.cpp file (@sbearrows, #170)
 * Allow cpp11 decorators of the form `cpp11::linking_to` (@sbearrows, #193)
+* Error messages now output original file name rather than the temporary file name (@sbearrows, #194)
+* Fixed bug when running `cpp_source()` on the same file more than once (@sbearrows, #202)
 
 # cpp11 0.3.1
 
