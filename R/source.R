@@ -87,8 +87,8 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   name <- generate_cpp_name(file)
   package <- tools::file_path_sans_ext(name)
 
-  orig_path <- normalizePath(dirname(file))
-  new_path <- normalizePath(file.path(dir, "src"))
+  orig_path <- normalizePath(dirname(file), winslash = "/")
+  new_path <- normalizePath(file.path(dir, "src"), winslash = "/")
 
   # file now points to another location
   file.copy(file, file.path(new_path, name))
