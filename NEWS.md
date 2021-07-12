@@ -1,10 +1,15 @@
 # cpp11 (development version)
+* added `as_double()` and `as_integer()` method to coerce integers to doubles and doubles to integers to doubles (@sbearrows, #46)
+* Removed redundant `.Call calls` in cpp11.cpp file (@sbearrows, #170)
+* Allow cpp11 decorators of the form `cpp11::linking_to` (@sbearrows, #193)
+
 
 # cpp11 0.3.1
 
 * Fix stringop-truncation warning from generated wrapping code.
 
 # cpp11 0.3.0
+
 
 ## New functions and features
 * New `x.empty()` method to check if a vector is empty (@sbearrows, #182)
