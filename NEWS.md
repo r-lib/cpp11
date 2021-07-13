@@ -2,7 +2,7 @@
 * added `as_double()` and `as_integer()` method to coerce integers to doubles and doubles to integers to doubles (@sbearrows, #46)
 * Removed redundant `.Call calls` in cpp11.cpp file (@sbearrows, #170)
 * Allow cpp11 decorators of the form `cpp11::linking_to` (@sbearrows, #193)
-
+* Removed internal instances of `cpp11::stop()` and replaced with C++ exceptions (@sbearrows, #203)
 
 # cpp11 0.3.1
 
