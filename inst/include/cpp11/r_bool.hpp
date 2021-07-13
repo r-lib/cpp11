@@ -23,7 +23,7 @@ class r_bool {
         value_ = static_cast<Rboolean>(LOGICAL_ELT(data, 0));
       }
     }
-    stop("Invalid r_bool value: %x", data);
+    throw std::invalid_argument("Invalid r_bool value");
   }
 
   r_bool(bool value) : value_(value ? TRUE : FALSE) {}
