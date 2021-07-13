@@ -111,7 +111,7 @@ enable_if_integral<T, T> as_cpp(SEXP from) {
     }
   }
 
-  stop("Expected single integer value");
+  throw "Expected single integer value";
 }
 
 template <typename E>
@@ -125,7 +125,7 @@ enable_if_enum<E, E> as_cpp(SEXP from) {
     return static_cast<E>(as_cpp<int_type>(from));
   }
 
-  stop("Expected single integer value");
+  throw "Expected single integer value";
 }
 
 template <typename T>
@@ -136,7 +136,7 @@ enable_if_bool<T, T> as_cpp(SEXP from) {
     }
   }
 
-  stop("Expected single logical value");
+  throw "Expected single logical value";
 }
 
 template <typename T>
@@ -165,7 +165,7 @@ enable_if_floating_point<T, T> as_cpp(SEXP from) {
     }
   }
 
-  stop("Expected single double value");
+  throw "Expected single double value";
 }
 
 template <typename T>
@@ -176,7 +176,7 @@ enable_if_char<T, T> as_cpp(SEXP from) {
     }
   }
 
-  stop("Expected string vector of length 1");
+  throw "Expected string vector of length 1";
 }
 
 template <typename T>
@@ -188,7 +188,7 @@ enable_if_c_string<T, T> as_cpp(SEXP from) {
     }
   }
 
-  stop("Expected string vector of length 1");
+  throw "Expected string vector of length 1";
 }
 
 template <typename T>
