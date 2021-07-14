@@ -87,25 +87,24 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   name <- generate_cpp_name(file)
   package <- tools::file_path_sans_ext(name)
 
-  orig_path <- normalizePath(dirname(file), winslash = "/")
-  new_path <- normalizePath(file.path(dir, "src"), winslash = "/")
+  orig_dir <- normalizePath(dirname(file), winslash = "/")
+  new_dir <- normalizePath(file.path(dir, "src"), winslash = "/")
 
   # file now points to another location
-  file.copy(file, file.path(new_path, name))
+  file.copy(file, file.path(new_dir, name))
 
   #change variable name to reflect this
-  new_file_path <- file.path(new_path, name)
+  new_file_path <- file.path(new_dir, name)
   new_file_name <- basename(new_file_path)
 
-  new_file <- file.path(new_path, new_file_name)
-  orig_file <- file.path(orig_path, new_file_name)
+  orig_file_path <- file.path(orig_dir, new_file_name)
 
   suppressWarnings(
     all_decorations <- decor::cpp_decorations(dir, is_attribute = TRUE)
   )
 
   #provide original path for error messages
-  check_valid_attributes(all_decorations, file = orig_file)
+  check_valid_attributes(all_decorations, file = orig_file_path)
 
   cli_suppress(
     funs <- get_registered_functions(all_decorations, "cpp11::register")
@@ -127,15 +126,15 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
 
   makevars_content <- generate_makevars(includes, cxx_std)
 
-  brio::write_lines(makevars_content, file.path(new_path, "Makevars"))
+  brio::write_lines(makevars_content, file.path(new_dir, "Makevars"))
 
   source_files <- normalizePath(c(new_file_path, cpp_path), winslash = "/")
-  res <- callr::rcmd("SHLIB", source_files, user_profile = TRUE, show = !quiet, wd = new_path)
+  res <- callr::rcmd("SHLIB", source_files, user_profile = TRUE, show = !quiet, wd = new_dir)
   if (res$status != 0) {
     error_messages <- res$stderr
 
     # Substitute temporary file path with original file path
-    error_messages <- gsub(tools::file_path_sans_ext(new_file), tools::file_path_sans_ext(orig_file), res$stderr, fixed = TRUE)
+    error_messages <- gsub(tools::file_path_sans_ext(new_file_path), tools::file_path_sans_ext(orig_file_path), error_messages, fixed = TRUE)
     cat(error_messages)
     stop("Compilation failed.", call. = FALSE)
   }
