@@ -56,11 +56,11 @@ test_that("cpp_source works with files called `cpp11.cpp`", {
 
 test_that("cpp_source returns original file name on error", {
 
-  expect_output(try(cpp_source(test_path("single_error.cpp")), silent = TRUE),
+  expect_output(try(cpp_source(test_path("single_error.cpp"), clean = TRUE), silent = TRUE),
                normalizePath(test_path("single_error.cpp"), winslash = "/"), fixed = TRUE)
 
-  #error generate for attributes is separate from compilation errors
-  expect_error(cpp_source(test_path("single_incorrect.cpp")),
+  #error generated for incorrect attributes is separate from compilation errors
+  expect_error(cpp_source(test_path("single_incorrect.cpp"), clean = TRUE),
                 normalizePath(test_path("single_incorrect.cpp"), winslash = "/"), fixed = TRUE)
 
 })
@@ -115,7 +115,7 @@ test_that("generate_include_paths handles paths with spaces", {
 
 test_that("check_valid_attributes does not return an error if all registers are correct", {
   expect_error_free(
-    cpp11::cpp_source(code = '#include <cpp11.hpp>
+    cpp11::cpp_source(clean = TRUE, code = '#include <cpp11.hpp>
   using namespace cpp11::literals;
   [[cpp11::register]]
   cpp11::list fn() {
@@ -130,7 +130,7 @@ test_that("check_valid_attributes does not return an error if all registers are 
     return x;
   }'))
   expect_error_free(
-    cpp11::cpp_source(
+    cpp11::cpp_source(clean = TRUE,
       code = '#include <cpp11/R.hpp>
               #include <RProgress.h>
 
@@ -208,14 +208,12 @@ test_that("check_valid_attributes returns an error if one or more registers is i
           pb.tick();
         }
       }
-')
-  )
-
+'))
 })
 
 test_that("cpp_source(d) functions work after sourcing file more than once", {
-  cpp11::cpp_source(test_path("single.cpp"))
+  cpp11::cpp_source(test_path("single.cpp"), clean = TRUE)
   expect_equal(foo(), 1)
-  cpp11::cpp_source(test_path("single.cpp"))
+  cpp11::cpp_source(test_path("single.cpp"), clean = TRUE)
   expect_equal(foo(), 1)
 })
