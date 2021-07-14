@@ -143,6 +143,8 @@
 <li>added <code>as_double()</code> and <code>as_integer()</code> method to coerce integers to doubles and doubles to integers to doubles (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/46'>#46</a>)</li>
 <li>Removed redundant <code>.Call calls</code> in cpp11.cpp file (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/170'>#170</a>)</li>
 <li>Allow cpp11 decorators of the form <code>cpp11::linking_to</code> (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/193'>#193</a>)</li>
+<li>Error messages now output original file name rather than the temporary file name (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/194'>#194</a>)</li>
+<li>Fixed bug when running <code><a href="../reference/cpp_source.html">cpp_source()</a></code> on the same file more than once (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/202'>#202</a>)</li>
 <li>Removed internal instances of <code><a href="https://rdrr.io/r/base/stop.html">cpp11::stop()</a></code> and replaced with C++ exceptions (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/203'>#203</a>)</li>
 </ul>
 </div>
