@@ -183,8 +183,12 @@ static struct {
     static int* should_unwind_protect = nullptr;
 
     if (should_unwind_protect == nullptr) {
-      SEXP should_unwind_protect_sexp = Rf_allocVector(LGLSXP, 1);
-      R_PreserveObject(should_unwind_protect_sexp);
+      SEXP should_unwind_protect_sym = Rf_install("cpp11_should_unwind_protect");
+      SEXP should_unwind_protect_sexp = Rf_GetOption1(should_unwind_protect_sym);
+      if (should_unwind_protect_sexp == R_NilValue) {
+        should_unwind_protect_sexp = Rf_allocVector(LGLSXP, 1);
+        set_option(should_unwind_protect_sym, should_unwind_protect_sexp);
+      }
       should_unwind_protect = LOGICAL(should_unwind_protect_sexp);
       should_unwind_protect[0] = TRUE;
     }
@@ -207,6 +211,7 @@ preserved;
 template <typename Fun, typename = typename std::enable_if<std::is_same<
                             decltype(std::declval<Fun&&>()()), SEXP>::value>::type>
 SEXP unwind_protect(Fun&& code) {
+  REprintf("%s\n", *preserved.should_unwind_protect_ == TRUE ? "TRUE" : "FALSE");
   if (*preserved.should_unwind_protect_ == FALSE) {
     return std::forward<Fun>(code)();
   }
