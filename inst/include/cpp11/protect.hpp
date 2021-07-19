@@ -26,194 +26,6 @@ class unwind_exception : public std::exception {
   unwind_exception(SEXP token_) : token(token_) {}
 };
 
-#ifdef HAS_UNWIND_PROTECT
-
-/// Unwind Protection from C longjmp's, like those used in R error handling
-///
-/// @param code The code to which needs to be protected, as a nullary callable
-template <typename Fun, typename = typename std::enable_if<std::is_same<
-                            decltype(std::declval<Fun&&>()()), SEXP>::value>::type>
-SEXP unwind_protect(Fun&& code) {
-  static SEXP token = [] {
-    SEXP res = R_MakeUnwindCont();
-    R_PreserveObject(res);
-    return res;
-  }();
-
-  std::jmp_buf jmpbuf;
-  if (setjmp(jmpbuf)) {
-    throw unwind_exception(token);
-  }
-
-  SEXP res = R_UnwindProtect(
-      [](void* data) -> SEXP {
-        auto callback = static_cast<decltype(&code)>(data);
-        return static_cast<Fun&&>(*callback)();
-      },
-      &code,
-      [](void* jmpbuf, Rboolean jump) {
-        if (jump == TRUE) {
-          // We need to first jump back into the C++ stacks because you can't safely throw
-          // exceptions from C stack frames.
-          longjmp(*static_cast<std::jmp_buf*>(jmpbuf), 1);
-        }
-      },
-      &jmpbuf, token);
-
-  // R_UnwindProtect adds the result to the CAR of the continuation token,
-  // which implicitly protects the result. However if there is no error and
-  // R_UwindProtect does a normal exit the memory shouldn't be protected, so we
-  // unset it here before returning the value ourselves.
-  SETCAR(token, R_NilValue);
-
-  return res;
-}
-
-template <typename Fun, typename = typename std::enable_if<std::is_same<
-                            decltype(std::declval<Fun&&>()()), void>::value>::type>
-void unwind_protect(Fun&& code) {
-  (void)unwind_protect([&] {
-    std::forward<Fun>(code)();
-    return R_NilValue;
-  });
-}
-
-template <typename Fun, typename R = decltype(std::declval<Fun&&>()())>
-typename std::enable_if<!std::is_same<R, SEXP>::value && !std::is_same<R, void>::value,
-                        R>::type
-unwind_protect(Fun&& code) {
-  R out;
-  (void)unwind_protect([&] {
-    out = std::forward<Fun>(code)();
-    return R_NilValue;
-  });
-  return out;
-}
-
-#else
-// Don't do anything if we don't have unwind protect. This will leak C++ resources,
-// including those held by cpp11 objects, but the other alternatives are also not great.
-template <typename Fun>
-decltype(std::declval<Fun&&>()()) unwind_protect(Fun&& code) {
-  return std::forward<Fun>(code)();
-}
-#endif
-
-namespace detail {
-
-template <size_t...>
-struct index_sequence {
-  using type = index_sequence;
-};
-
-template <typename, size_t>
-struct appended_sequence;
-
-template <std::size_t... I, std::size_t J>
-struct appended_sequence<index_sequence<I...>, J> : index_sequence<I..., J> {};
-
-template <size_t N>
-struct make_index_sequence
-    : appended_sequence<typename make_index_sequence<N - 1>::type, N - 1> {};
-
-template <>
-struct make_index_sequence<0> : index_sequence<> {};
-
-template <typename F, typename... Aref, size_t... I>
-decltype(std::declval<F&&>()(std::declval<Aref>()...)) apply(
-    F&& f, std::tuple<Aref...>&& a, const index_sequence<I...>&) {
-  return std::forward<F>(f)(std::get<I>(std::move(a))...);
-}
-
-template <typename F, typename... Aref>
-decltype(std::declval<F&&>()(std::declval<Aref>()...)) apply(F&& f,
-                                                             std::tuple<Aref...>&& a) {
-  return apply(std::forward<F>(f), std::move(a), make_index_sequence<sizeof...(Aref)>{});
-}
-
-// overload to silence a compiler warning that the (empty) tuple parameter is set but
-// unused
-template <typename F>
-decltype(std::declval<F&&>()()) apply(F&& f, std::tuple<>&&) {
-  return std::forward<F>(f)();
-}
-
-template <typename F, typename... Aref>
-struct closure {
-  decltype(std::declval<F*>()(std::declval<Aref>()...)) operator()() && {
-    return apply(ptr_, std::move(arefs_));
-  }
-  F* ptr_;
-  std::tuple<Aref...> arefs_;
-};
-
-}  // namespace detail
-
-struct protect {
-  template <typename F>
-  struct function {
-    template <typename... A>
-    decltype(std::declval<F*>()(std::declval<A&&>()...)) operator()(A&&... a) const {
-      // workaround to support gcc4.8, which can't capture a parameter pack
-      return unwind_protect(
-          detail::closure<F, A&&...>{ptr_, std::forward_as_tuple(std::forward<A>(a)...)});
-    }
-
-    F* ptr_;
-  };
-
-  /// May not be applied to a function bearing attributes, which interfere with linkage on
-  /// some compilers; use an appropriately attributed alternative. (For example, Rf_error
-  /// bears the [[noreturn]] attribute and must be protected with safe.noreturn rather
-  /// than safe.operator[]).
-  template <typename F>
-  constexpr function<F> operator[](F* raw) const {
-    return {raw};
-  }
-
-  template <typename F>
-  struct noreturn_function {
-    template <typename... A>
-    void operator() [[noreturn]] (A&&... a) const {
-      // workaround to support gcc4.8, which can't capture a parameter pack
-      unwind_protect(
-          detail::closure<F, A&&...>{ptr_, std::forward_as_tuple(std::forward<A>(a)...)});
-      // Compiler hint to allow [[noreturn]] attribute; this is never executed since
-      // the above call will not return.
-      throw std::runtime_error("[[noreturn]]");
-    }
-    F* ptr_;
-  };
-
-  template <typename F>
-  constexpr noreturn_function<F> noreturn(F* raw) const {
-    return {raw};
-  }
-};
-constexpr struct protect safe = {};
-
-inline void check_user_interrupt() { safe[R_CheckUserInterrupt](); }
-
-template <typename... Args>
-void stop [[noreturn]] (const char* fmt, Args... args) {
-  safe.noreturn(Rf_errorcall)(R_NilValue, fmt, args...);
-}
-
-template <typename... Args>
-void stop [[noreturn]] (const std::string& fmt, Args... args) {
-  safe.noreturn(Rf_errorcall)(R_NilValue, fmt.c_str(), args...);
-}
-
-template <typename... Args>
-void warning(const char* fmt, Args... args) {
-  safe[Rf_warningcall](R_NilValue, fmt, args...);
-}
-
-template <typename... Args>
-void warning(const std::string& fmt, Args... args) {
-  safe[Rf_warningcall](R_NilValue, fmt.c_str(), args...);
-}
-
 /// A doubly-linked list of preserved objects, allowing O(1) insertion/release of
 /// objects compared to O(N preserved) with R_PreserveObject.
 static struct {
@@ -367,7 +179,221 @@ static struct {
     return preserve_list;
   }
 
+  static int* get_should_unwind_protect() {
+    static int* should_unwind_protect = nullptr;
+
+    if (should_unwind_protect == nullptr) {
+      SEXP should_unwind_protect_sexp = Rf_allocVector(LGLSXP, 1);
+      R_PreserveObject(should_unwind_protect_sexp);
+      should_unwind_protect = LOGICAL(should_unwind_protect_sexp);
+      should_unwind_protect[0] = TRUE;
+    }
+
+    return &should_unwind_protect[0];
+  }
+
   SEXP list_ = get_preserve_list();
+
+ public:
+  int* should_unwind_protect_ = get_should_unwind_protect();
 }  // namespace cpp11
 preserved;
+
+#ifdef HAS_UNWIND_PROTECT
+
+/// Unwind Protection from C longjmp's, like those used in R error handling
+///
+/// @param code The code to which needs to be protected, as a nullary callable
+template <typename Fun, typename = typename std::enable_if<std::is_same<
+                            decltype(std::declval<Fun&&>()()), SEXP>::value>::type>
+SEXP unwind_protect(Fun&& code) {
+  if (*preserved.should_unwind_protect_ == FALSE) {
+    return std::forward<Fun>(code)();
+  }
+
+  *preserved.should_unwind_protect_ = FALSE;
+
+  static SEXP token = [] {
+    SEXP res = R_MakeUnwindCont();
+    R_PreserveObject(res);
+    return res;
+  }();
+
+  std::jmp_buf jmpbuf;
+  if (setjmp(jmpbuf)) {
+    *preserved.should_unwind_protect_ = TRUE;
+    throw unwind_exception(token);
+  }
+
+  SEXP res = R_UnwindProtect(
+      [](void* data) -> SEXP {
+        auto callback = static_cast<decltype(&code)>(data);
+        return static_cast<Fun&&>(*callback)();
+      },
+      &code,
+      [](void* jmpbuf, Rboolean jump) {
+        if (jump == TRUE) {
+          // We need to first jump back into the C++ stacks because you can't safely
+          // throw exceptions from C stack frames.
+          longjmp(*static_cast<std::jmp_buf*>(jmpbuf), 1);
+        }
+      },
+      &jmpbuf, token);
+
+  // R_UnwindProtect adds the result to the CAR of the continuation token,
+  // which implicitly protects the result. However if there is no error and
+  // R_UwindProtect does a normal exit the memory shouldn't be protected, so we
+  // unset it here before returning the value ourselves.
+  SETCAR(token, R_NilValue);
+
+  *preserved.should_unwind_protect_ = TRUE;
+
+  return res;
+}
+
+template <typename Fun, typename = typename std::enable_if<std::is_same<
+                            decltype(std::declval<Fun&&>()()), void>::value>::type>
+void unwind_protect(Fun&& code) {
+  (void)unwind_protect([&] {
+    std::forward<Fun>(code)();
+    return R_NilValue;
+  });
+}
+
+template <typename Fun, typename R = decltype(std::declval<Fun&&>()())>
+typename std::enable_if<!std::is_same<R, SEXP>::value && !std::is_same<R, void>::value,
+                        R>::type
+unwind_protect(Fun&& code) {
+  R out;
+  (void)unwind_protect([&] {
+    out = std::forward<Fun>(code)();
+    return R_NilValue;
+  });
+  return out;
+}
+
+#else
+// Don't do anything if we don't have unwind protect. This will leak C++ resources,
+// including those held by cpp11 objects, but the other alternatives are also not great.
+template <typename Fun>
+decltype(std::declval<Fun&&>()()) unwind_protect(Fun&& code) {
+  return std::forward<Fun>(code)();
+}
+#endif
+
+namespace detail {
+
+template <size_t...>
+struct index_sequence {
+  using type = index_sequence;
+};
+
+template <typename, size_t>
+struct appended_sequence;
+
+template <std::size_t... I, std::size_t J>
+struct appended_sequence<index_sequence<I...>, J> : index_sequence<I..., J> {};
+
+template <size_t N>
+struct make_index_sequence
+    : appended_sequence<typename make_index_sequence<N - 1>::type, N - 1> {};
+
+template <>
+struct make_index_sequence<0> : index_sequence<> {};
+
+template <typename F, typename... Aref, size_t... I>
+decltype(std::declval<F&&>()(std::declval<Aref>()...)) apply(
+    F&& f, std::tuple<Aref...>&& a, const index_sequence<I...>&) {
+  return std::forward<F>(f)(std::get<I>(std::move(a))...);
+}
+
+template <typename F, typename... Aref>
+decltype(std::declval<F&&>()(std::declval<Aref>()...)) apply(F&& f,
+                                                             std::tuple<Aref...>&& a) {
+  return apply(std::forward<F>(f), std::move(a), make_index_sequence<sizeof...(Aref)>{});
+}
+
+// overload to silence a compiler warning that the (empty) tuple parameter is set but
+// unused
+template <typename F>
+decltype(std::declval<F&&>()()) apply(F&& f, std::tuple<>&&) {
+  return std::forward<F>(f)();
+}
+
+template <typename F, typename... Aref>
+struct closure {
+  decltype(std::declval<F*>()(std::declval<Aref>()...)) operator()() && {
+    return apply(ptr_, std::move(arefs_));
+  }
+  F* ptr_;
+  std::tuple<Aref...> arefs_;
+};
+
+}  // namespace detail
+
+struct protect {
+  template <typename F>
+  struct function {
+    template <typename... A>
+    decltype(std::declval<F*>()(std::declval<A&&>()...)) operator()(A&&... a) const {
+      // workaround to support gcc4.8, which can't capture a parameter pack
+      return unwind_protect(
+          detail::closure<F, A&&...>{ptr_, std::forward_as_tuple(std::forward<A>(a)...)});
+    }
+
+    F* ptr_;
+  };
+
+  /// May not be applied to a function bearing attributes, which interfere with linkage on
+  /// some compilers; use an appropriately attributed alternative. (For example, Rf_error
+  /// bears the [[noreturn]] attribute and must be protected with safe.noreturn rather
+  /// than safe.operator[]).
+  template <typename F>
+  constexpr function<F> operator[](F* raw) const {
+    return {raw};
+  }
+
+  template <typename F>
+  struct noreturn_function {
+    template <typename... A>
+    void operator() [[noreturn]] (A&&... a) const {
+      // workaround to support gcc4.8, which can't capture a parameter pack
+      unwind_protect(
+          detail::closure<F, A&&...>{ptr_, std::forward_as_tuple(std::forward<A>(a)...)});
+      // Compiler hint to allow [[noreturn]] attribute; this is never executed since
+      // the above call will not return.
+      throw std::runtime_error("[[noreturn]]");
+    }
+    F* ptr_;
+  };
+
+  template <typename F>
+  constexpr noreturn_function<F> noreturn(F* raw) const {
+    return {raw};
+  }
+};
+constexpr struct protect safe = {};
+
+inline void check_user_interrupt() { safe[R_CheckUserInterrupt](); }
+
+template <typename... Args>
+void stop [[noreturn]] (const char* fmt, Args... args) {
+  safe.noreturn(Rf_errorcall)(R_NilValue, fmt, args...);
+}
+
+template <typename... Args>
+void stop [[noreturn]] (const std::string& fmt, Args... args) {
+  safe.noreturn(Rf_errorcall)(R_NilValue, fmt.c_str(), args...);
+}
+
+template <typename... Args>
+void warning(const char* fmt, Args... args) {
+  safe[Rf_warningcall](R_NilValue, fmt, args...);
+}
+
+template <typename... Args>
+void warning(const std::string& fmt, Args... args) {
+  safe[Rf_warningcall](R_NilValue, fmt.c_str(), args...);
+}
+
 }  // namespace cpp11
