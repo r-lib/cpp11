@@ -8,6 +8,14 @@ data_frame_ <- function() {
   .Call(`_cpp11test_data_frame_`)
 }
 
+my_stop <- function(mystring, myarg) {
+  invisible(.Call(`_cpp11test_my_stop`, mystring, myarg))
+}
+
+my_warning <- function(mystring, myarg) {
+  invisible(.Call(`_cpp11test_my_warning`, mystring, myarg))
+}
+
 remove_altrep <- function(x) {
   .Call(`_cpp11test_remove_altrep`, x)
 }
