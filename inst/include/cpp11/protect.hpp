@@ -399,5 +399,4 @@ static struct {
   SEXP list_ = get_preserve_list();
 }  // namespace cpp11
 preserved;
-
 }  // namespace cpp11
