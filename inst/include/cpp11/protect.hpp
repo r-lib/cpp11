@@ -15,6 +15,9 @@
 #include "R_ext/Utils.h"    // for R_CheckUserInterrupt
 #include "Rversion.h"       // for R_VERSION, R_Version
 
+#define FMT_HEADER_ONLY
+#include "fmt/core.h"
+
 #if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
 #define HAS_UNWIND_PROTECT
 #endif
@@ -195,23 +198,27 @@ constexpr struct protect safe = {};
 inline void check_user_interrupt() { safe[R_CheckUserInterrupt](); }
 
 template <typename... Args>
-void stop [[noreturn]] (const char* fmt, Args... args) {
-  safe.noreturn(Rf_errorcall)(R_NilValue, fmt, args...);
+void stop [[noreturn]] (const char* fmt_arg, Args... args) {
+  std::string msg = fmt::format(fmt_arg, args...);
+  safe.noreturn(Rf_errorcall)(R_NilValue, "%s", msg.c_str());
 }
 
 template <typename... Args>
-void stop [[noreturn]] (const std::string& fmt, Args... args) {
-  safe.noreturn(Rf_errorcall)(R_NilValue, fmt.c_str(), args...);
+void stop [[noreturn]] (const std::string& fmt_arg, Args... args) {
+  std::string msg = fmt::format(fmt_arg, args...);
+  safe.noreturn(Rf_errorcall)(R_NilValue, "%s", msg.c_str());
 }
 
 template <typename... Args>
-void warning(const char* fmt, Args... args) {
-  safe[Rf_warningcall](R_NilValue, fmt, args...);
+void warning(const char* fmt_arg, Args... args) {
+  std::string msg = fmt::format(fmt_arg, args...);
+  safe[Rf_warningcall](R_NilValue, "%s", msg.c_str());
 }
 
 template <typename... Args>
-void warning(const std::string& fmt, Args... args) {
-  safe[Rf_warningcall](R_NilValue, fmt.c_str(), args...);
+void warning(const std::string& fmt_arg, Args... args) {
+  std::string msg = fmt::format(fmt_arg, args...);
+  safe[Rf_warningcall](R_NilValue, "%s", msg.c_str());
 }
 
 /// A doubly-linked list of preserved objects, allowing O(1) insertion/release of

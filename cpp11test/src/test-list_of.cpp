@@ -1,8 +1,9 @@
-#include <testthat.h>
 #include "cpp11/doubles.hpp"
 #include "cpp11/list.hpp"
 #include "cpp11/list_of.hpp"
 #include "cpp11/strings.hpp"
+
+#include <testthat.h>
 
 context("list_of-C++") {
   test_that("list_of works") {
