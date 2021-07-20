@@ -78,7 +78,6 @@ static int* should_unwind_protect = get_should_unwind_protect();
 template <typename Fun, typename = typename std::enable_if<std::is_same<
                             decltype(std::declval<Fun&&>()()), SEXP>::value>::type>
 SEXP unwind_protect(Fun&& code) {
-  REprintf("%s\n", *detail::should_unwind_protect == TRUE ? "TRUE" : "FALSE");
   if (*detail::should_unwind_protect == FALSE) {
     return std::forward<Fun>(code)();
   }
