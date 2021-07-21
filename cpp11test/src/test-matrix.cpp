@@ -1,8 +1,9 @@
-#include <testthat.h>
 #include "cpp11/doubles.hpp"
 #include "cpp11/function.hpp"
 #include "cpp11/integers.hpp"
 #include "cpp11/matrix.hpp"
+
+#include <testthat.h>
 
 context("matrix-C++") {
   test_that("matrix dim attributes are correct for writable matrices") {

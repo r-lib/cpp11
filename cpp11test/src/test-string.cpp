@@ -1,5 +1,6 @@
-#include <testthat.h>
 #include "cpp11/strings.hpp"
+
+#include <testthat.h>
 
 context("string-C++") {
   test_that("is_na(string)") {

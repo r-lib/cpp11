@@ -1,8 +1,9 @@
-#include <testthat.h>
 #include "cpp11/data_frame.hpp"
 #include "cpp11/function.hpp"
 #include "cpp11/integers.hpp"
 #include "cpp11/strings.hpp"
+
+#include <testthat.h>
 
 context("data_frame-C++") {
   test_that("data_frame works") {

@@ -1,9 +1,9 @@
-#include <testthat.h>
-
 #include "cpp11/as.hpp"
 #include "cpp11/environment.hpp"
 #include "cpp11/function.hpp"
 #include "cpp11/strings.hpp"
+
+#include <testthat.h>
 
 context("environment-C++") {
   test_that("environment works") {

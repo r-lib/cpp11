@@ -1,10 +1,10 @@
-#include <testthat.h>
-
 #include <deque>
 #include <string>
 #include <vector>
 
 #include "cpp11/declarations.hpp"
+
+#include <testthat.h>
 
 #include "Rcpp.h"
 

@@ -1,9 +1,10 @@
-#include <testthat.h>
 #include <cstring>
 #include "cpp11/doubles.hpp"
 #include "cpp11/integers.hpp"
 #include "cpp11/sexp.hpp"
 #include "cpp11/strings.hpp"
+
+#include <testthat.h>
 
 context("doubles-C++") {
   test_that("doubles::r_vector(SEXP)") {
