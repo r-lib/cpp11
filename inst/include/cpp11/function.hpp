@@ -73,4 +73,19 @@ class package {
 
   SEXP data_;
 };
+
+static auto R_message = cpp11::package("base")["message"];
+
+template <typename... Args>
+void message (const char* fmt_arg, Args... args) {
+  std::string msg = fmt::format(fmt_arg, args...);
+  R_message(msg.c_str());
+}
+
+template <typename... Args>
+void message (const std::string& fmt_arg, Args... args) {
+  std::string msg = fmt::format(fmt_arg, args...);
+  R_message(msg.c_str());
+}
+
 }  // namespace cpp11

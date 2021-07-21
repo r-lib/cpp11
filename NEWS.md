@@ -5,7 +5,7 @@
 * Error messages now output original file name rather than the temporary file name (@sbearrows, #194)
 * Fixed bug when running `cpp_source()` on the same file more than once (@sbearrows, #202)
 * Removed internal instances of `cpp11::stop()` and replaced with C++ exceptions (@sbearrows, #203)
-* Added optionally formatting to `stop()` and `warning()` using {fmt} library for better error messages (@sbearrows, #169)
+* Added `cpp11::messages()` feature with {fmt} library formatting like `stop()` and `warning()` for non-error messages (@sbearrows, #208)
 
 # cpp11 0.3.1
 

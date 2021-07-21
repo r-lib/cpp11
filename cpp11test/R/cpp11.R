@@ -16,6 +16,10 @@ my_warning <- function(mystring, myarg) {
   invisible(.Call(`_cpp11test_my_warning`, mystring, myarg))
 }
 
+my_message <- function(mystring, myarg) {
+  invisible(.Call(`_cpp11test_my_message`, mystring, myarg))
+}
+
 remove_altrep <- function(x) {
   .Call(`_cpp11test_remove_altrep`, x)
 }

@@ -13,3 +13,11 @@ test_that("cpp11::warning formatting works", {
   test2 <- c("failed", "passed")
   expect_warning(my_warning("You {}", test2[2]), "You passed", fixed = TRUE)
 })
+test_that("cpp11::message formatting works", {
+  test1 <- "message"
+  expect
+  expect_message(my_message("This is a {}", test1), "This is a message", fixed = TRUE)
+
+  test2 <- c("great", "super")
+  expect_message(my_message("You're {}", test2[2]), "You're super", fixed = TRUE)
+})
