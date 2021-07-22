@@ -1127,11 +1127,11 @@ If you are using `devtools` to develop your package this is done automatically b
 C++ is a large, complex language that takes years to master.
 If you would like to dive deeper or write more complex functions other resources I've found helpful in learning C++ are:
 
-* _Effective C++_ [@effective-cpp] and _Effective STL_ [@effective-stl].
+* [_Effective C++_](https://www.aristeia.com/books.html) and [_Effective STL_](https://www.aristeia.com/books.html)
 
 * [_C++ Annotations_](http://www.icce.rug.nl/documents/cplusplus/cplusplus.html), aimed at knowledgeable users of C (or any other language using a C-like grammar, like Perl or Java) who would like to know more about, or make the transition to, C++.
 
 * [_Algorithm Libraries_](https://www.cs.helsinki.fi/u/tpkarkka/alglib/k06/), which provides a more technical, but still concise, description of important STL concepts. (Follow the links under notes.)
 
 Writing performant code may also require you to rethink your basic approach: a solid understanding of basic data structures and algorithms is very helpful here.
-That's beyond the scope of this vignette, but I'd suggest the _Algorithm Design Manual_ [@alg-design-man], MIT's [_Introduction to Algorithms_](https://web.archive.org/web/20200604134756/https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-046j-introduction-to-algorithms-sma-5503-fall-2005/), _Algorithms_ by Robert Sedgewick and Kevin Wayne which has a free [online textbook](http://algs4.cs.princeton.edu/home/) and a matching [Coursera course](https://www.coursera.org/learn/algorithms-part1).
+That's beyond the scope of this vignette, but I'd suggest the [_Algorithm Design Manual_](https://www.algorist.com/) MIT's [_Introduction to Algorithms_](https://web.archive.org/web/20200604134756/https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-046j-introduction-to-algorithms-sma-5503-fall-2005/), _Algorithms_ by Robert Sedgewick and Kevin Wayne which has a free [online textbook](http://algs4.cs.princeton.edu/home/) and a matching [Coursera course](https://www.coursera.org/learn/algorithms-part1).
