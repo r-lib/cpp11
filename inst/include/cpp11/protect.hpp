@@ -19,6 +19,11 @@
 #define HAS_UNWIND_PROTECT
 #endif
 
+#ifdef CPP11_USE_FMT
+#define FMT_HEADER_ONLY
+#include "fmt/core.h"
+#endif
+
 namespace cpp11 {
 class unwind_exception : public std::exception {
  public:
@@ -245,6 +250,31 @@ constexpr struct protect safe = {};
 
 inline void check_user_interrupt() { safe[R_CheckUserInterrupt](); }
 
+#ifdef CPP11_USE_FMT
+template <typename... Args>
+void stop [[noreturn]] (const char* fmt_arg, Args&&... args) {
+  std::string msg = fmt::format(fmt_arg, std::forward<Args>(args)...);
+  safe.noreturn(Rf_errorcall)(R_NilValue, "%s", msg.c_str());
+}
+
+template <typename... Args>
+void stop [[noreturn]] (const std::string& fmt_arg, Args&&... args) {
+  std::string msg = fmt::format(fmt_arg, std::forward<Args>(args)...);
+  safe.noreturn(Rf_errorcall)(R_NilValue, "%s", msg.c_str());
+}
+
+template <typename... Args>
+void warning(const char* fmt_arg, Args&&... args) {
+  std::string msg = fmt::format(fmt_arg, std::forward<Args>(args)...);
+  safe[Rf_warningcall](R_NilValue, "%s", msg.c_str());
+}
+
+template <typename... Args>
+void warning(const std::string& fmt_arg, Args&&... args) {
+  std::string msg = fmt::format(fmt_arg, std::forward<Args>(args)...);
+  safe[Rf_warningcall](R_NilValue, "%s", msg.c_str());
+}
+#else
 template <typename... Args>
 void stop [[noreturn]] (const char* fmt, Args... args) {
   safe.noreturn(Rf_errorcall)(R_NilValue, fmt, args...);
@@ -264,6 +294,7 @@ template <typename... Args>
 void warning(const std::string& fmt, Args... args) {
   safe[Rf_warningcall](R_NilValue, fmt.c_str(), args...);
 }
+#endif
 
 /// A doubly-linked list of preserved objects, allowing O(1) insertion/release of
 /// objects compared to O(N preserved) with R_PreserveObject.

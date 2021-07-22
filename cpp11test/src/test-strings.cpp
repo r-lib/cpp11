@@ -1,7 +1,8 @@
-#include <testthat.h>
 #include <cstring>
 #include "cpp11/sexp.hpp"
 #include "cpp11/strings.hpp"
+
+#include <testthat.h>
 
 context("strings-C++") {
   test_that("strings.push_back()") {
