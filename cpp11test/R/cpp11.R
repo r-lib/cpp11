@@ -17,12 +17,18 @@ my_warning <- function(mystring, myarg) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3b3ff2861878876c2a942808846b172209a28ab7
 my_message <- function(mystring, myarg) {
   invisible(.Call(`_cpp11test_my_message`, mystring, myarg))
 }
 
+<<<<<<< HEAD
 =======
 >>>>>>> upstream/master
+=======
+>>>>>>> 3b3ff2861878876c2a942808846b172209a28ab7
 my_stop_n1fmt <- function(mystring) {
   invisible(.Call(`_cpp11test_my_stop_n1fmt`, mystring))
 }
@@ -40,12 +46,17 @@ my_warning_n2fmt <- function(mystring, myarg) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 my_message_nfmt <- function(mystring, myarg) {
   invisible(.Call(`_cpp11test_my_message_nfmt`, mystring, myarg))
 }
 
 =======
 >>>>>>> upstream/master
+=======
+my_message_nfmt <- function(mystring, myarg) {
+  invisible(.Call(`_cpp11test_my_message_nfmt`, mystring, myarg))
+>>>>>>> 3b3ff2861878876c2a942808846b172209a28ab7
 remove_altrep <- function(x) {
   .Call(`_cpp11test_remove_altrep`, x)
 }

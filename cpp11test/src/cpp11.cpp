@@ -37,6 +37,9 @@ extern "C" SEXP _cpp11test_my_warning(SEXP mystring, SEXP myarg) {
   END_CPP11
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3b3ff2861878876c2a942808846b172209a28ab7
 // errors_fmt.cpp
 void my_message(std::string mystring, std::string myarg);
 extern "C" SEXP _cpp11test_my_message(SEXP mystring, SEXP myarg) {
@@ -45,8 +48,11 @@ extern "C" SEXP _cpp11test_my_message(SEXP mystring, SEXP myarg) {
     return R_NilValue;
   END_CPP11
 }
+<<<<<<< HEAD
 =======
 >>>>>>> upstream/master
+=======
+>>>>>>> 3b3ff2861878876c2a942808846b172209a28ab7
 // errors.cpp
 void my_stop_n1fmt(std::string mystring);
 extern "C" SEXP _cpp11test_my_stop_n1fmt(SEXP mystring) {
@@ -80,6 +86,9 @@ extern "C" SEXP _cpp11test_my_warning_n2fmt(SEXP mystring, SEXP myarg) {
   END_CPP11
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3b3ff2861878876c2a942808846b172209a28ab7
 // errors.cpp
 void my_message_nfmt(std::string mystring, std::string myarg);
 extern "C" SEXP _cpp11test_my_message_nfmt(SEXP mystring, SEXP myarg) {
@@ -88,8 +97,11 @@ extern "C" SEXP _cpp11test_my_message_nfmt(SEXP mystring, SEXP myarg) {
     return R_NilValue;
   END_CPP11
 }
+<<<<<<< HEAD
 =======
 >>>>>>> upstream/master
+=======
+>>>>>>> 3b3ff2861878876c2a942808846b172209a28ab7
 // find-intervals.cpp
 SEXP remove_altrep(SEXP x);
 extern "C" SEXP _cpp11test_remove_altrep(SEXP x) {
@@ -409,10 +421,15 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_gibbs_rcpp2",              (DL_FUNC) &_cpp11test_gibbs_rcpp2,              2},
     {"_cpp11test_grow_",                    (DL_FUNC) &_cpp11test_grow_,                    1},
 <<<<<<< HEAD
+<<<<<<< HEAD
     {"_cpp11test_my_message",               (DL_FUNC) &_cpp11test_my_message,               2},
     {"_cpp11test_my_message_nfmt",          (DL_FUNC) &_cpp11test_my_message_nfmt,          2},
 =======
 >>>>>>> upstream/master
+=======
+    {"_cpp11test_my_message",               (DL_FUNC) &_cpp11test_my_message,               2},
+    {"_cpp11test_my_message_nfmt",          (DL_FUNC) &_cpp11test_my_message_nfmt,          2},
+>>>>>>> 3b3ff2861878876c2a942808846b172209a28ab7
     {"_cpp11test_my_stop",                  (DL_FUNC) &_cpp11test_my_stop,                  2},
     {"_cpp11test_my_stop_n1fmt",            (DL_FUNC) &_cpp11test_my_stop_n1fmt,            1},
     {"_cpp11test_my_stop_n2fmt",            (DL_FUNC) &_cpp11test_my_stop_n2fmt,            2},
