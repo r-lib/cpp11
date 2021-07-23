@@ -6,8 +6,8 @@
 
 #ifndef CPP11_PARTIAL
 #include "cpp11.hpp"
-using namespace cpp11;
-namespace writable = cpp11::writable;
+using namespace ::cpp11;
+namespace writable = ::cpp11::writable;
 #endif
 
 #include <R_ext/Rdynload.h>

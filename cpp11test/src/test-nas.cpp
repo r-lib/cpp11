@@ -1,8 +1,9 @@
-#include <testthat.h>
 #include "cpp11/doubles.hpp"
 #include "cpp11/integers.hpp"
 #include "cpp11/r_bool.hpp"
 #include "cpp11/r_string.hpp"
+
+#include <testthat.h>
 
 context("nas-C++") {
   test_that("na integer") { expect_true(cpp11::na<int>() == NA_INTEGER); }

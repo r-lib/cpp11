@@ -1,5 +1,6 @@
-#include <testthat.h>
 #include "cpp11/logicals.hpp"
+
+#include <testthat.h>
 
 context("logicals-C++") {
   test_that("logicals.push_back()") {
