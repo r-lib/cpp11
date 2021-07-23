@@ -141,4 +141,17 @@ context("list-C++") {
 
     expect_false(y.empty());
   }
+
+  test_that("names of named lists are also resized") {
+    cpp11::writable::list x;
+    x.push_back({"n1"_nm = 1});
+    x.push_back({"n2"_nm = 2});
+    x.push_back({"n3"_nm = 3});
+    x.push_back({"n4"_nm = 4});
+    x.push_back({"n5"_nm = 5});
+    x = SEXP(x);
+
+    cpp11::strings nms(x.names());
+    expect_true(x.size() == nms.size());
+  }
 }
