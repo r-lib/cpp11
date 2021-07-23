@@ -13,6 +13,6 @@ using namespace cpp11;
   cpp11::warning(mystring, myarg.c_str());
 }
 
-[[cpp11::register]] void my_message(std::string mystring, std::string myarg) {
-  cpp11::message(mystring, myarg);
+[[cpp11::register]] void my_message_nfmt(std::string mystring, std::string myarg) {
+  cpp11::message(mystring, myarg.c_str());
 }

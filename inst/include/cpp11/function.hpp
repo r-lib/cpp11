@@ -102,7 +102,7 @@ void message (const char* fmt_arg, Args... args) {
 template <typename... Args>
 void message (const std::string& fmt_arg, Args... args) {
   char buff [1024];
-  int msg = std::snprintf(buff, 1024, fmt_arg, args...);
+  int msg = std::snprintf(buff, 1024, fmt_arg.c_str(), args...);
   if (msg >=0 && msg<1024) {
     R_message(buff);
   }
