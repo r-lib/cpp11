@@ -6,6 +6,7 @@
 * Fixed bug when running `cpp_source()` on the same file more than once (@sbearrows, #202)
 * Removed internal instances of `cpp11::stop()` and replaced with C++ exceptions (@sbearrows, #203)
 * Names of named lists are now resized along with the list elements (@sbearrows, #206)
+* Added optionally formatting to `stop()` and `warning()` using {fmt} library (@sbearrows, #169)
 
 # cpp11 0.3.1
 

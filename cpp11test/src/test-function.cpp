@@ -1,5 +1,6 @@
-#include <testthat.h>
 #include "cpp11/function.hpp"
+
+#include <testthat.h>
 
 context("function-C++") {
   test_that("functions can be called") {

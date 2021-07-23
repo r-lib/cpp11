@@ -1,5 +1,6 @@
-#include <testthat.h>
 #include "cpp11/raws.hpp"
+
+#include <testthat.h>
 
 context("raws-C++") {
   test_that("raws.push_back()") {

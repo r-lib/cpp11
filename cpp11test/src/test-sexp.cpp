@@ -1,5 +1,6 @@
-#include <testthat.h>
 #include "cpp11/list.hpp"
+
+#include <testthat.h>
 
 context("sexp-C++") {
   test_that("sexp initializer lists work") {

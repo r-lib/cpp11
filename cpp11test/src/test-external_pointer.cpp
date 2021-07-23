@@ -1,6 +1,7 @@
-#include <testthat.h>
 #include <iostream>
 #include "cpp11/external_pointer.hpp"
+
+#include <testthat.h>
 
 bool deleted = false;
 
