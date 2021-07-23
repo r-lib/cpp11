@@ -36,6 +36,14 @@ extern "C" SEXP _cpp11test_my_warning(SEXP mystring, SEXP myarg) {
     return R_NilValue;
   END_CPP11
 }
+// errors_fmt.cpp
+void my_message(std::string mystring, std::string myarg);
+extern "C" SEXP _cpp11test_my_message(SEXP mystring, SEXP myarg) {
+  BEGIN_CPP11
+    my_message(cpp11::as_cpp<cpp11::decay_t<std::string>>(mystring), cpp11::as_cpp<cpp11::decay_t<std::string>>(myarg));
+    return R_NilValue;
+  END_CPP11
+}
 // errors.cpp
 void my_stop_n1fmt(std::string mystring);
 extern "C" SEXP _cpp11test_my_stop_n1fmt(SEXP mystring) {
@@ -65,6 +73,14 @@ void my_warning_n2fmt(std::string mystring, std::string myarg);
 extern "C" SEXP _cpp11test_my_warning_n2fmt(SEXP mystring, SEXP myarg) {
   BEGIN_CPP11
     my_warning_n2fmt(cpp11::as_cpp<cpp11::decay_t<std::string>>(mystring), cpp11::as_cpp<cpp11::decay_t<std::string>>(myarg));
+    return R_NilValue;
+  END_CPP11
+}
+// errors.cpp
+void my_message_nfmt(std::string mystring, std::string myarg);
+extern "C" SEXP _cpp11test_my_message_nfmt(SEXP mystring, SEXP myarg) {
+  BEGIN_CPP11
+    my_message_nfmt(cpp11::as_cpp<cpp11::decay_t<std::string>>(mystring), cpp11::as_cpp<cpp11::decay_t<std::string>>(myarg));
     return R_NilValue;
   END_CPP11
 }
@@ -386,6 +402,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_gibbs_rcpp",               (DL_FUNC) &_cpp11test_gibbs_rcpp,               2},
     {"_cpp11test_gibbs_rcpp2",              (DL_FUNC) &_cpp11test_gibbs_rcpp2,              2},
     {"_cpp11test_grow_",                    (DL_FUNC) &_cpp11test_grow_,                    1},
+    {"_cpp11test_my_message",               (DL_FUNC) &_cpp11test_my_message,               2},
+    {"_cpp11test_my_message_nfmt",          (DL_FUNC) &_cpp11test_my_message_nfmt,          2},
     {"_cpp11test_my_stop",                  (DL_FUNC) &_cpp11test_my_stop,                  2},
     {"_cpp11test_my_stop_n1fmt",            (DL_FUNC) &_cpp11test_my_stop_n1fmt,            1},
     {"_cpp11test_my_stop_n2fmt",            (DL_FUNC) &_cpp11test_my_stop_n2fmt,            2},

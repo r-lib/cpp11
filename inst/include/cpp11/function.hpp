@@ -2,6 +2,7 @@
 
 #include <string.h>  // for strcmp
 
+#include <stdio.h>  // for snprintf
 #include <string>   // for string, basic_string
 #include <utility>  // for forward
 
@@ -73,4 +74,39 @@ class package {
 
   SEXP data_;
 };
+
+static auto R_message = cpp11::package("base")["message"];
+
+#ifdef CPP11_USE_FMT
+template <typename... Args>
+void message(const char* fmt_arg, Args... args) {
+  std::string msg = fmt::format(fmt_arg, args...);
+  R_message(msg.c_str());
+}
+
+template <typename... Args>
+void message(const std::string& fmt_arg, Args... args) {
+  std::string msg = fmt::format(fmt_arg, args...);
+  R_message(msg.c_str());
+}
+#else
+template <typename... Args>
+void message(const char* fmt_arg, Args... args) {
+  char buff[1024];
+  int msg = std::snprintf(buff, 1024, fmt_arg, args...);
+  if (msg >= 0 && msg < 1024) {
+    R_message(buff);
+  }
+}
+
+template <typename... Args>
+void message(const std::string& fmt_arg, Args... args) {
+  char buff[1024];
+  int msg = std::snprintf(buff, 1024, fmt_arg.c_str(), args...);
+  if (msg >= 0 && msg < 1024) {
+    R_message(buff);
+  }
+}
+#endif
+
 }  // namespace cpp11
