@@ -38,8 +38,6 @@ my_warning_n2fmt <- function(mystring, myarg) {
 
 my_message_nfmt <- function(mystring, myarg) {
   invisible(.Call(`_cpp11test_my_message_nfmt`, mystring, myarg))
-}
-
 remove_altrep <- function(x) {
   .Call(`_cpp11test_remove_altrep`, x)
 }
