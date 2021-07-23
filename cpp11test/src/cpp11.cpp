@@ -199,6 +199,13 @@ extern "C" SEXP _cpp11test_rcpp_release_(SEXP n) {
     return R_NilValue;
   END_CPP11
 }
+// resize.cpp
+cpp11::writable::list test_nms_resize();
+extern "C" SEXP _cpp11test_test_nms_resize() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(test_nms_resize());
+  END_CPP11
+}
 // safe.cpp
 SEXP cpp11_safe_(SEXP x_sxp);
 extern "C" SEXP _cpp11test_cpp11_safe_(SEXP x_sxp) {
@@ -321,49 +328,6 @@ extern "C" SEXP _cpp11test_sum_dbl_accumulate2_(SEXP x_sxp) {
 
 extern "C" {
 /* .Call calls */
-extern SEXP _cpp11test_cpp11_add_vec_for_(SEXP, SEXP);
-extern SEXP _cpp11test_cpp11_insert_(SEXP);
-extern SEXP _cpp11test_cpp11_release_(SEXP);
-extern SEXP _cpp11test_cpp11_safe_(SEXP);
-extern SEXP _cpp11test_data_frame_();
-extern SEXP _cpp11test_findInterval2(SEXP, SEXP);
-extern SEXP _cpp11test_findInterval2_5(SEXP, SEXP);
-extern SEXP _cpp11test_findInterval3(SEXP, SEXP);
-extern SEXP _cpp11test_findInterval4(SEXP, SEXP);
-extern SEXP _cpp11test_gibbs_cpp(SEXP, SEXP);
-extern SEXP _cpp11test_gibbs_cpp2(SEXP, SEXP);
-extern SEXP _cpp11test_gibbs_rcpp(SEXP, SEXP);
-extern SEXP _cpp11test_gibbs_rcpp2(SEXP, SEXP);
-extern SEXP _cpp11test_grow_(SEXP);
-extern SEXP _cpp11test_protect_many_(SEXP);
-extern SEXP _cpp11test_protect_many_cpp11_(SEXP);
-extern SEXP _cpp11test_protect_many_preserve_(SEXP);
-extern SEXP _cpp11test_protect_many_rcpp_(SEXP);
-extern SEXP _cpp11test_protect_many_sexp_(SEXP);
-extern SEXP _cpp11test_protect_one_(SEXP, SEXP);
-extern SEXP _cpp11test_protect_one_cpp11_(SEXP, SEXP);
-extern SEXP _cpp11test_protect_one_preserve_(SEXP, SEXP);
-extern SEXP _cpp11test_protect_one_sexp_(SEXP, SEXP);
-extern SEXP _cpp11test_rcpp_grow_(SEXP);
-extern SEXP _cpp11test_rcpp_release_(SEXP);
-extern SEXP _cpp11test_rcpp_sum_dbl_accumulate_(SEXP);
-extern SEXP _cpp11test_rcpp_sum_dbl_for_(SEXP);
-extern SEXP _cpp11test_rcpp_sum_dbl_foreach_(SEXP);
-extern SEXP _cpp11test_rcpp_sum_int_for_(SEXP);
-extern SEXP _cpp11test_remove_altrep(SEXP);
-extern SEXP _cpp11test_row_sums(SEXP);
-extern SEXP _cpp11test_sum_dbl_accumulate2_(SEXP);
-extern SEXP _cpp11test_sum_dbl_accumulate_(SEXP);
-extern SEXP _cpp11test_sum_dbl_for2_(SEXP);
-extern SEXP _cpp11test_sum_dbl_for3_(SEXP);
-extern SEXP _cpp11test_sum_dbl_for_(SEXP);
-extern SEXP _cpp11test_sum_dbl_foreach2_(SEXP);
-extern SEXP _cpp11test_sum_dbl_foreach_(SEXP);
-extern SEXP _cpp11test_sum_int_accumulate_(SEXP);
-extern SEXP _cpp11test_sum_int_for2_(SEXP);
-extern SEXP _cpp11test_sum_int_for_(SEXP);
-extern SEXP _cpp11test_sum_int_foreach_(SEXP);
-extern SEXP _cpp11test_upper_bound(SEXP, SEXP);
 extern SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
@@ -409,6 +373,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_sum_int_for2_",            (DL_FUNC) &_cpp11test_sum_int_for2_,            1},
     {"_cpp11test_sum_int_for_",             (DL_FUNC) &_cpp11test_sum_int_for_,             1},
     {"_cpp11test_sum_int_foreach_",         (DL_FUNC) &_cpp11test_sum_int_foreach_,         1},
+    {"_cpp11test_test_nms_resize",          (DL_FUNC) &_cpp11test_test_nms_resize,          0},
     {"_cpp11test_upper_bound",              (DL_FUNC) &_cpp11test_upper_bound,              2},
     {"run_testthat_tests",                  (DL_FUNC) &run_testthat_tests,                  1},
     {NULL, NULL, 0}

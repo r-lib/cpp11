@@ -104,6 +104,10 @@ rcpp_release_ <- function(n) {
   invisible(.Call(`_cpp11test_rcpp_release_`, n))
 }
 
+test_nms_resize <- function() {
+  .Call(`_cpp11test_test_nms_resize`)
+}
+
 cpp11_safe_ <- function(x_sxp) {
   .Call(`_cpp11test_cpp11_safe_`, x_sxp)
 }

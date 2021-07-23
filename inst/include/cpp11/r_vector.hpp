@@ -406,7 +406,6 @@ inline r_vector<T>::operator sexp() const {
   return data_;
 }
 
-
 /// Provide access to the underlying data, mainly for interface
 /// compatibility with std::vector
 template <typename T>
@@ -879,17 +878,28 @@ inline void r_vector<T>::clear() {
   length_ = 0;
 }
 
+inline SEXP truncate(SEXP x, R_xlen_t length, R_xlen_t capacity) {
+#if R_VERSION >= R_Version(3, 4, 0)
+  SETLENGTH(x, length);
+  SET_TRUELENGTH(x, capacity);
+  SET_GROWABLE_BIT(x);
+#else
+  x = safe[Rf_lengthgets](x, length_);
+#endif
+  return x;
+}
+
 template <typename T>
 inline r_vector<T>::operator SEXP() const {
   if (length_ < capacity_) {
-#if R_VERSION >= R_Version(3, 4, 0)
-    SETLENGTH(data_, length_);
-    SET_TRUELENGTH(data_, capacity_);
-    SET_GROWABLE_BIT(data_);
-#else
     auto* p = const_cast<r_vector<T>*>(this);
-    p->data_ = safe[Rf_lengthgets](data_, length_);
-#endif
+    p->data_ = truncate(p->data_, length_, capacity_);
+    SEXP nms = names();
+    auto nms_size = Rf_xlength(nms);
+    if ((nms_size > 0) && (length_ < nms_size)) {
+      nms = truncate(nms, length_, capacity_);
+      names() = nms;
+    }
   }
   return data_;
 }
