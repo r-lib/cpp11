@@ -13,6 +13,7 @@ test_that("cpp11::warning formatting works", {
   test2 <- c("failed", "passed")
   expect_warning(my_warning("You {}", test2[2]), "You passed", fixed = TRUE)
 })
+<<<<<<< HEAD
 test_that("cpp11::message formatting works", {
   test1 <- "message"
   expect_message(my_message("This is a {}", test1), "This is a message", fixed = TRUE)
@@ -20,6 +21,8 @@ test_that("cpp11::message formatting works", {
   test2 <- c("great", "super")
   expect_message(my_message("You're {}", test2[2]), "You're super", fixed = TRUE)
 })
+=======
+>>>>>>> upstream/master
 test_that("cpp11::stop works without including the fmt library", {
   test1 <- "error"
   expect_error(my_stop_n1fmt("This is a stop"), "This is a stop", fixed = TRUE)
@@ -30,6 +33,7 @@ test_that("cpp11::warning works without including the fmt library", {
   expect_warning(my_warning_n1fmt("This is a warning"), "This is a warning", fixed = TRUE)
   expect_warning(my_warning_n2fmt("This is a %s", test1), "This is a warning", fixed = TRUE)
 })
+<<<<<<< HEAD
 test_that("cpp11::message works without including the fmt library", {
   test1 <- "message"
   expect_message(my_message_nfmt("This is a %s", test1), "This is a message", fixed = TRUE)
@@ -37,3 +41,5 @@ test_that("cpp11::message works without including the fmt library", {
   test2 <- c("great", "super")
   expect_message(my_message_nfmt("You're %s", test2[2]), "You're super", fixed = TRUE)
 })
+=======
+>>>>>>> upstream/master

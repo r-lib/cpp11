@@ -36,6 +36,7 @@ extern "C" SEXP _cpp11test_my_warning(SEXP mystring, SEXP myarg) {
     return R_NilValue;
   END_CPP11
 }
+<<<<<<< HEAD
 // errors_fmt.cpp
 void my_message(std::string mystring, std::string myarg);
 extern "C" SEXP _cpp11test_my_message(SEXP mystring, SEXP myarg) {
@@ -44,6 +45,8 @@ extern "C" SEXP _cpp11test_my_message(SEXP mystring, SEXP myarg) {
     return R_NilValue;
   END_CPP11
 }
+=======
+>>>>>>> upstream/master
 // errors.cpp
 void my_stop_n1fmt(std::string mystring);
 extern "C" SEXP _cpp11test_my_stop_n1fmt(SEXP mystring) {
@@ -76,6 +79,7 @@ extern "C" SEXP _cpp11test_my_warning_n2fmt(SEXP mystring, SEXP myarg) {
     return R_NilValue;
   END_CPP11
 }
+<<<<<<< HEAD
 // errors.cpp
 void my_message_nfmt(std::string mystring, std::string myarg);
 extern "C" SEXP _cpp11test_my_message_nfmt(SEXP mystring, SEXP myarg) {
@@ -84,6 +88,8 @@ extern "C" SEXP _cpp11test_my_message_nfmt(SEXP mystring, SEXP myarg) {
     return R_NilValue;
   END_CPP11
 }
+=======
+>>>>>>> upstream/master
 // find-intervals.cpp
 SEXP remove_altrep(SEXP x);
 extern "C" SEXP _cpp11test_remove_altrep(SEXP x) {
@@ -402,8 +408,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_gibbs_rcpp",               (DL_FUNC) &_cpp11test_gibbs_rcpp,               2},
     {"_cpp11test_gibbs_rcpp2",              (DL_FUNC) &_cpp11test_gibbs_rcpp2,              2},
     {"_cpp11test_grow_",                    (DL_FUNC) &_cpp11test_grow_,                    1},
+<<<<<<< HEAD
     {"_cpp11test_my_message",               (DL_FUNC) &_cpp11test_my_message,               2},
     {"_cpp11test_my_message_nfmt",          (DL_FUNC) &_cpp11test_my_message_nfmt,          2},
+=======
+>>>>>>> upstream/master
     {"_cpp11test_my_stop",                  (DL_FUNC) &_cpp11test_my_stop,                  2},
     {"_cpp11test_my_stop_n1fmt",            (DL_FUNC) &_cpp11test_my_stop_n1fmt,            1},
     {"_cpp11test_my_stop_n2fmt",            (DL_FUNC) &_cpp11test_my_stop_n2fmt,            2},
