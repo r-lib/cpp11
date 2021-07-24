@@ -2,7 +2,7 @@
 
 #include <string.h>  // for strcmp
 
-#include <stdio.h>  // for snprintf
+#include <cstdio>   // for snprintf
 #include <string>   // for string, basic_string
 #include <utility>  // for forward
 
