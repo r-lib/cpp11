@@ -1,5 +1,5 @@
 #include "cpp11/function.hpp"
-#include "cpp11/protect.hpp"
+//#include "cpp11/protect.hpp"
 using namespace cpp11;
 
 [[cpp11::register]] void my_stop_n1fmt(std::string mystring) { cpp11::stop(mystring); }
