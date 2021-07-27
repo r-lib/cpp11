@@ -75,8 +75,6 @@ class package {
   SEXP data_;
 };
 
-
-
 #ifdef CPP11_USE_FMT
 template <typename... Args>
 void message(const char* fmt_arg, Args... args) {
