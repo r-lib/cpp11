@@ -115,7 +115,7 @@ cpp_register <- function(path = ".", quiet = FALSE) {
       {call_entries}
       }}
       {init$declarations}
-      extern "C" void R_init_{package}(DllInfo* dll){{
+      extern "C" attribute_visible void R_init_{package}(DllInfo* dll){{
         R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
         R_useDynamicSymbols(dll, FALSE);{init$calls}
         R_forceSymbols(dll, TRUE);

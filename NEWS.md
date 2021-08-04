@@ -1,4 +1,5 @@
 # cpp11 (development version)
+* `cpp_register()` now includes `attribute_visible` in the init function, so packages compiled with `C_VISIBILITY` will find the init function.
 * added `as_double()` and `as_integer()` method to coerce integers to doubles and doubles to integers to doubles (@sbearrows, #46)
 * Removed redundant `.Call calls` in cpp11.cpp file (@sbearrows, #170)
 * Allow cpp11 decorators of the form `cpp11::linking_to` (@sbearrows, #193)
