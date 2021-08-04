@@ -11,6 +11,7 @@ namespace writable = ::cpp11::writable;
 #endif
 
 #include <R_ext/Rdynload.h>
+#include <R_ext/Visibility.h>
 
 namespace cpp11 {
 template <class T>
