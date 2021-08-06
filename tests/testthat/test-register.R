@@ -84,6 +84,7 @@ describe("get_call_entries", {
 
 
 #include \"cpp11/declarations.hpp\"
+#include <R_ext/Visibility.h>
 
 // multiple.cpp
 int foo();
@@ -116,7 +117,7 @@ static const R_CallMethodDef CallEntries[] = {
 };
 }
 
-extern \"C\" void R_init_testPkg(DllInfo* dll){
+extern \"C\" attribute_visible void R_init_testPkg(DllInfo* dll){
   R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
   R_forceSymbols(dll, TRUE);
@@ -579,6 +580,7 @@ foo <- function() {
 
 
 #include \"cpp11/declarations.hpp\"
+#include <R_ext/Visibility.h>
 
 // single.cpp
 int foo();
@@ -595,7 +597,7 @@ static const R_CallMethodDef CallEntries[] = {
 };
 }
 
-extern \"C\" void R_init_testPkg(DllInfo* dll){
+extern \"C\" attribute_visible void R_init_testPkg(DllInfo* dll){
   R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
   R_forceSymbols(dll, TRUE);
