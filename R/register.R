@@ -108,6 +108,7 @@ cpp_register <- function(path = ".", quiet = FALSE) {
 
       {extra_includes}
       #include "cpp11/declarations.hpp"
+      #include <R_ext/Visibility.h>
 
       {cpp_functions_definitions}
 
