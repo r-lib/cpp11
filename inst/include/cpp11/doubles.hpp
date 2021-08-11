@@ -148,7 +148,7 @@ inline doubles as_doubles(sexp x) {
     return ret;
   }
 
-  throw type_error(INTSXP, TYPEOF(x));
+  throw type_error(REALSXP, TYPEOF(x));
 }
 
 template <>
