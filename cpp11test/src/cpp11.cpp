@@ -5,6 +5,7 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 #include "cpp11/declarations.hpp"
+#include <R_ext/Visibility.h>
 
 // add.cpp
 SEXP cpp11_add_vec_for_(cpp11::writable::doubles x, double num);
@@ -444,7 +445,7 @@ static const R_CallMethodDef CallEntries[] = {
 };
 }
 
-extern "C" void R_init_cpp11test(DllInfo* dll){
+extern "C" attribute_visible void R_init_cpp11test(DllInfo* dll){
   R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
   R_forceSymbols(dll, TRUE);
