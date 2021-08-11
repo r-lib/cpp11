@@ -1,4 +1,6 @@
 # cpp11 (development version)
+
+* Remove undefined behavior when constructing global `cpp11::sexp`s (#224)
 * `cpp_register()` now includes `attribute_visible` in the init function, so packages compiled with `C_VISIBILITY` will find the init function.
 * added `as_double()` and `as_integer()` method to coerce integers to doubles and doubles to integers to doubles (@sbearrows, #46)
 * Removed redundant `.Call calls` in cpp11.cpp file (@sbearrows, #170)
