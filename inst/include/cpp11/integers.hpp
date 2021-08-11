@@ -163,7 +163,7 @@ inline integers as_integers(sexp x) {
     return ret;
   }
 
-  throw type_error(REALSXP, TYPEOF(x));
+  throw type_error(INTSXP, TYPEOF(x));
 }
 
 }  // namespace cpp11
