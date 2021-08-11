@@ -884,7 +884,7 @@ inline SEXP truncate(SEXP x, R_xlen_t length, R_xlen_t capacity) {
   SET_TRUELENGTH(x, capacity);
   SET_GROWABLE_BIT(x);
 #else
-  x = safe[Rf_lengthgets](x, length_);
+  x = safe[Rf_lengthgets](x, length);
 #endif
   return x;
 }
