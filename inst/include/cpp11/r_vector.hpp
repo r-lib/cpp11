@@ -149,7 +149,7 @@ class r_vector {
 
     const_iterator(const r_vector* data, R_xlen_t pos);
 
-    inline const_iterator& operator+(R_xlen_t pos);
+    inline const_iterator operator+(R_xlen_t pos);
     inline ptrdiff_t operator-(const const_iterator& other) const;
 
     inline const_iterator& operator++();
@@ -275,7 +275,8 @@ class r_vector : public cpp11::r_vector<T> {
 
     using cpp11::r_vector<T>::const_iterator::operator!=;
 
-    inline iterator& operator+(R_xlen_t rhs);
+    inline iterator& operator+=(R_xlen_t rhs);
+    inline iterator operator+(R_xlen_t rhs);
   };
 
   r_vector() = default;
@@ -498,13 +499,11 @@ inline ptrdiff_t r_vector<T>::const_iterator::operator-(
 }
 
 template <typename T>
-inline typename r_vector<T>::const_iterator& r_vector<T>::const_iterator::operator+(
+inline typename r_vector<T>::const_iterator r_vector<T>::const_iterator::operator+(
     R_xlen_t rhs) {
-  pos_ += rhs;
-  if (data_->is_altrep() && pos_ >= block_start_ + length_) {
-    fill_buf(pos_);
-  }
-  return *this;
+  auto it = *this;
+  it += rhs;
+  return it;
 }
 
 template <typename T>
@@ -623,12 +622,19 @@ inline typename r_vector<T>::iterator& r_vector<T>::iterator::operator++() {
 }
 
 template <typename T>
-inline typename r_vector<T>::iterator& r_vector<T>::iterator::operator+(R_xlen_t rhs) {
+inline typename r_vector<T>::iterator& r_vector<T>::iterator::operator+=(R_xlen_t rhs) {
   pos_ += rhs;
   if (data_.is_altrep() && pos_ >= block_start_ + length_) {
     fill_buf(pos_);
   }
   return *this;
+}
+
+template <typename T>
+inline typename r_vector<T>::iterator r_vector<T>::iterator::operator+(R_xlen_t rhs) {
+  auto it = *this;
+  it += rhs;
+  return it;
 }
 
 template <typename T>
