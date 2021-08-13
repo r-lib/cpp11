@@ -203,12 +203,29 @@ cpp11::raws push_raws() {
 push_raws()
 ```
 
-#### 11. What are the types for C++ iterators?
+#### 11. How can I create a `std::string` from a `cpp11::writable::string`?
+
+Because C++ does not allow for two implicit cast, explicitly cast to `cpp11::r_string` first.
+
+```{cpp11}
+#include <cpp11.hpp>
+#include <string>
+
+[[cpp11::register]]
+std::string my_string() {
+  cpp11::writable::strings x({"foo", "bar"});
+  std::string elt = cpp11::r_string(x[0]);
+  return elt;
+}
+```
+
+
+#### 12. What are the types for C++ iterators?
 
 The iterators are `::iterator` classes contained inside the vector classes.
 For example the iterator for `cpp11::doubles` would be `cpp11::doubles::iterator` and the iterator for `cpp11::writable::doubles` would be `cpp11::writable::doubles::iterator`.
 
-#### 12. My code has `using namespace std`, why do I still have to include `std::` in the signatures of `[[cpp11::register]]` functions?
+#### 13. My code has `using namespace std`, why do I still have to include `std::` in the signatures of `[[cpp11::register]]` functions?
 
 The `using namespace std` directive will not be included in the generated code of the function signatures, so they still need to be fully qualified.
 However you will _not_ need to qualify the type names within those functions.
@@ -240,7 +257,7 @@ std::string foobar() {
 }
 ```
 
-#### 13. How do I modify a vector in place?
+#### 14. How do I modify a vector in place?
 
 In place modification breaks the normal semantics of R code.
 In general it should be avoided, which is why `cpp11::writable` classes always copy their data when constructed.
