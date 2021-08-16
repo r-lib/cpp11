@@ -313,9 +313,7 @@ static struct {
 
     PROTECT(obj);
 
-    if (TYPEOF(list_) != LISTSXP) {
-      list_ = get_preserve_list();
-    }
+    static SEXP list_ = get_preserve_list();
 
     // Add a new cell that points to the previous end.
     SEXP cell = PROTECT(Rf_cons(list_, CDR(list_)));
@@ -334,6 +332,7 @@ static struct {
   }
 
   void print() {
+    static SEXP list_ = get_preserve_list();
     for (SEXP head = list_; head != R_NilValue; head = CDR(head)) {
       REprintf("%x CAR: %x CDR: %x TAG: %x\n", head, CAR(head), CDR(head), TAG(head));
     }
@@ -344,6 +343,7 @@ static struct {
   // in older R versions if needed
   void release_all() {
 #if !defined(CPP11_USE_PRESERVE_OBJECT)
+    static SEXP list_ = get_preserve_list();
     SEXP first = CDR(list_);
     if (first != R_NilValue) {
       SETCAR(first, R_NilValue);
@@ -378,7 +378,7 @@ static struct {
   }
 
  private:
-  // The list_ singleton is stored in a XPtr within an R global option.
+  // The preserved list singleton is stored in a XPtr within an R global option.
   //
   // It is not constructed as a static variable directly since many
   // translation units may be compiled, resulting in unrelated instances of each
@@ -426,8 +426,6 @@ static struct {
 
     return preserve_list;
   }
-
-  SEXP list_ = get_preserve_list();
 }  // namespace cpp11
 preserved;
 }  // namespace cpp11
