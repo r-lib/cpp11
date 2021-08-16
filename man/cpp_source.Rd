@@ -66,7 +66,7 @@ external packages. This is equivalent to putting those packages in the
 \code{LinkingTo} field in a package DESCRIPTION.
 }
 \examples{
-\dontrun{
+
 cpp_source(
   code = '#include "cpp11/integers.hpp"
 
@@ -95,7 +95,7 @@ cpp_source(
 
 [[cpp11::register]] void
 show_progress() {
-  RProgress::RProgress pb("Downloading [:bar] ETA: :eta");
+  RProgress::RProgress pb("Processing [:bar] ETA: :eta");
 
   pb.tick(0);
   for (int i = 0; i < 100; i++) {
@@ -107,5 +107,5 @@ show_progress() {
 
 show_progress()
 }
-}
+
 }
