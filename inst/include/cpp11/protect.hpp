@@ -313,7 +313,7 @@ static struct {
 
     PROTECT(obj);
 
-    SEXP list_ = get_preserve_list();
+    static SEXP list_ = get_preserve_list();
 
     // Add a new cell that points to the previous end.
     SEXP cell = PROTECT(Rf_cons(list_, CDR(list_)));
@@ -332,7 +332,8 @@ static struct {
   }
 
   void print() {
-    for (SEXP head = get_preserve_list(); head != R_NilValue; head = CDR(head)) {
+    static SEXP list_ = get_preserve_list();
+    for (SEXP head = list_; head != R_NilValue; head = CDR(head)) {
       REprintf("%x CAR: %x CDR: %x TAG: %x\n", head, CAR(head), CDR(head), TAG(head));
     }
     REprintf("---\n");
@@ -342,7 +343,7 @@ static struct {
   // in older R versions if needed
   void release_all() {
 #if !defined(CPP11_USE_PRESERVE_OBJECT)
-    SEXP list_ = get_preserve_list();
+    static SEXP list_ = get_preserve_list();
     SEXP first = CDR(list_);
     if (first != R_NilValue) {
       SETCAR(first, R_NilValue);
