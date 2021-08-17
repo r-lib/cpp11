@@ -12,12 +12,24 @@ my_stop <- function(mystring, myarg) {
   invisible(.Call(`_cpp11test_my_stop`, mystring, myarg))
 }
 
+my_stop_n1 <- function(mystring) {
+  invisible(.Call(`_cpp11test_my_stop_n1`, mystring))
+}
+
 my_warning <- function(mystring, myarg) {
   invisible(.Call(`_cpp11test_my_warning`, mystring, myarg))
 }
 
+my_warning_n1 <- function(mystring) {
+  invisible(.Call(`_cpp11test_my_warning_n1`, mystring))
+}
+
 my_message <- function(mystring, myarg) {
   invisible(.Call(`_cpp11test_my_message`, mystring, myarg))
+}
+
+my_message_n1 <- function(mystring) {
+  invisible(.Call(`_cpp11test_my_message_n1`, mystring))
 }
 
 my_stop_n1fmt <- function(mystring) {
@@ -36,8 +48,12 @@ my_warning_n2fmt <- function(mystring, myarg) {
   invisible(.Call(`_cpp11test_my_warning_n2fmt`, mystring, myarg))
 }
 
-my_message_nfmt <- function(mystring, myarg) {
-  invisible(.Call(`_cpp11test_my_message_nfmt`, mystring, myarg))
+my_message_n1fmt <- function(mystring) {
+  invisible(.Call(`_cpp11test_my_message_n1fmt`, mystring))
+}
+
+my_message_n2fmt <- function(mystring, myarg) {
+  invisible(.Call(`_cpp11test_my_message_n2fmt`, mystring, myarg))
 }
 
 remove_altrep <- function(x) {
