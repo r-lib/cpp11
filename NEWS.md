@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* Fixed `+` and `+=` operators of `r_vector::[const_]iterator` to conform the *iterators* concept:
+  `+=` updates the iterator, and `+` returns the updated copy, while keeping the original unchanged (@alyst, #231)
 * Remove undefined behavior when constructing global `cpp11::sexp`s (#224)
 * `cpp_register()` now includes `attribute_visible` in the init function, so packages compiled with `C_VISIBILITY` will find the init function.
 * added `as_double()` and `as_integer()` method to coerce integers to doubles and doubles to integers to doubles (@sbearrows, #46)
