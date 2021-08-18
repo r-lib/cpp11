@@ -73,7 +73,7 @@ struct matrix_slices<by_column> : public matrix_dims {
   int slice_offset(int pos) const { return pos * nrow(); }
 };
 
-template <typename V, typename T, typename S>
+template <typename V, typename T, typename S = by_column>
 class matrix : public matrix_slices<S> {
  private:
   V vector_;
@@ -203,23 +203,23 @@ class matrix : public matrix_slices<S> {
   slice_iterator end() { return {*this, nslices()}; }
 };
 
-template <typename S>
+template <typename S = by_column>
 using doubles_matrix = matrix<r_vector<double>, double, S>;
-template <typename S>
+template <typename S = by_column>
 using integers_matrix = matrix<r_vector<int>, int, S>;
-template <typename S>
+template <typename S = by_column>
 using logicals_matrix = matrix<r_vector<r_bool>, r_bool, S>;
-template <typename S>
+template <typename S = by_column>
 using strings_matrix = matrix<r_vector<r_string>, r_string, S>;
 
 namespace writable {
-template <typename S>
+template <typename S = by_column>
 using doubles_matrix = matrix<r_vector<double>, r_vector<double>::proxy, S>;
-template <typename S>
+template <typename S = by_column>
 using integers_matrix = matrix<r_vector<int>, r_vector<int>::proxy, S>;
-template <typename S>
+template <typename S = by_column>
 using logicals_matrix = matrix<r_vector<r_bool>, r_vector<r_bool>::proxy, S>;
-template <typename S>
+template <typename S = by_column>
 using strings_matrix = matrix<r_vector<r_string>, r_vector<r_string>::proxy, S>;
 }  // namespace writable
 
