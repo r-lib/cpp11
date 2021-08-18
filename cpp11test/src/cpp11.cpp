@@ -149,7 +149,7 @@ extern "C" SEXP _cpp11test_gibbs_cpp(SEXP N, SEXP thin) {
   END_CPP11
 }
 // matrix.cpp
-cpp11::doubles_matrix gibbs_cpp2(int N, int thin);
+cpp11::doubles_matrix<> gibbs_cpp2(int N, int thin);
 extern "C" SEXP _cpp11test_gibbs_cpp2(SEXP N, SEXP thin) {
   BEGIN_CPP11
     return cpp11::as_sexp(gibbs_cpp2(cpp11::as_cpp<cpp11::decay_t<int>>(N), cpp11::as_cpp<cpp11::decay_t<int>>(thin)));
@@ -170,10 +170,17 @@ extern "C" SEXP _cpp11test_gibbs_rcpp2(SEXP N, SEXP thin) {
   END_CPP11
 }
 // matrix.cpp
-cpp11::doubles row_sums(cpp11::doubles_matrix x);
+cpp11::doubles row_sums(cpp11::doubles_matrix<cpp11::by_row> x);
 extern "C" SEXP _cpp11test_row_sums(SEXP x) {
   BEGIN_CPP11
-    return cpp11::as_sexp(row_sums(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix>>(x)));
+    return cpp11::as_sexp(row_sums(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<cpp11::by_row>>>(x)));
+  END_CPP11
+}
+// matrix.cpp
+cpp11::doubles col_sums(cpp11::doubles_matrix<cpp11::by_column> x);
+extern "C" SEXP _cpp11test_col_sums(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(col_sums(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<cpp11::by_column>>>(x)));
   END_CPP11
 }
 // protect.cpp
@@ -389,6 +396,7 @@ extern "C" {
 extern SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_cpp11test_col_sums",                 (DL_FUNC) &_cpp11test_col_sums,                 1},
     {"_cpp11test_cpp11_add_vec_for_",       (DL_FUNC) &_cpp11test_cpp11_add_vec_for_,       2},
     {"_cpp11test_cpp11_insert_",            (DL_FUNC) &_cpp11test_cpp11_insert_,            1},
     {"_cpp11test_cpp11_release_",           (DL_FUNC) &_cpp11test_cpp11_release_,           1},

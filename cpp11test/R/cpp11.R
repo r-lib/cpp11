@@ -92,6 +92,10 @@ row_sums <- function(x) {
   .Call(`_cpp11test_row_sums`, x)
 }
 
+col_sums <- function(x) {
+  .Call(`_cpp11test_col_sums`, x)
+}
+
 protect_one_ <- function(x, n) {
   invisible(.Call(`_cpp11test_protect_one_`, x, n))
 }
