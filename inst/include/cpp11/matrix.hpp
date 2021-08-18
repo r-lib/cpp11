@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iterator>
 #include <string>  // for string
 
 #include "cpp11/R.hpp"         // for SEXP, SEXPREC, R_xlen_t, INT...
@@ -9,66 +10,174 @@
 #include "cpp11/sexp.hpp"      // for sexp
 
 namespace cpp11 {
-template <typename V, typename T>
-class matrix {
- private:
-  V vector_;
-  int nrow_;
+
+// matrix dimensions
+struct matrix_dims {
+ protected:
+  const int nrow_;
+  const int ncol_;
 
  public:
-  class row {
+  matrix_dims(SEXP data) : nrow_(Rf_nrows(data)), ncol_(Rf_ncols(data)) {}
+  matrix_dims(int nrow, int ncol) : nrow_(nrow), ncol_(ncol) {}
+
+  int nrow() const { return nrow_; }
+  int ncol() const { return ncol_; }
+};
+
+// base type for dimension-wise matrix access specialization
+struct matrix_slice {};
+
+struct by_row : public matrix_slice {};
+struct by_column : public matrix_slice {};
+
+// basic properties of matrix slices
+template <typename S>
+struct matrix_slices : public matrix_dims {
+ public:
+  using matrix_dims::matrix_dims;
+  using matrix_dims::ncol;
+  using matrix_dims::nrow;
+
+  int nslices() const;
+  int slice_size() const;
+  int slice_stride() const;
+  int slice_offset(int pos) const;
+};
+
+// basic properties of matrix row slices
+template <>
+struct matrix_slices<by_row> : public matrix_dims {
+ public:
+  using matrix_dims::matrix_dims;
+  using matrix_dims::ncol;
+  using matrix_dims::nrow;
+
+  int nslices() const { return nrow(); }
+  int slice_size() const { return ncol(); }
+  int slice_stride() const { return nrow(); }
+  int slice_offset(int pos) const { return pos; }
+};
+
+// basic properties of matrix column slices
+template <>
+struct matrix_slices<by_column> : public matrix_dims {
+ public:
+  using matrix_dims::matrix_dims;
+  using matrix_dims::ncol;
+  using matrix_dims::nrow;
+
+  int nslices() const { return ncol(); }
+  int slice_size() const { return nrow(); }
+  int slice_stride() const { return 1; }
+  int slice_offset(int pos) const { return pos * nrow(); }
+};
+
+template <typename V, typename T, typename S>
+class matrix : public matrix_slices<S> {
+ private:
+  V vector_;
+
+ public:
+  // matrix slice: row (if S=by_row) or a column (if S=by_column)
+  class slice {
    private:
     matrix& parent_;
-    int row_;
+    int index_;   // slice index
+    int offset_;  // index of the first slice element in parent_.vector_
 
    public:
-    row(matrix& parent, R_xlen_t row) : parent_(parent), row_(row) {}
-    T operator[](const int pos) { return parent_.vector_[row_ + (pos * parent_.nrow_)]; }
+    slice(matrix& parent, int index)
+        : parent_(parent), index_(index), offset_(parent.slice_offset(index)) {}
 
+    R_xlen_t stride() const { return parent_.slice_stride(); }
+    R_xlen_t size() const { return parent_.slice_size(); }
+
+    bool operator==(const slice& rhs) const {
+      return (index_ == rhs.index_) && (parent_.data() == rhs.parent_.data());
+    }
+    bool operator!=(const slice& rhs) const { return !operator==(rhs); }
+
+    T operator[](int pos) { return parent_.vector_[offset_ + stride() * pos]; }
+
+    // iterates elements of a slice
     class iterator {
      private:
-      row& row_;
+      slice& slice_;
       int pos_;
 
      public:
-      iterator(row& row, R_xlen_t pos) : row_(row), pos_(pos) {}
-      iterator begin() const { return row_.parent_.vector_iterator(&this, 0); }
-      iterator end() const { return iterator(&this, row_.size()); }
-      inline iterator& operator++() {
+      using difference_type = std::ptrdiff_t;
+      using value_type = T;
+      using pointer = T*;
+      using reference = T&;
+      using iterator_category = std::forward_iterator_tag;
+
+      iterator(slice& slice, R_xlen_t pos) : slice_(slice), pos_(pos) {}
+
+      iterator& operator++() {
         ++pos_;
         return *this;
       }
-      bool operator!=(const iterator& rhs) {
-        return !(pos_ == rhs.pos_ && row_.row_ == rhs.row_.row_);
+
+      bool operator==(const iterator& rhs) const {
+        return (pos_ == rhs.pos_) && (slice_ == rhs.slice_);
       }
-      T operator*() const { return row_[pos_]; };
+      bool operator!=(const iterator& rhs) const { return !operator==(rhs); }
+
+      T operator*() const { return slice_[pos_]; };
     };
 
-    iterator begin() { return iterator(*this, 0); }
-    iterator end() { return iterator(*this, size()); }
-    R_xlen_t size() const { return parent_.vector_.size() / parent_.nrow_; }
-    bool operator!=(const row& rhs) { return row_ != rhs.row_; }
-    row& operator++() {
-      ++row_;
+    iterator begin() { return {*this, 0}; }
+    iterator end() { return {*this, size()}; }
+  };
+  friend slice;
+
+  // iterates slices (rows or columns -- depending on S template param) of a matrix
+  class slice_iterator {
+   private:
+    matrix& parent_;
+    int pos_;
+
+   public:
+    using difference_type = std::ptrdiff_t;
+    using value_type = slice;
+    using pointer = slice*;
+    using reference = slice&;
+    using iterator_category = std::forward_iterator_tag;
+
+    slice_iterator(matrix& parent, R_xlen_t pos) : parent_(parent), pos_(pos) {}
+
+    slice_iterator& operator++() {
+      ++pos_;
       return *this;
     }
-    row& operator*() { return *this; }
+
+    bool operator==(const slice_iterator& rhs) const {
+      return (pos_ == rhs.pos_) && (parent_.data() == rhs.parent_.data());
+    }
+    bool operator!=(const slice_iterator& rhs) const { return !operator==(rhs); }
+
+    slice operator*() { return parent_[pos_]; };
   };
-  friend row;
 
  public:
-  matrix(SEXP data) : vector_(data), nrow_(INTEGER_ELT(vector_.attr("dim"), 0)) {}
+  matrix(SEXP data) : matrix_slices<S>(data), vector_(data) {}
 
-  template <typename V2, typename T2>
-  matrix(const cpp11::matrix<V2, T2>& rhs) : vector_(rhs), nrow_(rhs.nrow()) {}
+  template <typename V2, typename T2, typename S2>
+  matrix(const cpp11::matrix<V2, T2, S2>& rhs) : matrix_slices<S>(rhs), vector_(rhs) {}
 
-  matrix(int nrow, int ncol) : vector_(R_xlen_t(nrow * ncol)), nrow_(nrow) {
-    vector_.attr("dim") = {nrow, ncol};
+  matrix(int nrow, int ncol)
+      : matrix_slices<S>(nrow, ncol), vector_(R_xlen_t(nrow * ncol)) {
+    vector_.attr(R_DimSymbol) = {nrow, ncol};
   }
 
-  int nrow() const { return nrow_; }
-
-  int ncol() const { return size() / nrow_; }
+  using matrix_slices<S>::nrow;
+  using matrix_slices<S>::ncol;
+  using matrix_slices<S>::nslices;
+  using matrix_slices<S>::slice_size;
+  using matrix_slices<S>::slice_stride;
+  using matrix_slices<S>::slice_offset;
 
   SEXP data() const { return vector_.data(); }
 
@@ -86,24 +195,32 @@ class matrix {
 
   r_vector<r_string> names() const { return SEXP(vector_.names()); }
 
-  row operator[](const int pos) { return {*this, pos}; }
+  T operator()(int row, int col) { return vector_[row + (col * nrow())]; }
 
-  T operator()(int row, int col) { return vector_[row + (col * nrow_)]; }
+  slice operator[](int index) { return {*this, index}; }
 
-  row begin() { return {*this, 0}; }
-  row end() { return {*this, nrow_}; }
+  slice_iterator begin() { return {*this, 0}; }
+  slice_iterator end() { return {*this, nslices()}; }
 };
 
-using doubles_matrix = matrix<r_vector<double>, double>;
-using integers_matrix = matrix<r_vector<int>, int>;
-using logicals_matrix = matrix<r_vector<r_bool>, r_bool>;
-using strings_matrix = matrix<r_vector<r_string>, r_string>;
+template <typename S>
+using doubles_matrix = matrix<r_vector<double>, double, S>;
+template <typename S>
+using integers_matrix = matrix<r_vector<int>, int, S>;
+template <typename S>
+using logicals_matrix = matrix<r_vector<r_bool>, r_bool, S>;
+template <typename S>
+using strings_matrix = matrix<r_vector<r_string>, r_string, S>;
 
 namespace writable {
-using doubles_matrix = matrix<r_vector<double>, r_vector<double>::proxy>;
-using integers_matrix = matrix<r_vector<int>, r_vector<int>::proxy>;
-using logicals_matrix = matrix<r_vector<r_bool>, r_vector<r_bool>::proxy>;
-using strings_matrix = matrix<r_vector<r_string>, r_vector<r_string>::proxy>;
+template <typename S>
+using doubles_matrix = matrix<r_vector<double>, r_vector<double>::proxy, S>;
+template <typename S>
+using integers_matrix = matrix<r_vector<int>, r_vector<int>::proxy, S>;
+template <typename S>
+using logicals_matrix = matrix<r_vector<r_bool>, r_vector<r_bool>::proxy, S>;
+template <typename S>
+using strings_matrix = matrix<r_vector<r_string>, r_vector<r_string>::proxy, S>;
 }  // namespace writable
 
 // TODO: Add tests for Matrix class
