@@ -4,7 +4,7 @@
 using namespace cpp11;
 
 [[cpp11::register]] SEXP gibbs_cpp(int N, int thin) {
-  cpp11::writable::doubles_matrix mat(N, 2);
+  cpp11::writable::doubles_matrix<> mat(N, 2);
   double x = 0, y = 0;
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < thin; j++) {
@@ -18,8 +18,8 @@ using namespace cpp11;
   return mat;
 }
 
-[[cpp11::register]] cpp11::doubles_matrix gibbs_cpp2(int N, int thin) {
-  cpp11::writable::doubles_matrix mat(N, 2);
+[[cpp11::register]] cpp11::doubles_matrix<> gibbs_cpp2(int N, int thin) {
+  cpp11::writable::doubles_matrix<> mat(N, 2);
   double x = 0, y = 0;
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < thin; j++) {
@@ -67,13 +67,32 @@ using namespace Rcpp;
   return (mat);
 }
 
-[[cpp11::register]] cpp11::doubles row_sums(cpp11::doubles_matrix x) {
+[[cpp11::register]] cpp11::doubles row_sums(cpp11::doubles_matrix<cpp11::by_row> x) {
   cpp11::writable::doubles sums(x.nrow());
 
   int i = 0;
-  for (auto& row : x) {
+  for (auto row : x) {
     sums[i] = 0.;
     for (auto&& val : row) {
+      if (cpp11::is_na(val)) {
+        sums[i] = NA_REAL;
+        break;
+      }
+      sums[i] += val;
+    }
+    ++i;
+  }
+
+  return sums;
+}
+
+[[cpp11::register]] cpp11::doubles col_sums(cpp11::doubles_matrix<cpp11::by_column> x) {
+  cpp11::writable::doubles sums(x.ncol());
+
+  int i = 0;
+  for (auto col : x) {
+    sums[i] = 0.;
+    for (auto&& val : col) {
       if (cpp11::is_na(val)) {
         sums[i] = NA_REAL;
         break;
