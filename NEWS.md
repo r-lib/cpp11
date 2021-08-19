@@ -1,5 +1,6 @@
 # cpp11 (development version)
 
+* Allow `cpp11::matrix` to be accessed either row-wise or column-wise (the default) depending on the user's choice (@alyst, #229)
 * Fixed `+` and `+=` operators of `r_vector::[const_]iterator` to conform the *iterators* concept:
   `+=` updates the iterator, and `+` returns the updated copy, while keeping the original unchanged (@alyst, #231)
 * Remove undefined behavior when constructing global `cpp11::sexp`s (#224)
