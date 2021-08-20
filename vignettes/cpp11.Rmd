@@ -92,7 +92,7 @@ add
 add(1, 2, 3)
 ```
 
-When you run the avove code, cpp11 will compile the C++ code and construct an R function that connects to the compiled C++ function.
+When you run the above code, cpp11 will compile the C++ code and construct an R function that connects to the compiled C++ function.
 There's a lot going on underneath the hood but cpp11 takes care of all the details so you don't need to worry about them.
 
 The following sections will teach you the basics by translating simple R functions to their C++ equivalents.
