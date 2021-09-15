@@ -7,7 +7,7 @@
 [![CRAN status](https://www.r-pkg.org/badges/version/cpp11)](https://CRAN.R-project.org/package=cpp11)
 <!-- badges: end -->
 
-cpp11 is a header-only R package that helps R package developers handle R objects with C++ code.
+cpp11 helps you to interact with R objects using C++ code.
 Its goals and syntax are similar to the excellent [Rcpp](https://cran.r-project.org/package=Rcpp) package.
 
 ## Using cpp11 in a package
@@ -22,7 +22,7 @@ SystemRequirements: C++11
 Then decorate C++ functions you want to expose to R with `[[cpp11::register]]`. 
 *Note that this is a [C++11 attribute](https://en.cppreference.com/w/cpp/language/attributes), not a comment like is used in Rcpp.*
 
-cpp11 has no hard dependencies and does not use a shared library, so it is straightforward and reliable to use in packages.
+cpp11 is a header only library with no hard dependencies and does not use a shared library, so it is straightforward and reliable to use in packages without fear of compile-time and run-time mismatches.
 
 Alternatively, you can [vendor](https://cpp11.r-lib.org/articles/motivations.html#vendoring) the current installed version of cpp11 headers into your package with `cpp11::vendor_cpp11()`.
 This ensures the headers will remain unchanged until you explicitly update them.
