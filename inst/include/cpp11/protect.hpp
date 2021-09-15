@@ -58,8 +58,9 @@ inline Rboolean& get_should_unwind_protect() {
   SEXP should_unwind_protect_sym = Rf_install("cpp11_should_unwind_protect");
   SEXP should_unwind_protect_sexp = Rf_GetOption1(should_unwind_protect_sym);
   if (should_unwind_protect_sexp == R_NilValue) {
-    should_unwind_protect_sexp = Rf_allocVector(LGLSXP, 1);
+    should_unwind_protect_sexp = PROTECT(Rf_allocVector(LGLSXP, 1));
     detail::set_option(should_unwind_protect_sym, should_unwind_protect_sexp);
+    UNPROTECT(1);
   }
 
   Rboolean* should_unwind_protect =
