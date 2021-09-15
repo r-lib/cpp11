@@ -112,7 +112,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   cpp_functions_definitions <- generate_cpp_functions(funs, package = package)
 
   cpp_path <- file.path(dirname(new_file_path), "cpp11.cpp")
-  brio::write_lines(c('#include "cpp11/declarations.hpp"', "using namespace cpp11;", cpp_functions_definitions), cpp_path)
+  brio::write_lines(c('#include "cpp11/declarations.hpp"', "using namespace ::cpp11;", cpp_functions_definitions), cpp_path)
 
   linking_to <- union(get_linking_to(all_decorations), "cpp11")
 
@@ -184,8 +184,8 @@ generate_makevars <- function(includes, cxx_std) {
 #' @export
 cpp_function <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11")) {
   cpp_source(code = paste(c('#include "cpp11.hpp"',
-        "using namespace cpp11;",
-        "namespace writable = cpp11::writable;",
+        "using namespace ::cpp11;",
+        "namespace writable = ::cpp11::writable;",
         "[[cpp11::register]]",
         code),
       collapse = "\n"),
@@ -202,8 +202,8 @@ utils::globalVariables("f")
 #' @export
 cpp_eval <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11")) {
   cpp_source(code = paste(c('#include "cpp11.hpp"',
-        "using namespace cpp11;",
-        "namespace writable = cpp11::writable;",
+        "using namespace ::cpp11;",
+        "namespace writable = ::cpp11::writable;",
         "[[cpp11::register]]",
         "SEXP f() { return as_sexp(",
         code,
