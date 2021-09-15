@@ -4,6 +4,9 @@
 #' `.cpp`, `.h` or `.hpp` will be wrapped in generated code and registered to
 #' be called from R.
 #'
+#' Note registered functions will not be *exported* from your package unless
+#' you also add a `@export` roxygen2 directive for them.
+#'
 #' In order to use `cpp_register()` the `cli`, `decor`, `desc`, `glue`,
 #' `tibble` and `vctrs` packages must also be installed.
 #' @param path The path to the package root directory

@@ -20,6 +20,9 @@ Functions decorated with \verb{[[cpp11::register]]} in files ending in \code{.cc
 be called from R.
 }
 \details{
+Note registered functions will not be \emph{exported} from your package unless
+you also add a \verb{@export} roxygen2 directive for them.
+
 In order to use \code{cpp_register()} the \code{cli}, \code{decor}, \code{desc}, \code{glue},
 \code{tibble} and \code{vctrs} packages must also be installed.
 }
