@@ -165,7 +165,9 @@ be called from R.</p>
     <p>The paths to the generated R and C++ source files (in that order).</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>In order to use <code>cpp_register()</code> the <code>cli</code>, <code>decor</code>, <code>desc</code>, <code>glue</code>,
+    <p>Note registered functions will not be <em>exported</em> from your package unless
+you also add a <code>@export</code> roxygen2 directive for them.</p>
+<p>In order to use <code>cpp_register()</code> the <code>cli</code>, <code>decor</code>, <code>desc</code>, <code>glue</code>,
 <code>tibble</code> and <code>vctrs</code> packages must also be installed.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

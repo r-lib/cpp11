@@ -100,7 +100,7 @@
 <a href="#cpp11" class="anchor"></a>cpp11</h1></div>
 <!-- badges: start -->
 
-<p>cpp11 is a header-only R package that helps R package developers handle R objects with C++ code. Its goals and syntax are similar to the excellent <a href="https://cran.r-project.org/package=Rcpp">Rcpp</a> package.</p>
+<p>cpp11 helps you to interact with R objects using C++ code. Its goals and syntax are similar to the excellent <a href="https://cran.r-project.org/package=Rcpp">Rcpp</a> package.</p>
 <div id="using-cpp11-in-a-package" class="section level2">
 <h2 class="hasAnchor">
 <a href="#using-cpp11-in-a-package" class="anchor"></a>Using cpp11 in a package</h2>
@@ -108,7 +108,7 @@
 <pre><code>LinkingTo: cpp11
 SystemRequirements: C++11</code></pre>
 <p>Then decorate C++ functions you want to expose to R with <code>[[cpp11::register]]</code>. <em>Note that this is a <a href="https://en.cppreference.com/w/cpp/language/attributes">C++11 attribute</a>, not a comment like is used in Rcpp.</em></p>
-<p>cpp11 has no hard dependencies and does not use a shared library, so it is straightforward and reliable to use in packages.</p>
+<p>cpp11 is a header only library with no hard dependencies and does not use a shared library, so it is straightforward and reliable to use in packages without fear of compile-time and run-time mismatches.</p>
 <p>Alternatively, you can <a href="https://cpp11.r-lib.org/articles/motivations.html#vendoring">vendor</a> the current installed version of cpp11 headers into your package with <code>cpp11::vendor_cpp11()</code>. This ensures the headers will remain unchanged until you explicitly update them.</p>
 </div>
 <div id="getting-started" class="section level2">
@@ -216,9 +216,9 @@ SystemRequirements: C++11</code></pre>
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/r-lib/cpp11/actions"><img src="https://github.com/r-lib/cpp11/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://github.com/r-lib/cpp11/actions"><img src="https://github.com/r-lib/cpp11/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://codecov.io/gh/r-lib/cpp11"><img src="https://codecov.io/gh/r-lib/cpp11/branch/master/graph/badge.svg?token=EEWYoCYxQ2" alt="codecov"></a></li>
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
 <li><a href="https://CRAN.R-project.org/package=cpp11"><img src="https://www.r-pkg.org/badges/version/cpp11" alt="CRAN status"></a></li>
 </ul>
 </div>

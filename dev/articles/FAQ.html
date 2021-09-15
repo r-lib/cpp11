@@ -198,7 +198,6 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">is_named</span><span class="op">(</span><span class="st">"foo"</span><span class="op">)</span>
 <span class="co">#&gt; [1] FALSE</span>
-
 <span class="fu">is_named</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"foo"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
 </div>
@@ -225,10 +224,8 @@
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">my_false</span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; [1] FALSE</span>
-
 <span class="fu">my_true</span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span>
-
 <span class="fu">my_both</span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; [1]  TRUE FALSE  TRUE</span></code></pre></div>
 </div>
@@ -264,7 +261,6 @@
 
 <span class="fu">foo_exists</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="co">#&gt; [1] FALSE</span>
-
 <span class="fu">set_foo</span><span class="op">(</span><span class="va">x</span>, <span class="fl">1</span><span class="op">)</span>
 
 <span class="fu">foo_exists</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
@@ -291,57 +287,71 @@
 <code class="sourceCode R"><span class="fu">push_raws</span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; [1] 68 69</span></code></pre></div>
 </div>
+<div id="how-can-i-create-a-stdstring-from-a-cpp11writablestring" class="section level4">
+<h4 class="hasAnchor">
+<a href="#how-can-i-create-a-stdstring-from-a-cpp11writablestring" class="anchor"></a>11. How can I create a <code>std::string</code> from a <code>cpp11::writable::string</code>?</h4>
+<p>Because C++ does not allow for two implicit cast, explicitly cast to <code>cpp11::r_string</code> first.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a></span>
+<span id="cb13-4"><a href="#cb13-4"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="bu">std::</span>string my_string() {</span>
+<span id="cb13-6"><a href="#cb13-6"></a>  cpp11::writable::strings x({<span class="st">"foo"</span>, <span class="st">"bar"</span>});</span>
+<span id="cb13-7"><a href="#cb13-7"></a>  <span class="bu">std::</span>string elt = cpp11::r_string(x[<span class="dv">0</span>]);</span>
+<span id="cb13-8"><a href="#cb13-8"></a>  <span class="cf">return</span> elt;</span>
+<span id="cb13-9"><a href="#cb13-9"></a>}</span></code></pre></div>
+</div>
 <div id="what-are-the-types-for-c-iterators" class="section level4">
 <h4 class="hasAnchor">
-<a href="#what-are-the-types-for-c-iterators" class="anchor"></a>11. What are the types for C++ iterators?</h4>
+<a href="#what-are-the-types-for-c-iterators" class="anchor"></a>12. What are the types for C++ iterators?</h4>
 <p>The iterators are <code>::iterator</code> classes contained inside the vector classes. For example the iterator for <code>cpp11::doubles</code> would be <code>cpp11::doubles::iterator</code> and the iterator for <code>cpp11::writable::doubles</code> would be <code>cpp11::writable::doubles::iterator</code>.</p>
 </div>
 <div id="my-code-has-using-namespace-std-why-do-i-still-have-to-include-std-in-the-signatures-of-cpp11register-functions" class="section level4">
 <h4 class="hasAnchor">
-<a href="#my-code-has-using-namespace-std-why-do-i-still-have-to-include-std-in-the-signatures-of-cpp11register-functions" class="anchor"></a>12. My code has <code>using namespace std</code>, why do I still have to include <code>std::</code> in the signatures of <code>[[cpp11::register]]</code> functions?</h4>
+<a href="#my-code-has-using-namespace-std-why-do-i-still-have-to-include-std-in-the-signatures-of-cpp11register-functions" class="anchor"></a>13. My code has <code>using namespace std</code>, why do I still have to include <code>std::</code> in the signatures of <code>[[cpp11::register]]</code> functions?</h4>
 <p>The <code>using namespace std</code> directive will not be included in the generated code of the function signatures, so they still need to be fully qualified. However you will <em>not</em> need to qualify the type names within those functions.</p>
 <p>The following won’t compile</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
-<span id="cb13-2"><a href="#cb13-2"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
-<span id="cb13-3"><a href="#cb13-3"></a></span>
-<span id="cb13-4"><a href="#cb13-4"></a><span class="kw">using</span> <span class="kw">namespace</span> std;</span>
-<span id="cb13-5"><a href="#cb13-5"></a></span>
-<span id="cb13-6"><a href="#cb13-6"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb13-7"><a href="#cb13-7"></a>string foobar() {</span>
-<span id="cb13-8"><a href="#cb13-8"></a>  <span class="cf">return</span> string(<span class="st">"foo"</span>) + <span class="st">"-bar"</span>;</span>
-<span id="cb13-9"><a href="#cb13-9"></a>}</span></code></pre></div>
-<p>But this will compile and work as intended</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb14-1"><a href="#cb14-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
 <span id="cb14-2"><a href="#cb14-2"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
 <span id="cb14-3"><a href="#cb14-3"></a></span>
 <span id="cb14-4"><a href="#cb14-4"></a><span class="kw">using</span> <span class="kw">namespace</span> std;</span>
 <span id="cb14-5"><a href="#cb14-5"></a></span>
 <span id="cb14-6"><a href="#cb14-6"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb14-7"><a href="#cb14-7"></a><span class="bu">std::</span>string foobar() {</span>
+<span id="cb14-7"><a href="#cb14-7"></a>string foobar() {</span>
 <span id="cb14-8"><a href="#cb14-8"></a>  <span class="cf">return</span> string(<span class="st">"foo"</span>) + <span class="st">"-bar"</span>;</span>
 <span id="cb14-9"><a href="#cb14-9"></a>}</span></code></pre></div>
+<p>But this will compile and work as intended</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3"></a></span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="kw">using</span> <span class="kw">namespace</span> std;</span>
+<span id="cb15-5"><a href="#cb15-5"></a></span>
+<span id="cb15-6"><a href="#cb15-6"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb15-7"><a href="#cb15-7"></a><span class="bu">std::</span>string foobar() {</span>
+<span id="cb15-8"><a href="#cb15-8"></a>  <span class="cf">return</span> string(<span class="st">"foo"</span>) + <span class="st">"-bar"</span>;</span>
+<span id="cb15-9"><a href="#cb15-9"></a>}</span></code></pre></div>
 </div>
 <div id="how-do-i-modify-a-vector-in-place" class="section level4">
 <h4 class="hasAnchor">
-<a href="#how-do-i-modify-a-vector-in-place" class="anchor"></a>13. How do I modify a vector in place?</h4>
+<a href="#how-do-i-modify-a-vector-in-place" class="anchor"></a>14. How do I modify a vector in place?</h4>
 <p>In place modification breaks the normal semantics of R code. In general it should be avoided, which is why <code>cpp11::writable</code> classes always copy their data when constructed.</p>
 <p>However if you are <em>positive</em> in-place modification is necessary for your use case you can use the move constructor to do this.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
-<span id="cb15-2"><a href="#cb15-2"></a></span>
-<span id="cb15-3"><a href="#cb15-3"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb15-4"><a href="#cb15-4"></a><span class="dt">void</span> add_one(cpp11::sexp x_sexp) {</span>
-<span id="cb15-5"><a href="#cb15-5"></a>  cpp11::writable::integers x(<span class="bu">std::</span>move(x_sexp.data()));</span>
-<span id="cb15-6"><a href="#cb15-6"></a>  <span class="cf">for</span> (<span class="kw">auto</span>&amp;&amp; value : x) {</span>
-<span id="cb15-7"><a href="#cb15-7"></a>    ++value;</span>
-<span id="cb15-8"><a href="#cb15-8"></a>  }</span>
-<span id="cb15-9"><a href="#cb15-9"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb16-1"><a href="#cb16-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a></span>
+<span id="cb16-3"><a href="#cb16-3"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
+<span id="cb16-4"><a href="#cb16-4"></a><span class="dt">void</span> add_one(cpp11::sexp x_sexp) {</span>
+<span id="cb16-5"><a href="#cb16-5"></a>  cpp11::writable::integers x(<span class="bu">std::</span>move(x_sexp.data()));</span>
+<span id="cb16-6"><a href="#cb16-6"></a>  <span class="cf">for</span> (<span class="kw">auto</span>&amp;&amp; value : x) {</span>
+<span id="cb16-7"><a href="#cb16-7"></a>    ++value;</span>
+<span id="cb16-8"><a href="#cb16-8"></a>  }</span>
+<span id="cb16-9"><a href="#cb16-9"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fl">2L</span>, <span class="fl">3L</span>, <span class="fl">4L</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Internal.html">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; @7fc8db97f188 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span>
+<span class="co">#&gt; @55edd035b018 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span>
 <span class="fu">add_one</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Internal.html">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; @7fc8db97f188 13 INTSXP g0c2 [REF(6)] (len=4, tl=0) 2,3,4,5</span>
+<span class="co">#&gt; @55edd035b018 13 INTSXP g0c2 [REF(6)] (len=4, tl=0) 2,3,4,5</span>
 <span class="va">x</span>
 <span class="co">#&gt; [1] 2 3 4 5</span></code></pre></div>
 </div>
