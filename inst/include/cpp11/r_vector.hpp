@@ -120,15 +120,17 @@ class r_vector {
   /// compatibility with std::vector
   SEXP data() const;
 
-  sexp attr(const char* name) const {
+  const sexp attr(const char* name) const {
     return SEXP(attribute_proxy<r_vector<T>>(*this, name));
   }
 
-  sexp attr(const std::string& name) const {
+  const sexp attr(const std::string& name) const {
     return SEXP(attribute_proxy<r_vector<T>>(*this, name.c_str()));
   }
 
-  sexp attr(SEXP name) const { return SEXP(attribute_proxy<r_vector<T>>(*this, name)); }
+  const sexp attr(SEXP name) const {
+    return SEXP(attribute_proxy<r_vector<T>>(*this, name));
+  }
 
   r_vector<r_string> names() const {
     SEXP nms = SEXP(attribute_proxy<r_vector<T>>(*this, R_NamesSymbol));
