@@ -103,6 +103,7 @@ class r_vector {
   };
 
   r_vector(const writable::r_vector<T>& rhs) : r_vector(static_cast<SEXP>(rhs)) {}
+  r_vector(named_arg) = delete;
 
   bool is_altrep() const;
 

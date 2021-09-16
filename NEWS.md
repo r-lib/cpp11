@@ -1,5 +1,6 @@
 # cpp11 (development version)
 
+* read-only `r_vector` constructors now disallow implicit construction with named arguments (#237)
 * read-only `r_vector.attr()` methods now return const objects, so it is a compile time error to try to assign to them (#237)
 * Allow `cpp11::matrix` to be accessed either row-wise or column-wise (the default) depending on the user's choice (@alyst, #229)
 * Fixed `+` and `+=` operators of `r_vector::[const_]iterator` to conform the *iterators* concept:
