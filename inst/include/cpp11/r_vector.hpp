@@ -900,8 +900,12 @@ inline SEXP truncate(SEXP x, R_xlen_t length, R_xlen_t capacity) {
 
 template <typename T>
 inline r_vector<T>::operator SEXP() const {
+  auto* p = const_cast<r_vector<T>*>(this);
+  if (data_ == R_NilValue) {
+    p->resize(0);
+    return data_;
+  }
   if (length_ < capacity_) {
-    auto* p = const_cast<r_vector<T>*>(this);
     p->data_ = truncate(p->data_, length_, capacity_);
     SEXP nms = names();
     auto nms_size = Rf_xlength(nms);

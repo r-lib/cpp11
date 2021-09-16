@@ -154,4 +154,12 @@ context("list-C++") {
     cpp11::strings nms(x.names());
     expect_true(x.size() == nms.size());
   }
+
+  test_that("We don't return NULL for default constructed vectors") {
+    cpp11::writable::list x;
+    SEXP y(x);
+
+    expect_true(Rf_xlength(y) == 0);
+    expect_true(y != R_NilValue);
+  }
 }
