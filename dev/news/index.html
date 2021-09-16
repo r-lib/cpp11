@@ -140,6 +140,8 @@
 <a href="#cpp11-development-version" class="anchor"></a>cpp11 (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li>
+<code>writable::r_vector</code> default constructors now return a 0 length vector when converted to <code>SEXP</code> (<a href='https://github.com/r-lib/cpp11/issues/166'>#166</a>)</li>
 <li>read-only <code>r_vector</code> constructors now disallow implicit construction with named arguments (<a href='https://github.com/r-lib/cpp11/issues/237'>#237</a>)</li>
 <li>read-only <code>r_vector.attr()</code> methods now return const objects, so it is a compile time error to try to assign to them (<a href='https://github.com/r-lib/cpp11/issues/237'>#237</a>)</li>
 <li>Allow <code><a href="https://rdrr.io/r/base/matrix.html">cpp11::matrix</a></code> to be accessed either row-wise or column-wise (the default) depending on the user’s choice (<a href='https://github.com/alyst'>@alyst</a>, <a href='https://github.com/r-lib/cpp11/issues/229'>#229</a>)</li>
