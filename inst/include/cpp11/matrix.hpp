@@ -193,7 +193,7 @@ class matrix : public matrix_slices<S> {
 
   sexp attr(SEXP name) const { return SEXP(vector_.attr(name)); }
 
-  r_vector<r_string> names() const { return SEXP(vector_.names()); }
+  r_vector<r_string> names() const { return r_vector<r_string>(vector_.names()); }
 
   T operator()(int row, int col) { return vector_[row + (col * nrow())]; }
 

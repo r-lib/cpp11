@@ -139,7 +139,7 @@ class r_vector {
       return r_vector<r_string>();
     }
 
-    return nms;
+    return r_vector<r_string>(nms);
   }
 
   class const_iterator {
