@@ -56,7 +56,7 @@ class r_vector {
   typedef T* pointer;
   typedef T& reference;
 
-  r_vector() = default;
+  r_vector() noexcept = default;
 
   r_vector(SEXP data);
 
@@ -282,7 +282,7 @@ class r_vector : public cpp11::r_vector<T> {
     inline iterator operator+(R_xlen_t rhs);
   };
 
-  r_vector() = default;
+  r_vector() noexcept = default;
   r_vector(const SEXP& data);
   r_vector(SEXP&& data);
   r_vector(const SEXP& data, bool is_altrep);
