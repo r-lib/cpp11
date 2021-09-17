@@ -82,12 +82,12 @@ class matrix : public matrix_slices<S> {
   // matrix slice: row (if S=by_row) or a column (if S=by_column)
   class slice {
    private:
-    matrix& parent_;
+    const matrix& parent_;
     int index_;   // slice index
     int offset_;  // index of the first slice element in parent_.vector_
 
    public:
-    slice(matrix& parent, int index)
+    slice(const matrix& parent, int index)
         : parent_(parent), index_(index), offset_(parent.slice_offset(index)) {}
 
     R_xlen_t stride() const { return parent_.slice_stride(); }
@@ -98,12 +98,12 @@ class matrix : public matrix_slices<S> {
     }
     bool operator!=(const slice& rhs) const { return !operator==(rhs); }
 
-    T operator[](int pos) { return parent_.vector_[offset_ + stride() * pos]; }
+    T operator[](int pos) const { return parent_.vector_[offset_ + stride() * pos]; }
 
     // iterates elements of a slice
     class iterator {
      private:
-      slice& slice_;
+      const slice& slice_;
       int pos_;
 
      public:
@@ -113,7 +113,7 @@ class matrix : public matrix_slices<S> {
       using reference = T&;
       using iterator_category = std::forward_iterator_tag;
 
-      iterator(slice& slice, R_xlen_t pos) : slice_(slice), pos_(pos) {}
+      iterator(const slice& slice, R_xlen_t pos) : slice_(slice), pos_(pos) {}
 
       iterator& operator++() {
         ++pos_;
@@ -128,15 +128,15 @@ class matrix : public matrix_slices<S> {
       T operator*() const { return slice_[pos_]; };
     };
 
-    iterator begin() { return {*this, 0}; }
-    iterator end() { return {*this, size()}; }
+    iterator begin() const { return {*this, 0}; }
+    iterator end() const { return {*this, size()}; }
   };
   friend slice;
 
   // iterates slices (rows or columns -- depending on S template param) of a matrix
   class slice_iterator {
    private:
-    matrix& parent_;
+    const matrix& parent_;
     int pos_;
 
    public:
@@ -146,7 +146,7 @@ class matrix : public matrix_slices<S> {
     using reference = slice&;
     using iterator_category = std::forward_iterator_tag;
 
-    slice_iterator(matrix& parent, R_xlen_t pos) : parent_(parent), pos_(pos) {}
+    slice_iterator(const matrix& parent, R_xlen_t pos) : parent_(parent), pos_(pos) {}
 
     slice_iterator& operator++() {
       ++pos_;
@@ -195,12 +195,12 @@ class matrix : public matrix_slices<S> {
 
   r_vector<r_string> names() const { return r_vector<r_string>(vector_.names()); }
 
-  T operator()(int row, int col) { return vector_[row + (col * nrow())]; }
+  T operator()(int row, int col) const { return vector_[row + (col * nrow())]; }
 
-  slice operator[](int index) { return {*this, index}; }
+  slice operator[](int index) const { return {*this, index}; }
 
-  slice_iterator begin() { return {*this, 0}; }
-  slice_iterator end() { return {*this, nslices()}; }
+  slice_iterator begin() const { return {*this, 0}; }
+  slice_iterator end() const { return {*this, nslices()}; }
 };
 
 template <typename S = by_column>

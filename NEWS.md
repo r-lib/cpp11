@@ -1,5 +1,6 @@
 # cpp11 (development version)
 
+* read-only matrix accessors are now marked const (#234)
 * `writable::r_vector` default constructors now return a 0 length vector when converted to `SEXP` (#166)
 * read-only `r_vector` constructors now disallow implicit construction with named arguments (#237)
 * read-only `r_vector.attr()` methods now return const objects, so it is a compile time error to try to assign to them (#237)
