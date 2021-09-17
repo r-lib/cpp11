@@ -75,40 +75,42 @@ class package {
   SEXP data_;
 };
 
+inline void message(const char* fmt_arg) {
+  static auto R_message = cpp11::package("base")["message"];
 #ifdef CPP11_USE_FMT
-template <typename... Args>
-void message(const char* fmt_arg, Args... args) {
-  static auto R_message = cpp11::package("base")["message"];
-  std::string msg = fmt::format(fmt_arg, args...);
+  std::string msg = fmt::format(fmt_arg);
   R_message(msg.c_str());
-}
-
-template <typename... Args>
-void message(const std::string& fmt_arg, Args... args) {
-  static auto R_message = cpp11::package("base")["message"];
-  std::string msg = fmt::format(fmt_arg, args...);
-  R_message(msg.c_str());
-}
 #else
-template <typename... Args>
-void message(const char* fmt_arg, Args... args) {
-  static auto R_message = cpp11::package("base")["message"];
   char buff[1024];
-  int msg = std::snprintf(buff, 1024, fmt_arg, args...);
+  int msg;
+  msg = std::snprintf(buff, 1024, "%s", fmt_arg);
   if (msg >= 0 && msg < 1024) {
     R_message(buff);
   }
+#endif
 }
 
 template <typename... Args>
-void message(const std::string& fmt_arg, Args... args) {
+void message(const char* fmt_arg, Args... args) {
   static auto R_message = cpp11::package("base")["message"];
+#ifdef CPP11_USE_FMT
+  std::string msg = fmt::format(fmt_arg, args...);
+  R_message(msg.c_str());
+#else
   char buff[1024];
-  int msg = std::snprintf(buff, 1024, fmt_arg.c_str(), args...);
+  int msg;
+  msg = std::snprintf(buff, 1024, fmt_arg, args...);
   if (msg >= 0 && msg < 1024) {
     R_message(buff);
   }
-}
 #endif
+}
+
+inline void message(const std::string& fmt_arg) { message(fmt_arg.c_str()); }
+
+template <typename... Args>
+void message(const std::string& fmt_arg, Args... args) {
+  message(fmt_arg.c_str(), args...);
+}
 
 }  // namespace cpp11
