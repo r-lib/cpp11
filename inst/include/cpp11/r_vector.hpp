@@ -134,7 +134,7 @@ class r_vector {
   }
 
   r_vector<r_string> names() const {
-    SEXP nms = SEXP(attribute_proxy<r_vector<T>>(*this, R_NamesSymbol));
+    SEXP nms = SEXP(Rf_getAttrib(data_, R_NamesSymbol));
     if (nms == R_NilValue) {
       return r_vector<r_string>();
     }
@@ -387,7 +387,7 @@ inline bool r_vector<T>::is_altrep() const {
 
 template <typename T>
 inline bool r_vector<T>::named() const {
-  return ((this->names()) != R_NilValue);
+  return Rf_getAttrib(data_, R_NamesSymbol) != R_NilValue;
 }
 
 template <typename T>
@@ -397,6 +397,9 @@ inline R_xlen_t r_vector<T>::size() const {
 
 template <typename T>
 inline r_vector<T>::operator SEXP() const {
+  if (!std::is_same<T, SEXP>::value && data_ == R_NilValue) {
+    throw std::runtime_error("Uninitialized vector");
+  }
   return data_;
 }
 

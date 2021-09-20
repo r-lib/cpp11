@@ -23,6 +23,9 @@ class external_pointer {
   sexp data_ = R_NilValue;
 
   static SEXP valid_type(SEXP data) {
+    if (data == nullptr) {
+      throw type_error(EXTPTRSXP, NILSXP);
+    }
     if (TYPEOF(data) != EXTPTRSXP) {
       throw type_error(EXTPTRSXP, TYPEOF(data));
     }

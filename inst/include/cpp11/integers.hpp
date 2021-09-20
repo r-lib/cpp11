@@ -19,6 +19,9 @@ namespace cpp11 {
 
 template <>
 inline SEXP r_vector<int>::valid_type(SEXP data) {
+  if (data == nullptr) {
+    throw type_error(INTSXP, NILSXP);
+  }
   if (TYPEOF(data) != INTSXP) {
     throw type_error(INTSXP, TYPEOF(data));
   }
