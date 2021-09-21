@@ -1,23 +1,28 @@
 # cpp11 (development version)
 
-* read-only matrix accessors are now marked const (#234)
+## New Features
+
+* New opt-in message formatting with the {fmt} C++ library for `cpp11::messages()` `cpp11::stop()` and `cpp11::warning()`. 
+  Set the `CPP11_USE_FMT` macro to use this feature in your package. (@sbearrows, #169, #208)
+* New `as_double()` and `as_integer()` methods to coerce integers to doubles and doubles to integers to doubles (@sbearrows, #46)
+* `cpp11::matrix` iterators can now be used either row-wise or column-wise (the default) depending on the user's choice (@alyst, #229)
+
+## Improvements and fixes
+
+* Read-only matrix accessors are now marked const (#234)
 * `writable::r_vector` default constructors now return a 0 length vector when converted to `SEXP` (#166)
-* read-only `r_vector` constructors now disallow implicit construction with named arguments (#237)
-* read-only `r_vector.attr()` methods now return const objects, so it is a compile time error to try to assign to them (#237)
-* Allow `cpp11::matrix` to be accessed either row-wise or column-wise (the default) depending on the user's choice (@alyst, #229)
+* Read-only `r_vector` constructors now disallow implicit construction with named arguments (#237)
+* Read-only `r_vector.attr()` methods now return const objects, so it is a compile time error to try to assign to them (#237)
 * Fixed `+` and `+=` operators of `r_vector::[const_]iterator` to conform the *iterators* concept:
   `+=` updates the iterator, and `+` returns the updated copy, while keeping the original unchanged (@alyst, #231)
 * Remove undefined behavior when constructing global `cpp11::sexp`s (#224)
-* `cpp_register()` now includes `attribute_visible` in the init function, so packages compiled with `C_VISIBILITY` will find the init function.
-* added `as_double()` and `as_integer()` method to coerce integers to doubles and doubles to integers to doubles (@sbearrows, #46)
 * Removed redundant `.Call calls` in cpp11.cpp file (@sbearrows, #170)
-* Allow cpp11 decorators of the form `cpp11::linking_to` (@sbearrows, #193)
 * Error messages now output original file name rather than the temporary file name (@sbearrows, #194)
+* `cpp_register()` now includes `attribute_visible` in the init function, so packages compiled with `C_VISIBILITY` will find the init function.
 * Fixed bug when running `cpp_source()` on the same file more than once (@sbearrows, #202)
+* Allow cpp11 decorators of the form `cpp11::linking_to` (@sbearrows, #193)
 * Removed internal instances of `cpp11::stop()` and replaced with C++ exceptions (@sbearrows, #203)
-* Added `cpp11::messages()` feature with {fmt} library formatting for non-error messages (@sbearrows, #208)
 * Names of named lists are now resized along with the list elements (@sbearrows, #206)
-* Added optionally formatting to `stop()` and `warning()` using {fmt} library (@sbearrows, #169)
 
 # cpp11 0.3.1
 
@@ -34,7 +39,7 @@
 ## Major fixes
 * Memory no longer inadvertently leaks when move constructing vectors (#173)
 
-## minor improvements and fixes
+## Minor improvements and fixes
 * Incorrectly formatted cpp11 decorators now output a more informative error message (@sbearrows, #127)
 * Generated registration code now uses C collation to avoid spurious changes from `tools::package_native_routine_registration_skeleton()` (@sbearrows, #171)
 * Makevars files which include filenames now handle spaces in paths properly (@klmr, #160)
