@@ -397,9 +397,6 @@ inline R_xlen_t r_vector<T>::size() const {
 
 template <typename T>
 inline r_vector<T>::operator SEXP() const {
-  if (!std::is_same<T, SEXP>::value && data_ == R_NilValue) {
-    throw std::runtime_error("Uninitialized vector");
-  }
   return data_;
 }
 
