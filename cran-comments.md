@@ -1,9 +1,8 @@
 ## Test environments
 
-* GitHub Actions (ubuntu-16.04): 3.3, 3.4, 3.5, oldrel, release, devel
-* GitHub Actions (windows): release
-* Github Actions (macOS): release, devel
-* win-builder: devel
+* GitHub Actions (ubuntu-18.04): devel, release, oldrel-1, oldrel-2, oldrel-3, oldrel-4
+* GitHub Actions (windows): release, 3.6
+* Github Actions (macOS): release
 
 ## R CMD check results
 
@@ -11,7 +10,7 @@
 
 ## revdepcheck results
 
-We checked 21 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+We checked 27 reverse dependencies (26 from CRAN + 1 from Bioconductor), comparing R CMD check results across CRAN and dev versions of this package.
 
  * We saw 0 new problems
  * We failed to check 0 packages
