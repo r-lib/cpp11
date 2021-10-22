@@ -84,7 +84,7 @@ cpp_source(
 
 num_odd(as.integer(c(1:10, 15, 23)))
 
-if (require("progress")) {
+if (interactive() && require("progress")) {
 
 cpp_source(
   code = '
