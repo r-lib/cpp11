@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.3.1.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.4.0.9000</span>
       </span>
     </div>
 
@@ -135,6 +135,7 @@
 <code class="sourceCode R"><span class="va">y</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">4</span>
 <span class="va">y</span>
 <span class="co">#&gt; [1] 1 2 4</span>
+
 <span class="va">x</span>
 <span class="co">#&gt; [1] 1 2 3</span></code></pre></div>
 <p>C++ does not have copy-on-write built into the language, however it has related concepts, copy-by-value and copy-by-reference. Copy-by-value works similarly to R, except that R only copies when something is changed, C++ <em>always</em> copies.</p>
@@ -165,6 +166,7 @@
 <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">*</span> <span class="fl">2</span>
 <span class="va">y</span>
 <span class="co">#&gt; [1] 2 4 6</span>
+
 <span class="va">x</span>
 <span class="co">#&gt; [1] 1 2 3</span></code></pre></div>
 <p>However if we now call our <code>times_two_rcpp()</code> function we get the right output value, but now <code>x</code> is <em>also changed</em>.</p>
@@ -172,6 +174,7 @@
 <code class="sourceCode R"><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu">times_two_rcpp</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="va">z</span>
 <span class="co">#&gt; [1] 2 4 6</span>
+
 <span class="va">x</span>
 <span class="co">#&gt; [1] 2 4 6</span></code></pre></div>
 <p>cpp11 strives to make its functions behave similarly to normal R functions, while preserving the speed of Rcpp when read only access is needed. Each of the r_vector classes in cpp11 has a normal <em>read only</em> version that uses copy-by-reference, and a <em>writable</em> version which uses copy-by-value.</p>
@@ -191,6 +194,7 @@
 <span class="va">z</span> <span class="op">&lt;-</span> <span class="fu">times_two_cpp11</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="va">z</span>
 <span class="co">#&gt; [1] 2 4 6</span>
+
 <span class="va">x</span>
 <span class="co">#&gt; [1] 1 2 3</span></code></pre></div>
 </div>
