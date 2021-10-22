@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -88,6 +88,9 @@
 </li>
 <li>
   <a href="../articles/converting.html">Converting</a>
+</li>
+<li>
+  <a href="../articles/FAQ.html">FAQ</a>
 </li>
 <li>
   <a href="../articles/internals.html">Internals</a>
@@ -132,10 +135,49 @@
       <small>Source: <a href='https://github.com/r-lib/cpp11/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="cpp11-040" class="section level1">
+<h1 class="page-header" data-toc-text="0.4.0">
+<a href="#cpp11-040" class="anchor"></a>cpp11 0.4.0<small> 2021-09-22 </small>
+</h1>
+<div id="new-features" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features" class="anchor"></a>New Features</h2>
+<ul>
+<li>New opt-in message formatting with the {fmt} C++ library for <code>cpp11::messages()</code> <code><a href="https://rdrr.io/r/base/stop.html">cpp11::stop()</a></code> and <code><a href="https://rdrr.io/r/base/warning.html">cpp11::warning()</a></code>. Set the <code>CPP11_USE_FMT</code> macro to use this feature in your package. (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/169'>#169</a>, <a href='https://github.com/r-lib/cpp11/issues/208'>#208</a>)</li>
+<li>New <code>as_double()</code> and <code>as_integer()</code> methods to coerce integers to doubles and doubles to integers to doubles (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/46'>#46</a>)</li>
+<li>
+<code><a href="https://rdrr.io/r/base/matrix.html">cpp11::matrix</a></code> iterators can now be used either row-wise or column-wise (the default) depending on the user’s choice (<a href='https://github.com/alyst'>@alyst</a>, <a href='https://github.com/r-lib/cpp11/issues/229'>#229</a>)</li>
+</ul>
+</div>
+<div id="improvements-and-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#improvements-and-fixes" class="anchor"></a>Improvements and fixes</h2>
+<ul>
+<li>Read-only matrix accessors are now marked const (<a href='https://github.com/r-lib/cpp11/issues/234'>#234</a>)</li>
+<li>
+<code>writable::r_vector</code> default constructors now return a 0 length vector when converted to <code>SEXP</code> (<a href='https://github.com/r-lib/cpp11/issues/166'>#166</a>)</li>
+<li>Read-only <code>r_vector</code> constructors now disallow implicit construction with named arguments (<a href='https://github.com/r-lib/cpp11/issues/237'>#237</a>)</li>
+<li>Read-only <code>r_vector.attr()</code> methods now return const objects, so it is a compile time error to try to assign to them (<a href='https://github.com/r-lib/cpp11/issues/237'>#237</a>)</li>
+<li>Fixed <code><a href="https://rdrr.io/r/base/Arithmetic.html">+</a></code> and <code>+=</code> operators of <code>r_vector::[const_]iterator</code> to conform the <em>iterators</em> concept: <code>+=</code> updates the iterator, and <code><a href="https://rdrr.io/r/base/Arithmetic.html">+</a></code> returns the updated copy, while keeping the original unchanged (<a href='https://github.com/alyst'>@alyst</a>, <a href='https://github.com/r-lib/cpp11/issues/231'>#231</a>)</li>
+<li>Remove undefined behavior when constructing global <code>cpp11::sexp</code>s (<a href='https://github.com/r-lib/cpp11/issues/224'>#224</a>)</li>
+<li>Removed redundant <code>.Call calls</code> in cpp11.cpp file (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/170'>#170</a>)</li>
+<li>Error messages now output original file name rather than the temporary file name (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/194'>#194</a>)</li>
+<li>
+<code><a href="../reference/cpp_register.html">cpp_register()</a></code> now includes <code>attribute_visible</code> in the init function, so packages compiled with <code>C_VISIBILITY</code> will find the init function.</li>
+<li>Fixed bug when running <code><a href="../reference/cpp_source.html">cpp_source()</a></code> on the same file more than once (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/202'>#202</a>)</li>
+<li>Allow cpp11 decorators of the form <code>cpp11::linking_to</code> (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/193'>#193</a>)</li>
+<li>Removed internal instances of <code><a href="https://rdrr.io/r/base/stop.html">cpp11::stop()</a></code> and replaced with C++ exceptions (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/203'>#203</a>)</li>
+<li>Names of named lists are now resized along with the list elements (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/206'>#206</a>)</li>
+</ul>
+</div>
+</div>
     <div id="cpp11-031" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.1">
 <a href="#cpp11-031" class="anchor"></a>cpp11 0.3.1<small> 2021-06-25 </small>
 </h1>
+<ul>
+<li>Fix stringop-truncation warning from generated wrapping code.</li>
+</ul>
 </div>
     <div id="cpp11-030" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.0">
@@ -159,7 +201,7 @@
 </div>
 <div id="minor-improvements-and-fixes" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-improvements-and-fixes" class="anchor"></a>minor improvements and fixes</h2>
+<a href="#minor-improvements-and-fixes" class="anchor"></a>Minor improvements and fixes</h2>
 <ul>
 <li>Incorrectly formatted cpp11 decorators now output a more informative error message (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/127'>#127</a>)</li>
 <li>Generated registration code now uses C collation to avoid spurious changes from <code><a href="https://rdrr.io/r/tools/package_native_routine_registration_skeleton.html">tools::package_native_routine_registration_skeleton()</a></code> (<a href='https://github.com/sbearrows'>@sbearrows</a>, <a href='https://github.com/r-lib/cpp11/issues/171'>#171</a>)</li>
@@ -253,9 +295,9 @@
 <h1 class="page-header" data-toc-text="0.2.0">
 <a href="#cpp11-020" class="anchor"></a>cpp11 0.2.0<small> 2020-08-10 </small>
 </h1>
-<div id="new-features" class="section level2">
+<div id="new-features-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features" class="anchor"></a>New features</h2>
+<a href="#new-features-1" class="anchor"></a>New features</h2>
 <ul>
 <li><p>cpp11 is now able to compile on gcc 4.8.5 (<a href='https://github.com/r-lib/cpp11/issues/69'>#69</a>, <a href='https://github.com/bkietz'>@bkietz</a>)</p></li>
 <li><p><code><a href="../reference/cpp_source.html">cpp_source()</a></code>, <code><a href="../reference/cpp_source.html">cpp_function()</a></code> and <code><a href="../reference/cpp_source.html">cpp_eval()</a></code> now support <code>[[cpp11::linking_to()]]</code> syntax to link to third party packages with C++ headers. (<a href='https://github.com/r-lib/cpp11/issues/48'>#48</a>)</p></li>

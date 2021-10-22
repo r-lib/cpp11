@@ -74,7 +74,7 @@ cpp_eval() evaluates a single C++ expression and returns the result." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -91,6 +91,9 @@ cpp_eval() evaluates a single C++ expression and returns the result." />
 </li>
 <li>
   <a href="../articles/converting.html">Converting</a>
+</li>
+<li>
+  <a href="../articles/FAQ.html">FAQ</a>
 </li>
 <li>
   <a href="../articles/internals.html">Internals</a>
@@ -216,7 +219,7 @@ external packages. This is equivalent to putting those packages in the
 <code>LinkingTo</code> field in a package DESCRIPTION.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+    <pre class="examples"><div class='input'>
 <span class='fu'>cpp_source</span><span class='op'>(</span>
   code <span class='op'>=</span> <span class='st'>'#include "cpp11/integers.hpp"
 
@@ -233,8 +236,8 @@ external packages. This is equivalent to putting those packages in the
   '</span><span class='op'>)</span>
 
 <span class='fu'>num_odd</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, <span class='fl'>15</span>, <span class='fl'>23</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='kw'>if</span> <span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='st'><a href='https://github.com/r-lib/progress#readme'>"progress"</a></span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+</div><div class='output co'>#&gt; [1] 7</div><div class='input'>
+<span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>&amp;&amp;</span> <span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='st'><a href='https://github.com/r-lib/progress#readme'>"progress"</a></span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
 
 <span class='fu'>cpp_source</span><span class='op'>(</span>
   code <span class='op'>=</span> <span class='st'>'
@@ -245,7 +248,7 @@ external packages. This is equivalent to putting those packages in the
 
 [[cpp11::register]] void
 show_progress() {
-  RProgress::RProgress pb("Downloading [:bar] ETA: :eta");
+  RProgress::RProgress pb("Processing [:bar] ETA: :eta");
 
   pb.tick(0);
   for (int i = 0; i &lt; 100; i++) {
@@ -257,7 +260,7 @@ show_progress() {
 
 <span class='fu'>show_progress</span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>}</span>
-<span class='op'>}</span>
+
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
