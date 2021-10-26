@@ -70,8 +70,6 @@ inline Rboolean& get_should_unwind_protect() {
   return should_unwind_protect[0];
 }
 
-static Rboolean& should_unwind_protect = get_should_unwind_protect();
-
 }  // namespace detail
 
 #ifdef HAS_UNWIND_PROTECT
@@ -82,11 +80,12 @@ static Rboolean& should_unwind_protect = get_should_unwind_protect();
 template <typename Fun, typename = typename std::enable_if<std::is_same<
                             decltype(std::declval<Fun&&>()()), SEXP>::value>::type>
 SEXP unwind_protect(Fun&& code) {
-  if (detail::should_unwind_protect == FALSE) {
+  static auto should_unwind_protect = detail::get_should_unwind_protect();
+  if (should_unwind_protect == FALSE) {
     return std::forward<Fun>(code)();
   }
 
-  detail::should_unwind_protect = FALSE;
+  should_unwind_protect = FALSE;
 
   static SEXP token = [] {
     SEXP res = R_MakeUnwindCont();
@@ -96,7 +95,7 @@ SEXP unwind_protect(Fun&& code) {
 
   std::jmp_buf jmpbuf;
   if (setjmp(jmpbuf)) {
-    detail::should_unwind_protect = TRUE;
+    should_unwind_protect = TRUE;
     throw unwind_exception(token);
   }
 
@@ -121,7 +120,7 @@ SEXP unwind_protect(Fun&& code) {
   // unset it here before returning the value ourselves.
   SETCAR(token, R_NilValue);
 
-  detail::should_unwind_protect = TRUE;
+  should_unwind_protect = TRUE;
 
   return res;
 }
