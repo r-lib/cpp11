@@ -68,12 +68,12 @@ Alternatively many IDEs support automatically running `clang-format` every time 
 
 ## Code organization
 
-cpp11 is a header only library, so all source code exposed to users lives in [inst/include](https://github.com/r-lib/cpp11/tree/master/inst/include).
-R code used to register functions and for `cpp11::cpp_source()` is in [R/](https://github.com/r-lib/cpp11/tree/master/R).
-Tests for _only_ the code in `R/` is in [tests/testthat/](https://github.com/r-lib/cpp11/tree/master/tests/testthat)
-The rest of the code is in a separate [cpp11test/](https://github.com/r-lib/cpp11/tree/master/cpp11test) package included in the source tree.
-Inside [cpp11test/src](https://github.com/r-lib/cpp11/tree/master/cpp11test/src) the files that start with `test-` are C++ tests using the [Catch](https://testthat.r-lib.org/reference/use_catch.html) support in testthat.
-In addition there are some regular R tests in [cpp11test/tests/testthat/](https://github.com/r-lib/cpp11/tree/master/cpp11test/tests/testthat).
+cpp11 is a header only library, so all source code exposed to users lives in [inst/include](https://github.com/r-lib/cpp11/tree/main/inst/include).
+R code used to register functions and for `cpp11::cpp_source()` is in [R/](https://github.com/r-lib/cpp11/tree/main/R).
+Tests for _only_ the code in `R/` is in [tests/testthat/](https://github.com/r-lib/cpp11/tree/main/tests/testthat)
+The rest of the code is in a separate [cpp11test/](https://github.com/r-lib/cpp11/tree/main/cpp11test) package included in the source tree.
+Inside [cpp11test/src](https://github.com/r-lib/cpp11/tree/main/cpp11test/src) the files that start with `test-` are C++ tests using the [Catch](https://testthat.r-lib.org/reference/use_catch.html) support in testthat.
+In addition there are some regular R tests in [cpp11test/tests/testthat/](https://github.com/r-lib/cpp11/tree/main/cpp11test/tests/testthat).
 
 ## Naming conventions
 
@@ -86,12 +86,12 @@ In addition there are some regular R tests in [cpp11test/tests/testthat/](https:
 
 ## Vector classes
 
-All of the basic r_vector classes are class templates, the base template is defined in [cpp11/r_vector.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/r_vector.hpp)
+All of the basic r_vector classes are class templates, the base template is defined in [cpp11/r_vector.hpp](https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/r_vector.hpp)
 The template parameter is the type of **value** the particular R vector stores, e.g. `double` for `cpp11::doubles`.
 This differs from Rcpp, whose first template parameter is the R vector type, e.g. `REALSXP`.
 
 The file first has the class declarations, then function definitions further down in the file.
-Specializations for the various types are in separate files, e.g. [cpp11/doubles.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/doubles.hpp), [cpp11/integers.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/integers.hpp)
+Specializations for the various types are in separate files, e.g. [cpp11/doubles.hpp](https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/doubles.hpp), [cpp11/integers.hpp](https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/integers.hpp)
 
 ## Coercion functions
 
@@ -100,7 +100,7 @@ There are two different coercion functions
 `as_sexp()` takes a C++ object and coerces it to a SEXP object, so it can be used in R.
 `as_cpp<>()` is a template function that takes a SEXP and creates a C++ object from it
 
-The various methods for both functions are defined in [cpp11/as.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/as.hpp)
+The various methods for both functions are defined in [cpp11/as.hpp](https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/as.hpp)
 
 This is definitely the most complex part of the cpp11 code, with extensive use of [template metaprogramming](https://en.wikipedia.org/wiki/Template_metaprogramming).
 In particular the [substitution failure is not an error (SFINAE)](https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error) technique is used to control overloading of the functions.
@@ -126,14 +126,14 @@ Calling `preserved.release()` on this returned token will release the protection
 
 This scheme scales in O(1) time to release or insert an object vs O(N) or worse time with `R_PreserveObject()` / `R_ReleaseObject()`.
 
-These functions are defined in [protect.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/protect.hpp)
+These functions are defined in [protect.hpp](https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/protect.hpp)
 
 ### Unwind Protect
 
 In R 3.5+ cpp11 uses `R_UnwindProtect` to protect (most) calls to the R API that could fail.
 These are usually those that allocate memory, though in truth most R API functions could error along some paths.
 If an error happends under `R_UnwindProtect` cpp11 will throw a C++ exception.
-This exception is caught by the try catch block defined in the `BEGIN_CPP11` macro in [cpp11/declarations.hpp](https://github.com/r-lib/cpp11/blob/master/inst/include/cpp11/declarations.hpp).
+This exception is caught by the try catch block defined in the `BEGIN_CPP11` macro in [cpp11/declarations.hpp](https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/declarations.hpp).
 The exception will cause any C++ destructors to run, freeing any resources held by C++ objects.
 After the try catch block exits the R error unwinding is then continued by `R_ContinueUnwind()` and a normal R error results.
 

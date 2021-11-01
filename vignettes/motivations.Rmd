@@ -312,7 +312,7 @@ saveRDS(b_sum, "sum.Rds", version = 2)
 knitr::kable(readRDS("sum.Rds"))
 ```
 
-[cpp11test/src/sum.cpp](https://github.com/r-lib/cpp11/blob/master/cpp11test/src/sum.cpp) contains the code ran in these benchmarks.
+[cpp11test/src/sum.cpp](https://github.com/r-lib/cpp11/blob/main/cpp11test/src/sum.cpp) contains the code ran in these benchmarks.
 
 ## UTF-8 everywhere
 

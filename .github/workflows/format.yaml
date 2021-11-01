@@ -1,9 +1,9 @@
 on:
   push:
-    branches: master
+    branches: main
   pull_request:
     branches:
-      - master
+      - main
 
 name: format_check
 
@@ -21,4 +21,3 @@ jobs:
 
       - name: Check for a non-empty diff
         run: git diff-files -U --exit-code
-
