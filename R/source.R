@@ -127,7 +127,8 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
 
   linking_to <- union(get_linking_to(all_decorations), "cpp11")
 
-  includes <- generate_include_paths(linking_to)
+  includes <- c(generate_include_paths(linking_to),
+                sprintf("-I'%s'", orig_dir))
 
   if (isTRUE(clean)) {
     on.exit(unlink(dir, recursive = TRUE), add = TRUE)
