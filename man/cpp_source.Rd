@@ -64,6 +64,10 @@ expression.
 Within C++ code you can use \verb{[[cpp11::linking_to("pkgxyz")]]} to link to
 external packages. This is equivalent to putting those packages in the
 \code{LinkingTo} field in a package DESCRIPTION.
+
+Custom types, if any,  should be declared in \verb{<basename>_types.h} or
+\verb{<basename>_types.hpp}. If such file exists it will be automatically included
+into the routine registration file (\code{cpp11.cpp}) during compilation.
 }
 \examples{
 

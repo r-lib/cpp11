@@ -8,6 +8,10 @@
 #' external packages. This is equivalent to putting those packages in the
 #' `LinkingTo` field in a package DESCRIPTION.
 #'
+#' Custom types, if any,  should be declared in `<basename>_types.h` or
+#' `<basename>_types.hpp`. If such file exists it will be automatically included
+#' into the routine registration file (`cpp11.cpp`) during compilation.
+#'
 #' @param file A file containing C++ code to compile
 #' @param code If non-null, the C++ code to compile
 #' @param env The R environment where the R wrapping functions should be defined.
@@ -111,8 +115,15 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   )
   cpp_functions_definitions <- generate_cpp_functions(funs, package = package)
 
+  basename <- tools::file_path_sans_ext(basename(file))
+  type_paths <- file.path(orig_dir, paste0(basename, "_", c("types.h", "types.hpp")))
+  type_paths <- type_paths[file.exists(type_paths)]
   cpp_path <- file.path(dirname(new_file_path), "cpp11.cpp")
-  brio::write_lines(c('#include "cpp11/declarations.hpp"', "using namespace ::cpp11;", cpp_functions_definitions), cpp_path)
+  brio::write_lines(c(sprintf('#include "%s"', type_paths),
+                      '#include "cpp11/declarations.hpp"',
+                      "using namespace ::cpp11;",
+                      cpp_functions_definitions),
+                    cpp_path)
 
   linking_to <- union(get_linking_to(all_decorations), "cpp11")
 
