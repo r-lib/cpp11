@@ -88,8 +88,16 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     stop("`file` must have a `.cpp` or `.cc` extension")
   }
 
-  name <- generate_cpp_name(file)
-  package <- tools::file_path_sans_ext(name)
+  # In order to preserve error links to the original location we do the
+  # following:
+  #  1) We compile with the original base name in a tmp location
+  #  2) In case of an error replace all tmp locations with original location ()
+  #  3) Load schlib with a package name suffixed with _N where N is incremented
+  #     on each compilation
+  name <- basename(file)
+  if (identical(name, "cpp11.cpp"))
+    name <- "cpp11x.cpp" # corner case
+  package <- tools::file_path_sans_ext(generate_cpp_name(file))
 
   orig_dir <- normalizePath(dirname(file), winslash = "/")
   new_dir <- normalizePath(file.path(dir, "src"), winslash = "/")
@@ -146,17 +154,25 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     error_messages <- res$stderr
 
     # Substitute temporary file path with original file path
-    error_messages <- gsub(tools::file_path_sans_ext(new_file_path), tools::file_path_sans_ext(orig_file_path), error_messages, fixed = TRUE)
+    error_messages <- gsub(tools::file_path_sans_ext(new_file_path),
+                           tools::file_path_sans_ext(orig_file_path),
+                           error_messages, fixed = TRUE)
     cat(error_messages)
     stop("Compilation failed.", call. = FALSE)
   }
 
-  shared_lib <- file.path(dir, "src", paste0(tools::file_path_sans_ext(new_file_name), .Platform$dynlib.ext))
+  # During compilation we keep original file name, but the name of the package
+  # and shared lib is suffixed with _N where N is incremented on every
+  # cpp_source.
+  slib_orig <- file.path(dir, "src", paste0(tools::file_path_sans_ext(name), .Platform$dynlib.ext))
+  slib_new <- file.path(dir, "src", paste0(package, .Platform$dynlib.ext))
+  file.rename(slib_orig, slib_new)
+
   r_path <- file.path(dir, "R", "cpp11.R")
   brio::write_lines(r_functions, r_path)
   source(r_path, local = env)
 
-  dyn.load(shared_lib, local = TRUE, now = TRUE)
+  dyn.load(slib_new, local = TRUE, now = TRUE)
 }
 
 the <- new.env(parent = emptyenv())
