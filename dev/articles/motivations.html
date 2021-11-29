@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.4.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.4.1.9000</span>
       </span>
     </div>
 
@@ -143,7 +143,7 @@
 <span id="cb3-2"><a href="#cb3-2"></a><span class="dt">int</span> y = x;</span>
 <span id="cb3-3"><a href="#cb3-3"></a>y = <span class="dv">0</span>;</span>
 <span id="cb3-4"><a href="#cb3-4"></a><span class="co">// x is still == 42</span></span></code></pre></div>
-<p>Copy-by-reference does the opposite, both <code>x</code> and <code>y</code> always point to the <em>same</em> underlying value. In C++ you specify a reference with <code><a href="https://rdrr.io/r/base/Logic.html">&amp;</a></code>.</p>
+<p>Copy-by-reference does the opposite, both <code>x</code> and <code>y</code> always point to the <em>same</em> underlying value. In C++ you specify a reference with <code>&amp;</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1"></a><span class="dt">int</span> x = <span class="dv">42</span>;</span>
 <span id="cb4-2"><a href="#cb4-2"></a><span class="dt">int</span> &amp;y = x;</span>
 <span id="cb4-3"><a href="#cb4-3"></a>y = <span class="dv">0</span>;</span>
@@ -237,8 +237,8 @@
 <div id="altrep-support" class="section level2">
 <h2 class="hasAnchor">
 <a href="#altrep-support" class="anchor"></a>Altrep support</h2>
-<p><a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">ALTREP</a> which stands for <strong>ALT</strong>ernative <strong>REP</strong>resntations is a feature introduced in R 3.5. ALTREP allows R internals and package authors to define alternative ways of representing data to R. One example of the use of altrep is the <code><a href="https://rdrr.io/r/base/Colon.html">:</a></code> operator.</p>
-<p>Prior to R 3.5 <code><a href="https://rdrr.io/r/base/Colon.html">:</a></code> generated a full vector for the entire sequence. e.g. <code>1:1000</code> would require 1000 individual values. As of R 3.5 this sequence is instead represented by an ALTREP vector, so <em>none</em> of the values actually exist in memory. Instead each time R access a particular value in the sequence that value is computed on-the-fly. This saves memory and excution time, and allows users to use sequences which would otherwise be too big to fit in memory.</p>
+<p><a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">ALTREP</a> which stands for <strong>ALT</strong>ernative <strong>REP</strong>resntations is a feature introduced in R 3.5. ALTREP allows R internals and package authors to define alternative ways of representing data to R. One example of the use of altrep is the <code>:</code> operator.</p>
+<p>Prior to R 3.5 <code>:</code> generated a full vector for the entire sequence. e.g. <code>1:1000</code> would require 1000 individual values. As of R 3.5 this sequence is instead represented by an ALTREP vector, so <em>none</em> of the values actually exist in memory. Instead each time R access a particular value in the sequence that value is computed on-the-fly. This saves memory and excution time, and allows users to use sequences which would otherwise be too big to fit in memory.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fl">1</span><span class="op">:</span><span class="fl">1e9</span>
 <span class="co">#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20</span>
@@ -791,7 +791,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="http://jimhester.com">Jim Hester</a>, <a href="https://www.rstudio.com"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" height="24"></a>.</p>
+  <p>Developed by <a href="http://jimhester.com">Jim Hester</a>, Romain François, <a href="https://www.rstudio.com"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" height="24"></a>.</p>
 </div>
 
 <div class="pkgdown">
