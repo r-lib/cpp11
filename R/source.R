@@ -8,6 +8,10 @@
 #' external packages. This is equivalent to putting those packages in the
 #' `LinkingTo` field in a package DESCRIPTION.
 #'
+#' Custom types, if any,  should be declared in `<basename>_types.h` or
+#' `<basename>_types.hpp`. If such file exists it will be automatically included
+#' into the routine registration file (`cpp11.cpp`) during compilation.
+#'
 #' @param file A file containing C++ code to compile
 #' @param code If non-null, the C++ code to compile
 #' @param env The R environment where the R wrapping functions should be defined.
@@ -84,8 +88,16 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     stop("`file` must have a `.cpp` or `.cc` extension")
   }
 
-  name <- generate_cpp_name(file)
-  package <- tools::file_path_sans_ext(name)
+  # In order to preserve error links to the original location we do the
+  # following:
+  #  1) We compile with the original base name in a tmp location
+  #  2) In case of an error replace all tmp locations with original location ()
+  #  3) Load schlib with a package name suffixed with _N where N is incremented
+  #     on each compilation
+  name <- basename(file)
+  if (identical(name, "cpp11.cpp"))
+    name <- "cpp11x.cpp" # corner case
+  package <- tools::file_path_sans_ext(generate_cpp_name(file))
 
   orig_dir <- normalizePath(dirname(file), winslash = "/")
   new_dir <- normalizePath(file.path(dir, "src"), winslash = "/")
@@ -111,12 +123,20 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   )
   cpp_functions_definitions <- generate_cpp_functions(funs, package = package)
 
+  basename <- tools::file_path_sans_ext(basename(file))
+  type_paths <- file.path(orig_dir, paste0(basename, "_", c("types.h", "types.hpp")))
+  type_paths <- type_paths[file.exists(type_paths)]
   cpp_path <- file.path(dirname(new_file_path), "cpp11.cpp")
-  brio::write_lines(c('#include "cpp11/declarations.hpp"', "using namespace ::cpp11;", cpp_functions_definitions), cpp_path)
+  brio::write_lines(c(sprintf('#include "%s"', type_paths),
+                      '#include "cpp11/declarations.hpp"',
+                      "using namespace ::cpp11;",
+                      cpp_functions_definitions),
+                    cpp_path)
 
   linking_to <- union(get_linking_to(all_decorations), "cpp11")
 
-  includes <- generate_include_paths(linking_to)
+  includes <- c(generate_include_paths(linking_to),
+                sprintf("-I'%s'", orig_dir))
 
   if (isTRUE(clean)) {
     on.exit(unlink(dir, recursive = TRUE), add = TRUE)
@@ -134,17 +154,25 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     error_messages <- res$stderr
 
     # Substitute temporary file path with original file path
-    error_messages <- gsub(tools::file_path_sans_ext(new_file_path), tools::file_path_sans_ext(orig_file_path), error_messages, fixed = TRUE)
+    error_messages <- gsub(tools::file_path_sans_ext(new_file_path),
+                           tools::file_path_sans_ext(orig_file_path),
+                           error_messages, fixed = TRUE)
     cat(error_messages)
     stop("Compilation failed.", call. = FALSE)
   }
 
-  shared_lib <- file.path(dir, "src", paste0(tools::file_path_sans_ext(new_file_name), .Platform$dynlib.ext))
+  # During compilation we keep original file name, but the name of the package
+  # and shared lib is suffixed with _N where N is incremented on every
+  # cpp_source.
+  slib_orig <- file.path(dir, "src", paste0(tools::file_path_sans_ext(name), .Platform$dynlib.ext))
+  slib_new <- file.path(dir, "src", paste0(package, .Platform$dynlib.ext))
+  file.rename(slib_orig, slib_new)
+
   r_path <- file.path(dir, "R", "cpp11.R")
   brio::write_lines(r_functions, r_path)
   source(r_path, local = env)
 
-  dyn.load(shared_lib, local = TRUE, now = TRUE)
+  dyn.load(slib_new, local = TRUE, now = TRUE)
 }
 
 the <- new.env(parent = emptyenv())

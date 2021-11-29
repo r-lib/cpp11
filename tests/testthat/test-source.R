@@ -54,6 +54,17 @@ test_that("cpp_source works with files called `cpp11.cpp`", {
   expect_true(always_true())
 })
 
+test_that("cpp_source does not generate _N.cpp suffixes in error links", {
+  skip_on_os("solaris")
+  tf <- file.path(tempdir(), "dummy.cpp")
+  on.exit(unlink(tf))
+  file.copy(test_path("single.cpp"), tf)
+  cpp_source(tf, clean = TRUE, quiet = TRUE)
+  file.copy(test_path("single_error.cpp"), tf)
+  output <- paste(capture.output(cpp_source(tf, clean = TRUE, quiet = FALSE)), collapse = "\n")
+  expect_false(grepl("_[0-9]+.cpp:[0-9]+:[0-9]+", output))
+})
+
 test_that("cpp_source returns original file name on error", {
 
   expect_output(try(cpp_source(test_path("single_error.cpp"), clean = TRUE), silent = TRUE),

@@ -1,5 +1,8 @@
 # cpp11 (development version)
 
+* Type files `<basename>_type.h` is no honored by `source_cpp()` (#216). 
+* The directory of the sourced file is included into the include path during `source_cpp()` compilation. 
+
 # cpp11 0.4.1
 
 * Fix crash related to unwind protect optimization (#244)
