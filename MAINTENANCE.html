@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Page not found (404) • cpp11</title>
+<title>NA • cpp11</title>
 
 
 <!-- jquery -->
@@ -18,8 +18,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
-<link rel="stylesheet" href="https://cpp11.r-lib.org/bootstrap-toc.css">
-<script src="https://cpp11.r-lib.org/bootstrap-toc.js"></script>
+<link rel="stylesheet" href="bootstrap-toc.css">
+<script src="bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
@@ -33,13 +33,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
-<link href="https://cpp11.r-lib.org/pkgdown.css" rel="stylesheet">
-<script src="https://cpp11.r-lib.org/pkgdown.js"></script>
+<link href="pkgdown.css" rel="stylesheet">
+<script src="pkgdown.js"></script>
 
 
 
 
-<meta property="og:title" content="Page not found (404)" />
+<meta property="og:title" content="NA" />
 
 
 
@@ -70,7 +70,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="https://cpp11.r-lib.org/index.html">cpp11</a>
+        <a class="navbar-link" href="index.html">cpp11</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
       </span>
     </div>
@@ -131,10 +131,43 @@
 <div class="row">
   <div class="contents col-md-9">
     <div class="page-header">
-      <h1>Page not found (404)</h1>
+      <h1>NA</h1>
     </div>
 
-Content not found. Please use links in the navbar.
+
+<div id="current-state" class="section level2">
+<h2 class="hasAnchor">
+<a href="#current-state" class="anchor"></a>Current state</h2>
+</div>
+<div id="known-outstanding-issues" class="section level2">
+<h2 class="hasAnchor">
+<a href="#known-outstanding-issues" class="anchor"></a>Known outstanding issues</h2>
+<div id="false-positive-url-checks-for-git-repositories-in-the-vignettes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#false-positive-url-checks-for-git-repositories-in-the-vignettes" class="anchor"></a>False positive URL checks for git repositories in the vignettes</h3>
+<p>If you run <code>urlchecker::url_check()</code> on the repo you will see the following false positives.</p>
+<pre><code>! Warning: vignettes/motivations.Rmd:363:11 Moved
+git clone https://github.com/r-lib/cpp11.git
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          https://github.com/r-lib/cpp11
+! Warning: vignettes/motivations.Rmd:354:11 Moved
+git clone https://github.com/RcppCore/Rcpp.git
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          https://github.com/RcppCore/Rcpp
+&gt;</code></pre>
+<p>These only happen with the urlchecker package, they can be safely ignored and the real CRAN checks will not show them.</p>
+</div>
+<div id="ensure-you-use-syssetenvcpp11_eval--true-devtoolssubmit_cran-when-submitting" class="section level3">
+<h3 class="hasAnchor">
+<a href="#ensure-you-use-syssetenvcpp11_eval--true-devtoolssubmit_cran-when-submitting" class="anchor"></a>Ensure you use <code>Sys.setenv("CPP11_EVAL" = "true"); devtools::submit_cran()</code> when submitting.</h3>
+<p>If you forget to set <code>CPP_EVAL = "true"</code> then the vignette chunks will not run properly and the vignettes will not be rendered properly.</p>
+</div>
+</div>
+<div id="future-directions" class="section level2">
+<h2 class="hasAnchor">
+<a href="#future-directions" class="anchor"></a>Future directions</h2>
+</div>
+
 
   </div>
 

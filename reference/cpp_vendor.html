@@ -73,7 +73,7 @@ project is using. It is often used in the go language community." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
       </span>
     </div>
 
@@ -169,25 +169,26 @@ cpp11 currently installed on your machine.</p>
 code until you run <code>vector_cpp11()</code> again.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># create a new directory</span>
-<span class='va'>dir</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span><span class='op'>(</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/files2.html'>dir.create</a></span><span class='op'>(</span><span class='va'>dir</span><span class='op'>)</span>
-
-<span class='co'># vendor the cpp11 headers into the directory</span>
-<span class='fu'>cpp_vendor</span><span class='op'>(</span><span class='va'>dir</span><span class='op'>)</span>
-
-<span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='va'>dir</span>, <span class='st'>"inst"</span>, <span class='st'>"include"</span>, <span class='st'>"cpp11"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;  [1] "altrep.hpp"           "as.hpp"               "attribute_proxy.hpp" 
-#&gt;  [4] "data_frame.hpp"       "declarations.hpp"     "doubles.hpp"         
-#&gt;  [7] "environment.hpp"      "external_pointer.hpp" "function.hpp"        
-#&gt; [10] "integers.hpp"         "list_of.hpp"          "list.hpp"            
-#&gt; [13] "logicals.hpp"         "matrix.hpp"           "named_arg.hpp"       
-#&gt; [16] "protect.hpp"          "r_bool.hpp"           "r_string.hpp"        
-#&gt; [19] "r_vector.hpp"         "R.hpp"                "raws.hpp"            
-#&gt; [22] "sexp.hpp"             "strings.hpp"         </div><div class='input'>
-<span class='co'># cleanup</span>
-<span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span><span class='op'>(</span><span class='va'>dir</span>, recursive <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># create a new directory</span></span>
+<span class='r-in'><span class='va'>dir</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span><span class='op'>(</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/files2.html'>dir.create</a></span><span class='op'>(</span><span class='va'>dir</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># vendor the cpp11 headers into the directory</span></span>
+<span class='r-in'><span class='fu'>cpp_vendor</span><span class='op'>(</span><span class='va'>dir</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='va'>dir</span>, <span class='st'>"inst"</span>, <span class='st'>"include"</span>, <span class='st'>"cpp11"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1] "altrep.hpp"           "as.hpp"               "attribute_proxy.hpp" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4] "data_frame.hpp"       "declarations.hpp"     "doubles.hpp"         </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7] "environment.hpp"      "external_pointer.hpp" "function.hpp"        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10] "integers.hpp"         "list_of.hpp"          "list.hpp"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13] "logicals.hpp"         "matrix.hpp"           "named_arg.hpp"       </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16] "protect.hpp"          "r_bool.hpp"           "r_string.hpp"        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19] "r_vector.hpp"         "R.hpp"                "raws.hpp"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [22] "sexp.hpp"             "strings.hpp"         </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># cleanup</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span><span class='op'>(</span><span class='va'>dir</span>, recursive <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -199,7 +200,7 @@ code until you run <code>vector_cpp11()</code> again.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='http://jimhester.com'>Jim Hester</a>, <a href='https://www.rstudio.com'><img src='https://www.tidyverse.org/rstudio-logo.svg' alt='RStudio' height='24' /></a>.</p>
+  <p>Developed by <a href='http://jimhester.com'>Jim Hester</a>, Romain François, <a href='https://www.rstudio.com'><img src='https://www.tidyverse.org/rstudio-logo.svg' alt='RStudio' height='24' /></a>.</p>
 </div>
 
 <div class="pkgdown">

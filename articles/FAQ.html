@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
       </span>
     </div>
 
@@ -204,7 +204,7 @@
 <div id="how-do-i-return-a-cpp11writablelogicals-object-with-only-a-false-value" class="section level4">
 <h4 class="hasAnchor">
 <a href="#how-do-i-return-a-cpp11writablelogicals-object-with-only-a-false-value" class="anchor"></a>7. How do I return a <code>cpp11::writable::logicals</code> object with only a <code>FALSE</code> value?</h4>
-<p>You need to use <a href="https://en.cppreference.com/w/cpp/language/list_initialization">list initialization</a> with <code>{}</code> to create the object.</p>
+<p>You need to use <a href="https://en.cppreference.com/w/cpp/language/list_initialization">list initialization</a> with <code><a href="https://rdrr.io/r/base/Paren.html">{}</a></code> to create the object.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
 <span id="cb6-2"><a href="#cb6-2"></a></span>
 <span id="cb6-3"><a href="#cb6-3"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
@@ -351,10 +351,10 @@
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fl">2L</span>, <span class="fl">3L</span>, <span class="fl">4L</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Internal.html">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; @55e189762f88 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span>
+<span class="co">#&gt; @56538e6b8b58 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span>
 <span class="fu">add_one</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Internal.html">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; @55e189762f88 13 INTSXP g0c2 [REF(6)] (len=4, tl=0) 2,3,4,5</span>
+<span class="co">#&gt; @56538e6b8b58 13 INTSXP g0c2 [REF(6)] (len=4, tl=0) 2,3,4,5</span>
 <span class="va">x</span>
 <span class="co">#&gt; [1] 2 3 4 5</span></code></pre></div>
 </div>
@@ -369,7 +369,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="http://jimhester.com">Jim Hester</a>, <a href="https://www.rstudio.com"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" height="24"></a>.</p>
+  <p>Developed by <a href="http://jimhester.com">Jim Hester</a>, Romain François, <a href="https://www.rstudio.com"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" height="24"></a>.</p>
 </div>
 
 <div class="pkgdown">

@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cpp11</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
       </span>
     </div>
 
@@ -142,7 +142,7 @@
 <span id="cb3-2"><a href="#cb3-2"></a><span class="dt">int</span> y = x;</span>
 <span id="cb3-3"><a href="#cb3-3"></a>y = <span class="dv">0</span>;</span>
 <span id="cb3-4"><a href="#cb3-4"></a><span class="co">// x is still == 42</span></span></code></pre></div>
-<p>Copy-by-reference does the opposite, both <code>x</code> and <code>y</code> always point to the <em>same</em> underlying value. In C++ you specify a reference with <code><a href="https://rdrr.io/r/base/Logic.html">&amp;</a></code>.</p>
+<p>Copy-by-reference does the opposite, both <code>x</code> and <code>y</code> always point to the <em>same</em> underlying value. In C++ you specify a reference with <code>&amp;</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1"></a><span class="dt">int</span> x = <span class="dv">42</span>;</span>
 <span id="cb4-2"><a href="#cb4-2"></a><span class="dt">int</span> &amp;y = x;</span>
 <span id="cb4-3"><a href="#cb4-3"></a>y = <span class="dv">0</span>;</span>
@@ -236,8 +236,8 @@
 <div id="altrep-support" class="section level2">
 <h2 class="hasAnchor">
 <a href="#altrep-support" class="anchor"></a>Altrep support</h2>
-<p><a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">ALTREP</a> which stands for <strong>ALT</strong>ernative <strong>REP</strong>resntations is a feature introduced in R 3.5. ALTREP allows R internals and package authors to define alternative ways of representing data to R. One example of the use of altrep is the <code><a href="https://rdrr.io/r/base/Colon.html">:</a></code> operator.</p>
-<p>Prior to R 3.5 <code><a href="https://rdrr.io/r/base/Colon.html">:</a></code> generated a full vector for the entire sequence. e.g. <code>1:1000</code> would require 1000 individual values. As of R 3.5 this sequence is instead represented by an ALTREP vector, so <em>none</em> of the values actually exist in memory. Instead each time R access a particular value in the sequence that value is computed on-the-fly. This saves memory and excution time, and allows users to use sequences which would otherwise be too big to fit in memory.</p>
+<p><a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">ALTREP</a> which stands for <strong>ALT</strong>ernative <strong>REP</strong>resntations is a feature introduced in R 3.5. ALTREP allows R internals and package authors to define alternative ways of representing data to R. One example of the use of altrep is the <code>:</code> operator.</p>
+<p>Prior to R 3.5 <code>:</code> generated a full vector for the entire sequence. e.g. <code>1:1000</code> would require 1000 individual values. As of R 3.5 this sequence is instead represented by an ALTREP vector, so <em>none</em> of the values actually exist in memory. Instead each time R access a particular value in the sequence that value is computed on-the-fly. This saves memory and excution time, and allows users to use sequences which would otherwise be too big to fit in memory.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fl">1</span><span class="op">:</span><span class="fl">1e9</span>
 <span class="co">#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20</span>
@@ -284,14 +284,14 @@
 <span class="co"># Add special case</span>
 <span class="va">cases</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>len <span class="op">=</span> <span class="fl">3e6</span>, vector <span class="op">=</span> <span class="st">"normal"</span>, method <span class="op">=</span> <span class="st">"for2"</span>, pkg <span class="op">=</span> <span class="st">"cpp11"</span><span class="op">)</span>, <span class="va">cases</span><span class="op">)</span>
 
-<span class="va">b_sum</span> <span class="op">&lt;-</span> <span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/press.html">press</a></span><span class="op">(</span>
+<span class="va">b_sum</span> <span class="op">&lt;-</span> <span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="http://bench.r-lib.org/reference/press.html">press</a></span><span class="op">(</span>
   .grid <span class="op">=</span> <span class="va">cases</span>,
   <span class="op">{</span>
     <span class="va">seq_real</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
     <span class="va">funs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"normal"</span> <span class="op">=</span> <span class="va">rnorm</span>, <span class="st">"altrep"</span> <span class="op">=</span> <span class="va">seq_real</span><span class="op">)</span>
     <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">funs</span><span class="op">[[</span><span class="va">vector</span><span class="op">]</span><span class="op">]</span><span class="op">(</span><span class="va">len</span><span class="op">)</span>
     <span class="va">fun</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.fun.html">match.fun</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%ssum_dbl_%s_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">pkg</span> <span class="op">==</span> <span class="st">"cpp11"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">pkg</span>, <span class="st">"_"</span><span class="op">)</span><span class="op">)</span>, <span class="va">method</span><span class="op">)</span><span class="op">)</span>
-    <span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/mark.html">mark</a></span><span class="op">(</span>
+    <span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="http://bench.r-lib.org/reference/mark.html">mark</a></span><span class="op">(</span>
       <span class="fu">fun</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
     <span class="op">)</span>
   <span class="op">}</span>
@@ -561,10 +561,10 @@
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">cpp11test</span><span class="op">)</span>
 <span class="va">grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span><span class="op">(</span>len <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span> <span class="op">^</span> <span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>, <span class="fl">2e5</span><span class="op">)</span>, pkg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"cpp11"</span>, <span class="st">"rcpp"</span><span class="op">)</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="va">b_release</span> <span class="op">&lt;-</span> <span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/press.html">press</a></span><span class="op">(</span>.grid <span class="op">=</span> <span class="va">grid</span>,
+<span class="va">b_release</span> <span class="op">&lt;-</span> <span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="http://bench.r-lib.org/reference/press.html">press</a></span><span class="op">(</span>.grid <span class="op">=</span> <span class="va">grid</span>,
   <span class="op">{</span>
     <span class="va">fun</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/match.fun.html">match.fun</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%s_release_"</span>, <span class="va">pkg</span><span class="op">)</span><span class="op">)</span>
-    <span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/mark.html">mark</a></span><span class="op">(</span>
+    <span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="http://bench.r-lib.org/reference/mark.html">mark</a></span><span class="op">(</span>
       <span class="fu">fun</span><span class="op">(</span><span class="va">len</span><span class="op">)</span>,
       iterations <span class="op">=</span> <span class="fl">1</span>
     <span class="op">)</span>
@@ -644,10 +644,10 @@
   <span class="va">grid</span>,
   <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span><span class="op">(</span>len <span class="op">=</span> <span class="fl">10</span> <span class="op">^</span> <span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span>, pkg <span class="op">=</span> <span class="st">"rcpp"</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="op">)</span>
-<span class="va">b_grow</span> <span class="op">&lt;-</span> <span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/press.html">press</a></span><span class="op">(</span>.grid <span class="op">=</span> <span class="va">grid</span>,
+<span class="va">b_grow</span> <span class="op">&lt;-</span> <span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="http://bench.r-lib.org/reference/press.html">press</a></span><span class="op">(</span>.grid <span class="op">=</span> <span class="va">grid</span>,
   <span class="op">{</span>
     <span class="va">fun</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/match.fun.html">match.fun</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%sgrow_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">pkg</span> <span class="op">==</span> <span class="st">"cpp11"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">pkg</span>, <span class="st">"_"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-    <span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bench/man/mark.html">mark</a></span><span class="op">(</span>
+    <span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="http://bench.r-lib.org/reference/mark.html">mark</a></span><span class="op">(</span>
       <span class="fu">fun</span><span class="op">(</span><span class="va">len</span><span class="op">)</span>
     <span class="op">)</span>
   <span class="op">}</span>
@@ -790,7 +790,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="http://jimhester.com">Jim Hester</a>, <a href="https://www.rstudio.com"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" height="24"></a>.</p>
+  <p>Developed by <a href="http://jimhester.com">Jim Hester</a>, Romain François, <a href="https://www.rstudio.com"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" height="24"></a>.</p>
 </div>
 
 <div class="pkgdown">
