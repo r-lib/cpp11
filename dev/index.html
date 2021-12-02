@@ -24,6 +24,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -78,7 +80,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/r-lib/cpp11/">
+  <a href="https://github.com/r-lib/cpp11/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -95,37 +97,37 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="cpp11" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#cpp11" class="anchor"></a>cpp11</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="cpp11">cpp11<a class="anchor" aria-label="anchor" href="#cpp11"></a>
+</h1></div>
 <!-- badges: start -->
 
-<p>cpp11 helps you to interact with R objects using C++ code. Its goals and syntax are similar to the excellent <a href="https://cran.r-project.org/package=Rcpp">Rcpp</a> package.</p>
-<div id="using-cpp11-in-a-package" class="section level2">
-<h2 class="hasAnchor">
-<a href="#using-cpp11-in-a-package" class="anchor"></a>Using cpp11 in a package</h2>
+<p>cpp11 helps you to interact with R objects using C++ code. Its goals and syntax are similar to the excellent <a href="https://cran.r-project.org/package=Rcpp" class="external-link">Rcpp</a> package.</p>
+<div class="section level2">
+<h2 id="using-cpp11-in-a-package">Using cpp11 in a package<a class="anchor" aria-label="anchor" href="#using-cpp11-in-a-package"></a>
+</h2>
 <p>To add cpp11 to an existing package, put your C++ files in the <code>src/</code> directory and add the following to your DESCRIPTION file:</p>
-<pre><code>LinkingTo: cpp11
-SystemRequirements: C++11</code></pre>
-<p>Then decorate C++ functions you want to expose to R with <code>[[cpp11::register]]</code>. <em>Note that this is a <a href="https://en.cppreference.com/w/cpp/language/attributes">C++11 attribute</a>, not a comment like is used in Rcpp.</em></p>
+<pre><code><span class="va">LinkingTo</span><span class="op">:</span> <span class="va">cpp11</span>
+<span class="va">SystemRequirements</span><span class="op">:</span> <span class="va">C</span><span class="op">+</span><span class="op">+</span><span class="fl">11</span></code></pre>
+<p>Then decorate C++ functions you want to expose to R with <code>[[cpp11::register]]</code>. <em>Note that this is a <a href="https://en.cppreference.com/w/cpp/language/attributes" class="external-link">C++11 attribute</a>, not a comment like is used in Rcpp.</em></p>
 <p>cpp11 is a header only library with no hard dependencies and does not use a shared library, so it is straightforward and reliable to use in packages without fear of compile-time and run-time mismatches.</p>
 <p>Alternatively, you can <a href="https://cpp11.r-lib.org/articles/motivations.html#vendoring">vendor</a> the current installed version of cpp11 headers into your package with <code>cpp11::vendor_cpp11()</code>. This ensures the headers will remain unchanged until you explicitly update them.</p>
 </div>
-<div id="getting-started" class="section level2">
-<h2 class="hasAnchor">
-<a href="#getting-started" class="anchor"></a>Getting started</h2>
+<div class="section level2">
+<h2 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
+</h2>
 <p>See <a href="https://cpp11.r-lib.org/articles/cpp11.html">vignette(“cpp11”)</a> to get started using cpp11 in your scripts, particularly if you are new to C++ programming.</p>
 </div>
-<div id="getting-help-rstudio-community" class="section level2">
-<h2 class="hasAnchor">
-<a href="#getting-help-rstudio-community" class="anchor"></a>Getting help <a href="https://community.rstudio.com/new-topic?category=Package%20development&amp;tags=cpp11"><img src="https://img.shields.io/badge/community-cpp11-blue?style=social&amp;logo=rstudio&amp;logoColor=75AADB" alt="RStudio community"></a>
+<div class="section level2">
+<h2 id="getting-help-rstudio-community">Getting help <a href="https://community.rstudio.com/new-topic?category=Package%20development&amp;tags=cpp11" class="external-link"><img src="https://img.shields.io/badge/community-cpp11-blue?style=social&amp;logo=rstudio&amp;logoColor=75AADB" alt="RStudio community"></a>
+<a class="anchor" aria-label="anchor" href="#getting-help-rstudio-community"></a>
 </h2>
-<p><a href="https://community.rstudio.com/new-topic?category=Package%20development&amp;tags=cpp11">RStudio community</a> with the <code>cpp11</code> tag is the best place to ask for help using cpp11 or interfacing C++ with R.</p>
+<p><a href="https://community.rstudio.com/new-topic?category=Package%20development&amp;tags=cpp11" class="external-link">RStudio community</a> with the <code>cpp11</code> tag is the best place to ask for help using cpp11 or interfacing C++ with R.</p>
 </div>
-<div id="motivations" class="section level2">
-<h2 class="hasAnchor">
-<a href="#motivations" class="anchor"></a>Motivations</h2>
-<p><a href="https://cran.r-project.org/package=Rcpp">Rcpp</a> has been a widely successful project, however over the years a number of issues and additional C++ features have arisen. Adding these features to Rcpp would require a great deal of work, or in some cases would be impossible without severely breaking backwards compatibility.</p>
+<div class="section level2">
+<h2 id="motivations">Motivations<a class="anchor" aria-label="anchor" href="#motivations"></a>
+</h2>
+<p><a href="https://cran.r-project.org/package=Rcpp" class="external-link">Rcpp</a> has been a widely successful project, however over the years a number of issues and additional C++ features have arisen. Adding these features to Rcpp would require a great deal of work, or in some cases would be impossible without severely breaking backwards compatibility.</p>
 <p><strong>cpp11</strong> is a ground up rewrite of C++ bindings to R with different design trade-offs and features.</p>
 <p>Changes that motivated cpp11 include:</p>
 <ul>
@@ -144,33 +146,33 @@ SystemRequirements: C++11</code></pre>
 </ul>
 <p>See <a href="https://cpp11.r-lib.org/articles/motivations.html">vignette(“motivations”)</a> for full details on the motivations for writing cpp11.</p>
 </div>
-<div id="conversion-from-rcpp" class="section level2">
-<h2 class="hasAnchor">
-<a href="#conversion-from-rcpp" class="anchor"></a>Conversion from Rcpp</h2>
+<div class="section level2">
+<h2 id="conversion-from-rcpp">Conversion from Rcpp<a class="anchor" aria-label="anchor" href="#conversion-from-rcpp"></a>
+</h2>
 <p>See <a href="https://cpp11.r-lib.org/articles/converting.html">vignette(“converting”)</a> if you are already familiar with Rcpp or have an existing package that uses Rcpp and want to convert it to use cpp11.</p>
 </div>
-<div id="learning-more" class="section level2">
-<h2 class="hasAnchor">
-<a href="#learning-more" class="anchor"></a>Learning More</h2>
+<div class="section level2">
+<h2 id="learning-more">Learning More<a class="anchor" aria-label="anchor" href="#learning-more"></a>
+</h2>
 <ul>
 <li>
-<a href="https://www.youtube.com/watch?v=_kq0N0FNIjA">Welding R and C++</a> - Presentation at SatRday Columbus <a href="https://speakerdeck.com/jimhester/cpp11-welding-r-and-c-plus-plus">(slides)</a>
+<a href="https://www.youtube.com/watch?v=_kq0N0FNIjA" class="external-link">Welding R and C++</a> - Presentation at SatRday Columbus <a href="https://speakerdeck.com/jimhester/cpp11-welding-r-and-c-plus-plus" class="external-link">(slides)</a>
 </li>
 </ul>
 </div>
-<div id="internals" class="section level2">
-<h2 class="hasAnchor">
-<a href="#internals" class="anchor"></a>Internals</h2>
+<div class="section level2">
+<h2 id="internals">Internals<a class="anchor" aria-label="anchor" href="#internals"></a>
+</h2>
 <p>See <a href="https://cpp11.r-lib.org/articles/internals.html">vignette(“internals”)</a> for details on the cpp11 implementation or if you would like to contribute to cpp11.</p>
 </div>
-<div id="code-of-conduct" class="section level2">
-<h2 class="hasAnchor">
-<a href="#code-of-conduct" class="anchor"></a>Code of Conduct</h2>
+<div class="section level2">
+<h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
+</h2>
 <p>Please note that the cpp11 project is released with a <a href="https://cpp11.r-lib.org/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
-<div id="thanks" class="section level2">
-<h2 class="hasAnchor">
-<a href="#thanks" class="anchor"></a>Thanks</h2>
+<div class="section level2">
+<h2 id="thanks">Thanks<a class="anchor" aria-label="anchor" href="#thanks"></a>
+</h2>
 <p>cpp11 would not exist without Rcpp. Thanks to the Rcpp authors, Dirk Eddelbuettel, Romain Francois, JJ Allaire, Kevin Ushey, Qiang Kou, Nathan Russell, Douglas Bates and John Chambers for their work writing and maintaining Rcpp.</p>
 </div>
 </div>
@@ -178,61 +180,71 @@ SystemRequirements: C++11</code></pre>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=cpp11">https://​cloud.r-project.org/​package=cpp11</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/r-lib/cpp11/">https://​github.com/​r-lib/​cpp11/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/r-lib/cpp11/issues">https://​github.com/​r-lib/​cpp11/​issues</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=cpp11" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/r-lib/cpp11/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/r-lib/cpp11/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
+<li><small><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
+
 <div class="community">
-<h2>Community</h2>
+<h2 data-toc-skip>Community</h2>
 <ul class="list-unstyled">
 <li><a href="CONTRIBUTING.html">Contributing guide</a></li>
 <li><a href="CODE_OF_CONDUCT.html">Code of conduct</a></li>
 </ul>
 </div>
-<div class="developers">
-<h2>Developers</h2>
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li>
-<a href="http://jimhester.com">Jim Hester</a> <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-2739-7082" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Romain François <br><small class="roles"> Author, maintainer </small>  </li>
-<li>
-<a href="https://www.rstudio.com"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" height="24"></a> <br><small class="roles"> Copyright holder, funder </small>  </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="authors.html#citation">Citing cpp11</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/r-lib/cpp11/actions"><img src="https://github.com/r-lib/cpp11/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://app.codecov.io/gh/r-lib/cpp11"><img src="https://app.codecov.io/gh/r-lib/cpp11/branch/main/graph/badge.svg?token=EEWYoCYxQ2" alt="codecov"></a></li>
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
-<li><a href="https://CRAN.R-project.org/package=cpp11"><img src="https://www.r-pkg.org/badges/version/cpp11" alt="CRAN status"></a></li>
+<li>
+<a href="http://jimhester.com" class="external-link">Jim Hester</a> <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-2739-7082" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Romain François <br><small class="roles"> Author, maintainer </small>  </li>
+<li>
+<a href="https://www.rstudio.com" class="external-link"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" width="72"></a> <br><small class="roles"> Copyright holder, funder </small>  </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/r-lib/cpp11/actions" class="external-link"><img src="https://github.com/r-lib/cpp11/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://app.codecov.io/gh/r-lib/cpp11" class="external-link"><img src="https://app.codecov.io/gh/r-lib/cpp11/branch/main/graph/badge.svg?token=EEWYoCYxQ2" alt="codecov"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
+<li><a href="https://CRAN.R-project.org/package=cpp11" class="external-link"><img src="https://www.r-pkg.org/badges/version/cpp11" alt="CRAN status"></a></li>
+</ul>
 </div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="http://jimhester.com">Jim Hester</a>, Romain François, <a href="https://www.rstudio.com"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" height="24"></a>.</p>
+  <p></p>
+<p>Developed by <a href="http://jimhester.com" class="external-link">Jim Hester</a>, Romain François, <a href="https://www.rstudio.com" class="external-link"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" width="72"></a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.0.</p>
 </div>
 
       </footer>
@@ -240,6 +252,8 @@ SystemRequirements: C++11</code></pre>
 
   
 
+
+  
 
   </body>
 </html>

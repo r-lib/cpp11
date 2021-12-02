@@ -20,6 +20,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -74,7 +76,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/r-lib/cpp11/">
+  <a href="https://github.com/r-lib/cpp11/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -95,20 +97,20 @@
       <h1 data-toc-skip>cpp11 internals</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/cpp11/blob/master/vignettes/internals.Rmd"><code>vignettes/internals.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/cpp11/blob/HEAD/vignettes/internals.Rmd" class="external-link"><code>vignettes/internals.Rmd</code></a></small>
       <div class="hidden name"><code>internals.Rmd</code></div>
 
     </div>
 
     
     
-<p>The development repository for cpp11 is <a href="https://github.com/r-lib/cpp11" class="uri">https://github.com/r-lib/cpp11</a>.</p>
-<div id="initial-setup-and-dev-workflow" class="section level2">
-<h2 class="hasAnchor">
-<a href="#initial-setup-and-dev-workflow" class="anchor"></a>Initial setup and dev workflow</h2>
+<p>The development repository for cpp11 is <a href="https://github.com/r-lib/cpp11" class="external-link uri">https://github.com/r-lib/cpp11</a>.</p>
+<div class="section level2">
+<h2 id="initial-setup-and-dev-workflow">Initial setup and dev workflow<a class="anchor" aria-label="anchor" href="#initial-setup-and-dev-workflow"></a>
+</h2>
 <p>First install any dependencies needed for development.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_deps</span><span class="op">(</span>dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p>You can load the package in an interactive R session</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -124,24 +126,24 @@
 <p>Generally when developing the C++ headers I run R with its working directory in the <code>cpp11test</code> directory and use <code>devtools::test()</code> to run the cpp11tests.</p>
 <p>To calculate code coverage of the cpp11 package run the following from the <code>cpp11</code> root directory.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">covr</span><span class="fu">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/report.html">report</a></span><span class="op">(</span><span class="fu">cpp11_coverage</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">covr</span><span class="fu">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/report.html" class="external-link">report</a></span><span class="op">(</span><span class="fu">cpp11_coverage</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="code-formatting" class="section level2">
-<h2 class="hasAnchor">
-<a href="#code-formatting" class="anchor"></a>Code formatting</h2>
-<p>This project uses <a href="https://clang.llvm.org/docs/ClangFormat.html">clang-format</a> (version 10) to automatically format the c++ code.</p>
-<p>You can run <code>make format</code> to re-format all code in the project. If your system does not have <code>clang-format</code> version 10, this can be installed using a <a href="https://github.com/r-lib/homebrew-taps">homebrew tap</a> at the command line with <code>brew install r-lib/taps/clang-format@10</code>.</p>
+<div class="section level2">
+<h2 id="code-formatting">Code formatting<a class="anchor" aria-label="anchor" href="#code-formatting"></a>
+</h2>
+<p>This project uses <a href="https://clang.llvm.org/docs/ClangFormat.html" class="external-link">clang-format</a> (version 10) to automatically format the c++ code.</p>
+<p>You can run <code>make format</code> to re-format all code in the project. If your system does not have <code>clang-format</code> version 10, this can be installed using a <a href="https://github.com/r-lib/homebrew-taps" class="external-link">homebrew tap</a> at the command line with <code>brew install r-lib/taps/clang-format@10</code>.</p>
 <p>You may need to link the newly installed version 10. To do so, run <code>brew unlink clang-format</code> followed by <code>brew link clang-format@10</code>.</p>
 <p>Alternatively many IDEs support automatically running <code>clang-format</code> every time files are written.</p>
 </div>
-<div id="code-organization" class="section level2">
-<h2 class="hasAnchor">
-<a href="#code-organization" class="anchor"></a>Code organization</h2>
-<p>cpp11 is a header only library, so all source code exposed to users lives in <a href="https://github.com/r-lib/cpp11/tree/main/inst/include">inst/include</a>. R code used to register functions and for <code><a href="../reference/cpp_source.html">cpp11::cpp_source()</a></code> is in <a href="https://github.com/r-lib/cpp11/tree/main/R">R/</a>. Tests for <em>only</em> the code in <code>R/</code> is in <a href="https://github.com/r-lib/cpp11/tree/main/tests/testthat">tests/testthat/</a> The rest of the code is in a separate <a href="https://github.com/r-lib/cpp11/tree/main/cpp11test">cpp11test/</a> package included in the source tree. Inside <a href="https://github.com/r-lib/cpp11/tree/main/cpp11test/src">cpp11test/src</a> the files that start with <code>test-</code> are C++ tests using the <a href="https://testthat.r-lib.org/reference/use_catch.html">Catch</a> support in testthat. In addition there are some regular R tests in <a href="https://github.com/r-lib/cpp11/tree/main/cpp11test/tests/testthat">cpp11test/tests/testthat/</a>.</p>
+<div class="section level2">
+<h2 id="code-organization">Code organization<a class="anchor" aria-label="anchor" href="#code-organization"></a>
+</h2>
+<p>cpp11 is a header only library, so all source code exposed to users lives in <a href="https://github.com/r-lib/cpp11/tree/main/inst/include" class="external-link">inst/include</a>. R code used to register functions and for <code><a href="../reference/cpp_source.html">cpp11::cpp_source()</a></code> is in <a href="https://github.com/r-lib/cpp11/tree/main/R" class="external-link">R/</a>. Tests for <em>only</em> the code in <code>R/</code> is in <a href="https://github.com/r-lib/cpp11/tree/main/tests/testthat" class="external-link">tests/testthat/</a> The rest of the code is in a separate <a href="https://github.com/r-lib/cpp11/tree/main/cpp11test" class="external-link">cpp11test/</a> package included in the source tree. Inside <a href="https://github.com/r-lib/cpp11/tree/main/cpp11test/src" class="external-link">cpp11test/src</a> the files that start with <code>test-</code> are C++ tests using the <a href="https://testthat.r-lib.org/reference/use_catch.html" class="external-link">Catch</a> support in testthat. In addition there are some regular R tests in <a href="https://github.com/r-lib/cpp11/tree/main/cpp11test/tests/testthat" class="external-link">cpp11test/tests/testthat/</a>.</p>
 </div>
-<div id="naming-conventions" class="section level2">
-<h2 class="hasAnchor">
-<a href="#naming-conventions" class="anchor"></a>Naming conventions</h2>
+<div class="section level2">
+<h2 id="naming-conventions">Naming conventions<a class="anchor" aria-label="anchor" href="#naming-conventions"></a>
+</h2>
 <ul>
 <li>All header files are named with a <code>.hpp</code> extension.</li>
 <li>All source files are named with a <code>.cpp</code> extension.</li>
@@ -152,48 +154,48 @@
 <li>Private classes and functions should be put in the <code>cpp11::internal</code> namespace.</li>
 </ul>
 </div>
-<div id="vector-classes" class="section level2">
-<h2 class="hasAnchor">
-<a href="#vector-classes" class="anchor"></a>Vector classes</h2>
-<p>All of the basic r_vector classes are class templates, the base template is defined in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/r_vector.hpp">cpp11/r_vector.hpp</a> The template parameter is the type of <strong>value</strong> the particular R vector stores, e.g. <code>double</code> for <code>cpp11::doubles</code>. This differs from Rcpp, whose first template parameter is the R vector type, e.g. <code>REALSXP</code>.</p>
-<p>The file first has the class declarations, then function definitions further down in the file. Specializations for the various types are in separate files, e.g. <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/doubles.hpp">cpp11/doubles.hpp</a>, <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/integers.hpp">cpp11/integers.hpp</a></p>
+<div class="section level2">
+<h2 id="vector-classes">Vector classes<a class="anchor" aria-label="anchor" href="#vector-classes"></a>
+</h2>
+<p>All of the basic r_vector classes are class templates, the base template is defined in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/r_vector.hpp" class="external-link">cpp11/r_vector.hpp</a> The template parameter is the type of <strong>value</strong> the particular R vector stores, e.g. <code>double</code> for <code>cpp11::doubles</code>. This differs from Rcpp, whose first template parameter is the R vector type, e.g. <code>REALSXP</code>.</p>
+<p>The file first has the class declarations, then function definitions further down in the file. Specializations for the various types are in separate files, e.g. <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/doubles.hpp" class="external-link">cpp11/doubles.hpp</a>, <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/integers.hpp" class="external-link">cpp11/integers.hpp</a></p>
 </div>
-<div id="coercion-functions" class="section level2">
-<h2 class="hasAnchor">
-<a href="#coercion-functions" class="anchor"></a>Coercion functions</h2>
+<div class="section level2">
+<h2 id="coercion-functions">Coercion functions<a class="anchor" aria-label="anchor" href="#coercion-functions"></a>
+</h2>
 <p>There are two different coercion functions</p>
 <p><code>as_sexp()</code> takes a C++ object and coerces it to a SEXP object, so it can be used in R. <code>as_cpp&lt;&gt;()</code> is a template function that takes a SEXP and creates a C++ object from it</p>
-<p>The various methods for both functions are defined in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/as.hpp">cpp11/as.hpp</a></p>
-<p>This is definitely the most complex part of the cpp11 code, with extensive use of <a href="https://en.wikipedia.org/wiki/Template_metaprogramming">template metaprogramming</a>. In particular the <a href="https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error">substitution failure is not an error (SFINAE)</a> technique is used to control overloading of the functions. If we could use C++20 a lot of this code would be made simpler with <a href="https://en.cppreference.com/w/cpp/language/constraints">Concepts</a>, but alas.</p>
+<p>The various methods for both functions are defined in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/as.hpp" class="external-link">cpp11/as.hpp</a></p>
+<p>This is definitely the most complex part of the cpp11 code, with extensive use of <a href="https://en.wikipedia.org/wiki/Template_metaprogramming" class="external-link">template metaprogramming</a>. In particular the <a href="https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error" class="external-link">substitution failure is not an error (SFINAE)</a> technique is used to control overloading of the functions. If we could use C++20 a lot of this code would be made simpler with <a href="https://en.cppreference.com/w/cpp/language/constraints" class="external-link">Concepts</a>, but alas.</p>
 <p>The most common C++ types are included in the test suite and should work without issues, as more exotic types are used in real projects additional issues may arise.</p>
 <p>Some useful links on SFINAE</p>
 <ul>
 <li>
-<a href="https://www.fluentcpp.com/2018/05/15/make-sfinae-pretty-1-what-value-sfinae-brings-to-code/" class="uri">https://www.fluentcpp.com/2018/05/15/make-sfinae-pretty-1-what-value-sfinae-brings-to-code/</a>, <a href="https://www.fluentcpp.com/2018/05/18/make-sfinae-pretty-2-hidden-beauty-sfinae/" class="uri">https://www.fluentcpp.com/2018/05/18/make-sfinae-pretty-2-hidden-beauty-sfinae/</a>
+<a href="https://www.fluentcpp.com/2018/05/15/make-sfinae-pretty-1-what-value-sfinae-brings-to-code/" class="external-link uri">https://www.fluentcpp.com/2018/05/15/make-sfinae-pretty-1-what-value-sfinae-brings-to-code/</a>, <a href="https://www.fluentcpp.com/2018/05/18/make-sfinae-pretty-2-hidden-beauty-sfinae/" class="external-link uri">https://www.fluentcpp.com/2018/05/18/make-sfinae-pretty-2-hidden-beauty-sfinae/</a>
 </li>
 </ul>
 </div>
-<div id="protection" class="section level2">
-<h2 class="hasAnchor">
-<a href="#protection" class="anchor"></a>Protection</h2>
-<div id="protect-list" class="section level3">
-<h3 class="hasAnchor">
-<a href="#protect-list" class="anchor"></a>Protect list</h3>
-<p>cpp11 uses an idea proposed by <a href="https://github.com/RcppCore/Rcpp/issues/1081#issuecomment-630330838">Luke Tierney</a> to use a double linked list with the head preserved to protect objects cpp11 is protecting.</p>
+<div class="section level2">
+<h2 id="protection">Protection<a class="anchor" aria-label="anchor" href="#protection"></a>
+</h2>
+<div class="section level3">
+<h3 id="protect-list">Protect list<a class="anchor" aria-label="anchor" href="#protect-list"></a>
+</h3>
+<p>cpp11 uses an idea proposed by <a href="https://github.com/RcppCore/Rcpp/issues/1081#issuecomment-630330838" class="external-link">Luke Tierney</a> to use a double linked list with the head preserved to protect objects cpp11 is protecting.</p>
 <p>Each node in the list uses the head (<code>CAR</code>) part to point to the previous node, and the <code>CDR</code> part to point to the next node. The <code>TAG</code> is used to point to the object being protected. The head and tail of the list have <code>R_NilValue</code> as their <code>CAR</code> and <code>CDR</code> pointers respectively.</p>
 <p>Calling <code>preserved.insert()</code> with a regular R object will add a new node to the list and return a protect token corresponding to the node added. Calling <code>preserved.release()</code> on this returned token will release the protection by unlinking the node from the linked list.</p>
 <p>This scheme scales in O(1) time to release or insert an object vs O(N) or worse time with <code>R_PreserveObject()</code> / <code>R_ReleaseObject()</code>.</p>
-<p>These functions are defined in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/protect.hpp">protect.hpp</a></p>
+<p>These functions are defined in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/protect.hpp" class="external-link">protect.hpp</a></p>
 </div>
-<div id="unwind-protect" class="section level3">
-<h3 class="hasAnchor">
-<a href="#unwind-protect" class="anchor"></a>Unwind Protect</h3>
-<p>In R 3.5+ cpp11 uses <code>R_UnwindProtect</code> to protect (most) calls to the R API that could fail. These are usually those that allocate memory, though in truth most R API functions could error along some paths. If an error happends under <code>R_UnwindProtect</code> cpp11 will throw a C++ exception. This exception is caught by the try catch block defined in the <code>BEGIN_CPP11</code> macro in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/declarations.hpp">cpp11/declarations.hpp</a>. The exception will cause any C++ destructors to run, freeing any resources held by C++ objects. After the try catch block exits the R error unwinding is then continued by <code>R_ContinueUnwind()</code> and a normal R error results.</p>
+<div class="section level3">
+<h3 id="unwind-protect">Unwind Protect<a class="anchor" aria-label="anchor" href="#unwind-protect"></a>
+</h3>
+<p>In R 3.5+ cpp11 uses <code>R_UnwindProtect</code> to protect (most) calls to the R API that could fail. These are usually those that allocate memory, though in truth most R API functions could error along some paths. If an error happends under <code>R_UnwindProtect</code> cpp11 will throw a C++ exception. This exception is caught by the try catch block defined in the <code>BEGIN_CPP11</code> macro in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/declarations.hpp" class="external-link">cpp11/declarations.hpp</a>. The exception will cause any C++ destructors to run, freeing any resources held by C++ objects. After the try catch block exits the R error unwinding is then continued by <code>R_ContinueUnwind()</code> and a normal R error results.</p>
 <p>In R versions prior to 3.5 <code>R_UnwindProtect()</code> is not available. Unfortunately the options to emulate it are not ideal.</p>
 <ol style="list-style-type: decimal">
-<li>Using <code>R_TopLevelExec()</code> works to avoid the C long jump, but because the code is always run in a top level context any errors or messages thrown cannot be caught by <code><a href="https://rdrr.io/r/base/conditions.html">tryCatch()</a></code> or similar techniques.</li>
+<li>Using <code>R_TopLevelExec()</code> works to avoid the C long jump, but because the code is always run in a top level context any errors or messages thrown cannot be caught by <code><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch()</a></code> or similar techniques.</li>
 <li>Using <code>R_TryCatch()</code> is not available prior to R 3.4, and also has a serious bug in R 3.4 (fixed in R 3.5).</li>
-<li>Calling the R level <code><a href="https://rdrr.io/r/base/conditions.html">tryCatch()</a></code> function which contains an expression that runs a C function which then runs the C++ code would be an option, but implementing this is convoluted and it would impact performance, perhaps severely.</li>
+<li>Calling the R level <code><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch()</a></code> function which contains an expression that runs a C function which then runs the C++ code would be an option, but implementing this is convoluted and it would impact performance, perhaps severely.</li>
 <li>Have <code>cpp11::unwind_protect()</code> be a no-op for these versions. This means any resources held by C++ objects would leak, including cpp11::r_vector / cpp11::sexp objects.</li>
 </ol>
 <p>None of these options is perfect, here are some pros and cons for each.</p>
@@ -203,7 +205,7 @@
 <li>Was ruled out partially because the implementation would be somewhat tricky and more because performance would suffer greatly.</li>
 <li>is what we now do in cpp11. It leaks protected objects when there are R API errors.</li>
 </ol>
-<p>If packages are concerned about the leaked memory they can call <code>cpp11::preserved.release_all()</code> as needed to release the current protections for all objects managed by cpp11. This is not done automatically because in some cases the protections should persist beyond the <code><a href="https://rdrr.io/r/base/CallExternal.html">.Call()</a></code> boundry, e.g. in vroom altrep objects for example.</p>
+<p>If packages are concerned about the leaked memory they can call <code>cpp11::preserved.release_all()</code> as needed to release the current protections for all objects managed by cpp11. This is not done automatically because in some cases the protections should persist beyond the <code><a href="https://rdrr.io/r/base/CallExternal.html" class="external-link">.Call()</a></code> boundry, e.g. in vroom altrep objects for example.</p>
 </div>
 </div>
   </div>
@@ -219,11 +221,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="http://jimhester.com">Jim Hester</a>, Romain François, <a href="https://www.rstudio.com"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" height="24"></a>.</p>
+  <p></p>
+<p>Developed by <a href="http://jimhester.com" class="external-link">Jim Hester</a>, Romain François, <a href="https://www.rstudio.com" class="external-link"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" width="72"></a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.0.</p>
 </div>
 
       </footer>
@@ -231,6 +235,8 @@
 
   
 
+
+  
 
   </body>
 </html>
