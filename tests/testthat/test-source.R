@@ -217,3 +217,21 @@ test_that("cpp_source(d) functions work after sourcing file more than once", {
   cpp11::cpp_source(test_path("single.cpp"), clean = TRUE)
   expect_equal(foo(), 1)
 })
+
+test_that("cpp_source() cleans file name (#248)", {
+  code <- "
+#include <cpp11.hpp>
+
+[[cpp11::register]]
+int some_function() {return 42; }
+"
+  temp1 <- withr::local_tempfile(fileext = "contains-hyphen.cpp")
+  write(code, temp1)
+  expect_error(cpp11::cpp_source(temp1), NA)
+  expect_equal(some_function(), 42L)
+
+  temp2 <- withr::local_tempfile(fileext = "contains+plus.cpp")
+  write(code, temp2)
+  expect_error(cpp11::cpp_source(temp2), NA)
+  expect_equal(some_function(), 42L)
+})
