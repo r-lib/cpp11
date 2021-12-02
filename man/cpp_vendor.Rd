@@ -26,7 +26,7 @@ If you choose to vendor the headers you should \emph{remove} \code{LinkingTo: cp
 
 \strong{Note}: vendoring places the responsibility of updating the code on
 \strong{you}. Bugfixes and new features in cpp11 will not be available for your
-code until you run \code{vector_cpp11()} again.
+code until you run \code{cpp_vendor()} again.
 }
 \examples{
 # create a new directory

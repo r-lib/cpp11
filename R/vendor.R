@@ -13,7 +13,7 @@
 #'
 #' **Note**: vendoring places the responsibility of updating the code on
 #' **you**. Bugfixes and new features in cpp11 will not be available for your
-#' code until you run `vector_cpp11()` again.
+#' code until you run `cpp_vendor()` again.
 #'
 #' @inheritParams cpp_register
 #' @return The file path to the vendored code (invisibly).
