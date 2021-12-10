@@ -80,4 +80,3 @@ std::string nameof(bool strip_namespace = false) {
 }
 
 }  // namespace cpp11
-
