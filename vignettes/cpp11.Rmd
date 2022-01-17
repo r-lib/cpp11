@@ -226,7 +226,7 @@ The C++ version is similar, but:
   Similar in-place operators are `-=`, `*=`, and `/=`.
 
 This is a good example of where C++ is much more efficient than R.
-As shown by the following microbenchmark, `sumC()` is competitive with the built-in (and highly optimised) `sum()`, while `sumR()` is several orders of magnitude slower.
+As shown by the following microbenchmark, `sum_cpp()` is competitive with the built-in (and highly optimised) `sum()`, while `sum_r()` is several orders of magnitude slower.
 
 ```{r sum-bench}
 x <- runif(1e3)
