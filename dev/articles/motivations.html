@@ -104,9 +104,9 @@
 
     
     
-<div class="section level1">
-<h1 id="motivations">Motivations<a class="anchor" aria-label="anchor" href="#motivations"></a>
-</h1>
+<div class="section level2">
+<h2 id="motivations">Motivations<a class="anchor" aria-label="anchor" href="#motivations"></a>
+</h2>
 <p>R and S have a long history of interacting with compiled languages. In fact the original version of S written in the late 1970s was mainly a wrapper around FORTRAN routines. <a href="https://www.r-project.org/conferences/useR-2006/Slides/Chambers.pdf" class="external-link">(History-of-S)</a> Released in 2000, the <a href="https://cran.r-project.org/package=cxx" class="external-link">cxx</a> package was an early prototype of C++ bindings to R. <a href="https://cran.r-project.org/package=Rcpp" class="external-link">Rcpp</a> was first published to CRAN in 2008, and <a href="https://cran.r-project.org/package=Rcpp11" class="external-link">Rcpp11</a> in 2014. Of these <code>Rcpp</code> has by far the widest adoption, with over 2000 reverse dependencies as of 2020.</p>
 <p>Rcpp has been a widely successful project, however over the years a number of issues and additional C++ features have arisen. Adding these features to Rcpp would require a great deal of work, or in some cases would be impossible without severely breaking backwards compatibility.</p>
 <p>cpp11 is a ground up rewrite of C++ bindings to R with different design trade-offs and features.</p>
@@ -125,9 +125,9 @@
 <li>
 <a href="#growing-vectors">Growing vectors</a> more efficiently.</li>
 </ul>
-<div class="section level2">
-<h2 id="copy-on-write-semantics">Copy-on-write semantics<a class="anchor" aria-label="anchor" href="#copy-on-write-semantics"></a>
-</h2>
+<div class="section level3">
+<h3 id="copy-on-write-semantics">Copy-on-write semantics<a class="anchor" aria-label="anchor" href="#copy-on-write-semantics"></a>
+</h3>
 <p>R uses <a href="https://adv-r.hadley.nz/names-values.html#copy-on-modify" class="external-link">copy-on-write</a> (also called copy-on-modify) semantics. Lets say you have two variables <code>x</code> and <code>y</code> that both point to the same underlying data.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>
@@ -200,14 +200,14 @@
 <span class="va">x</span>
 <span class="co">#&gt; [1] 1 2 3</span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="improve-safety">Improve safety<a class="anchor" aria-label="anchor" href="#improve-safety"></a>
-</h2>
+<div class="section level3">
+<h3 id="improve-safety">Improve safety<a class="anchor" aria-label="anchor" href="#improve-safety"></a>
+</h3>
 <p>Internally R is written in C, not C++. In general C and C++ work well together, a large part of C++’s success is due to its high interoperability with C code. However one area in which C and C++ are generally <em>not</em> interoperable is error handling. In C++ the most common way to handle errors is with <a href="https://isocpp.org/wiki/faq/exceptions" class="external-link">exceptions</a>.</p>
 <p>Exceptions provide a clean, safe way for objects to obtain and cleanup resources automatically even when errors occur.</p>
-<div class="section level3">
-<h3 id="c-safety">C safety<a class="anchor" aria-label="anchor" href="#c-safety"></a>
-</h3>
+<div class="section level4">
+<h4 id="c-safety">C safety<a class="anchor" aria-label="anchor" href="#c-safety"></a>
+</h4>
 <p>The C language does not have support for exceptions, so error handling is done a variety of ways. These include error codes like <a href="https://en.cppreference.com/w/c/error/errno" class="external-link">errno</a>, conditional statements, and in the R codebase the <a href="http://www.cplusplus.com/reference/csetjmp/longjmp/" class="external-link">longjmp</a> function.</p>
 <p><code>longjmp</code>, which stands for ‘long jump’ is a function that allows you to transfer the control flow of a program to another location elsewhere in the program. R uses long jumps extensively in its error handling routines. If an R function is executing and an error occurs, a long jump is called which ‘jumps’ the control flow into the error handling code.</p>
 <p>Crucially long jumps are <em>incompatible</em> with C++ <a href="https://isocpp.org/wiki/faq/dtors" class="external-link">destructors</a>. If a long jump occurs the destructors of any active C++ objects are not run, and therefore any resources (such as memory, file handles, etc.) managed by those objects will cause a <a href="https://en.wikipedia.org/wiki/Resource_leak" class="external-link">resource leak</a>.</p>
@@ -229,16 +229,16 @@
 <p>Again using <code>cpp11::safe()</code> converts the C long jump to a C++ exception, so the memory is automatically released.</p>
 <p>cpp11 uses these mechanisms extensively internally when calling the R C API, which make cpp11 much safer against resource leaks than using Rcpp or calling Rs C API by hand.</p>
 </div>
-<div class="section level3">
-<h3 id="c-safety-1">C++ safety<a class="anchor" aria-label="anchor" href="#c-safety-1"></a>
-</h3>
+<div class="section level4">
+<h4 id="c-safety-1">C++ safety<a class="anchor" aria-label="anchor" href="#c-safety-1"></a>
+</h4>
 <p>In the inverse of C safety we also need to ensure that C++ exceptions do not reach the C call stack, as they will terminate R if that occurs. Like Rcpp, cpp11 automatically generates <code>try / catch</code> guards around registered functions to prevent this and also converts C++ exceptions into normal R errors. This is done without developer facing code changes.</p>
 <p>With both C and C++ sides of the coin covered we can safely use R’s C API and C++ code together with C++ objects without leaking resources.</p>
 </div>
 </div>
-<div class="section level2">
-<h2 id="altrep-support">Altrep support<a class="anchor" aria-label="anchor" href="#altrep-support"></a>
-</h2>
+<div class="section level3">
+<h3 id="altrep-support">Altrep support<a class="anchor" aria-label="anchor" href="#altrep-support"></a>
+</h3>
 <p><a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html" class="external-link">ALTREP</a> which stands for <strong>ALT</strong>ernative <strong>REP</strong>resntations is a feature introduced in R 3.5. ALTREP allows R internals and package authors to define alternative ways of representing data to R. One example of the use of altrep is the <code>:</code> operator.</p>
 <p>Prior to R 3.5 <code>:</code> generated a full vector for the entire sequence. e.g. <code>1:1000</code> would require 1000 individual values. As of R 3.5 this sequence is instead represented by an ALTREP vector, so <em>none</em> of the values actually exist in memory. Instead each time R access a particular value in the sequence that value is computed on-the-fly. This saves memory and excution time, and allows users to use sequences which would otherwise be too big to fit in memory.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
@@ -267,9 +267,9 @@
 <code class="sourceCode R"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">identity_cpp11</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">100000</span><span class="op">)</span>
 <span class="fu">lobstr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lobstr/man/obj_size.html" class="external-link">obj_size</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>
 <span class="co">#&gt; 680 B</span></code></pre></div>
-<div class="section level3">
-<h3 id="altrep-benchmarks">Altrep benchmarks<a class="anchor" aria-label="anchor" href="#altrep-benchmarks"></a>
-</h3>
+<div class="section level4">
+<h4 id="altrep-benchmarks">Altrep benchmarks<a class="anchor" aria-label="anchor" href="#altrep-benchmarks"></a>
+</h4>
 <p>In these benchmarks note that Rcpp allocates memory for the ALTREP vectors. This is because Rcpp implicitly converts them into normal R vectors. cpp11 retains them as ALTREP vectors, so no additional memory is needed.</p>
 <p><code>foreach</code> and <code>accumulate</code> both use iterators that take advantage of <code>REAL_GET_REGION</code> to buffer queries. This makes them faster than naive C-style for loops with ALTREP vectors.</p>
 <p>The for2 case shows an optimization you can use if you know at compile-time that you won’t be dealing with ALTREP vectors. By specifying <code>false</code> to the second argument (<code>is_altrep</code>), you can disable the ALTREP support. This causes the ALTREP conditional code to be compiled out resulting in loop unrolling (and speeds) identical to that generated by Rcpp.</p>
@@ -450,17 +450,17 @@
 <p><a href="https://github.com/r-lib/cpp11/blob/main/cpp11test/src/sum.cpp" class="external-link">cpp11test/src/sum.cpp</a> contains the code ran in these benchmarks.</p>
 </div>
 </div>
-<div class="section level2">
-<h2 id="utf-8-everywhere">UTF-8 everywhere<a class="anchor" aria-label="anchor" href="#utf-8-everywhere"></a>
-</h2>
+<div class="section level3">
+<h3 id="utf-8-everywhere">UTF-8 everywhere<a class="anchor" aria-label="anchor" href="#utf-8-everywhere"></a>
+</h3>
 <p>R has complicated support for Unicode strings and non-ASCII code pages, whose behavior often differs substantially on different operating systems, particularly Windows. Correctly dealing with this is challenging and often feels like whack a mole.</p>
 <p>To combat this complexity cpp11 uses the <a href="http://utf8everywhere.org/" class="external-link">UTF-8 everywhere</a> philosophy. This means that whenever text data is converted from R data structures to C++ data structures by cpp11 the data is translated into UTF-8. Conversely any text data coming from C++ code is assumed to be UTF-8 and marked as such for R. Doing this universally avoids many locale specific issues when dealing with Unicode text.</p>
 <p>Concretely cpp11 always uses <code>Rf_translateCharUTF8()</code> when obtaining <code>const char*</code> from <code>CHRSXP</code> objects and uses <code>Rf_mkCharCE(, CE_UTF8)</code> when creating new <code>CHRSXP</code> objects from <code>const char*</code> inputs.</p>
 <!--TODO: unicode examples?-->
 </div>
-<div class="section level2">
-<h2 id="c11-features">C++11 features<a class="anchor" aria-label="anchor" href="#c11-features"></a>
-</h2>
+<div class="section level3">
+<h3 id="c11-features">C++11 features<a class="anchor" aria-label="anchor" href="#c11-features"></a>
+</h3>
 <p>C++11 provides a host of new features to the C++ language. cpp11 uses a number of these including</p>
 <ul>
 <li><a href="https://en.cppreference.com/w/cpp/language/move_constructor" class="external-link">move semantics</a></li>
@@ -471,18 +471,18 @@
 <li><a href="https://en.cppreference.com/w/cpp/language/attributes" class="external-link">user defined attributes</a></li>
 </ul>
 </div>
-<div class="section level2">
-<h2 id="simpler-implementation">Simpler implementation<a class="anchor" aria-label="anchor" href="#simpler-implementation"></a>
-</h2>
+<div class="section level3">
+<h3 id="simpler-implementation">Simpler implementation<a class="anchor" aria-label="anchor" href="#simpler-implementation"></a>
+</h3>
 <p>Rcpp is very ambitious, with a number of advanced features, including <a href="https://cran.r-project.org/package=Rcpp/vignettes/Rcpp-modules.pdf" class="external-link">modules</a>, <a href="https://cran.r-project.org/package=Rcpp/vignettes/Rcpp-sugar.pdf" class="external-link">sugar</a> and extensive support for <a href="https://CRAN.R-project.org/package=Rcpp/vignettes/Rcpp-attributes.pdf" class="external-link">attributes</a>. While these are useful features, many R packages do not use one or any of these advanced features. In addition the code needed to support these features is complex and can be challenging to maintain.</p>
 <p>cpp11 takes a more limited scope, providing only the set of r_vector wrappers for R vector types, coercion methods to and from C++ and the limited attributes necessary to support use in R packages.</p>
 <p>This limited scope allows the implementation to be much simpler, the headers in Rcpp 1.0.4 have 74,658 lines of code (excluding blank or commented lines) in 379 files. Some headers in Rcpp are automatically generated, removing these still gives you 25,249 lines of code in 357 files. In contrast the headers in cpp11 contain only 1,734 lines of code in 19 files.</p>
 <p>This reduction in complexity should make cpp11 an easier project to maintain and ensure correctness, particularly around interactions with the R garbage collector.</p>
 <!--TODO: mention rchk compatibility here?-->
 </div>
-<div class="section level2">
-<h2 id="compilation-speed">Compilation speed<a class="anchor" aria-label="anchor" href="#compilation-speed"></a>
-</h2>
+<div class="section level3">
+<h3 id="compilation-speed">Compilation speed<a class="anchor" aria-label="anchor" href="#compilation-speed"></a>
+</h3>
 <p>Rcpp always bundles all of its headers together, which causes slow compilation times and high peak memory usage when compiling. The headers in cpp11 are more easily decoupled, so you only can include only the particular headers you actually use in a source file. This can significantly improve the compilation speed and memory usage to compile your package.</p>
 <p>Here are some real examples of the reduction in compile time and peak memory usage after converting packages to cpp11.</p>
 <table style="width:100%;" class="table">
@@ -544,22 +544,22 @@
 </tbody>
 </table>
 </div>
-<div class="section level2">
-<h2 id="header-only">Header only<a class="anchor" aria-label="anchor" href="#header-only"></a>
-</h2>
+<div class="section level3">
+<h3 id="header-only">Header only<a class="anchor" aria-label="anchor" href="#header-only"></a>
+</h3>
 <p>Rcpp has long been a <em>mostly</em> <a href="https://en.wikipedia.org/wiki/Header-only" class="external-link">header only</a> library, however is not a <em>completely</em> header only library. There have been <a href="https://github.com/tidyverse/dplyr/issues/2308" class="external-link">cases</a> when a package was first installed with version X of Rcpp, and then a newer version of Rcpp was later installed. Then when the original package X was loaded R would crash, because the <a href="https://en.wikipedia.org/wiki/Application_binary_interface" class="external-link">Application Binary Interface</a> of Rcpp had changed between the two versions.</p>
 <p>Because cpp11 consists of exclusively headers this issue does not occur.</p>
 </div>
-<div class="section level2">
-<h2 id="vendoring">Vendoring<a class="anchor" aria-label="anchor" href="#vendoring"></a>
-</h2>
+<div class="section level3">
+<h3 id="vendoring">Vendoring<a class="anchor" aria-label="anchor" href="#vendoring"></a>
+</h3>
 <p>In the go community the concept of <a href="https://go.googlesource.com/proposal/+/master/design/25719-go15vendor.md" class="external-link">vendoring</a> is widespread. Vendoring means that you copy the code for the dependencies into your project’s source tree. This ensures the dependency code is fixed and stable until it is updated. Because cpp11 is fully <a href="#header-only">header only</a> you can vendor the code in the same way. <code>cpp11::vendor_cpp11()</code> is provided to do this if you choose.</p>
 <p>Vendoring has advantages and drawbacks however. The advantage is that changes to the cpp11 project could never break your existing code. The drawbacks are both minor, your package size is now slightly larger, and major, you no longer get bugfixes and new features until you explicitly update cpp11.</p>
 <p>I think the majority of packages should use <code>LinkingTo: cpp11</code> and <em>not</em> vendor the cpp11 dependency. However, vendoring can be appropriate for certain situations.</p>
 </div>
-<div class="section level2">
-<h2 id="protection">Protection<a class="anchor" aria-label="anchor" href="#protection"></a>
-</h2>
+<div class="section level3">
+<h3 id="protection">Protection<a class="anchor" aria-label="anchor" href="#protection"></a>
+</h3>
 <p>cpp11 uses a custom double linked list data structure to track objects it is managing. This structure is much more efficient for large numbers of objects than using <code>R_PreserveObject()</code> / <code>R_ReleaseObjects()</code> as is done in Rcpp.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">cpp11test</span><span class="op">)</span>
@@ -636,9 +636,9 @@
 </tbody>
 </table>
 </div>
-<div class="section level2">
-<h2 id="growing-vectors">Growing vectors<a class="anchor" aria-label="anchor" href="#growing-vectors"></a>
-</h2>
+<div class="section level3">
+<h3 id="growing-vectors">Growing vectors<a class="anchor" aria-label="anchor" href="#growing-vectors"></a>
+</h3>
 <p>One major difference in Rcpp and cpp11 is how vectors are grown. Rcpp vectors have a <code>push_back()</code> method, but unlike <code>std::vector()</code> no additional space is reserved when pushing. This makes calling <code>push_back()</code> repeatably very expensive, as the entire vector has to be copied each call.</p>
 <p>In contrast <code>cpp11</code> vectors grow efficiently, reserving extra space. Because of this you can do ~10,000,000 vector appends with cpp11 in approximately the same amount of time that Rcpp does 10,000, as this benchmark demonstrates.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -774,9 +774,9 @@
 </tbody>
 </table>
 </div>
-<div class="section level2">
-<h2 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
-</h2>
+<div class="section level3">
+<h3 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
+</h3>
 <p>Rcpp has been and will continue to be widely successful. cpp11 is a alternative implementation of C++ bindings to R that chooses different design trade-offs and features. Both packages can co-exist (even be used in the same package!) and continue to enrich the R community.</p>
 </div>
 </div>
@@ -794,12 +794,12 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by <a href="http://jimhester.com" class="external-link">Jim Hester</a>, Romain François, <a href="https://www.rstudio.com" class="external-link"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" width="72"></a>.</p>
+<p>Developed by <a href="http://jimhester.com" class="external-link">Jim Hester</a>, Romain François, RStudio.</p>
 </div>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.0.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
