@@ -3,5 +3,5 @@
     Code
       cpp_source(i_do_not_exist)
     Error <simpleError>
-      non-character object(s)
+      `file` must exist.
 
