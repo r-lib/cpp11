@@ -68,7 +68,7 @@
 cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11"), dir = tempfile()) {
   stop_unless_installed(c("brio", "callr", "cli", "decor", "desc", "glue", "tibble", "vctrs"))
   if (!missing(file) && !file.exists(file)) {
-    stop("`file` must exist.", call. = FALSE)
+    stop("Can't find `file` at this path:\n", file, "\n", call. = FALSE)
   }
 
   dir.create(dir, showWarnings = FALSE, recursive = TRUE)
