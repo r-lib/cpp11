@@ -217,3 +217,13 @@ test_that("cpp_source(d) functions work after sourcing file more than once", {
   cpp11::cpp_source(test_path("single.cpp"), clean = TRUE)
   expect_equal(foo(), 1)
 })
+
+test_that("cpp_source fails informatively for nonexistent file", {
+  i_do_not_exist <- tempfile(pattern = "nope-", fileext = ".cpp")
+  expect_false(file.exists(i_do_not_exist))
+  expect_snapshot(
+    error = TRUE,
+    cpp_source(i_do_not_exist),
+    transform = ~ sub("^.+[.]cpp$", "{NON_EXISTENT_FILEPATH}", .x)
+  )
+})

@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* `cpp_source()` errors on non-existent file (#261). 
+
 # cpp11 0.4.2
 
 * Romain François is now the maintainer.
