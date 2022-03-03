@@ -134,26 +134,6 @@ typedef r_vector<double> doubles;
 
 }  // namespace writable
 
-typedef r_vector<int> integers;
-
-inline doubles as_doubles(sexp x) {
-  if (TYPEOF(x) == REALSXP) {
-    return as_cpp<doubles>(x);
-  }
-
-  else if (TYPEOF(x) == INTSXP) {
-    integers xn = as_cpp<integers>(x);
-    size_t len = xn.size();
-    writable::doubles ret;
-    for (size_t i = 0; i < len; ++i) {
-      ret.push_back(static_cast<double>(xn[i]));
-    }
-    return ret;
-  }
-
-  throw type_error(REALSXP, TYPEOF(x));
-}
-
 template <>
 inline double na() {
   return NA_REAL;
@@ -163,4 +143,31 @@ template <>
 inline bool is_na(const double& x) {
   return ISNA(x);
 }
+
+// forward declaration
+typedef r_vector<int> integers;
+template <> int na();
+template <> int r_vector<int>::operator[](const R_xlen_t pos) const;
+
+inline doubles as_doubles(sexp x) {
+  if (TYPEOF(x) == REALSXP) {
+    return as_cpp<doubles>(x);
+  } else if (TYPEOF(x) == INTSXP) {
+    integers xn = as_cpp<integers>(x);
+    R_xlen_t len = xn.size();
+    writable::doubles ret(len);
+    for (R_xlen_t i = 0; i < len; ++i) {
+      int el = xn[i];
+      if (is_na(el)) {
+        ret[i] = na<double>();
+      } else {
+        ret[i] = static_cast<double>(el);
+      }
+    }
+    return ret;
+  }
+
+  throw type_error(REALSXP, TYPEOF(x));
+}
+
 }  // namespace cpp11
