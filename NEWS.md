@@ -1,5 +1,8 @@
 # cpp11 (development version)
 
+* `as_doubles()` and `as_integers()` now propagate missing values correctly
+  (#265).
+
 * `cpp_source()` errors on non-existent file (#261). 
 
 # cpp11 0.4.2
