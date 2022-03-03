@@ -144,10 +144,14 @@ inline int na() {
   return NA_INTEGER;
 }
 
-// forward declaration
+// forward declarations
 typedef r_vector<double> doubles;
-template <> bool is_na(const double& x);
-template <> double r_vector<double>::operator[](const R_xlen_t pos) const;
+
+template <>
+bool is_na(const double& x);
+
+template <>
+double r_vector<double>::operator[](const R_xlen_t pos) const;
 
 inline integers as_integers(sexp x) {
   if (TYPEOF(x) == INTSXP) {
