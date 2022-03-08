@@ -164,7 +164,7 @@ inline integers as_integers(sexp x) {
       double el = xn[i];
       if (is_na(el)) {
         ret[i] = na<int>();
-      } else if (is_convertable_without_loss_to_integer(el)) {
+      } else if (is_convertible_without_loss_to_integer(el)) {
         ret[i] = static_cast<int>(el);
       } else {
         throw std::runtime_error("All elements must be integer-like");
