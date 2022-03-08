@@ -33,6 +33,13 @@ constexpr R_xlen_t operator"" _xl(unsigned long long int value) { return value; 
 
 }  // namespace literals
 
+namespace traits {
+template <typename T>
+struct get_underlying_type {
+  using type = T;
+};
+}  // namespace traits
+
 template <typename T>
 inline T na();
 

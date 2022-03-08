@@ -45,7 +45,7 @@ inline SEXP r_vector<SEXP>::operator[](const r_string& name) const {
 }
 
 template <>
-inline SEXP* r_vector<SEXP>::get_p(bool, SEXP) {
+inline typename r_vector<SEXP>::underlying_type* r_vector<SEXP>::get_p(bool, SEXP) {
   return nullptr;
 }
 
