@@ -1,5 +1,7 @@
 #include "Rversion.h"
+
 #include "cpp11/integers.hpp"
+
 #include "cpp11/doubles.hpp"
 #include "cpp11/strings.hpp"
 
