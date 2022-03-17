@@ -32,7 +32,7 @@ stop_unless_installed <- function(pkgs) {
     )
 
     if (is_interactive()) {
-      ans <- readline(paste(c(msg, "Would you like to install them? (Y/N) "), collapse = "\n"))
+      ans <- readline(paste(c(msg, "Would you like to install them? (y/N) "), collapse = "\n"))
       if (tolower(ans) == "y") {
         utils::install.packages(pkgs[!has_pkg])
         stop_unless_installed(pkgs)
