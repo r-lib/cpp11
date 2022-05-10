@@ -66,16 +66,18 @@ class data_frame : public list {
 namespace writable {
 class data_frame : public cpp11::data_frame {
  private:
-  writable::list set_data_frame_attributes(writable::list&& x) {
-    x.attr(R_RowNamesSymbol) = {NA_INTEGER, -static_cast<int>(calc_nrow(x))};
+  writable::list set_data_frame_attributes(writable::list&& x, int nrow) {
+    x.attr(R_RowNamesSymbol) = {NA_INTEGER, -nrow};
     x.attr(R_ClassSymbol) = "data.frame";
     return std::move(x);
   }
 
  public:
-  data_frame(const SEXP data) : cpp11::data_frame(set_data_frame_attributes(data)) {}
+  data_frame(const SEXP data) : cpp11::data_frame(set_data_frame_attributes(data, calc_nrow(data))) {}
   data_frame(const SEXP data, bool is_altrep)
       : cpp11::data_frame(set_data_frame_attributes(data), is_altrep) {}
+  data_frame(const SEXP data, bool is_altrep, int nrow)
+    : cpp11::data_frame(set_data_frame_attributes(data, nrow), is_altrep) {}
   data_frame(std::initializer_list<list> il)
       : cpp11::data_frame(set_data_frame_attributes(writable::list(il))) {}
   data_frame(std::initializer_list<named_arg> il)
