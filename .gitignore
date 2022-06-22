@@ -1,6 +1,7 @@
 script.R
 README.html
 .Rproj.user
+.Rhistory
 .clangd/
 cpp11test/compile_commands.json
 cpp11test/src/Makevars
