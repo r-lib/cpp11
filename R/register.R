@@ -54,6 +54,7 @@ cpp_register <- function(path = ".", quiet = FALSE) {
   funs <- get_registered_functions(all_decorations, "cpp11::register", quiet)
 
   package <- desc::desc_get("Package", file = file.path(path, "DESCRIPTION"))
+  package <- sub("[.]", "_", package)
 
   cpp_functions_definitions <- generate_cpp_functions(funs, package)
 
