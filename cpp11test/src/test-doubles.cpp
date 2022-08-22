@@ -1,5 +1,6 @@
 #include <cstring>
 #include "cpp11/doubles.hpp"
+#include "cpp11/function.hpp"
 #include "cpp11/integers.hpp"
 #include "cpp11/sexp.hpp"
 #include "cpp11/strings.hpp"
@@ -184,7 +185,12 @@ context("doubles-C++") {
 
 #if defined(__APPLE__) && defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
   test_that("writable::doubles(ALTREP_SEXP)") {
-    SEXP x = PROTECT(Rf_coerceVector(R_compact_intrange(1, 5), REALSXP));
+    // ALTREP compact-seq
+    auto seq = cpp11::package("base")[":"];
+    cpp11::sexp range = seq(cpp11::as_sexp(1), cpp11::as_sexp(5));
+
+    SEXP x = PROTECT(Rf_coerceVector(range, REALSXP));
+    expect_true(ALTREP(x));
     // Need to find (or create) an altrep class that implements duplicate.
 
     cpp11::writable::doubles y(x);
@@ -218,7 +224,11 @@ context("doubles-C++") {
     expect_true(y.data() != x.data());
     expect_true(y.is_altrep() == x.is_altrep());
 
-    cpp11::writable::doubles z(Rf_coerceVector(R_compact_intrange(1, 5), REALSXP));
+    // ALTREP compact-seq
+    auto seq = cpp11::package("base")[":"];
+    cpp11::sexp range = seq(cpp11::as_sexp(1), cpp11::as_sexp(5));
+
+    cpp11::writable::doubles z(Rf_coerceVector(range, REALSXP));
     cpp11::writable::doubles w({0.});
     w = z;
     expect_true(w.size() == 5);
@@ -236,7 +246,11 @@ context("doubles-C++") {
     expect_true(y.data() == x_data);
     expect_true(y.is_altrep() == false);
 
-    cpp11::writable::doubles z(Rf_coerceVector(R_compact_intrange(1, 5), REALSXP));
+    // ALTREP compact-seq
+    auto seq = cpp11::package("base")[":"];
+    cpp11::sexp range = seq(cpp11::as_sexp(1), cpp11::as_sexp(5));
+
+    cpp11::writable::doubles z(Rf_coerceVector(range, REALSXP));
     cpp11::writable::doubles w({0.});
     expect_true(z.is_altrep() == true);
 

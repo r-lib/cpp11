@@ -1,5 +1,6 @@
 #include "Rversion.h"
 #include "cpp11/doubles.hpp"
+#include "cpp11/function.hpp"
 #include "cpp11/integers.hpp"
 #include "cpp11/strings.hpp"
 
@@ -164,7 +165,10 @@ context("integers-C++") {
 
 #if defined(__APPLE__) && defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
   test_that("writable::integers(ALTREP_SEXP)") {
-    SEXP x = PROTECT(R_compact_intrange(1, 5));
+    // ALTREP compact-seq
+    auto seq = cpp11::package("base")[":"];
+    SEXP x = PROTECT(seq(cpp11::as_sexp(1), cpp11::as_sexp(5)));
+    expect_true(ALTREP(x));
     // Need to find (or create) an altrep class that implements duplicate.
 
     cpp11::writable::integers y(x);
