@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* Silenced an unknown attribute warning specific to the Intel compiler (#98).
+
 # cpp11 0.4.3
 
 * Modernized the GitHub Actions workflows and updated some internal tests to
