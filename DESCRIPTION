@@ -61,4 +61,4 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 SystemRequirements: C++11
 Remotes:
-    r-lib/testthat#1673
+    r-lib/testthat
