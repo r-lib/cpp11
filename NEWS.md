@@ -1,5 +1,9 @@
 # cpp11 (development version)
 
+* Modernized the GitHub Actions workflows and updated some internal tests to
+  better align with changes in those workflows and the latest version of R
+  (#279).
+
 * `cpp_source()` errors on non-existent file (#261). 
 
 # cpp11 0.4.2
