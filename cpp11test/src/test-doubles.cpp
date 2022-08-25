@@ -186,7 +186,7 @@ context("doubles-C++") {
 #if defined(__APPLE__) && defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
   test_that("writable::doubles(ALTREP_SEXP)") {
     // ALTREP compact-seq
-    auto seq = cpp11::package("base")[":"];
+    auto seq = cpp11::package("base")["seq"];
     cpp11::sexp range = seq(cpp11::as_sexp(1), cpp11::as_sexp(5));
 
     SEXP x = PROTECT(Rf_coerceVector(range, REALSXP));
@@ -225,7 +225,7 @@ context("doubles-C++") {
     expect_true(y.is_altrep() == x.is_altrep());
 
     // ALTREP compact-seq
-    auto seq = cpp11::package("base")[":"];
+    auto seq = cpp11::package("base")["seq"];
     cpp11::sexp range = seq(cpp11::as_sexp(1), cpp11::as_sexp(5));
 
     cpp11::writable::doubles z(Rf_coerceVector(range, REALSXP));
@@ -247,7 +247,7 @@ context("doubles-C++") {
     expect_true(y.is_altrep() == false);
 
     // ALTREP compact-seq
-    auto seq = cpp11::package("base")[":"];
+    auto seq = cpp11::package("base")["seq"];
     cpp11::sexp range = seq(cpp11::as_sexp(1), cpp11::as_sexp(5));
 
     cpp11::writable::doubles z(Rf_coerceVector(range, REALSXP));

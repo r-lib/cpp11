@@ -166,7 +166,7 @@ context("integers-C++") {
 #if defined(__APPLE__) && defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
   test_that("writable::integers(ALTREP_SEXP)") {
     // ALTREP compact-seq
-    auto seq = cpp11::package("base")[":"];
+    auto seq = cpp11::package("base")["seq"];
     SEXP x = PROTECT(seq(cpp11::as_sexp(1), cpp11::as_sexp(5)));
     expect_true(ALTREP(x));
     // Need to find (or create) an altrep class that implements duplicate.
