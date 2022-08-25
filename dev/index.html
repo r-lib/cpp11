@@ -66,7 +66,7 @@
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     News
      
     <span class="caret"></span>
@@ -101,14 +101,13 @@
 <div class="page-header"><h1 id="cpp11">cpp11<a class="anchor" aria-label="anchor" href="#cpp11"></a>
 </h1></div>
 <!-- badges: start -->
-
 <p>cpp11 helps you to interact with R objects using C++ code. Its goals and syntax are similar to the excellent <a href="https://cran.r-project.org/package=Rcpp" class="external-link">Rcpp</a> package.</p>
 <div class="section level2">
 <h2 id="using-cpp11-in-a-package">Using cpp11 in a package<a class="anchor" aria-label="anchor" href="#using-cpp11-in-a-package"></a>
 </h2>
 <p>To add cpp11 to an existing package, put your C++ files in the <code>src/</code> directory and add the following to your DESCRIPTION file:</p>
-<pre><code><span class="va">LinkingTo</span><span class="op">:</span> <span class="va">cpp11</span>
-<span class="va">SystemRequirements</span><span class="op">:</span> <span class="va">C</span><span class="op">+</span><span class="op">+</span><span class="fl">11</span></code></pre>
+<pre><code><span><span class="va">LinkingTo</span><span class="op">:</span> <span class="va">cpp11</span></span>
+<span><span class="va">SystemRequirements</span><span class="op">:</span> <span class="va">C</span><span class="op">+</span><span class="op">+</span><span class="fl">11</span></span></code></pre>
 <p>Then decorate C++ functions you want to expose to R with <code>[[cpp11::register]]</code>. <em>Note that this is a <a href="https://en.cppreference.com/w/cpp/language/attributes" class="external-link">C++11 attribute</a>, not a comment like is used in Rcpp.</em></p>
 <p>cpp11 is a header only library with no hard dependencies and does not use a shared library, so it is straightforward and reliable to use in packages without fear of compile-time and run-time mismatches.</p>
 <p>Alternatively, you can <a href="https://cpp11.r-lib.org/articles/motivations.html#vendoring">vendor</a> the current installed version of cpp11 headers into your package with <code>cpp11::vendor_cpp11()</code>. This ensures the headers will remain unchanged until you explicitly update them.</p>
@@ -154,11 +153,9 @@
 <div class="section level2">
 <h2 id="learning-more">Learning More<a class="anchor" aria-label="anchor" href="#learning-more"></a>
 </h2>
-<ul>
-<li>
+<ul><li>
 <a href="https://www.youtube.com/watch?v=_kq0N0FNIjA" class="external-link">Welding R and C++</a> - Presentation at SatRday Columbus <a href="https://speakerdeck.com/jimhester/cpp11-welding-r-and-c-plus-plus" class="external-link">(slides)</a>
-</li>
-</ul>
+</li></ul>
 </div>
 <div class="section level2">
 <h2 id="internals">Internals<a class="anchor" aria-label="anchor" href="#internals"></a>
@@ -201,6 +198,7 @@
 <ul class="list-unstyled">
 <li><a href="CONTRIBUTING.html">Contributing guide</a></li>
 <li><a href="CODE_OF_CONDUCT.html">Code of conduct</a></li>
+<li><a href="SUPPORT.html">Getting help</a></li>
 </ul>
 </div>
 
@@ -225,7 +223,7 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/r-lib/cpp11/actions" class="external-link"><img src="https://github.com/r-lib/cpp11/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/r-lib/cpp11/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/r-lib/cpp11/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://app.codecov.io/gh/r-lib/cpp11" class="external-link"><img src="https://app.codecov.io/gh/r-lib/cpp11/branch/main/graph/badge.svg?token=EEWYoCYxQ2" alt="codecov"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
 <li><a href="https://CRAN.R-project.org/package=cpp11" class="external-link"><img src="https://www.r-pkg.org/badges/version/cpp11" alt="CRAN status"></a></li>
@@ -243,7 +241,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

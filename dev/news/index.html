@@ -44,7 +44,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     News
      
     <span class="caret"></span>
@@ -74,17 +74,15 @@
 
     <div class="section level2">
 <h2 class="page-header" data-toc-text="development version" id="cpp11-development-version">cpp11 (development version)<a class="anchor" aria-label="anchor" href="#cpp11-development-version"></a></h2>
-<ul><li>
-<code><a href="../reference/cpp_source.html">cpp_source()</a></code> errors on non-existent file (<a href="https://github.com/r-lib/cpp11/issues/261" class="external-link">#261</a>).</li>
+<ul><li><p>Modernized the GitHub Actions workflows and updated some internal tests to better align with changes in those workflows and the latest version of R (<a href="https://github.com/r-lib/cpp11/issues/279" class="external-link">#279</a>).</p></li>
+<li><p><code><a href="../reference/cpp_source.html">cpp_source()</a></code> errors on non-existent file (<a href="https://github.com/r-lib/cpp11/issues/261" class="external-link">#261</a>).</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4.2" id="cpp11-042">cpp11 0.4.2<small>2021-11-30</small><a class="anchor" aria-label="anchor" href="#cpp11-042"></a></h2>
-<ul><li>Romain François is now the maintainer.</li>
-</ul></div>
+<ul><li>Romain François is now the maintainer.</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4.1" id="cpp11-041">cpp11 0.4.1<small>2021-11-03</small><a class="anchor" aria-label="anchor" href="#cpp11-041"></a></h2>
-<ul><li>Fix crash related to unwind protect optimization (<a href="https://github.com/r-lib/cpp11/issues/244" class="external-link">#244</a>)</li>
-</ul></div>
+<ul><li>Fix crash related to unwind protect optimization (<a href="https://github.com/r-lib/cpp11/issues/244" class="external-link">#244</a>)</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4.0" id="cpp11-040">cpp11 0.4.0<small>2021-09-22</small><a class="anchor" aria-label="anchor" href="#cpp11-040"></a></h2>
 <div class="section level3">
@@ -115,8 +113,7 @@
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.3.1" id="cpp11-031">cpp11 0.3.1<small>2021-06-25</small><a class="anchor" aria-label="anchor" href="#cpp11-031"></a></h2>
-<ul><li>Fix stringop-truncation warning from generated wrapping code.</li>
-</ul></div>
+<ul><li>Fix stringop-truncation warning from generated wrapping code.</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.3.0" id="cpp11-030">cpp11 0.3.0<a class="anchor" aria-label="anchor" href="#cpp11-030"></a></h2>
 <div class="section level3">
@@ -127,8 +124,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="major-fixes-0-3-0">Major fixes<a class="anchor" aria-label="anchor" href="#major-fixes-0-3-0"></a></h3>
-<ul><li>Memory no longer inadvertently leaks when move constructing vectors (<a href="https://github.com/r-lib/cpp11/issues/173" class="external-link">#173</a>)</li>
-</ul></div>
+<ul><li>Memory no longer inadvertently leaks when move constructing vectors (<a href="https://github.com/r-lib/cpp11/issues/173" class="external-link">#173</a>)</li></ul></div>
 <div class="section level3">
 <h3 id="minor-improvements-and-fixes-0-3-0">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-0-3-0"></a></h3>
 <ul><li>Incorrectly formatted cpp11 decorators now output a more informative error message (<a href="https://github.com/sbearrows" class="external-link">@sbearrows</a>, <a href="https://github.com/r-lib/cpp11/issues/127" class="external-link">#127</a>)</li>
@@ -145,8 +141,7 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.6" id="cpp11-026">cpp11 0.2.6<small>2021-01-29</small><a class="anchor" aria-label="anchor" href="#cpp11-026"></a></h2>
 <ul><li>
-<code><a href="../reference/cpp_register.html">cpp_register()</a></code> now uses symbols exclusively in the <code><a href="https://rdrr.io/r/base/CallExternal.html" class="external-link">.Call()</a></code> interface. This allows it to be more robust in interactive use with the pkgload package.</li>
-</ul></div>
+<code><a href="../reference/cpp_register.html">cpp_register()</a></code> now uses symbols exclusively in the <code><a href="https://rdrr.io/r/base/CallExternal.html" class="external-link">.Call()</a></code> interface. This allows it to be more robust in interactive use with the pkgload package.</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.5" id="cpp11-025">cpp11 0.2.5<small>2021-01-12</small><a class="anchor" aria-label="anchor" href="#cpp11-025"></a></h2>
 <ul><li>
@@ -210,8 +205,7 @@
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.1.0" id="cpp11-010">cpp11 0.1.0<small>2020-07-10</small><a class="anchor" aria-label="anchor" href="#cpp11-010"></a></h2>
-<ul><li>Initial release</li>
-</ul></div>
+<ul><li>Initial release</li></ul></div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -226,7 +220,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

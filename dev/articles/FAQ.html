@@ -62,7 +62,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     News
      
     <span class="caret"></span>
@@ -91,7 +91,7 @@
 
       
 
-      </header><script src="FAQ_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>FAQ</h1>
@@ -145,35 +145,35 @@
 <h4 id="how-do-i-add-elements-to-a-named-list">2. How do I add elements to a named list?<a class="anchor" aria-label="anchor" href="#how-do-i-add-elements-to-a-named-list"></a>
 </h4>
 <p>Use the <code>push_back()</code> method with the named literal syntax. The named literal syntax is defined in the <code>cpp11::literals</code> namespace.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a></span>
-<span id="cb1-3"><a href="#cb1-3"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb1-4"><a href="#cb1-4"></a>cpp11::list foo_push() {</span>
-<span id="cb1-5"><a href="#cb1-5"></a>  <span class="kw">using</span> <span class="kw">namespace</span> cpp11::literals;</span>
-<span id="cb1-6"><a href="#cb1-6"></a></span>
-<span id="cb1-7"><a href="#cb1-7"></a>  cpp11::writable::list x;</span>
-<span id="cb1-8"><a href="#cb1-8"></a>  x.push_back({<span class="st">"foo"_nm</span> = <span class="dv">1</span>});</span>
-<span id="cb1-9"><a href="#cb1-9"></a></span>
-<span id="cb1-10"><a href="#cb1-10"></a>  <span class="cf">return</span> x;</span>
-<span id="cb1-11"><a href="#cb1-11"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>cpp11<span class="op">::</span>list foo_push<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> <span class="kw">namespace</span> cpp11<span class="op">::</span>literals<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  cpp11<span class="op">::</span>writable<span class="op">::</span>list x<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  x<span class="op">.</span>push_back<span class="op">({</span><span class="st">"foo"_nm</span> <span class="op">=</span> <span class="dv">1</span><span class="op">});</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x<span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="does-cpp11-support-default-arguments">3. Does cpp11 support default arguments?<a class="anchor" aria-label="anchor" href="#does-cpp11-support-default-arguments"></a>
 </h4>
 <p>cpp11 does not support default arguments, while convenient they would require more complexity to support than is currently worthwhile. If you need default argument support you can use a wrapper function around your cpp11 registered function. A common convention is to name the internal function with a trailing <code>_</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="dt">double</span> <span class="va">add_some_</span>(<span class="dt">double</span> x, <span class="dt">double</span> amount) {</span>
-<span id="cb2-4"><a href="#cb2-4"></a>  <span class="cf">return</span> x + amount;</span>
-<span id="cb2-5"><a href="#cb2-5"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> <span class="va">add_some_</span><span class="op">(</span><span class="dt">double</span> x<span class="op">,</span> <span class="dt">double</span> amount<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x <span class="op">+</span> amount<span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">add_some</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">amount</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu">add_some_</span><span class="op">(</span><span class="va">x</span>, <span class="va">amount</span><span class="op">)</span>
-<span class="op">}</span>
-<span class="fu">add_some</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
-<span class="co">#&gt; [1] 2</span>
-<span class="fu">add_some</span><span class="op">(</span><span class="fl">1</span>, amount <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
-<span class="co">#&gt; [1] 6</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">add_some</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">amount</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">add_some_</span><span class="op">(</span><span class="va">x</span>, <span class="va">amount</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">add_some</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 2</span></span>
+<span><span class="fu">add_some</span><span class="op">(</span><span class="fl">1</span>, amount <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 6</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="how-do-i-create-a-new-empty-list">4. How do I create a new empty list?<a class="anchor" aria-label="anchor" href="#how-do-i-create-a-new-empty-list"></a>
@@ -191,121 +191,121 @@
 <h4 id="how-can-i-tell-whether-a-vector-is-named">6. How can I tell whether a vector is named?<a class="anchor" aria-label="anchor" href="#how-can-i-tell-whether-a-vector-is-named"></a>
 </h4>
 <p>Use the <code>named()</code> method for vector classes.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a></span>
-<span id="cb4-3"><a href="#cb4-3"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb4-4"><a href="#cb4-4"></a><span class="dt">bool</span> is_named(cpp11::strings x) {</span>
-<span id="cb4-5"><a href="#cb4-5"></a>  <span class="cf">return</span> x.named();</span>
-<span id="cb4-6"><a href="#cb4-6"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> is_named<span class="op">(</span>cpp11<span class="op">::</span>strings x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x<span class="op">.</span>named<span class="op">();</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">is_named</span><span class="op">(</span><span class="st">"foo"</span><span class="op">)</span>
-<span class="co">#&gt; [1] FALSE</span>
-
-<span class="fu">is_named</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"foo"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] TRUE</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">is_named</span><span class="op">(</span><span class="st">"foo"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] FALSE</span></span>
+<span></span>
+<span><span class="fu">is_named</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"foo"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="how-do-i-return-a-cpp11writablelogicals-object-with-only-a-false-value">7. How do I return a <code>cpp11::writable::logicals</code> object with only a <code>FALSE</code> value?<a class="anchor" aria-label="anchor" href="#how-do-i-return-a-cpp11writablelogicals-object-with-only-a-false-value"></a>
 </h4>
 <p>You need to use <a href="https://en.cppreference.com/w/cpp/language/list_initialization" class="external-link">list initialization</a> with <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{}</a></code> to create the object.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a></span>
-<span id="cb6-3"><a href="#cb6-3"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb6-4"><a href="#cb6-4"></a>cpp11::writable::logicals my_false() {</span>
-<span id="cb6-5"><a href="#cb6-5"></a>  <span class="cf">return</span> {FALSE};</span>
-<span id="cb6-6"><a href="#cb6-6"></a>}</span>
-<span id="cb6-7"><a href="#cb6-7"></a></span>
-<span id="cb6-8"><a href="#cb6-8"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb6-9"><a href="#cb6-9"></a>cpp11::writable::logicals my_true() {</span>
-<span id="cb6-10"><a href="#cb6-10"></a>  <span class="cf">return</span> {TRUE};</span>
-<span id="cb6-11"><a href="#cb6-11"></a>}</span>
-<span id="cb6-12"><a href="#cb6-12"></a></span>
-<span id="cb6-13"><a href="#cb6-13"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb6-14"><a href="#cb6-14"></a>cpp11::writable::logicals my_both() {</span>
-<span id="cb6-15"><a href="#cb6-15"></a>  <span class="cf">return</span> {TRUE, FALSE, TRUE};</span>
-<span id="cb6-16"><a href="#cb6-16"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>cpp11<span class="op">::</span>writable<span class="op">::</span>logicals my_false<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="op">{</span>FALSE<span class="op">};</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>cpp11<span class="op">::</span>writable<span class="op">::</span>logicals my_true<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="op">{</span>TRUE<span class="op">};</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>cpp11<span class="op">::</span>writable<span class="op">::</span>logicals my_both<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="op">{</span>TRUE<span class="op">,</span> FALSE<span class="op">,</span> TRUE<span class="op">};</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">my_false</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] FALSE</span>
-
-<span class="fu">my_true</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] TRUE</span>
-
-<span class="fu">my_both</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1]  TRUE FALSE  TRUE</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">my_false</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] FALSE</span></span>
+<span></span>
+<span><span class="fu">my_true</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span></span>
+<span><span class="fu">my_both</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1]  TRUE FALSE  TRUE</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="how-do-i-create-a-new-empty-environment">8. How do I create a new empty environment?<a class="anchor" aria-label="anchor" href="#how-do-i-create-a-new-empty-environment"></a>
 </h4>
 <p>To do this you need to call the <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">base::new.env()</a></code> function from C++. This can be done by creating a <code>cpp11::function</code> object and then calling it to generate the new environment.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
-<span id="cb8-2"><a href="#cb8-2"></a></span>
-<span id="cb8-3"><a href="#cb8-3"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb8-4"><a href="#cb8-4"></a>cpp11::environment create_environment() {</span>
-<span id="cb8-5"><a href="#cb8-5"></a>  cpp11::function new_env(cpp11::package(<span class="st">"base"</span>)[<span class="st">"new.env"</span>]);</span>
-<span id="cb8-6"><a href="#cb8-6"></a>  <span class="cf">return</span> new_env();</span>
-<span id="cb8-7"><a href="#cb8-7"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>cpp11<span class="op">::</span>environment create_environment<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  cpp11<span class="op">::</span>function new_env<span class="op">(</span>cpp11<span class="op">::</span>package<span class="op">(</span><span class="st">"base"</span><span class="op">)[</span><span class="st">"new.env"</span><span class="op">]);</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> new_env<span class="op">();</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="how-do-i-assign-and-retrieve-values-in-an-environment-what-happens-if-i-try-to-get-a-value-that-doesnt-exist">9. How do I assign and retrieve values in an environment? What happens if I try to get a value that doesn’t exist?<a class="anchor" aria-label="anchor" href="#how-do-i-assign-and-retrieve-values-in-an-environment-what-happens-if-i-try-to-get-a-value-that-doesnt-exist"></a>
 </h4>
 <p>Use <code>[]</code> to retrieve or assign values from an environment by name. If a value does not exist it will return <code>R_UnboundValue</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a></span>
-<span id="cb9-3"><a href="#cb9-3"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb9-4"><a href="#cb9-4"></a><span class="dt">bool</span> foo_exists(cpp11::environment x) {</span>
-<span id="cb9-5"><a href="#cb9-5"></a>  <span class="cf">return</span> x[<span class="st">"foo"</span>] != R_UnboundValue;</span>
-<span id="cb9-6"><a href="#cb9-6"></a>}</span>
-<span id="cb9-7"><a href="#cb9-7"></a></span>
-<span id="cb9-8"><a href="#cb9-8"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb9-9"><a href="#cb9-9"></a><span class="dt">void</span> set_foo(cpp11::environment x, <span class="dt">double</span> value) {</span>
-<span id="cb9-10"><a href="#cb9-10"></a>  x[<span class="st">"foo"</span>] = value;</span>
-<span id="cb9-11"><a href="#cb9-11"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> foo_exists<span class="op">(</span>cpp11<span class="op">::</span>environment x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x<span class="op">[</span><span class="st">"foo"</span><span class="op">]</span> <span class="op">!=</span> R_UnboundValue<span class="op">;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> set_foo<span class="op">(</span>cpp11<span class="op">::</span>environment x<span class="op">,</span> <span class="dt">double</span> value<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  x<span class="op">[</span><span class="st">"foo"</span><span class="op">]</span> <span class="op">=</span> value<span class="op">;</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="fu">foo_exists</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-<span class="co">#&gt; [1] FALSE</span>
-
-<span class="fu">set_foo</span><span class="op">(</span><span class="va">x</span>, <span class="fl">1</span><span class="op">)</span>
-
-<span class="fu">foo_exists</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-<span class="co">#&gt; [1] TRUE</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">foo_exists</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] FALSE</span></span>
+<span></span>
+<span><span class="fu">set_foo</span><span class="op">(</span><span class="va">x</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">foo_exists</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="how-can-i-create-a-cpp11raws-from-a-stdstring">10. How can I create a <code>cpp11:raws</code> from a <code>std::string</code>?<a class="anchor" aria-label="anchor" href="#how-can-i-create-a-cpp11raws-from-a-stdstring"></a>
 </h4>
 <p>There is no built in way to do this. One method would be to <code>push_back()</code> each element of the string individually.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
-<span id="cb11-2"><a href="#cb11-2"></a></span>
-<span id="cb11-3"><a href="#cb11-3"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb11-4"><a href="#cb11-4"></a>cpp11::raws push_raws() {</span>
-<span id="cb11-5"><a href="#cb11-5"></a>  <span class="bu">std::</span>string x(<span class="st">"hi"</span>);</span>
-<span id="cb11-6"><a href="#cb11-6"></a>  cpp11::writable::raws out;</span>
-<span id="cb11-7"><a href="#cb11-7"></a></span>
-<span id="cb11-8"><a href="#cb11-8"></a>  <span class="cf">for</span> (<span class="kw">auto</span> c : x) {</span>
-<span id="cb11-9"><a href="#cb11-9"></a>    out.push_back(c);</span>
-<span id="cb11-10"><a href="#cb11-10"></a>  }</span>
-<span id="cb11-11"><a href="#cb11-11"></a></span>
-<span id="cb11-12"><a href="#cb11-12"></a>  <span class="cf">return</span> out;</span>
-<span id="cb11-13"><a href="#cb11-13"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>cpp11<span class="op">::</span>raws push_raws<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>string<span class="op"> </span>x<span class="op">(</span><span class="st">"hi"</span><span class="op">);</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  cpp11<span class="op">::</span>writable<span class="op">::</span>raws out<span class="op">;</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="kw">auto</span> c <span class="op">:</span> x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    out<span class="op">.</span>push_back<span class="op">(</span>c<span class="op">);</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> out<span class="op">;</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">push_raws</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] 68 69</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">push_raws</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 68 69</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="how-can-i-create-a-stdstring-from-a-cpp11writablestring">11. How can I create a <code>std::string</code> from a <code>cpp11::writable::string</code>?<a class="anchor" aria-label="anchor" href="#how-can-i-create-a-stdstring-from-a-cpp11writablestring"></a>
 </h4>
 <p>Because C++ does not allow for two implicit cast, explicitly cast to <code>cpp11::r_string</code> first.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
-<span id="cb13-2"><a href="#cb13-2"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
-<span id="cb13-3"><a href="#cb13-3"></a></span>
-<span id="cb13-4"><a href="#cb13-4"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb13-5"><a href="#cb13-5"></a><span class="bu">std::</span>string my_string() {</span>
-<span id="cb13-6"><a href="#cb13-6"></a>  cpp11::writable::strings x({<span class="st">"foo"</span>, <span class="st">"bar"</span>});</span>
-<span id="cb13-7"><a href="#cb13-7"></a>  <span class="bu">std::</span>string elt = cpp11::r_string(x[<span class="dv">0</span>]);</span>
-<span id="cb13-8"><a href="#cb13-8"></a>  <span class="cf">return</span> elt;</span>
-<span id="cb13-9"><a href="#cb13-9"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string<span class="op"> </span>my_string<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  cpp11<span class="op">::</span>writable<span class="op">::</span>strings x<span class="op">({</span><span class="st">"foo"</span><span class="op">,</span> <span class="st">"bar"</span><span class="op">});</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>string<span class="op"> </span>elt <span class="op">=</span> cpp11<span class="op">::</span>r_string<span class="op">(</span>x<span class="op">[</span><span class="dv">0</span><span class="op">]);</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> elt<span class="op">;</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="what-are-the-types-for-c-iterators">12. What are the types for C++ iterators?<a class="anchor" aria-label="anchor" href="#what-are-the-types-for-c-iterators"></a>
@@ -317,49 +317,49 @@
 </h4>
 <p>The <code>using namespace std</code> directive will not be included in the generated code of the function signatures, so they still need to be fully qualified. However you will <em>not</em> need to qualify the type names within those functions.</p>
 <p>The following won’t compile</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb14-1"><a href="#cb14-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
-<span id="cb14-2"><a href="#cb14-2"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
-<span id="cb14-3"><a href="#cb14-3"></a></span>
-<span id="cb14-4"><a href="#cb14-4"></a><span class="kw">using</span> <span class="kw">namespace</span> std;</span>
-<span id="cb14-5"><a href="#cb14-5"></a></span>
-<span id="cb14-6"><a href="#cb14-6"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb14-7"><a href="#cb14-7"></a>string foobar() {</span>
-<span id="cb14-8"><a href="#cb14-8"></a>  <span class="cf">return</span> string(<span class="st">"foo"</span>) + <span class="st">"-bar"</span>;</span>
-<span id="cb14-9"><a href="#cb14-9"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>string foobar<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> string<span class="op">(</span><span class="st">"foo"</span><span class="op">)</span> <span class="op">+</span> <span class="st">"-bar"</span><span class="op">;</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>But this will compile and work as intended</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
-<span id="cb15-2"><a href="#cb15-2"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
-<span id="cb15-3"><a href="#cb15-3"></a></span>
-<span id="cb15-4"><a href="#cb15-4"></a><span class="kw">using</span> <span class="kw">namespace</span> std;</span>
-<span id="cb15-5"><a href="#cb15-5"></a></span>
-<span id="cb15-6"><a href="#cb15-6"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb15-7"><a href="#cb15-7"></a><span class="bu">std::</span>string foobar() {</span>
-<span id="cb15-8"><a href="#cb15-8"></a>  <span class="cf">return</span> string(<span class="st">"foo"</span>) + <span class="st">"-bar"</span>;</span>
-<span id="cb15-9"><a href="#cb15-9"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string<span class="op"> </span>foobar<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> string<span class="op">(</span><span class="st">"foo"</span><span class="op">)</span> <span class="op">+</span> <span class="st">"-bar"</span><span class="op">;</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="how-do-i-modify-a-vector-in-place">14. How do I modify a vector in place?<a class="anchor" aria-label="anchor" href="#how-do-i-modify-a-vector-in-place"></a>
 </h4>
 <p>In place modification breaks the normal semantics of R code. In general it should be avoided, which is why <code>cpp11::writable</code> classes always copy their data when constructed.</p>
 <p>However if you are <em>positive</em> in-place modification is necessary for your use case you can use the move constructor to do this.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb16-1"><a href="#cb16-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
-<span id="cb16-2"><a href="#cb16-2"></a></span>
-<span id="cb16-3"><a href="#cb16-3"></a>[[<span class="at">cpp11</span>::<span class="at">register</span>]]</span>
-<span id="cb16-4"><a href="#cb16-4"></a><span class="dt">void</span> add_one(cpp11::sexp x_sexp) {</span>
-<span id="cb16-5"><a href="#cb16-5"></a>  cpp11::writable::integers x(<span class="bu">std::</span>move(x_sexp.data()));</span>
-<span id="cb16-6"><a href="#cb16-6"></a>  <span class="cf">for</span> (<span class="kw">auto</span>&amp;&amp; value : x) {</span>
-<span id="cb16-7"><a href="#cb16-7"></a>    ++value;</span>
-<span id="cb16-8"><a href="#cb16-8"></a>  }</span>
-<span id="cb16-9"><a href="#cb16-9"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> add_one<span class="op">(</span>cpp11<span class="op">::</span>sexp x_sexp<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  cpp11<span class="op">::</span>writable<span class="op">::</span>integers x<span class="op">(</span><span class="bu">std::</span>move<span class="op">(</span>x_sexp<span class="op">.</span>data<span class="op">()));</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="kw">auto</span><span class="op">&amp;&amp;</span> value <span class="op">:</span> x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">++</span>value<span class="op">;</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fl">2L</span>, <span class="fl">3L</span>, <span class="fl">4L</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Internal.html" class="external-link">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; @556579d4f588 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span>
-<span class="fu">add_one</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Internal.html" class="external-link">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; @556579d4f588 13 INTSXP g0c2 [REF(6)] (len=4, tl=0) 2,3,4,5</span>
-<span class="va">x</span>
-<span class="co">#&gt; [1] 2 3 4 5</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fl">2L</span>, <span class="fl">3L</span>, <span class="fl">4L</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Internal.html" class="external-link">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; @56018c8b8978 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span></span>
+<span><span class="fu">add_one</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Internal.html" class="external-link">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; @56018c8b8978 13 INTSXP g0c2 [REF(6)] (len=4, tl=0) 2,3,4,5</span></span>
+<span><span class="va">x</span></span>
+<span><span class="co">#&gt; [1] 2 3 4 5</span></span></code></pre></div>
 </div>
   </div>
 
@@ -378,7 +378,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

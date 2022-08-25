@@ -46,7 +46,7 @@ cpp_eval() evaluates a single C++ expression and returns the result."><meta name
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     News
      
     <span class="caret"></span>
@@ -82,56 +82,71 @@ cpp_eval() evaluates a single C++ expression and returns the result."><meta name
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">cpp_source</span><span class="op">(</span>
-  <span class="va">file</span>,
-  code <span class="op">=</span> <span class="cn">NULL</span>,
-  env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span>,
-  clean <span class="op">=</span> <span class="cn">TRUE</span>,
-  quiet <span class="op">=</span> <span class="cn">TRUE</span>,
-  cxx_std <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"CXX_STD"</span>, <span class="st">"CXX11"</span><span class="op">)</span>,
-  dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="fu">cpp_function</span><span class="op">(</span>
-  <span class="va">code</span>,
-  env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span>,
-  clean <span class="op">=</span> <span class="cn">TRUE</span>,
-  quiet <span class="op">=</span> <span class="cn">TRUE</span>,
-  cxx_std <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"CXX_STD"</span>, <span class="st">"CXX11"</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="fu">cpp_eval</span><span class="op">(</span>
-  <span class="va">code</span>,
-  env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span>,
-  clean <span class="op">=</span> <span class="cn">TRUE</span>,
-  quiet <span class="op">=</span> <span class="cn">TRUE</span>,
-  cxx_std <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"CXX_STD"</span>, <span class="st">"CXX11"</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cpp_source</span><span class="op">(</span></span>
+<span>  <span class="va">file</span>,</span>
+<span>  code <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  clean <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cxx_std <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"CXX_STD"</span>, <span class="st">"CXX11"</span><span class="op">)</span>,</span>
+<span>  dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">cpp_function</span><span class="op">(</span></span>
+<span>  <span class="va">code</span>,</span>
+<span>  env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  clean <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cxx_std <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"CXX_STD"</span>, <span class="st">"CXX11"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">cpp_eval</span><span class="op">(</span></span>
+<span>  <span class="va">code</span>,</span>
+<span>  env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  clean <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cxx_std <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"CXX_STD"</span>, <span class="st">"CXX11"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>file</dt>
 <dd><p>A file containing C++ code to compile</p></dd>
+
+
 <dt>code</dt>
 <dd><p>If non-null, the C++ code to compile</p></dd>
+
+
 <dt>env</dt>
 <dd><p>The R environment where the R wrapping functions should be defined.</p></dd>
+
+
 <dt>clean</dt>
 <dd><p>If <code>TRUE</code>, cleanup the files after sourcing</p></dd>
+
+
 <dt>quiet</dt>
 <dd><p>If 'TRUE`, do not show compiler output</p></dd>
+
+
 <dt>cxx_std</dt>
 <dd><p>The C++ standard to use, the <code>CXX_STD</code> make macro is set to
 this value. The default value queries the <code>CXX_STD</code> environment variable, or
 uses 'CXX11' if unset.</p></dd>
+
+
 <dt>dir</dt>
 <dd><p>The directory to store the generated source files. <code><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile()</a></code> is
 used by default. The directory will be removed if <code>clean</code> is <code>TRUE</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>For <code>cpp_source()</code> and <code>[cpp_function()]</code> the results of
+    
+
+<p>For <code>cpp_source()</code> and <code>[cpp_function()]</code> the results of
 <code><a href="https://rdrr.io/r/base/dynload.html" class="external-link">dyn.load()</a></code> (invisibly). For <code>[cpp_eval()]</code> the results of the evaluated
 expression.</p>
     </div>
@@ -144,49 +159,49 @@ external packages. This is equivalent to putting those packages in the
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="fu">cpp_source</span><span class="op">(</span></span>
-<span class="r-in">  code <span class="op">=</span> <span class="st">'#include "cpp11/integers.hpp"</span>
-<span class="r-in"></span>
-<span class="r-in">  [[cpp11::register]]</span>
-<span class="r-in">  int num_odd(cpp11::integers x) {</span>
-<span class="r-in">    int total = 0;</span>
-<span class="r-in">    for (int val : x) {</span>
-<span class="r-in">      if ((val % 2) == 1) {</span>
-<span class="r-in">        ++total;</span>
-<span class="r-in">      }</span>
-<span class="r-in">    }</span>
-<span class="r-in">    return total;</span>
-<span class="r-in">  }</span>
-<span class="r-in">  '</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">num_odd</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">15</span>, <span class="fl">23</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">cpp_source</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  code <span class="op">=</span> <span class="st">'#include "cpp11/integers.hpp"</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st">  [[cpp11::register]]</span></span></span>
+<span class="r-in"><span><span class="st">  int num_odd(cpp11::integers x) {</span></span></span>
+<span class="r-in"><span><span class="st">    int total = 0;</span></span></span>
+<span class="r-in"><span><span class="st">    for (int val : x) {</span></span></span>
+<span class="r-in"><span><span class="st">      if ((val % 2) == 1) {</span></span></span>
+<span class="r-in"><span><span class="st">        ++total;</span></span></span>
+<span class="r-in"><span><span class="st">      }</span></span></span>
+<span class="r-in"><span><span class="st">    }</span></span></span>
+<span class="r-in"><span><span class="st">    return total;</span></span></span>
+<span class="r-in"><span><span class="st">  }</span></span></span>
+<span class="r-in"><span><span class="st">  '</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">num_odd</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">15</span>, <span class="fl">23</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/r-lib/progress#readme" class="external-link">"progress"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">cpp_source</span><span class="op">(</span></span>
-<span class="r-in">  code <span class="op">=</span> <span class="st">'</span>
-<span class="r-in">#include &lt;cpp11/R.hpp&gt;</span>
-<span class="r-in">#include &lt;RProgress.h&gt;</span>
-<span class="r-in"></span>
-<span class="r-in">[[cpp11::linking_to("progress")]]</span>
-<span class="r-in"></span>
-<span class="r-in">[[cpp11::register]] void</span>
-<span class="r-in">show_progress() {</span>
-<span class="r-in">  RProgress::RProgress pb("Processing [:bar] ETA: :eta");</span>
-<span class="r-in"></span>
-<span class="r-in">  pb.tick(0);</span>
-<span class="r-in">  for (int i = 0; i &lt; 100; i++) {</span>
-<span class="r-in">    usleep(2.0 / 100 * 1000000);</span>
-<span class="r-in">    pb.tick();</span>
-<span class="r-in">  }</span>
-<span class="r-in">}</span>
-<span class="r-in">'</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">show_progress</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/r-lib/progress#readme" class="external-link">"progress"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">cpp_source</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  code <span class="op">=</span> <span class="st">'</span></span></span>
+<span class="r-in"><span><span class="st">#include &lt;cpp11/R.hpp&gt;</span></span></span>
+<span class="r-in"><span><span class="st">#include &lt;RProgress.h&gt;</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st">[[cpp11::linking_to("progress")]]</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st">[[cpp11::register]] void</span></span></span>
+<span class="r-in"><span><span class="st">show_progress() {</span></span></span>
+<span class="r-in"><span><span class="st">  RProgress::RProgress pb("Processing [:bar] ETA: :eta");</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st">  pb.tick(0);</span></span></span>
+<span class="r-in"><span><span class="st">  for (int i = 0; i &lt; 100; i++) {</span></span></span>
+<span class="r-in"><span><span class="st">    usleep(2.0 / 100 * 1000000);</span></span></span>
+<span class="r-in"><span><span class="st">    pb.tick();</span></span></span>
+<span class="r-in"><span><span class="st">  }</span></span></span>
+<span class="r-in"><span><span class="st">}</span></span></span>
+<span class="r-in"><span><span class="st">'</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">show_progress</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -201,7 +216,7 @@ external packages. This is equivalent to putting those packages in the
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
