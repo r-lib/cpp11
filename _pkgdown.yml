@@ -4,6 +4,14 @@ authors:
   "Jim Hester":
     href: http://jimhester.com
 
+template:
+  package: tidytemplate
+  bootstrap: 5
+
+  includes:
+    in_header: |
+      <script defer data-domain="cpp11.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
+
 development:
   mode: auto
 
