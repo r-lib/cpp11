@@ -420,6 +420,8 @@ static struct {
         R_PreserveObject(preserve_list);
         set_preserve_xptr(preserve_list);
       }
+      if (CDR(preserve_list) == R_NilValue)
+        SETCDR(preserve_list, Rf_cons(R_NilValue, R_NilValue));
     }
 
     return preserve_list;
