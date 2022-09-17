@@ -315,7 +315,7 @@ static struct {
 
     static SEXP list_ = get_preserve_list();
 
-    // Get referneces to head, tail of the precious list.
+    // Get references to head, tail of the precious list.
     SEXP head = list_;
     SEXP tail = CDR(list_);
 
@@ -367,10 +367,6 @@ static struct {
     // Get a reference to the cells before and after the token.
     SEXP lhs = CAR(cell);
     SEXP rhs = CDR(cell);
-
-    if (lhs == R_NilValue && rhs == R_NilValue) {
-      Rf_error("should never happen");
-    }
 
     // Remove the cell from the precious list -- effectively, we do this
     // by updating the 'lhs' and 'rhs' references to point at each-other,
