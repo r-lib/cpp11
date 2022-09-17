@@ -424,6 +424,6 @@ static struct {
 
     return preserve_list;
   }
-}  // namespace cpp11
-preserved;
+} preserved;
+
 }  // namespace cpp11
