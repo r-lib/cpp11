@@ -411,21 +411,29 @@ static struct {
   }
 
   static SEXP get_preserve_list() {
-    static SEXP preserve_list = R_NilValue;
 
+    static SEXP preserve_list = R_NilValue;
     if (TYPEOF(preserve_list) != LISTSXP) {
+
       preserve_list = get_preserve_xptr_addr();
       if (TYPEOF(preserve_list) != LISTSXP) {
         preserve_list = Rf_cons(R_NilValue, Rf_cons(R_NilValue, R_NilValue));
         R_PreserveObject(preserve_list);
         set_preserve_xptr(preserve_list);
       }
+
+      // NOTE: Because older versions of cpp11 (<= 0.4.2) initialized the
+      // precious_list with a single cell, we might need to detect and update
+      // an existing empty precious list so that we have a second cell following.
       if (CDR(preserve_list) == R_NilValue)
         SETCDR(preserve_list, Rf_cons(R_NilValue, R_NilValue));
+
     }
 
     return preserve_list;
+
   }
+
 } preserved;
 
 }  // namespace cpp11
