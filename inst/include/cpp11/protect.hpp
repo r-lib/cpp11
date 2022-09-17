@@ -315,16 +315,17 @@ static struct {
 
     static SEXP list_ = get_preserve_list();
 
-    // Add a new cell that points to the previous end.
-    SEXP cell = PROTECT(Rf_cons(list_, CDR(list_)));
+    // Get referneces to head, tail of the precious list.
+    SEXP head = list_;
+    SEXP tail = CDR(list_);
 
+    // Add a new cell that points to the previous end.
+    SEXP cell = PROTECT(Rf_cons(head, tail));
     SET_TAG(cell, obj);
 
-    SETCDR(list_, cell);
-
-    if (CDR(cell) != R_NilValue) {
-      SETCAR(CDR(cell), cell);
-    }
+    // Update the head + tail to point at this cell.
+    SETCDR(head, cell);
+    SETCAR(tail, cell);
 
     UNPROTECT(2);
 
@@ -362,19 +363,15 @@ static struct {
     return;
 #endif
 
-    SEXP before = CAR(token);
+    SEXP head = CAR(token);
+    SEXP tail = CDR(token);
 
-    SEXP after = CDR(token);
-
-    if (before == R_NilValue && after == R_NilValue) {
+    if (head == R_NilValue && tail == R_NilValue) {
       Rf_error("should never happen");
     }
 
-    SETCDR(before, after);
-
-    if (after != R_NilValue) {
-      SETCAR(after, before);
-    }
+    SETCDR(head, tail);
+    SETCAR(tail, head);
   }
 
  private:
@@ -418,7 +415,7 @@ static struct {
     if (TYPEOF(preserve_list) != LISTSXP) {
       preserve_list = get_preserve_xptr_addr();
       if (TYPEOF(preserve_list) != LISTSXP) {
-        preserve_list = Rf_cons(R_NilValue, R_NilValue);
+        preserve_list = Rf_cons(R_NilValue, Rf_cons(R_NilValue, R_NilValue));
         R_PreserveObject(preserve_list);
         set_preserve_xptr(preserve_list);
       }

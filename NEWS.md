@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* Minor performance improvements to the cpp11 protect code. (@kevinushey)
+
 * Modernized the GitHub Actions workflows and updated some internal tests to
   better align with changes in those workflows and the latest version of R
   (#279).
