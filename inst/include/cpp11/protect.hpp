@@ -319,11 +319,12 @@ static struct {
     SEXP head = list_;
     SEXP tail = CDR(list_);
 
-    // Add a new cell that points to the previous end.
+    // Add a new cell that points to the current head + tail.
     SEXP cell = PROTECT(Rf_cons(head, tail));
     SET_TAG(cell, obj);
 
-    // Update the head + tail to point at this cell.
+    // Update the head + tail to point at the newly-created cell,
+    // effectively inserting that cell between the current head + tail.
     SETCDR(head, cell);
     SETCAR(tail, cell);
 
@@ -353,25 +354,29 @@ static struct {
 #endif
   }
 
-  void release(SEXP token) {
-    if (token == R_NilValue) {
+  void release(SEXP cell) {
+    if (cell == R_NilValue) {
       return;
     }
 
 #ifdef CPP11_USE_PRESERVE_OBJECT
-    R_ReleaseObject(token);
+    R_ReleaseObject(cell);
     return;
 #endif
 
-    SEXP head = CAR(token);
-    SEXP tail = CDR(token);
+    // Get a reference to the cells before and after the token.
+    SEXP lhs = CAR(cell);
+    SEXP rhs = CDR(cell);
 
-    if (head == R_NilValue && tail == R_NilValue) {
+    if (lhs == R_NilValue && rhs == R_NilValue) {
       Rf_error("should never happen");
     }
 
-    SETCDR(head, tail);
-    SETCAR(tail, head);
+    // Remove the cell from the precious list -- effectively, we do this
+    // by updating the 'lhs' and 'rhs' references to point at each-other,
+    // effectively removing any references to the cell in the pairlist.
+    SETCDR(lhs, rhs);
+    SETCAR(rhs, lhs);
   }
 
  private:
