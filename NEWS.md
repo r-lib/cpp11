@@ -6,6 +6,8 @@
 
 * `cpp_source()` errors on non-existent file (#261). 
 
+* `cpp_register()` is quiet by default when R is non interactive.
+
 # cpp11 0.4.2
 
 * Romain François is now the maintainer.
