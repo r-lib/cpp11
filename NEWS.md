@@ -8,6 +8,8 @@
 
 * `cpp_register()` is quiet by default when R is non interactive (#289).
 
+* updated test to adapt to changes in R 4.2.1 (#290).
+
 # cpp11 0.4.2
 
 * Romain François is now the maintainer.
