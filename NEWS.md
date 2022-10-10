@@ -6,6 +6,8 @@
 
 * `cpp_source()` errors on non-existent file (#261). 
 
+* updated test to adapt to changes in R 4.2.1 (#290).
+
 # cpp11 0.4.2
 
 * Romain François is now the maintainer.

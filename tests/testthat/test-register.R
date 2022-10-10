@@ -59,6 +59,7 @@ describe("get_call_entries", {
     dir.create(file.path(path, "R"))
     writeLines('foo <- function() .Call("bar")', file.path(path, "R", "foo.R"))
     call_entries <- get_call_entries(path, get_funs(path)$name, get_package_name(path))
+    # R added `(void)` to the signature after R 4.2.1
     expect_match(call_entries[2], "extern SEXP bar[(](void)?[)]")
     expect_equal(
       call_entries[4:7],
