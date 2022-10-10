@@ -6,7 +6,7 @@
 
 * `cpp_source()` errors on non-existent file (#261). 
 
-* `cpp_register()` is quiet by default when R is non interactive.
+* `cpp_register()` is quiet by default when R is non interactive (#289).
 
 # cpp11 0.4.2
 
