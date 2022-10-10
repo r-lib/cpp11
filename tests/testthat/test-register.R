@@ -614,12 +614,15 @@ extern \"C\" attribute_visible void R_init_testPkg(DllInfo* dll){
   })
 
 
-  it("can be run with messages, by default", {
+  it("can be run with messages", {
     pkg <- local_package()
     p <- pkg_path(pkg)
     dir.create(file.path(p, "src"))
     file.copy(test_path("single.cpp"), file.path(p, "src", "single.cpp"))
-    expect_message(cpp_register(p), "1 functions decorated with [[cpp11::register]]", fixed = TRUE)
+
+    expect_snapshot(
+      cpp_register(p, quiet = FALSE)
+    )
   })
 
   it("includes pkg_types.h if included in src", {
