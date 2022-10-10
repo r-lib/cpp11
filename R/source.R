@@ -109,9 +109,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   #provide original path for error messages
   check_valid_attributes(all_decorations, file = orig_file_path)
 
-  cli_suppress(
-    funs <- get_registered_functions(all_decorations, "cpp11::register", quiet = quiet)
-  )
+  funs <- get_registered_functions(all_decorations, "cpp11::register", quiet = quiet)
   cpp_functions_definitions <- generate_cpp_functions(funs, package = package)
 
   cpp_path <- file.path(dirname(new_file_path), "cpp11.cpp")
