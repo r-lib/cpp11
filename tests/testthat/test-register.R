@@ -619,12 +619,9 @@ extern \"C\" attribute_visible void R_init_testPkg(DllInfo* dll){
     p <- pkg_path(pkg)
     dir.create(file.path(p, "src"))
     file.copy(test_path("single.cpp"), file.path(p, "src", "single.cpp"))
-    suppressMessages(
-      # cpp_register() sends 3 messages, but expect_message() only checks
-      # for one, so suppress the other ones, so that they don't appear in the
-      # testthat output
-      expect_message(
-        cpp_register(p, quiet = FALSE), "1 functions decorated with [[cpp11::register]]", fixed = TRUE)
+
+    expect_snapshot(
+      cpp_register(p, quiet = FALSE)
     )
   })
 
