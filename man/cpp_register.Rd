@@ -4,10 +4,13 @@
 \alias{cpp_register}
 \title{Generates wrappers for registered C++ functions}
 \usage{
-cpp_register(path = ".", quiet = FALSE)
+cpp_register(path = ".", use_package = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{path}{The path to the package root directory}
+
+\item{use_package}{If \code{TRUE}, uses \code{.Call("yourfunc", ..., PACKAGE="yourpackage")}
+to call C++ functions, otherwise (the default) uses \code{.Call(`yourfunc`, ...)}.}
 
 \item{quiet}{If \code{TRUE} suppresses output from this function}
 }
