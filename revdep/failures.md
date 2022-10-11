@@ -28,9 +28,9 @@ Run `revdep_details(, "archive")` for more info
 * installing *source* package ‘archive’ ...
 ** package ‘archive’ successfully unpacked and MD5 sums checked
 ** using staged installation
-Homebrew 3.6.2
-Homebrew/homebrew-core (git revision f890e2444f9; last commit 2022-09-20)
-Homebrew/homebrew-cask (git revision 453312f43c; last commit 2022-09-20)
+Homebrew 3.6.5
+Homebrew/homebrew-core (git revision 93e8774c371; last commit 2022-10-11)
+Homebrew/homebrew-cask (git revision 1ca8537626; last commit 2022-10-11)
 PKG_CFLAGS=-I/opt/homebrew/opt/libarchive/include
 PKG_LIBS=-L/opt/homebrew/opt/libarchive/lib -larchive
 <stdin>:1:10: fatal error: 'archive.h' file not found
@@ -55,9 +55,9 @@ ERROR: configuration failed for package ‘archive’
 * installing *source* package ‘archive’ ...
 ** package ‘archive’ successfully unpacked and MD5 sums checked
 ** using staged installation
-Homebrew 3.6.2
-Homebrew/homebrew-core (git revision f890e2444f9; last commit 2022-09-20)
-Homebrew/homebrew-cask (git revision 453312f43c; last commit 2022-09-20)
+Homebrew 3.6.5
+Homebrew/homebrew-core (git revision 93e8774c371; last commit 2022-10-11)
+Homebrew/homebrew-cask (git revision 1ca8537626; last commit 2022-10-11)
 PKG_CFLAGS=-I/opt/homebrew/opt/libarchive/include
 PKG_LIBS=-L/opt/homebrew/opt/libarchive/lib -larchive
 <stdin>:1:10: fatal error: 'archive.h' file not found
@@ -220,88 +220,6 @@ ERROR: compilation failed for package ‘hilbert’
 
 
 ```
-# particles
-
-<details>
-
-* Version: 
-* GitHub: https://github.com/r-lib/cpp11
-* Source code: NA
-* Number of recursive dependencies: 0
-
-</details>
-
-## Error before installation
-
-### Devel
-
-```
-
-
-
-Warning: unable to access index for repository https://bioconductor.org/packages/3.15/bioc/bin/macosx/big-sur-arm64/contrib/4.2:
-  cannot open URL 'https://bioconductor.org/packages/3.15/bioc/bin/macosx/big-sur-arm64/contrib/4.2/PACKAGES'
-Warning: unable to access index for repository https://bioconductor.org/packages/3.15/bioc/bin/macosx/big-sur-arm64/contrib/4.2:
-  cannot open URL 'https://bioconductor.org/packages/3.15/bioc/bin/macosx/big-sur-arm64/contrib/4.2/PACKAGES'
-Warning: unable to access index for repository https://bioconductor.org/packages/3.15/data/annotation/bin/macosx/big-sur-arm64/contrib/4.2:
-  cannot open URL 'https://bioconductor.org/packages/3.15/data/annotation/bin/macosx/big-sur-arm64/contrib/4.2/PACKAGES'
-Warning: unable to access index for repository https://bioconductor.org/packages/3.15/data/annotation/bin/macosx/big-sur-arm64/contrib/4.2:
-  cannot open URL 'https://bioconductor.org/packages/3.15/data/annotation/bin/macosx/big-sur-arm64/contrib/4.2/PACKAGES'
-Warning: unable to access index for repository https://bioconductor.org/packages/3.15/data/experiment/bin/macosx/big-sur-arm64/contrib/4.2:
-  cannot open URL 'https://bioconductor.org/packages/3.15/data/experiment/bin/macosx/big-sur-arm64/contrib/4.2/PACKAGES'
-Warning: unable to access index for repository https://bioconductor.org/packages/3.15/data/experiment/bin/macosx/big-sur-arm64/contrib/4.2:
-  cannot open URL 'https://bioconductor.org/packages/3.15/data/experiment/bin/macosx/big-sur-arm64/contrib/4.2/PACKAGES'
-Warning: unable to access index for repository https://bioconductor.org/packages/3.15/workflows/bin/macosx/big-sur-arm64/contrib/4.2:
-  cannot open URL 'https://bioconductor.org/packages/3.15/workflows/bin/macosx/big-sur-arm64/contrib/4.2/PACKAGES'
-Warning: unable to access index for repository https://bioconductor.org/packages/3.15/workflows/bin/macosx/big-sur-arm64/contrib/4.2:
-  cannot open URL 'https://bioconductor.org/packages/3.15/workflows/bin/macosx/big-sur-arm64/contrib/4.2/PACKAGES'
-
-
-```
-### CRAN
-
-```
-
-
-
-Warning: unable to access index for repository https://bioconductor.org/packages/3.15/bioc/bin/macosx/big-sur-arm64/contrib/4.2:
-  cannot open URL 'https://bioconductor.org/packages/3.15/bioc/bin/macosx/big-sur-arm64/contrib/4.2/PACKAGES'
-Warning: unable to access index for repository https://bioconductor.org/packages/3.15/bioc/bin/macosx/big-sur-arm64/contrib/4.2:
-  cannot open URL 'https://bioconductor.org/packages/3.15/bioc/bin/macosx/big-sur-arm64/contrib/4.2/PACKAGES'
-Warning: unable to access index for repository https://bioconductor.org/packages/3.15/data/annotation/bin/macosx/big-sur-arm64/contrib/4.2:
-  cannot open URL 'https://bioconductor.org/packages/3.15/data/annotation/bin/macosx/big-sur-arm64/contrib/4.2/PACKAGES'
-Warning: unable to access index for repository https://bioconductor.org/packages/3.15/data/annotation/bin/macosx/big-sur-arm64/contrib/4.2:
-  cannot open URL 'https://bioconductor.org/packages/3.15/data/annotation/bin/macosx/big-sur-arm64/contrib/4.2/PACKAGES'
-Warning: unable to access index for repository https://bioconductor.org/packages/3.15/data/experiment/bin/macosx/big-sur-arm64/contrib/4.2:
-  cannot open URL 'https://bioconductor.org/packages/3.15/data/experiment/bin/macosx/big-sur-arm64/contrib/4.2/PACKAGES'
-Warning: unable to access index for repository https://bioconductor.org/packages/3.15/data/experiment/bin/macosx/big-sur-arm64/contrib/4.2:
-  cannot open URL 'https://bioconductor.org/packages/3.15/data/experiment/bin/macosx/big-sur-arm64/contrib/4.2/PACKAGES'
-Warning: unable to access index for repository https://bioconductor.org/packages/3.15/workflows/bin/macosx/big-sur-arm64/contrib/4.2:
-  cannot open URL 'https://bioconductor.org/packages/3.15/workflows/bin/macosx/big-sur-arm64/contrib/4.2/PACKAGES'
-Warning: unable to access index for repository https://bioconductor.org/packages/3.15/workflows/bin/macosx/big-sur-arm64/contrib/4.2:
-  cannot open URL 'https://bioconductor.org/packages/3.15/workflows/bin/macosx/big-sur-arm64/contrib/4.2/PACKAGES'
-
-
-```
-# pkgbuild
-
-<details>
-
-* Version: 1.3.1
-* GitHub: https://github.com/r-lib/pkgbuild
-* Source code: https://github.com/cran/pkgbuild
-* Date/Publication: 2021-12-20 13:00:02 UTC
-* Number of recursive dependencies: 44
-
-Run `revdep_details(, "pkgbuild")` for more info
-
-</details>
-
-## Newly broken
-
-*   R CMD check timed out
-    
-
 # RcppAlgos
 
 <details>
