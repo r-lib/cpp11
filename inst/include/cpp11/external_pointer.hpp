@@ -73,11 +73,11 @@ class external_pointer {
   external_pointer& operator=(std::nullptr_t) noexcept { reset(); }
 
   SEXP tag() const noexcept {
-    return safe[R_ExternalPtrTag](data_); // use safe?
+    return R_ExternalPtrTag(data_);
   }
 
   void set_tag(SEXP tag) noexcept {
-    safe[R_SetExternalPtrTag](data_, tag); // use safe?
+    R_SetExternalPtrTag(data_, tag);
   }
 
   operator SEXP() const noexcept { return data_; }
