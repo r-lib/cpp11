@@ -39,7 +39,13 @@ context("external_pointer-C++") {
 
   test_that("can set and get tag") {
     cpp11::external_pointer<int> extptr(new int);
-    extptr->set_tag(NA_Integer);
-    expect_true(extptr->tag() == NA_Integer);
+    SEXP num = PROTECT(Rf_allocVector(REALSXP, 1));
+    REAL(num)[0] = 42;
+    extptr.set_tag(num);
+
+    SEXP tag = extptr.tag();
+    expect_true(REAL(tag)[0] == 42);
+
+    UNPROTECT(1);
   }
 }
