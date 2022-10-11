@@ -36,7 +36,7 @@ context("external_pointer-C++") {
     uniq.reset();
     expect_true(deleted == true);
   }
-  
+
   test_that("can set and get tag") {
     cpp11::external_pointer<int> extptr(new int);
     extptr->set_tag(NA_Integer);

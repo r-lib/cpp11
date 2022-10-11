@@ -70,14 +70,14 @@ class external_pointer {
 
   external_pointer& operator=(external_pointer&& rhs) noexcept { reset(rhs.release()); }
 
-  external_pointer& operator=(std::nullptr_t) noexcept { reset(); };
-  
+  external_pointer& operator=(std::nullptr_t) noexcept { reset(); }
+
   SEXP tag() const noexcept {
-    return safe[R_ExternalPtrTag](data_);    // use safe?
+    return safe[R_ExternalPtrTag](data_); // use safe?
   }
-  
+
   void set_tag(SEXP tag) noexcept {
-    safe[R_SetExternalPtrTag](data_, tag);    // use safe?
+    safe[R_SetExternalPtrTag](data_, tag); // use safe?
   }
 
   operator SEXP() const noexcept { return data_; }
