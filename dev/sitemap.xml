@@ -1,63 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://cpp11.r-lib.org/CODE_OF_CONDUCT.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/CODE_OF_CONDUCT.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/CONTRIBUTING.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/CONTRIBUTING.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/LICENSE-text.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/LICENSE.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/MAINTENANCE.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/MAINTENANCE.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/SUPPORT.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/SUPPORT.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/articles/FAQ.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/articles/FAQ.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/articles/converting.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/articles/converting.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/articles/cpp11.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/articles/cpp11.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/articles/index.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/articles/internals.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/articles/internals.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/articles/motivations.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/articles/motivations.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/authors.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/authors.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/index.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/index.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/news/index.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/news/index.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/reference/cpp11-package.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/reference/cpp11-package.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/reference/cpp_register.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/reference/cpp_register.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/reference/cpp_source.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/reference/cpp_source.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/reference/cpp_vendor.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/reference/cpp_vendor.html</loc>
   </url>
   <url>
-    <loc>https://cpp11.r-lib.org/reference/index.html</loc>
+    <loc>https://cpp11.r-lib.org/dev/reference/index.html</loc>
   </url>
 </urlset>
