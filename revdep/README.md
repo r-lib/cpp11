@@ -22,15 +22,12 @@
 
 # Revdeps
 
-## Failed to check (7)
+## Failed to check (4)
 
 |package     |version |error |warning |note |
 |:-----------|:-------|:-----|:-------|:----|
-|archive     |1.1.5   |1     |        |     |
-|elbird      |0.2.5   |1     |        |     |
 |hilbert     |0.2.1   |1     |        |     |
 |RcppAlgos   |2.6.0   |1     |        |     |
 |svglite     |2.1.0   |1     |        |     |
-|textshaping |0.3.6   |1     |        |     |
 |vdiffr      |1.0.4   |1     |        |     |
 
