@@ -166,7 +166,7 @@ Exceptions provide a clean, safe way for objects to obtain and cleanup resources
 ### C safety
 
 The C language does not have support for exceptions, so error handling is done a variety of ways.
-These include error codes like [errno](https://en.cppreference.com/w/c/error/errno), conditional statements, and in the R codebase the [longjmp](http://www.cplusplus.com/reference/csetjmp/longjmp/) function.
+These include error codes like [errno](https://en.cppreference.com/w/c/error/errno), conditional statements, and in the R codebase the [longjmp](https://cplusplus.com/reference/csetjmp/longjmp/) function.
 
 `longjmp`, which stands for 'long jump' is a function that allows you to transfer the control flow of a program to another location elsewhere in the program.
 R uses long jumps extensively in its error handling routines.
@@ -351,7 +351,7 @@ cpp11 takes a more limited scope, providing only the set of r_vector wrappers fo
 ```{r, eval = FALSE, include = FALSE}
 # count lines for Rcpp headers (excluding comments)
 # brew install cloc
-git clone https://github.com/RcppCore/Rcpp.git
+git clone https://github.com/RcppCore/Rcpp
 cd Rcpp
 git checkout 1.0.4
 cloc inst/include
@@ -360,7 +360,7 @@ cloc inst/include
 cloc --fullpath --not-match-f '.*generated.*' inst/include
 
 # count lines for cpp11 headers
-git clone https://github.com/r-lib/cpp11.git
+git clone https://github.com/r-lib/cpp11
 cd cpp11
 cloc inst/include
 
