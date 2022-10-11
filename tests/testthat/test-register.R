@@ -615,6 +615,7 @@ extern \"C\" attribute_visible void R_init_testPkg(DllInfo* dll){
 
 
   it("can be run with messages", {
+    local_reproducible_output()
     pkg <- local_package()
     p <- pkg_path(pkg)
     dir.create(file.path(p, "src"))
