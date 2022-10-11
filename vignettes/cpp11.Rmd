@@ -13,6 +13,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   eval = as.logical(Sys.getenv("CPP11_EVAL", "false"))
 )
+library(cpp11)
 ```
 
 *This content is adapted (with permission) from the [Rcpp chapter](https://adv-r.hadley.nz/rcpp.html) of Hadley Wickham's book Advanced R.*
