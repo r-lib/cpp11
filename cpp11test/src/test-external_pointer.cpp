@@ -42,10 +42,9 @@ context("external_pointer-C++") {
     SEXP num = PROTECT(Rf_allocVector(REALSXP, 1));
     REAL(num)[0] = 42;
     extptr.set_tag(num);
+    UNPROTECT(1);
 
     SEXP tag = extptr.tag();
     expect_true(REAL(tag)[0] == 42);
-
-    UNPROTECT(1);
   }
 }
