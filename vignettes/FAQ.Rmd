@@ -24,7 +24,7 @@ If you have a question that you think would fit well here please [open an issue]
  | ---             | ---             |
  | cpp11::integers | int             |
  | cpp11::doubles  | double          |
- | cpp11::logical  | cpp11::r_bool   |
+ | cpp11::logicals | cpp11::r_bool   |
  | cpp11::strings  | cpp11::r_string |
  | cpp11::raws     | uint8_t         |
  | cpp11::list     | SEXP            |

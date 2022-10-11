@@ -3,7 +3,15 @@
 * `as_doubles()` and `as_integers()` now propagate missing values correctly
   (#265).
 
+* Modernized the GitHub Actions workflows and updated some internal tests to
+  better align with changes in those workflows and the latest version of R
+  (#279).
+
 * `cpp_source()` errors on non-existent file (#261). 
+
+* `cpp_register()` is quiet by default when R is non interactive (#289).
+
+* updated test to adapt to changes in R 4.2.1 (#290).
 
 # cpp11 0.4.2
 
