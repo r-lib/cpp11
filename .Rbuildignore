@@ -27,3 +27,4 @@ script.R
 ^MAINTENANCE\.md$
 ^doc$
 ^Meta$
+^CRAN-SUBMISSION$
