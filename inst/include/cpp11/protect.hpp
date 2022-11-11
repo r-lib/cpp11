@@ -78,9 +78,7 @@ inline Rboolean* access_should_unwind_protect() {
   return p_should_unwind_protect;
 }
 
-inline Rboolean get_should_unwind_protect() {
-  return *access_should_unwind_protect();
-}
+inline Rboolean get_should_unwind_protect() { return *access_should_unwind_protect(); }
 
 inline void set_should_unwind_protect(Rboolean should_unwind_protect) {
   *access_should_unwind_protect() = should_unwind_protect;
