@@ -29,7 +29,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">cpp11</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.4.2.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.4.3.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,7 +98,9 @@
 
     
     
-<p>Below are some Frequently Asked Questions about cpp11. If you have a question that you think would fit well here please <a href="https://github.com/r-lib/cpp11/issues/new/choose" class="external-link">open an issue</a>.</p>
+<p>Below are some Frequently Asked Questions about cpp11. If you have a
+question that you think would fit well here please <a href="https://github.com/r-lib/cpp11/issues/new/choose" class="external-link">open an
+issue</a>.</p>
 <div class="section level4">
 <h4 id="what-are-the-underlying-types-of-cpp11-objects">1. What are the underlying types of cpp11 objects?<a class="anchor" aria-label="anchor" href="#what-are-the-underlying-types-of-cpp11-objects"></a>
 </h4>
@@ -138,7 +140,9 @@
 <div class="section level4">
 <h4 id="how-do-i-add-elements-to-a-named-list">2. How do I add elements to a named list?<a class="anchor" aria-label="anchor" href="#how-do-i-add-elements-to-a-named-list"></a>
 </h4>
-<p>Use the <code>push_back()</code> method with the named literal syntax. The named literal syntax is defined in the <code>cpp11::literals</code> namespace.</p>
+<p>Use the <code>push_back()</code> method with the named literal
+syntax. The named literal syntax is defined in the
+<code>cpp11::literals</code> namespace.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
@@ -154,7 +158,11 @@
 <div class="section level4">
 <h4 id="does-cpp11-support-default-arguments">3. Does cpp11 support default arguments?<a class="anchor" aria-label="anchor" href="#does-cpp11-support-default-arguments"></a>
 </h4>
-<p>cpp11 does not support default arguments, while convenient they would require more complexity to support than is currently worthwhile. If you need default argument support you can use a wrapper function around your cpp11 registered function. A common convention is to name the internal function with a trailing <code>_</code>.</p>
+<p>cpp11 does not support default arguments, while convenient they would
+require more complexity to support than is currently worthwhile. If you
+need default argument support you can use a wrapper function around your
+cpp11 registered function. A common convention is to name the internal
+function with a trailing <code>_</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> <span class="va">add_some_</span><span class="op">(</span><span class="dt">double</span> x<span class="op">,</span> <span class="dt">double</span> amount<span class="op">)</span> <span class="op">{</span></span>
@@ -199,9 +207,11 @@
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="how-do-i-return-a-cpp11writablelogicals-object-with-only-a-false-value">7. How do I return a <code>cpp11::writable::logicals</code> object with only a <code>FALSE</code> value?<a class="anchor" aria-label="anchor" href="#how-do-i-return-a-cpp11writablelogicals-object-with-only-a-false-value"></a>
+<h4 id="how-do-i-return-a-cpp11writablelogicals-object-with-only-a-false-value">7. How do I return a <code>cpp11::writable::logicals</code> object
+with only a <code>FALSE</code> value?<a class="anchor" aria-label="anchor" href="#how-do-i-return-a-cpp11writablelogicals-object-with-only-a-false-value"></a>
 </h4>
-<p>You need to use <a href="https://en.cppreference.com/w/cpp/language/list_initialization" class="external-link">list initialization</a> with <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{}</a></code> to create the object.</p>
+<p>You need to use <a href="https://en.cppreference.com/w/cpp/language/list_initialization" class="external-link">list
+initialization</a> with <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{}</a></code> to create the object.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
@@ -231,7 +241,9 @@
 <div class="section level4">
 <h4 id="how-do-i-create-a-new-empty-environment">8. How do I create a new empty environment?<a class="anchor" aria-label="anchor" href="#how-do-i-create-a-new-empty-environment"></a>
 </h4>
-<p>To do this you need to call the <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">base::new.env()</a></code> function from C++. This can be done by creating a <code>cpp11::function</code> object and then calling it to generate the new environment.</p>
+<p>To do this you need to call the <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">base::new.env()</a></code> function
+from C++. This can be done by creating a <code>cpp11::function</code>
+object and then calling it to generate the new environment.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
@@ -241,9 +253,12 @@
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="how-do-i-assign-and-retrieve-values-in-an-environment-what-happens-if-i-try-to-get-a-value-that-doesnt-exist">9. How do I assign and retrieve values in an environment? What happens if I try to get a value that doesn’t exist?<a class="anchor" aria-label="anchor" href="#how-do-i-assign-and-retrieve-values-in-an-environment-what-happens-if-i-try-to-get-a-value-that-doesnt-exist"></a>
+<h4 id="how-do-i-assign-and-retrieve-values-in-an-environment-what-happens-if-i-try-to-get-a-value-that-doesnt-exist">9. How do I assign and retrieve values in an environment? What
+happens if I try to get a value that doesn’t exist?<a class="anchor" aria-label="anchor" href="#how-do-i-assign-and-retrieve-values-in-an-environment-what-happens-if-i-try-to-get-a-value-that-doesnt-exist"></a>
 </h4>
-<p>Use <code>[]</code> to retrieve or assign values from an environment by name. If a value does not exist it will return <code>R_UnboundValue</code>.</p>
+<p>Use <code>[]</code> to retrieve or assign values from an environment
+by name. If a value does not exist it will return
+<code>R_UnboundValue</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
@@ -267,9 +282,11 @@
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="how-can-i-create-a-cpp11raws-from-a-stdstring">10. How can I create a <code>cpp11:raws</code> from a <code>std::string</code>?<a class="anchor" aria-label="anchor" href="#how-can-i-create-a-cpp11raws-from-a-stdstring"></a>
+<h4 id="how-can-i-create-a-cpp11raws-from-a-stdstring">10. How can I create a <code>cpp11:raws</code> from a
+<code>std::string</code>?<a class="anchor" aria-label="anchor" href="#how-can-i-create-a-cpp11raws-from-a-stdstring"></a>
 </h4>
-<p>There is no built in way to do this. One method would be to <code>push_back()</code> each element of the string individually.</p>
+<p>There is no built in way to do this. One method would be to
+<code>push_back()</code> each element of the string individually.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
@@ -288,9 +305,11 @@
 <span><span class="co">#&gt; [1] 68 69</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="how-can-i-create-a-stdstring-from-a-cpp11writablestring">11. How can I create a <code>std::string</code> from a <code>cpp11::writable::string</code>?<a class="anchor" aria-label="anchor" href="#how-can-i-create-a-stdstring-from-a-cpp11writablestring"></a>
+<h4 id="how-can-i-create-a-stdstring-from-a-cpp11writablestring">11. How can I create a <code>std::string</code> from a
+<code>cpp11::writable::string</code>?<a class="anchor" aria-label="anchor" href="#how-can-i-create-a-stdstring-from-a-cpp11writablestring"></a>
 </h4>
-<p>Because C++ does not allow for two implicit cast, explicitly cast to <code>cpp11::r_string</code> first.</p>
+<p>Because C++ does not allow for two implicit cast, explicitly cast to
+<code>cpp11::r_string</code> first.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -304,12 +323,22 @@
 <div class="section level4">
 <h4 id="what-are-the-types-for-c-iterators">12. What are the types for C++ iterators?<a class="anchor" aria-label="anchor" href="#what-are-the-types-for-c-iterators"></a>
 </h4>
-<p>The iterators are <code>::iterator</code> classes contained inside the vector classes. For example the iterator for <code>cpp11::doubles</code> would be <code>cpp11::doubles::iterator</code> and the iterator for <code>cpp11::writable::doubles</code> would be <code>cpp11::writable::doubles::iterator</code>.</p>
+<p>The iterators are <code>::iterator</code> classes contained inside
+the vector classes. For example the iterator for
+<code>cpp11::doubles</code> would be
+<code>cpp11::doubles::iterator</code> and the iterator for
+<code>cpp11::writable::doubles</code> would be
+<code>cpp11::writable::doubles::iterator</code>.</p>
 </div>
 <div class="section level4">
-<h4 id="my-code-has-using-namespace-std-why-do-i-still-have-to-include-std-in-the-signatures-of-cpp11register-functions">13. My code has <code>using namespace std</code>, why do I still have to include <code>std::</code> in the signatures of <code>[[cpp11::register]]</code> functions?<a class="anchor" aria-label="anchor" href="#my-code-has-using-namespace-std-why-do-i-still-have-to-include-std-in-the-signatures-of-cpp11register-functions"></a>
+<h4 id="my-code-has-using-namespace-std-why-do-i-still-have-to-include-std-in-the-signatures-of-cpp11register-functions">13. My code has <code>using namespace std</code>, why do I still
+have to include <code>std::</code> in the signatures of
+<code>[[cpp11::register]]</code> functions?<a class="anchor" aria-label="anchor" href="#my-code-has-using-namespace-std-why-do-i-still-have-to-include-std-in-the-signatures-of-cpp11register-functions"></a>
 </h4>
-<p>The <code>using namespace std</code> directive will not be included in the generated code of the function signatures, so they still need to be fully qualified. However you will <em>not</em> need to qualify the type names within those functions.</p>
+<p>The <code>using namespace std</code> directive will not be included
+in the generated code of the function signatures, so they still need to
+be fully qualified. However you will <em>not</em> need to qualify the
+type names within those functions.</p>
 <p>The following won’t compile</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
@@ -334,8 +363,12 @@
 <div class="section level4">
 <h4 id="how-do-i-modify-a-vector-in-place">14. How do I modify a vector in place?<a class="anchor" aria-label="anchor" href="#how-do-i-modify-a-vector-in-place"></a>
 </h4>
-<p>In place modification breaks the normal semantics of R code. In general it should be avoided, which is why <code>cpp11::writable</code> classes always copy their data when constructed.</p>
-<p>However if you are <em>positive</em> in-place modification is necessary for your use case you can use the move constructor to do this.</p>
+<p>In place modification breaks the normal semantics of R code. In
+general it should be avoided, which is why <code>cpp11::writable</code>
+classes always copy their data when constructed.</p>
+<p>However if you are <em>positive</em> in-place modification is
+necessary for your use case you can use the move constructor to do
+this.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
@@ -348,10 +381,10 @@
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fl">2L</span>, <span class="fl">3L</span>, <span class="fl">4L</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Internal.html" class="external-link">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; @561db564b7e8 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span></span>
+<span><span class="co">#&gt; @55c00be56128 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span></span>
 <span><span class="fu">add_one</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Internal.html" class="external-link">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; @561db564b7e8 13 INTSXP g0c2 [REF(6)] (len=4, tl=0) 2,3,4,5</span></span>
+<span><span class="co">#&gt; @55c00be56128 13 INTSXP g0c2 [REF(6)] (len=4, tl=0) 2,3,4,5</span></span>
 <span><span class="va">x</span></span>
 <span><span class="co">#&gt; [1] 2 3 4 5</span></span></code></pre></div>
 </div>

@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">cpp11</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.4.2.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.4.3.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,6 +67,10 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="cpp11-development-version">cpp11 (development version)<a class="anchor" aria-label="anchor" href="#cpp11-development-version"></a></h2>
+<ul><li>Silenced an unknown attribute warning specific to the Intel compiler (r-lib/systemfonts#98).</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.3" id="cpp11-043">cpp11 0.4.3<a class="anchor" aria-label="anchor" href="#cpp11-043"></a></h2><p class="text-muted">CRAN release: 2022-10-12</p>
 <ul><li><p>Modernized the GitHub Actions workflows and updated some internal tests to better align with changes in those workflows and the latest version of R (<a href="https://github.com/r-lib/cpp11/issues/279" class="external-link">#279</a>).</p></li>
 <li><p><code><a href="../reference/cpp_source.html">cpp_source()</a></code> errors on non-existent file (<a href="https://github.com/r-lib/cpp11/issues/261" class="external-link">#261</a>).</p></li>
 <li><p><code><a href="../reference/cpp_register.html">cpp_register()</a></code> is quiet by default when R is non interactive (<a href="https://github.com/r-lib/cpp11/issues/289" class="external-link">#289</a>).</p></li>
@@ -74,10 +78,12 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.2" id="cpp11-042">cpp11 0.4.2<a class="anchor" aria-label="anchor" href="#cpp11-042"></a></h2><p class="text-muted">CRAN release: 2021-11-30</p>
-<ul><li>Romain François is now the maintainer.</li></ul></div>
+<ul><li>Romain François is now the maintainer.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.1" id="cpp11-041">cpp11 0.4.1<a class="anchor" aria-label="anchor" href="#cpp11-041"></a></h2><p class="text-muted">CRAN release: 2021-11-03</p>
-<ul><li>Fix crash related to unwind protect optimization (<a href="https://github.com/r-lib/cpp11/issues/244" class="external-link">#244</a>)</li></ul></div>
+<ul><li>Fix crash related to unwind protect optimization (<a href="https://github.com/r-lib/cpp11/issues/244" class="external-link">#244</a>)</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.0" id="cpp11-040">cpp11 0.4.0<a class="anchor" aria-label="anchor" href="#cpp11-040"></a></h2><p class="text-muted">CRAN release: 2021-09-22</p>
 <div class="section level3">
@@ -108,7 +114,8 @@
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.1" id="cpp11-031">cpp11 0.3.1<a class="anchor" aria-label="anchor" href="#cpp11-031"></a></h2><p class="text-muted">CRAN release: 2021-06-25</p>
-<ul><li>Fix stringop-truncation warning from generated wrapping code.</li></ul></div>
+<ul><li>Fix stringop-truncation warning from generated wrapping code.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.0" id="cpp11-030">cpp11 0.3.0<a class="anchor" aria-label="anchor" href="#cpp11-030"></a></h2>
 <div class="section level3">
@@ -119,7 +126,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="major-fixes-0-3-0">Major fixes<a class="anchor" aria-label="anchor" href="#major-fixes-0-3-0"></a></h3>
-<ul><li>Memory no longer inadvertently leaks when move constructing vectors (<a href="https://github.com/r-lib/cpp11/issues/173" class="external-link">#173</a>)</li></ul></div>
+<ul><li>Memory no longer inadvertently leaks when move constructing vectors (<a href="https://github.com/r-lib/cpp11/issues/173" class="external-link">#173</a>)</li>
+</ul></div>
 <div class="section level3">
 <h3 id="minor-improvements-and-fixes-0-3-0">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-0-3-0"></a></h3>
 <ul><li>Incorrectly formatted cpp11 decorators now output a more informative error message (<a href="https://github.com/sbearrows" class="external-link">@sbearrows</a>, <a href="https://github.com/r-lib/cpp11/issues/127" class="external-link">#127</a>)</li>
@@ -136,7 +144,8 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.6" id="cpp11-026">cpp11 0.2.6<a class="anchor" aria-label="anchor" href="#cpp11-026"></a></h2><p class="text-muted">CRAN release: 2021-01-29</p>
 <ul><li>
-<code><a href="../reference/cpp_register.html">cpp_register()</a></code> now uses symbols exclusively in the <code><a href="https://rdrr.io/r/base/CallExternal.html" class="external-link">.Call()</a></code> interface. This allows it to be more robust in interactive use with the pkgload package.</li></ul></div>
+<code><a href="../reference/cpp_register.html">cpp_register()</a></code> now uses symbols exclusively in the <code><a href="https://rdrr.io/r/base/CallExternal.html" class="external-link">.Call()</a></code> interface. This allows it to be more robust in interactive use with the pkgload package.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.5" id="cpp11-025">cpp11 0.2.5<a class="anchor" aria-label="anchor" href="#cpp11-025"></a></h2><p class="text-muted">CRAN release: 2021-01-12</p>
 <ul><li>
@@ -200,7 +209,8 @@
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.0" id="cpp11-010">cpp11 0.1.0<a class="anchor" aria-label="anchor" href="#cpp11-010"></a></h2><p class="text-muted">CRAN release: 2020-07-10</p>
-<ul><li>Initial release</li></ul></div>
+<ul><li>Initial release</li>
+</ul></div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
