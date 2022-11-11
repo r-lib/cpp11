@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* Fixed a performance issue related to nested `unwind_protect()` calls (#298).
+
 # cpp11 0.4.3
 
 * Modernized the GitHub Actions workflows and updated some internal tests to
