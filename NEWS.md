@@ -1,6 +1,7 @@
 # cpp11 (development version)
 
-* Silenced an unknown attribute warning specific to the Intel compiler (r-lib/systemfonts#98).
+* Silenced an unknown attribute warning specific to the Intel compiler
+  (r-lib/systemfonts#98).
 
 # cpp11 0.4.3
 
