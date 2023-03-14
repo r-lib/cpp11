@@ -273,7 +273,7 @@ get_call_entries <- function(path, names, package) {
 
   redundant <- glue::glue_collapse(glue::glue('extern SEXP _{package}_{names}'), sep = '|')
 
-  if (length(redundant) > 0) {
+  if (length(redundant) > 0 && nzchar(redundant)) {
     redundant <- paste0("^", redundant)
     res <- res[!grepl(redundant, res)]
   }

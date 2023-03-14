@@ -219,7 +219,7 @@ describe("generate_cpp_functions", {
       args = list(tibble::tibble(type = character(), name = character()))
     )
 
-    expect_equal(generate_cpp_functions(funs), character())
+    expect_equal(generate_cpp_functions(funs), "")
   })
 
   it("returns the wrapped function for a single void function with no arguments", {
@@ -388,7 +388,7 @@ describe("generate_r_functions", {
       args = list()
     )
 
-    expect_equal(generate_r_functions(funs), character())
+    expect_equal(generate_r_functions(funs), "")
   })
 
   it("returns the wrapped function for a single void function with no arguments", {
