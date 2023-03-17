@@ -32,6 +32,7 @@ Suggests:
     decor,
     desc,
     ggplot2,
+    glue,
     knitr,
     lobstr,
     mockery,
@@ -60,7 +61,3 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 SystemRequirements: C++11
-Imports: 
-    glue (>= 1.6.2.9000)
-Remotes:  
-    tidyverse/glue@empty-glue-collapse
