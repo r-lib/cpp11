@@ -208,6 +208,8 @@ describe("get_registered_functions", {
 
 describe("generate_cpp_functions", {
   it("returns the empty string if there are no functions", {
+    skip_if_not_installed("glue", "1.6.2.9000")
+
     funs <- tibble::tibble(
       file = character(),
       line = integer(),
@@ -377,6 +379,8 @@ extern \"C\" SEXP _cpp11_bar(SEXP baz) {
 
 describe("generate_r_functions", {
   it("returns the empty string if there are no functions", {
+    skip_if_not_installed("glue", "1.6.2.9000")
+
     funs <- tibble::tibble(
       file = character(),
       line = integer(),
