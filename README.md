@@ -27,6 +27,13 @@ cpp11 is a header only library with no hard dependencies and does not use a shar
 Alternatively, you can [vendor](https://cpp11.r-lib.org/articles/motivations.html#vendoring) the current installed version of cpp11 headers into your package with `cpp11::vendor_cpp11()`.
 This ensures the headers will remain unchanged until you explicitly update them.
 
+When calling functions from other packages in C++ (e.g., `package("tibble")["tibble"]`) make sure that these functions are imported by the package you are developing. For the case of `tibble` this is achieved with the following R code (using `roxygen2`):
+
+```r
+#'@ importFrom tibble tibble
+NULL
+```
+
 ## Getting started
 
 See [vignette("cpp11")](https://cpp11.r-lib.org/articles/cpp11.html) to get started using cpp11 in your scripts, particularly if you are new to C++ programming.
