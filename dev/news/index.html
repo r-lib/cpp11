@@ -67,7 +67,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="cpp11-development-version">cpp11 (development version)<a class="anchor" aria-label="anchor" href="#cpp11-development-version"></a></h2>
-<ul><li><p>Minor performance improvements to the cpp11 protect code. (<a href="https://github.com/kevinushey" class="external-link">@kevinushey</a>)</p></li>
+<ul><li><p>Fixed a performance issue related to nested <code>unwind_protect()</code> calls (<a href="https://github.com/r-lib/cpp11/issues/298" class="external-link">#298</a>).</p></li>
+<li><p>Minor performance improvements to the cpp11 protect code. (<a href="https://github.com/kevinushey" class="external-link">@kevinushey</a>)</p></li>
 <li><p>Silenced an unknown attribute warning specific to the Intel compiler (r-lib/systemfonts#98).</p></li>
 <li><p><code><a href="../reference/cpp_register.html">cpp_register()</a></code> gains an argument <code>extension=</code> governing the file extension of the <code>src/cpp11</code> file. By default it’s <code>.cpp</code>, but <code>.cc</code> is now supported as well (<a href="https://github.com/r-lib/cpp11/issues/292" class="external-link">#292</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
 </ul></div>
