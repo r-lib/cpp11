@@ -93,4 +93,11 @@ inline r_string na() {
   return NA_STRING;
 }
 
+namespace traits {
+template <>
+struct get_underlying_type<r_string> {
+  using type = SEXP;
+};
+}  // namespace traits
+
 }  // namespace cpp11
