@@ -13,12 +13,16 @@
 #include "Rinternals.h"
 
 // clang-format off
-#ifdef __clang__
+#if defined(__INTEL_COMPILER)
+# pragma warning(disable : 3924)
+#endif
+
+#if defined(__clang__)
 # pragma clang diagnostic push
 # pragma clang diagnostic ignored "-Wattributes"
 #endif
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER)
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wattributes"
 #endif

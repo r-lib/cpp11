@@ -11,6 +11,8 @@
 #' `tibble` and `vctrs` packages must also be installed.
 #' @param path The path to the package root directory
 #' @param quiet If `TRUE` suppresses output from this function
+#' @param extension The file extension to use for the generated src/cpp11 file.
+#'   `.cpp` by default, but `.cc` is also supported.
 #' @return The paths to the generated R and C++ source files (in that order).
 #' @export
 #' @examples
@@ -34,11 +36,12 @@
 #'
 #' # cleanup
 #' unlink(dir, recursive = TRUE)
-cpp_register <- function(path = ".", quiet = !is_interactive()) {
+cpp_register <- function(path = ".", quiet = !is_interactive(), extension = c(".cpp", ".cc")) {
   stop_unless_installed(get_cpp_register_needs())
+  extension <- match.arg(extension)
 
   r_path <- file.path(path, "R", "cpp11.R")
-  cpp_path <- file.path(path, "src", "cpp11.cpp")
+  cpp_path <- file.path(path, "src", paste0("cpp11", extension))
   unlink(c(r_path, cpp_path))
 
   suppressWarnings(
@@ -273,7 +276,7 @@ get_call_entries <- function(path, names, package) {
 
   redundant <- glue::glue_collapse(glue::glue('extern SEXP _{package}_{names}'), sep = '|')
 
-  if (length(redundant) > 0) {
+  if (length(redundant) > 0 && nzchar(redundant)) {
     redundant <- paste0("^", redundant)
     res <- res[!grepl(redundant, res)]
   }
