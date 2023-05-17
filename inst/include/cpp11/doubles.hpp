@@ -34,7 +34,8 @@ inline double r_vector<double>::operator[](const R_xlen_t pos) const {
 }
 
 template <>
-inline double* r_vector<double>::get_p(bool is_altrep, SEXP data) {
+inline typename r_vector<double>::underlying_type* r_vector<double>::get_p(bool is_altrep,
+                                                                           SEXP data) {
   if (is_altrep) {
     return nullptr;
   } else {

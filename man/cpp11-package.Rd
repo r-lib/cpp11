@@ -18,7 +18,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Romain François \email{romain@rstudio.com}
+\strong{Maintainer}: Romain François \email{romain@posit.co}
 
 Authors:
 \itemize{
