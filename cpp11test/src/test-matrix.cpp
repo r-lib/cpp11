@@ -1,6 +1,7 @@
+#include "cpp11/integers.hpp"
+
 #include "cpp11/doubles.hpp"
 #include "cpp11/function.hpp"
-#include "cpp11/integers.hpp"
 #include "cpp11/matrix.hpp"
 
 #include <testthat.h>
