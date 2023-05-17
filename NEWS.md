@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* Fixed a performance issue related to nested `unwind_protect()` calls (#298).
+
 * Minor performance improvements to the cpp11 protect code. (@kevinushey)
 
 * Silenced an unknown attribute warning specific to the Intel compiler
