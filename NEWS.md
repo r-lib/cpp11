@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* Minor performance improvements to the cpp11 protect code. (@kevinushey)
+
 * Silenced an unknown attribute warning specific to the Intel compiler
   (r-lib/systemfonts#98).
 
