@@ -18,6 +18,7 @@ Suggests:
     testthat,
     pkgload,
     xml2
+Imports: Rcpp
 LazyData: true
 Roxygen: list(markdown = TRUE)
 SystemRequirements: C++11
