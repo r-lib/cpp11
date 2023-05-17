@@ -78,7 +78,11 @@ be called from R.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cpp_register</span><span class="op">(</span>path <span class="op">=</span> <span class="st">"."</span>, quiet <span class="op">=</span> <span class="op">!</span><span class="fu">is_interactive</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cpp_register</span><span class="op">(</span></span>
+<span>  path <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="op">!</span><span class="fu">is_interactive</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  extension <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".cpp"</span>, <span class="st">".cc"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -89,6 +93,11 @@ be called from R.</p>
 
 <dt>quiet</dt>
 <dd><p>If <code>TRUE</code> suppresses output from this function</p></dd>
+
+
+<dt>extension</dt>
+<dd><p>The file extension to use for the generated src/cpp11 file.
+<code>.cpp</code> by default, but <code>.cc</code> is also supported.</p></dd>
 
 </dl></div>
     <div class="section level2">
