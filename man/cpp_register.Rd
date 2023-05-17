@@ -4,7 +4,7 @@
 \alias{cpp_register}
 \title{Generates wrappers for registered C++ functions}
 \usage{
-cpp_register(path = ".", quiet = FALSE)
+cpp_register(path = ".", quiet = !is_interactive())
 }
 \arguments{
 \item{path}{The path to the package root directory}

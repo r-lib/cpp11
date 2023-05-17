@@ -26,22 +26,24 @@ It is also a place to highlight some of the largest differences between Rcpp and
 
 ## Class comparison table
 
-| Rcpp                    | cpp11 (read-only)     | cpp11 (writable)   | cpp11 header                 |
-| ---                     | ---                   | ---                | ---                          |
-| NumericVector           | doubles               | writable::doubles  | <cpp11/doubles.hpp>          |
-| IntegerVector           | integers              | writable::integers | <cpp11/integers.hpp>         |
-| CharacterVector         | strings               | writable::strings  | <cpp11/strings.hpp>          |
-| RawVector               | raws                  | writable::raws     | <cpp11/raws.hpp>             |
-| List                    | list                  | writable::list     | <cpp11/list.hpp>             |
-| RObject                 | sexp                  |                    | <cpp11/sexp.hpp>             |
-| XPtr                    |                       | external_pointer   | <cpp11/external_pointer.hpp> |
-| Environment             |                       | environment        | <cpp11/environment.hpp>      |
-| Function                |                       | function           | <cpp11/function.hpp>         |
-| Environment (namespace) |                       | package            | <cpp11/function.hpp>         |
-| wrap                    |                       | as_sexp            | <cpp11/as.hpp>               |
-| as                      |                       | as_cpp             | <cpp11/as.hpp>               |
-| stop                    | stop                  |                    | <cpp11/protect.hpp>          |
-| checkUserInterrupt      | check_user_interrupt  |                    | <cpp11/protect.hpp>          |
+| Rcpp                    | cpp11 (read-only)     | cpp11 (writable)            | cpp11 header                 |
+| ---                     | ---                   | ---                         | ---                          |
+| NumericVector           | doubles               | writable::doubles           | <cpp11/doubles.hpp>          |
+| NumericMatrix           | doubles_matrix<>      | writable::doubles_matrix<>  | <cpp11/doubles.hpp>          |
+| IntegerVector           | integers              | writable::integers          | <cpp11/integers.hpp>         |
+| IntegerMatrix           | integers_matrix<>     | writable::integers_matrix<> | <cpp11/integers.hpp>         |
+| CharacterVector         | strings               | writable::strings           | <cpp11/strings.hpp>          |
+| RawVector               | raws                  | writable::raws              | <cpp11/raws.hpp>             |
+| List                    | list                  | writable::list              | <cpp11/list.hpp>             |
+| RObject                 | sexp                  |                             | <cpp11/sexp.hpp>             |
+| XPtr                    |                       | external_pointer            | <cpp11/external_pointer.hpp> |
+| Environment             |                       | environment                 | <cpp11/environment.hpp>      |
+| Function                |                       | function                    | <cpp11/function.hpp>         |
+| Environment (namespace) |                       | package                     | <cpp11/function.hpp>         |
+| wrap                    |                       | as_sexp                     | <cpp11/as.hpp>               |
+| as                      |                       | as_cpp                      | <cpp11/as.hpp>               |
+| stop                    | stop                  |                             | <cpp11/protect.hpp>          |
+| checkUserInterrupt      | check_user_interrupt  |                             | <cpp11/protect.hpp>          |
 
 ## Incomplete list of Rcpp features not included in cpp11
 

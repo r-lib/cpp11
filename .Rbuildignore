@@ -25,3 +25,6 @@ script.R
 ^talk$
 \.cache$
 ^MAINTENANCE\.md$
+^doc$
+^Meta$
+^CRAN-SUBMISSION$

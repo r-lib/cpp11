@@ -58,12 +58,12 @@ describe("get_call_entries", {
     path <- pkg_path(pkg)
     dir.create(file.path(path, "R"))
     writeLines('foo <- function() .Call("bar")', file.path(path, "R", "foo.R"))
+    call_entries <- get_call_entries(path, get_funs(path)$name, get_package_name(path))
+    # R added `(void)` to the signature after R 4.2.1
+    expect_match(call_entries[2], "extern SEXP bar[(](void)?[)]")
     expect_equal(
-      get_call_entries(path, get_funs(path)$name, get_package_name(path)),
-      c("/* .Call calls */",
-        "extern SEXP bar();",
-        "",
-        "static const R_CallMethodDef CallEntries[] = {",
+      call_entries[4:7],
+      c("static const R_CallMethodDef CallEntries[] = {",
         "    {\"bar\", (DL_FUNC) &bar, 0},",
         "    {NULL, NULL, 0}",
         "};"
@@ -208,6 +208,8 @@ describe("get_registered_functions", {
 
 describe("generate_cpp_functions", {
   it("returns the empty string if there are no functions", {
+    skip_if_not_installed("glue", "1.6.2.9000")
+
     funs <- tibble::tibble(
       file = character(),
       line = integer(),
@@ -219,7 +221,7 @@ describe("generate_cpp_functions", {
       args = list(tibble::tibble(type = character(), name = character()))
     )
 
-    expect_equal(generate_cpp_functions(funs), character())
+    expect_equal(generate_cpp_functions(funs), "")
   })
 
   it("returns the wrapped function for a single void function with no arguments", {
@@ -377,6 +379,8 @@ extern \"C\" SEXP _cpp11_bar(SEXP baz) {
 
 describe("generate_r_functions", {
   it("returns the empty string if there are no functions", {
+    skip_if_not_installed("glue", "1.6.2.9000")
+
     funs <- tibble::tibble(
       file = character(),
       line = integer(),
@@ -388,7 +392,7 @@ describe("generate_r_functions", {
       args = list()
     )
 
-    expect_equal(generate_r_functions(funs), character())
+    expect_equal(generate_r_functions(funs), "")
   })
 
   it("returns the wrapped function for a single void function with no arguments", {
@@ -614,12 +618,16 @@ extern \"C\" attribute_visible void R_init_testPkg(DllInfo* dll){
   })
 
 
-  it("can be run with messages, by default", {
+  it("can be run with messages", {
+    local_reproducible_output()
     pkg <- local_package()
     p <- pkg_path(pkg)
     dir.create(file.path(p, "src"))
     file.copy(test_path("single.cpp"), file.path(p, "src", "single.cpp"))
-    expect_message(cpp_register(p), "1 functions decorated with [[cpp11::register]]", fixed = TRUE)
+
+    expect_snapshot(
+      cpp_register(p, quiet = FALSE)
+    )
   })
 
   it("includes pkg_types.h if included in src", {

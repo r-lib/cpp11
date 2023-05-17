@@ -2,11 +2,20 @@
 
 * Minor performance improvements to the cpp11 protect code. (@kevinushey)
 
+* Silenced an unknown attribute warning specific to the Intel compiler
+  (r-lib/systemfonts#98).
+
+# cpp11 0.4.3
+
 * Modernized the GitHub Actions workflows and updated some internal tests to
   better align with changes in those workflows and the latest version of R
   (#279).
 
 * `cpp_source()` errors on non-existent file (#261). 
+
+* `cpp_register()` is quiet by default when R is non interactive (#289).
+
+* updated test to adapt to changes in R 4.2.1 (#290).
 
 # cpp11 0.4.2
 

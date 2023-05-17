@@ -34,7 +34,7 @@
 #'
 #' # cleanup
 #' unlink(dir, recursive = TRUE)
-cpp_register <- function(path = ".", quiet = FALSE) {
+cpp_register <- function(path = ".", quiet = !is_interactive()) {
   stop_unless_installed(get_cpp_register_needs())
 
   r_path <- file.path(path, "R", "cpp11.R")
@@ -138,7 +138,7 @@ cpp_register <- function(path = ".", quiet = FALSE) {
 
 utils::globalVariables(c("name", "return_type", "line", "decoration", "context", ".", "functions", "res"))
 
-get_registered_functions <- function(decorations, tag, quiet = FALSE) {
+get_registered_functions <- function(decorations, tag, quiet = !is_interactive()) {
   if (NROW(decorations) == 0) {
     return(tibble::tibble(file = character(), line = integer(), decoration = character(), params = list(), context = list(), name = character(), return_type = character(), args = list()))
   }
@@ -273,7 +273,7 @@ get_call_entries <- function(path, names, package) {
 
   redundant <- glue::glue_collapse(glue::glue('extern SEXP _{package}_{names}'), sep = '|')
 
-  if (length(redundant) > 0) {
+  if (length(redundant) > 0 && nzchar(redundant)) {
     redundant <- paste0("^", redundant)
     res <- res[!grepl(redundant, res)]
   }

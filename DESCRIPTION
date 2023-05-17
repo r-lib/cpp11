@@ -1,6 +1,6 @@
 Package: cpp11
 Title: A C++11 Interface for R's C Interface
-Version: 0.4.2.9000
+Version: 0.4.3.9000
 Authors@R: 
     c(person(given = "Jim",
              family = "Hester",
@@ -47,6 +47,7 @@ Suggests:
     withr
 VignetteBuilder: 
     knitr
+Config/Needs/website: tidyverse/tidytemplate
 Config/testthat/edition: 3
 Config/Needs/cpp11/cpp_register: 
     brio,
@@ -58,7 +59,5 @@ Config/Needs/cpp11/cpp_register:
     vctrs
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 SystemRequirements: C++11
-Remotes:
-    r-lib/testthat@ad8b726d1734c59ed08ec7d11df4a3d76d8e69df
