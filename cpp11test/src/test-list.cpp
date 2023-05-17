@@ -1,6 +1,5 @@
-#include "cpp11/integers.hpp"
-
 #include "cpp11/doubles.hpp"
+#include "cpp11/integers.hpp"
 #include "cpp11/list.hpp"
 #include "cpp11/logicals.hpp"
 #include "cpp11/raws.hpp"

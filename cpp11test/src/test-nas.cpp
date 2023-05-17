@@ -1,6 +1,5 @@
-#include "cpp11/integers.hpp"
-
 #include "cpp11/doubles.hpp"
+#include "cpp11/integers.hpp"
 #include "cpp11/r_bool.hpp"
 #include "cpp11/r_string.hpp"
 
