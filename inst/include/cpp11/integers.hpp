@@ -6,6 +6,7 @@
 
 #include "R_ext/Arith.h"              // for NA_INTEGER
 #include "cpp11/R.hpp"                // for SEXP, SEXPREC, Rf_allocVector
+#include "cpp11/doubles.hpp"
 #include "cpp11/as.hpp"               // for as_sexp
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/named_arg.hpp"        // for named_arg
