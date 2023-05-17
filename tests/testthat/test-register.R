@@ -718,6 +718,16 @@ extern \"C\" attribute_visible void R_init_testPkg(DllInfo* dll){
 
     expect_error_free(cpp_register(p))
   })
+
+  it("accepts .cc as an alternative value for extension=", {
+    pkg <- local_package()
+    p <- pkg_path(pkg)
+    dir.create(file.path(p, "src"))
+    file.copy(test_path("single.cpp"), file.path(p, "src", "single.cc"))
+    cpp_register(p, extension = ".cc")
+
+    expect_match(list.files(file.path(p, "src")), "\\.cc$")
+  })
 })
 
 describe("generate_init_functions", {
