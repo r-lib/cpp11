@@ -66,6 +66,10 @@ class data_frame : public list {
 namespace writable {
 class data_frame : public cpp11::data_frame {
  private:
+  writable::list set_data_frame_attributes(writable::list&& x) {
+    return set_data_frame_attributes(std::move(x), calc_nrow(x));
+  }
+
   writable::list set_data_frame_attributes(writable::list&& x, int nrow) {
     x.attr(R_RowNamesSymbol) = {NA_INTEGER, -nrow};
     x.attr(R_ClassSymbol) = "data.frame";
