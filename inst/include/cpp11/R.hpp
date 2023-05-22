@@ -48,12 +48,12 @@ template <typename T>
 inline T na();
 
 template <typename T>
-inline bool is_na(const T& value) {
+inline bool is_na(T value) {
   return value == na<T>();
 }
 
 template <>
-inline bool is_na<>(const double& x) {
+inline bool is_na<>(double x) {
   return ISNA(x);
 }
 
