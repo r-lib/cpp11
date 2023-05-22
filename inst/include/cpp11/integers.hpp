@@ -13,8 +13,6 @@
 #include "cpp11/r_vector.hpp"         // for r_vector, r_vector<>::proxy
 #include "cpp11/sexp.hpp"             // for sexp
 
-#include "cpp11/doubles.hpp"
-
 // Specializations for integers
 
 namespace cpp11 {
