@@ -1,7 +1,5 @@
 #pragma once
 
-#include <type_traits>
-
 #ifdef R_INTERNALS_H_
 #if !(defined(R_NO_REMAP) && defined(STRICT_R_HEADERS))
 #error R headers were included before cpp11 headers \
