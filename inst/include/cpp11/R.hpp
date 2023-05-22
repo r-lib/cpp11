@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 #ifdef R_INTERNALS_H_
 #if !(defined(R_NO_REMAP) && defined(STRICT_R_HEADERS))
 #error R headers were included before cpp11 headers \
@@ -50,6 +52,11 @@ inline T na();
 template <typename T>
 inline bool is_na(const T& value) {
   return value == na<T>();
+}
+
+template <>
+inline bool is_na<double>(const double& x) {
+  return ISNA(x);
 }
 
 }  // namespace cpp11

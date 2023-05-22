@@ -140,11 +140,6 @@ inline double na() {
   return NA_REAL;
 }
 
-template <>
-inline bool is_na(const double& x) {
-  return ISNA(x);
-}
-
 // forward declarations
 typedef r_vector<int> integers;
 

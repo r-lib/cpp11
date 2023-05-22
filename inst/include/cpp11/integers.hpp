@@ -151,9 +151,6 @@ inline int na() {
 typedef r_vector<double> doubles;
 
 template <>
-bool is_na(const double& x);
-
-template <>
 double r_vector<double>::operator[](const R_xlen_t pos) const;
 
 inline integers as_integers(sexp x) {
