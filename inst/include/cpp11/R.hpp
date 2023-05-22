@@ -53,7 +53,7 @@ inline bool is_na(const T& value) {
 }
 
 template <>
-inline bool is_na<double>(const double& x) {
+inline bool is_na<>(const double& x) {
   return ISNA(x);
 }
 
