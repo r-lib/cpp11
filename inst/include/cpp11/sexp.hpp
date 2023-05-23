@@ -50,6 +50,8 @@ class sexp {
   }
 
   sexp& operator=(sexp&& rhs) {
+    preserved.release(preserve_token_);
+
     data_ = rhs.data_;
     preserve_token_ = rhs.preserve_token_;
 
