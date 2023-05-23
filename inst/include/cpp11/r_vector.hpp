@@ -104,6 +104,17 @@ class r_vector {
     preserved.release(old_protect);
   };
 
+  r_vector(r_vector&& rhs) {
+    protect_ = rhs.protect_;
+    data_ = rhs.data_;
+    is_altrep_ = rhs.is_altrep_;
+    data_p_ = rhs.data_p_;
+    length_ = rhs.length_;
+
+    // so that the destructor for rhs is no-op
+    rhs.protect_ = R_NilValue;
+  }
+
   r_vector(const writable::r_vector<T>& rhs) : r_vector(static_cast<SEXP>(rhs)) {}
   r_vector(named_arg) = delete;
 

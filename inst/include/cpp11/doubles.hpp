@@ -164,7 +164,7 @@ inline doubles as_doubles(sexp x) {
         ret[i] = static_cast<double>(el);
       }
     }
-    return as_cpp<doubles>(ret);
+    return ret;
   }
 
   throw type_error(REALSXP, TYPEOF(x));
