@@ -400,6 +400,9 @@ context("doubles-C++") {
     expect_true(cpp11::is_na(na2[0]));
 
     cpp11::writable::integers na{NA_INTEGER};
+    cpp11::integers na4 = cpp11::as_cpp<cpp11::integers>(na);
+    expect_true(cpp11::is_na(na4[0]));
+
     cpp11::doubles na3(cpp11::as_doubles(na));
     expect_true(ISNA(na3[0]));
     expect_true(cpp11::is_na<double>(na3[0]));
