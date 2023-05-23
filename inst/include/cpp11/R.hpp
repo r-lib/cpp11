@@ -49,14 +49,14 @@ template <typename T>
 inline T na();
 
 template <typename T>
-inline typename std::enable_if<!std::is_same<T, double>::value, bool>::type is_na(
-    T value) {
+inline typename std::enable_if<!std::is_same<typename std::decay<T>::type, double>::value, bool>::type is_na(
+    const T& value) {
   return value == na<T>();
 }
 
 template <typename T>
-inline typename std::enable_if<std::is_same<T, double>::value, bool>::type is_na(
-    T value) {
+inline typename std::enable_if<std::is_same<typename std::decay<T>::type, double>::value, bool>::type is_na(
+    const T& value) {
   return ISNA(value);
 }
 
