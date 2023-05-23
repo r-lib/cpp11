@@ -42,7 +42,7 @@ context("integers-C++") {
     cpp11::writable::doubles na;
     na.push_back(cpp11::na<double>());
     cpp11::integers na2(cpp11::as_integers(na));
-    expect_true(cpp11::is_na(na2[0]));
+    expect_true(cpp11::is_na<int>(na2[0]));
   }
 
   test_that("integers.push_back()") {

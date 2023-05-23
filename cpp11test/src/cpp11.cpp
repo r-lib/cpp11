@@ -21,54 +21,6 @@ extern "C" SEXP _cpp11test_data_frame_() {
     return cpp11::as_sexp(data_frame_());
   END_CPP11
 }
-// errors_fmt.cpp
-void my_stop(std::string mystring, int myarg);
-extern "C" SEXP _cpp11test_my_stop(SEXP mystring, SEXP myarg) {
-  BEGIN_CPP11
-    my_stop(cpp11::as_cpp<cpp11::decay_t<std::string>>(mystring), cpp11::as_cpp<cpp11::decay_t<int>>(myarg));
-    return R_NilValue;
-  END_CPP11
-}
-// errors_fmt.cpp
-void my_stop_n1(std::string mystring);
-extern "C" SEXP _cpp11test_my_stop_n1(SEXP mystring) {
-  BEGIN_CPP11
-    my_stop_n1(cpp11::as_cpp<cpp11::decay_t<std::string>>(mystring));
-    return R_NilValue;
-  END_CPP11
-}
-// errors_fmt.cpp
-void my_warning(std::string mystring, std::string myarg);
-extern "C" SEXP _cpp11test_my_warning(SEXP mystring, SEXP myarg) {
-  BEGIN_CPP11
-    my_warning(cpp11::as_cpp<cpp11::decay_t<std::string>>(mystring), cpp11::as_cpp<cpp11::decay_t<std::string>>(myarg));
-    return R_NilValue;
-  END_CPP11
-}
-// errors_fmt.cpp
-void my_warning_n1(std::string mystring);
-extern "C" SEXP _cpp11test_my_warning_n1(SEXP mystring) {
-  BEGIN_CPP11
-    my_warning_n1(cpp11::as_cpp<cpp11::decay_t<std::string>>(mystring));
-    return R_NilValue;
-  END_CPP11
-}
-// errors_fmt.cpp
-void my_message(std::string mystring, std::string myarg);
-extern "C" SEXP _cpp11test_my_message(SEXP mystring, SEXP myarg) {
-  BEGIN_CPP11
-    my_message(cpp11::as_cpp<cpp11::decay_t<std::string>>(mystring), cpp11::as_cpp<cpp11::decay_t<std::string>>(myarg));
-    return R_NilValue;
-  END_CPP11
-}
-// errors_fmt.cpp
-void my_message_n1(std::string mystring);
-extern "C" SEXP _cpp11test_my_message_n1(SEXP mystring) {
-  BEGIN_CPP11
-    my_message_n1(cpp11::as_cpp<cpp11::decay_t<std::string>>(mystring));
-    return R_NilValue;
-  END_CPP11
-}
 // errors.cpp
 void my_stop_n1fmt(std::string mystring);
 extern "C" SEXP _cpp11test_my_stop_n1fmt(SEXP mystring) {
@@ -114,6 +66,54 @@ void my_message_n2fmt(std::string mystring, std::string myarg);
 extern "C" SEXP _cpp11test_my_message_n2fmt(SEXP mystring, SEXP myarg) {
   BEGIN_CPP11
     my_message_n2fmt(cpp11::as_cpp<cpp11::decay_t<std::string>>(mystring), cpp11::as_cpp<cpp11::decay_t<std::string>>(myarg));
+    return R_NilValue;
+  END_CPP11
+}
+// errors_fmt.cpp
+void my_stop(std::string mystring, int myarg);
+extern "C" SEXP _cpp11test_my_stop(SEXP mystring, SEXP myarg) {
+  BEGIN_CPP11
+    my_stop(cpp11::as_cpp<cpp11::decay_t<std::string>>(mystring), cpp11::as_cpp<cpp11::decay_t<int>>(myarg));
+    return R_NilValue;
+  END_CPP11
+}
+// errors_fmt.cpp
+void my_stop_n1(std::string mystring);
+extern "C" SEXP _cpp11test_my_stop_n1(SEXP mystring) {
+  BEGIN_CPP11
+    my_stop_n1(cpp11::as_cpp<cpp11::decay_t<std::string>>(mystring));
+    return R_NilValue;
+  END_CPP11
+}
+// errors_fmt.cpp
+void my_warning(std::string mystring, std::string myarg);
+extern "C" SEXP _cpp11test_my_warning(SEXP mystring, SEXP myarg) {
+  BEGIN_CPP11
+    my_warning(cpp11::as_cpp<cpp11::decay_t<std::string>>(mystring), cpp11::as_cpp<cpp11::decay_t<std::string>>(myarg));
+    return R_NilValue;
+  END_CPP11
+}
+// errors_fmt.cpp
+void my_warning_n1(std::string mystring);
+extern "C" SEXP _cpp11test_my_warning_n1(SEXP mystring) {
+  BEGIN_CPP11
+    my_warning_n1(cpp11::as_cpp<cpp11::decay_t<std::string>>(mystring));
+    return R_NilValue;
+  END_CPP11
+}
+// errors_fmt.cpp
+void my_message(std::string mystring, std::string myarg);
+extern "C" SEXP _cpp11test_my_message(SEXP mystring, SEXP myarg) {
+  BEGIN_CPP11
+    my_message(cpp11::as_cpp<cpp11::decay_t<std::string>>(mystring), cpp11::as_cpp<cpp11::decay_t<std::string>>(myarg));
+    return R_NilValue;
+  END_CPP11
+}
+// errors_fmt.cpp
+void my_message_n1(std::string mystring);
+extern "C" SEXP _cpp11test_my_message_n1(SEXP mystring) {
+  BEGIN_CPP11
+    my_message_n1(cpp11::as_cpp<cpp11::decay_t<std::string>>(mystring));
     return R_NilValue;
   END_CPP11
 }
@@ -310,6 +310,55 @@ extern "C" SEXP _cpp11test_cpp11_safe_(SEXP x_sxp) {
     return cpp11::as_sexp(cpp11_safe_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x_sxp)));
   END_CPP11
 }
+// sum.cpp
+double sum_dbl_for_(cpp11::doubles x);
+extern "C" SEXP _cpp11test_sum_dbl_for_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum_dbl_for_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
+  END_CPP11
+}
+// sum.cpp
+double sum_dbl_for2_(SEXP x_sxp);
+extern "C" SEXP _cpp11test_sum_dbl_for2_(SEXP x_sxp) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum_dbl_for2_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x_sxp)));
+  END_CPP11
+}
+// sum.cpp
+double sum_dbl_for3_(SEXP x_sxp);
+extern "C" SEXP _cpp11test_sum_dbl_for3_(SEXP x_sxp) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum_dbl_for3_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x_sxp)));
+  END_CPP11
+}
+// sum.cpp
+double sum_dbl_foreach_(cpp11::doubles x);
+extern "C" SEXP _cpp11test_sum_dbl_foreach_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum_dbl_foreach_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
+  END_CPP11
+}
+// sum.cpp
+double sum_dbl_foreach2_(SEXP x_sxp);
+extern "C" SEXP _cpp11test_sum_dbl_foreach2_(SEXP x_sxp) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum_dbl_foreach2_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x_sxp)));
+  END_CPP11
+}
+// sum.cpp
+double sum_dbl_accumulate_(cpp11::doubles x);
+extern "C" SEXP _cpp11test_sum_dbl_accumulate_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum_dbl_accumulate_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
+  END_CPP11
+}
+// sum.cpp
+double sum_dbl_accumulate2_(SEXP x_sxp);
+extern "C" SEXP _cpp11test_sum_dbl_accumulate2_(SEXP x_sxp) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum_dbl_accumulate2_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x_sxp)));
+  END_CPP11
+}
 // sum_int.cpp
 double sum_int_for_(cpp11::integers x);
 extern "C" SEXP _cpp11test_sum_int_for_(SEXP x) {
@@ -371,55 +420,6 @@ SEXP rcpp_grow_(SEXP n_sxp);
 extern "C" SEXP _cpp11test_rcpp_grow_(SEXP n_sxp) {
   BEGIN_CPP11
     return cpp11::as_sexp(rcpp_grow_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(n_sxp)));
-  END_CPP11
-}
-// sum.cpp
-double sum_dbl_for_(cpp11::doubles x);
-extern "C" SEXP _cpp11test_sum_dbl_for_(SEXP x) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(sum_dbl_for_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
-  END_CPP11
-}
-// sum.cpp
-double sum_dbl_for2_(SEXP x_sxp);
-extern "C" SEXP _cpp11test_sum_dbl_for2_(SEXP x_sxp) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(sum_dbl_for2_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x_sxp)));
-  END_CPP11
-}
-// sum.cpp
-double sum_dbl_for3_(SEXP x_sxp);
-extern "C" SEXP _cpp11test_sum_dbl_for3_(SEXP x_sxp) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(sum_dbl_for3_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x_sxp)));
-  END_CPP11
-}
-// sum.cpp
-double sum_dbl_foreach_(cpp11::doubles x);
-extern "C" SEXP _cpp11test_sum_dbl_foreach_(SEXP x) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(sum_dbl_foreach_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
-  END_CPP11
-}
-// sum.cpp
-double sum_dbl_foreach2_(SEXP x_sxp);
-extern "C" SEXP _cpp11test_sum_dbl_foreach2_(SEXP x_sxp) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(sum_dbl_foreach2_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x_sxp)));
-  END_CPP11
-}
-// sum.cpp
-double sum_dbl_accumulate_(cpp11::doubles x);
-extern "C" SEXP _cpp11test_sum_dbl_accumulate_(SEXP x) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(sum_dbl_accumulate_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
-  END_CPP11
-}
-// sum.cpp
-double sum_dbl_accumulate2_(SEXP x_sxp);
-extern "C" SEXP _cpp11test_sum_dbl_accumulate2_(SEXP x_sxp) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(sum_dbl_accumulate2_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x_sxp)));
   END_CPP11
 }
 

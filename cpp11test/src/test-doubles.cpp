@@ -397,7 +397,7 @@ context("doubles-C++") {
     cpp11::writable::integers na;
     na.push_back(cpp11::na<int>());
     cpp11::doubles na2(cpp11::as_doubles(na));
-    expect_true(cpp11::is_na(na2[0]));
+    expect_true(cpp11::is_na<double>(na2[0]));
   }
 
   test_that("doubles operator[] and at") {
