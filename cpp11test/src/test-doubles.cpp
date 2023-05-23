@@ -373,6 +373,9 @@ context("doubles-C++") {
 
     double y = NA_REAL;
     expect_true(cpp11::is_na(y));
+
+    double z = NA_INTEGER;
+    expect_true(!cpp11::is_na(z));
   }
 
   test_that("as_doubles(integers)") {
