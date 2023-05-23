@@ -158,7 +158,7 @@ inline doubles as_doubles(sexp x) {
     writable::doubles ret(len);
     for (R_xlen_t i = 0; i < len; ++i) {
       int el = xn[i];
-      if (is_na(el)) {
+      if (is_na<int>(el)) {
         ret[i] = na<double>();
       } else {
         ret[i] = static_cast<double>(el);
