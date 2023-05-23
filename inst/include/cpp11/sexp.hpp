@@ -49,6 +49,17 @@ class sexp {
     return *this;
   }
 
+  sexp& operator=(sexp&& rhs) {
+    data_ = rhs.data_;
+    preserve_token_ = rhs.preserve_token_;
+
+    rhs.data_ = R_NilValue;
+    rhs.preserve_token_ = R_NilValue;
+
+    // REprintf("moved %x : %i\n", rhs.data_, protect_head_size());
+    return *this;
+  }
+
   // void swap(sexp& rhs) {
   // sexp tmp(rhs);
   // rhs = *this;
