@@ -405,6 +405,7 @@ context("doubles-C++") {
     cpp11::writable::doubles na5(len);
     for (R_xlen_t i = 0; i < len; ++i) {
       int el = na4[i];
+      expect_true(el == NA_INTEGER);
       if (el == NA_INTEGER) {
         na5[i] = NA_REAL;
       } else {
