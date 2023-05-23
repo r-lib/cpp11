@@ -29,6 +29,7 @@
 // clang-format on
 
 #include "cpp11/altrep.hpp"
+#include <type_traits>
 
 namespace cpp11 {
 namespace literals {
@@ -48,13 +49,13 @@ template <typename T>
 inline T na();
 
 template <typename T>
-inline bool is_na(T value) {
+inline typename std::enable_if<!std::is_same<T, double>::value, bool>::type is_na(T value) {
   return value == na<T>();
 }
 
-template <>
-inline bool is_na<>(double x) {
-  return ISNA(x);
+template <typename T>
+inline typename std::enable_if<std::is_same<T, double>::value, bool>::type is_na(T value) {
+  return ISNA(value);
 }
 
 }  // namespace cpp11
