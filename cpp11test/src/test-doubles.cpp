@@ -414,6 +414,9 @@ context("doubles-C++") {
     }
     expect_true(ISNA(na5[0]));
 
+    cpp11::doubles na6(na5);
+    expect_true(ISNA(na6[0]));
+
     cpp11::doubles na3(cpp11::as_doubles(na));
     expect_true(na3.size() == 1);
     expect_true(ISNA(na3[0]));
