@@ -394,9 +394,7 @@ context("doubles-C++") {
     e.push_back("b");
     expect_error(cpp11::as_doubles(e));
 
-    cpp11::writable::integers na;
-    na.push_back(cpp11::na<int>());
-    expect_true(cpp11::is_na<int>((int)na[0]));
+    cpp11::writable::integers na{NA_INTEGER};
 
     cpp11::doubles na2(cpp11::as_doubles(na));
     expect_true(ISNA(na2[0]));
