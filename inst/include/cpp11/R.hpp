@@ -49,19 +49,17 @@ template <typename T>
 inline T na();
 
 template <typename T>
-inline bool is_na_impl(T value, std::true_type) {
-  return ISNA(value);
-}
-
-template <typename T>
-inline bool is_na_impl(T value, std::false_type) {
+inline typename std::enable_if<!std::is_same<typename std::decay<T>::type, double>::value,
+                               bool>::type
+is_na(const T& value) {
   return value == na<T>();
 }
 
 template <typename T>
-inline bool is_na(T value) {
-  return is_na_impl(value,
-                    typename std::is_same<typename std::decay<T>::type, double>::type());
+inline typename std::enable_if<std::is_same<typename std::decay<T>::type, double>::value,
+                               bool>::type
+is_na(const T& value) {
+  return ISNA(value);
 }
 
 }  // namespace cpp11
