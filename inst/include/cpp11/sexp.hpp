@@ -23,17 +23,12 @@ class sexp {
     // REprintf("created %x %x : %i\n", data_, preserve_token_, protect_head_size());
   }
 
-  sexp(const sexp& rhs) {
-    data_ = rhs.data_;
-    preserve_token_ = preserved.insert(data_);
+  sexp(const sexp& rhs) : data_(rhs.data_), preserve_token_(preserved.insert(rhs.data_)) {
     // REprintf("copied %x new protect %x : %i\n", rhs.data_, preserve_token_,
     // protect_head_size());
   }
 
-  sexp(sexp&& rhs) {
-    data_ = rhs.data_;
-    preserve_token_ = rhs.preserve_token_;
-
+  sexp(sexp&& rhs) : data_(rhs.data_), preserve_token_(rhs.preserve_token_) {
     rhs.data_ = R_NilValue;
     rhs.preserve_token_ = R_NilValue;
 
@@ -41,22 +36,30 @@ class sexp {
   }
 
   sexp& operator=(const sexp& rhs) {
-    preserved.release(preserve_token_);
+    if (data_ != rhs.data_) {
+      SEXP old_preserve_token = preserve_token_;
 
-    data_ = rhs.data_;
-    preserve_token_ = preserved.insert(data_);
+      data_ = rhs.data_;
+      preserve_token_ = preserved.insert(data_);
+
+      preserved.release(old_preserve_token);
+    }
+
     // REprintf("assigned %x : %i\n", rhs.data_, protect_head_size());
     return *this;
   }
 
   sexp& operator=(sexp&& rhs) {
-    preserved.release(preserve_token_);
+    if (data_ != rhs.data_) {
+      SEXP old_preserve_token = preserve_token_;
 
-    data_ = rhs.data_;
-    preserve_token_ = rhs.preserve_token_;
+      data_ = rhs.data_;
+      preserve_token_ = rhs.preserve_token_;
 
-    rhs.data_ = R_NilValue;
-    rhs.preserve_token_ = R_NilValue;
+      rhs.data_ = R_NilValue;
+      rhs.preserve_token_ = R_NilValue;
+      preserved.release(old_preserve_token);
+    }
 
     // REprintf("moved %x : %i\n", rhs.data_, protect_head_size());
     return *this;
@@ -68,7 +71,9 @@ class sexp {
   //*this = tmp;
   //}
 
-  ~sexp() { preserved.release(preserve_token_); }
+  ~sexp() {
+    preserved.release(preserve_token_);
+  }
 
   attribute_proxy<sexp> attr(const char* name) const {
     return attribute_proxy<sexp>(*this, name);
@@ -87,9 +92,11 @@ class sexp {
   }
 
   operator SEXP() const { return data_; }
+  /*
   operator double() const { return REAL_ELT(data_, 0); }
   operator size_t() const { return REAL_ELT(data_, 0); }
   operator bool() const { return LOGICAL_ELT(data_, 0); }
+  */
   SEXP data() const { return data_; }
 };
 
