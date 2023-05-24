@@ -160,8 +160,4 @@ inline double na() {
   return NA_REAL;
 }
 
-template <>
-inline bool is_na(const double& x) {
-  return ISNA(x);
-}
 }  // namespace cpp11
