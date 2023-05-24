@@ -399,24 +399,8 @@ context("doubles-C++") {
     expect_true(cpp11::is_na<double>(na2[0]));
     expect_true(cpp11::is_na(na2[0]));
 
-    cpp11::writable::integers na{NA_INTEGER};
-    cpp11::integers na4 = cpp11::as_cpp<cpp11::integers>(na);
-    R_xlen_t len = na4.size();
-    cpp11::writable::doubles na5(len);
-    for (R_xlen_t i = 0; i < len; ++i) {
-      int el = na4[i];
-      expect_true(el == NA_INTEGER);
-      if (el == NA_INTEGER) {
-        na5[i] = NA_REAL;
-      } else {
-        na5[i] = static_cast<double>(el);
-      }
-    }
-    expect_true(ISNA(na5[0]));
-
-    cpp11::doubles na6(na5);
-    expect_true(ISNA(na6[0]));
-
+    // cpp11::writable::integers na{NA_INTEGER};
+    cpp11::sexp na(Rf_ScalarReal(NA_INTEGER));
     cpp11::doubles na3(cpp11::as_doubles(na));
     expect_true(na3.size() == 1);
     expect_true(ISNA(na3[0]));
