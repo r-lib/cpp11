@@ -403,6 +403,8 @@ context("doubles-C++") {
 
     // cpp11::writable::integers na{NA_INTEGER};
     cpp11::sexp na(Rf_ScalarInteger(NA_INTEGER));
+    expect_true(TYPEOF(na) == INTSXP);
+
     cpp11::integers na3(cpp11::as_doubles(na));
     expect_true(na3.size() == 1);
     // expect_true(ISNA(na3[0]));
