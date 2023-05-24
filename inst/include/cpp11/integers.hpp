@@ -160,8 +160,8 @@ inline integers as_integers(sexp x) {
     writable::integers ret(len);
     for (R_xlen_t i = 0; i < len; ++i) {
       double el = xn[i];
-      if (is_na<double>(el)) {
-        ret[i] = na<int>();
+      if (ISNA(el)) {
+        ret[i] = NA_INTEGER;
       } else if (is_convertible_without_loss_to_integer(el)) {
         ret[i] = static_cast<int>(el);
       } else {
