@@ -39,10 +39,11 @@ context("integers-C++") {
     expect_true(t[3] == 100000);
     expect_true(TYPEOF(t) == INTSXP);
 
-    cpp11::writable::doubles na;
-    na.push_back(cpp11::na<double>());
-    cpp11::integers na2(cpp11::as_integers(na));
-    expect_true(cpp11::is_na<int>(na2[0]));
+    cpp11::doubles na3(Rf_ScalarReal(NA_REAL));
+    expect_true(na3.size() == 1);
+
+    cpp11::integers na2(cpp11::as_integers(na3));
+    expect_true(cpp11::is_na(na2[0]));
   }
 
   test_that("integers.push_back()") {
