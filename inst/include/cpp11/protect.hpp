@@ -328,18 +328,16 @@ static struct {
 
     static SEXP list_ = get_preserve_list();
 
-    // Get references to head, tail of the precious list.
-    SEXP head = list_;
-    SEXP tail = CDR(list_);
+    // Add a new cell that points to the previous end.
+    SEXP cell = PROTECT(Rf_cons(list_, CDR(list_)));
 
-    // Add a new cell that points to the current head + tail.
-    SEXP cell = PROTECT(Rf_cons(head, tail));
     SET_TAG(cell, obj);
 
-    // Update the head + tail to point at the newly-created cell,
-    // effectively inserting that cell between the current head + tail.
-    SETCDR(head, cell);
-    SETCAR(tail, cell);
+    SETCDR(list_, cell);
+
+    if (CDR(cell) != R_NilValue) {
+      SETCAR(CDR(cell), cell);
+    }
 
     UNPROTECT(2);
 
@@ -367,25 +365,29 @@ static struct {
 #endif
   }
 
-  void release(SEXP cell) {
-    if (cell == R_NilValue) {
+  void release(SEXP token) {
+    if (token == R_NilValue) {
       return;
     }
 
 #ifdef CPP11_USE_PRESERVE_OBJECT
-    R_ReleaseObject(cell);
+    R_ReleaseObject(token);
     return;
 #endif
 
-    // Get a reference to the cells before and after the token.
-    SEXP lhs = CAR(cell);
-    SEXP rhs = CDR(cell);
+    SEXP before = CAR(token);
 
-    // Remove the cell from the precious list -- effectively, we do this
-    // by updating the 'lhs' and 'rhs' references to point at each-other,
-    // effectively removing any references to the cell in the pairlist.
-    SETCDR(lhs, rhs);
-    SETCAR(rhs, lhs);
+    SEXP after = CDR(token);
+
+    if (before == R_NilValue && after == R_NilValue) {
+      Rf_error("should never happen");
+    }
+
+    SETCDR(before, after);
+
+    if (after != R_NilValue) {
+      SETCAR(after, before);
+    }
   }
 
  private:
@@ -425,24 +427,18 @@ static struct {
 
   static SEXP get_preserve_list() {
     static SEXP preserve_list = R_NilValue;
+
     if (TYPEOF(preserve_list) != LISTSXP) {
       preserve_list = get_preserve_xptr_addr();
       if (TYPEOF(preserve_list) != LISTSXP) {
-        preserve_list = Rf_cons(R_NilValue, Rf_cons(R_NilValue, R_NilValue));
+        preserve_list = Rf_cons(R_NilValue, R_NilValue);
         R_PreserveObject(preserve_list);
         set_preserve_xptr(preserve_list);
       }
-
-      // NOTE: Because older versions of cpp11 (<= 0.4.2) initialized the
-      // precious_list with a single cell, we might need to detect and update
-      // an existing empty precious list so that we have a second cell following.
-      if (CDR(preserve_list) == R_NilValue)
-        SETCDR(preserve_list, Rf_cons(R_NilValue, R_NilValue));
     }
 
     return preserve_list;
   }
-
-} preserved;
-
+}  // namespace cpp11
+preserved;
 }  // namespace cpp11
