@@ -158,7 +158,7 @@ inline integers as_integers(sexp x) {
     writable::integers ret = writable::integers(len);
     for (size_t i = 0; i < len; ++i) {
       double el = xn[i];
-      if (!is_convertable_without_loss_to_integer(el)) {
+      if (!is_convertible_without_loss_to_integer(el)) {
         throw std::runtime_error("All elements must be integer-like");
       }
       ret[i] = (static_cast<int>(el));
