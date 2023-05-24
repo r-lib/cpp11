@@ -149,30 +149,4 @@ int na();
 template <>
 int r_vector<int>::operator[](const R_xlen_t pos) const;
 
-inline integers as_doubles(SEXP x) {
-  /*if (TYPEOF(x) == REALSXP) {
-    return as_cpp<doubles>(x);
-  } else
-  */
-  if (TYPEOF(x) == INTSXP) {
-    integers xn = as_cpp<integers>(x);
-    return xn;
-    /*
-    R_xlen_t len = xn.size();
-    writable::doubles ret(len);
-    for (R_xlen_t i = 0; i < len; ++i) {
-      int el = xn[i];
-      if (el == NA_INTEGER) {
-        ret[i] = NA_REAL;
-      } else {
-        ret[i] = static_cast<double>(el);
-      }
-    }
-    return ret;
-     */
-  }
-
-  throw type_error(REALSXP, TYPEOF(x));
-}
-
 }  // namespace cpp11
