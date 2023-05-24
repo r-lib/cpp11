@@ -376,35 +376,10 @@ context("doubles-C++") {
   }
 
   test_that("as_doubles(integers)") {
-    /*
-    cpp11::writable::integers y;
-    y.push_back(10);
-    y.push_back(13616);
-    y.push_back(124);
-    y.push_back(899);
-    cpp11::doubles i(cpp11::as_doubles(y));
-
-    expect_true(i[0] == 10);
-    expect_true(i[1] == 13616);
-    expect_true(i[2] == 124);
-    expect_true(i[3] == 899);
-    expect_true(TYPEOF(i) == REALSXP);
-
-    cpp11::writable::strings e;
-    e.push_back("a");
-    e.push_back("b");
-    expect_error(cpp11::as_doubles(e));
-
-    cpp11::doubles na2(Rf_ScalarReal(NA_REAL));
-    expect_true(ISNA(na2[0]));
-    expect_true(cpp11::is_na<double>(na2[0]));
-    expect_true(cpp11::is_na(na2[0]));
-    */
-
     // cpp11::writable::integers na{NA_INTEGER};
-    cpp11::sexp na(Rf_ScalarInteger(NA_INTEGER));
+    // cpp11::sexp na();
 
-    cpp11::integers na3(cpp11::as_doubles(na));
+    cpp11::integers na3(cpp11::as_doubles(Rf_ScalarInteger(NA_INTEGER)));
     expect_true(na3.size() == 1);
     // expect_true(ISNA(na3[0]));
     // expect_true(cpp11::is_na<double>(na3[0]));
