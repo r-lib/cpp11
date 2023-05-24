@@ -149,7 +149,7 @@ int na();
 template <>
 int r_vector<int>::operator[](const R_xlen_t pos) const;
 
-inline doubles as_doubles(SEXP x) {
+inline SEXP as_doubles(SEXP x) {
   if (TYPEOF(x) == REALSXP) {
     return doubles(x);
   } else if (TYPEOF(x) == INTSXP) {
