@@ -9,27 +9,22 @@
 
 namespace cpp11 {
 
-inline integers as_doubles(SEXP x) {
-  /*if (TYPEOF(x) == REALSXP) {
-   return as_cpp<doubles>(x);
-   } else
-   */
-  if (TYPEOF(x) == INTSXP) {
+inline doubles as_doubles(SEXP x) {
+  if (TYPEOF(x) == REALSXP) {
+    return as_cpp<doubles>(x);
+   } else if (TYPEOF(x) == INTSXP) {
     integers xn = as_cpp<integers>(x);
-    return xn;
-    /*
      R_xlen_t len = xn.size();
      writable::doubles ret(len);
      for (R_xlen_t i = 0; i < len; ++i) {
-     int el = xn[i];
-     if (el == NA_INTEGER) {
-     ret[i] = NA_REAL;
-     } else {
-     ret[i] = static_cast<double>(el);
-     }
+       int el = xn[i];
+       if (el == NA_INTEGER) {
+        ret[i] = NA_REAL;
+       } else {
+        ret[i] = static_cast<double>(el);
+       }
      }
      return ret;
-     */
   }
 
   throw type_error(REALSXP, TYPEOF(x));
@@ -409,7 +404,7 @@ context("doubles-C++") {
     // cpp11::writable::integers na{NA_INTEGER};
     // cpp11::sexp na();
 
-    cpp11::integers na3(cpp11::as_doubles(Rf_ScalarInteger(NA_INTEGER)));
+    cpp11::doubles na3(cpp11::as_doubles(Rf_ScalarInteger(NA_INTEGER)));
     expect_true(na3.size() == 1);
     // expect_true(ISNA(na3[0]));
     // expect_true(cpp11::is_na<double>(na3[0]));
