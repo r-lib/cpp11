@@ -151,9 +151,9 @@ int r_vector<int>::operator[](const R_xlen_t pos) const;
 
 inline doubles as_doubles(SEXP x) {
   if (TYPEOF(x) == REALSXP) {
-    return as_cpp<doubles>(x);
+    return doubles(x);
   } else if (TYPEOF(x) == INTSXP) {
-    integers xn = as_cpp<integers>(x);
+    integers xn(x);
     R_xlen_t len = xn.size();
     writable::doubles ret(len);
     for (R_xlen_t i = 0; i < len; ++i) {

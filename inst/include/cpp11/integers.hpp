@@ -151,7 +151,7 @@ typedef r_vector<double> doubles;
 template <>
 double r_vector<double>::operator[](const R_xlen_t pos) const;
 
-inline integers as_integers(sexp x) {
+inline integers as_integers(SEXP x) {
   if (TYPEOF(x) == INTSXP) {
     return as_cpp<integers>(x);
   } else if (TYPEOF(x) == REALSXP) {
