@@ -1,9 +1,7 @@
 #include "Rversion.h"
-
+#include "cpp11/doubles.hpp"
 #include "cpp11/function.hpp"
 #include "cpp11/integers.hpp"
-
-#include "cpp11/doubles.hpp"
 #include "cpp11/strings.hpp"
 
 #include <testthat.h>
@@ -39,10 +37,10 @@ context("integers-C++") {
     expect_true(t[3] == 100000);
     expect_true(TYPEOF(t) == INTSXP);
 
-    cpp11::writable::doubles na;
-    na.push_back(cpp11::na<double>());
+    cpp11::writable::doubles na{NA_REAL, 42.};
     cpp11::integers na2(cpp11::as_integers(na));
     expect_true(cpp11::is_na(na2[0]));
+    expect_true(!cpp11::is_na(na2[1]));
   }
 
   test_that("integers.push_back()") {

@@ -145,32 +145,25 @@ inline int na() {
   return NA_INTEGER;
 }
 
-// forward declarations
+// forward declaration
+
 typedef r_vector<double> doubles;
 
-template <>
-bool is_na(const double& x);
-
-template <>
-double r_vector<double>::operator[](const R_xlen_t pos) const;
-
-inline integers as_integers(sexp x) {
+inline integers as_integers(SEXP x) {
   if (TYPEOF(x) == INTSXP) {
-    return as_cpp<integers>(x);
+    return integers(x);
   } else if (TYPEOF(x) == REALSXP) {
-    doubles xn = as_cpp<doubles>(x);
-    R_xlen_t len = xn.size();
-    writable::integers ret(len);
-    for (R_xlen_t i = 0; i < len; ++i) {
-      double el = xn[i];
-      if (is_na(el)) {
-        ret[i] = na<int>();
-      } else if (is_convertible_without_loss_to_integer(el)) {
-        ret[i] = static_cast<int>(el);
-      } else {
+    doubles xn(x);
+    writable::integers ret(xn.size());
+    std::transform(xn.begin(), xn.end(), ret.begin(), [](double value) {
+      if (ISNA(value)) {
+        return NA_INTEGER;
+      }
+      if (!is_convertible_without_loss_to_integer(value)) {
         throw std::runtime_error("All elements must be integer-like");
       }
-    }
+      return static_cast<int>(value);
+    });
     return ret;
   }
 

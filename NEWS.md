@@ -1,7 +1,7 @@
 # cpp11 (development version)
 
 * `as_doubles()` and `as_integers()` now propagate missing values correctly
-  (#265).
+   (#265, #319).
 
 * Fixed a performance issue related to nested `unwind_protect()` calls (#298).
 
