@@ -151,19 +151,16 @@ typedef r_vector<double> doubles;
 
 inline integers as_integers(sexp x) {
   if (TYPEOF(x) == INTSXP) {
-    return as_cpp<integers>(x);
+    return integers(x);
   } else if (TYPEOF(x) == REALSXP) {
-    doubles xn = as_cpp<doubles>(x);
-    size_t len = (xn.size());
-    writable::integers ret = writable::integers(len);
-    for (size_t i = 0; i < len; ++i) {
-      double el = xn[i];
-      if (!is_convertible_without_loss_to_integer(el)) {
+    doubles xn(x);
+    writable::integers ret = writable::integers(xn.size());
+    std::transform(xn.begin(), xn.end(), ret.begin(), [](double value) {
+      if (!is_convertible_without_loss_to_integer(value)) {
         throw std::runtime_error("All elements must be integer-like");
       }
-      ret[i] = (static_cast<int>(el));
-    }
-
+      return ISNA(value) ? NA_INTEGER : static_cast<int>(value);
+    });
     return ret;
   }
 
