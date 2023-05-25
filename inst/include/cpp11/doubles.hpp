@@ -1,6 +1,6 @@
 #pragma once
 
-#include <algorithm>         // for min
+#include <algorithm>         // for min, tranform
 #include <array>             // for array
 #include <initializer_list>  // for initializer_list
 
@@ -139,16 +139,16 @@ typedef r_vector<int> integers;
 
 inline doubles as_doubles(sexp x) {
   if (TYPEOF(x) == REALSXP) {
-    return as_cpp<doubles>(x);
+    return doubles(x);
   }
 
   else if (TYPEOF(x) == INTSXP) {
-    integers xn = as_cpp<integers>(x);
+    integers xn(x);
     size_t len = xn.size();
-    writable::doubles ret;
-    for (size_t i = 0; i < len; ++i) {
-      ret.push_back(static_cast<double>(xn[i]));
-    }
+    writable::doubles ret(len);
+    std::transform(xn.begin(), xn.end(), ret.begin(), [](int value) {
+      return value == NA_INTEGER ? NA_REAL : static_cast<double>(value);
+    });
     return ret;
   }
 
