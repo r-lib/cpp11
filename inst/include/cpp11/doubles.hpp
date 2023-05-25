@@ -137,7 +137,7 @@ typedef r_vector<double> doubles;
 
 typedef r_vector<int> integers;
 
-inline doubles as_doubles(sexp x) {
+inline doubles as_doubles(SEXP x) {
   if (TYPEOF(x) == REALSXP) {
     return doubles(x);
   }
