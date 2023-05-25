@@ -85,6 +85,7 @@ jobs:
         run: |
           options(warn = 2)
           pak::local_install_dev_deps("cpp11test", dependencies = TRUE)
+          install.packages(".", repos = NULL, type = "source")
           install.packages("cpp11test", repos = NULL, INSTALL_opts = "--install-tests", type = "source")
         shell: Rscript {0}
 
