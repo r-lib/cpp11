@@ -154,12 +154,15 @@ inline integers as_integers(SEXP x) {
     return integers(x);
   } else if (TYPEOF(x) == REALSXP) {
     doubles xn(x);
-    writable::integers ret = writable::integers(xn.size());
+    writable::integers ret(xn.size());
     std::transform(xn.begin(), xn.end(), ret.begin(), [](double value) {
+      if (ISNA(value)) {
+        return NA_INTEGER;
+      }
       if (!is_convertible_without_loss_to_integer(value)) {
         throw std::runtime_error("All elements must be integer-like");
       }
-      return ISNA(value) ? NA_INTEGER : static_cast<int>(value);
+      return static_cast<int>(value);
     });
     return ret;
   }
