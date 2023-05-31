@@ -527,7 +527,9 @@ doubles attribs() {
 
 ## Missing values {#na}
 If you're working with missing values, you need to know two things:
+
 * How R's missing values behave in C++'s scalars (e.g., `double`).
+
 * How to get and set missing values in vectors (e.g., `doubles`).
 
 ### Scalars

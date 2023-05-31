@@ -1,6 +1,6 @@
 #pragma once
 
-#include <algorithm>         // for min
+#include <algorithm>         // for min, tranform
 #include <array>             // for array
 #include <initializer_list>  // for initializer_list
 
@@ -34,7 +34,8 @@ inline double r_vector<double>::operator[](const R_xlen_t pos) const {
 }
 
 template <>
-inline double* r_vector<double>::get_p(bool is_altrep, SEXP data) {
+inline typename r_vector<double>::underlying_type* r_vector<double>::get_p(bool is_altrep,
+                                                                           SEXP data) {
   if (is_altrep) {
     return nullptr;
   } else {
@@ -136,18 +137,18 @@ typedef r_vector<double> doubles;
 
 typedef r_vector<int> integers;
 
-inline doubles as_doubles(sexp x) {
+inline doubles as_doubles(SEXP x) {
   if (TYPEOF(x) == REALSXP) {
-    return as_cpp<doubles>(x);
+    return doubles(x);
   }
 
   else if (TYPEOF(x) == INTSXP) {
-    integers xn = as_cpp<integers>(x);
+    integers xn(x);
     size_t len = xn.size();
-    writable::doubles ret;
-    for (size_t i = 0; i < len; ++i) {
-      ret.push_back(static_cast<double>(xn[i]));
-    }
+    writable::doubles ret(len);
+    std::transform(xn.begin(), xn.end(), ret.begin(), [](int value) {
+      return value == NA_INTEGER ? NA_REAL : static_cast<double>(value);
+    });
     return ret;
   }
 
@@ -159,8 +160,4 @@ inline double na() {
   return NA_REAL;
 }
 
-template <>
-inline bool is_na(const double& x) {
-  return ISNA(x);
-}
 }  // namespace cpp11

@@ -10,11 +10,8 @@ test: all
 
 clean:
 	@Rscript -e 'devtools::clean_dll()'
+	@Rscript -e 'devtools::clean_dll("cpp11test")'
 
 clang_format=`which clang-format`
 format: $(shell find . -name '*.hpp') $(shell find . -name '*.cpp')
-ifeq ($(findstring version 10,$(shell ${clang_format} --version 2>/dev/null)),)
-	@echo "clang-format 10 is required"
-else
 	@${clang_format} -i $?
-endif

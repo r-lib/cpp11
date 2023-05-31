@@ -73,7 +73,7 @@ using enable_if_c_string = enable_if_t<std::is_same<T, const char*>::value, R>;
 
 // https://stackoverflow.com/a/1521682/2055486
 //
-inline bool is_convertable_without_loss_to_integer(double value) {
+inline bool is_convertible_without_loss_to_integer(double value) {
   double int_part;
   return std::modf(value, &int_part) == 0.0;
 }
@@ -100,7 +100,7 @@ enable_if_integral<T, T> as_cpp(SEXP from) {
         return NA_INTEGER;
       }
       double value = REAL_ELT(from, 0);
-      if (is_convertable_without_loss_to_integer(value)) {
+      if (is_convertible_without_loss_to_integer(value)) {
         return value;
       }
     }

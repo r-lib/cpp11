@@ -4,12 +4,19 @@
 \alias{cpp_register}
 \title{Generates wrappers for registered C++ functions}
 \usage{
-cpp_register(path = ".", quiet = !is_interactive())
+cpp_register(
+  path = ".",
+  quiet = !is_interactive(),
+  extension = c(".cpp", ".cc")
+)
 }
 \arguments{
 \item{path}{The path to the package root directory}
 
 \item{quiet}{If \code{TRUE} suppresses output from this function}
+
+\item{extension}{The file extension to use for the generated src/cpp11 file.
+\code{.cpp} by default, but \code{.cc} is also supported.}
 }
 \value{
 The paths to the generated R and C++ source files (in that order).

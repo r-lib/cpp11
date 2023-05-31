@@ -35,7 +35,8 @@ inline int r_vector<int>::operator[](const R_xlen_t pos) const {
 }
 
 template <>
-inline int* r_vector<int>::get_p(bool is_altrep, SEXP data) {
+inline typename r_vector<int>::underlying_type* r_vector<int>::get_p(bool is_altrep,
+                                                                     SEXP data) {
   if (is_altrep) {
     return nullptr;
   } else {
@@ -148,21 +149,21 @@ inline int na() {
 
 typedef r_vector<double> doubles;
 
-inline integers as_integers(sexp x) {
+inline integers as_integers(SEXP x) {
   if (TYPEOF(x) == INTSXP) {
-    return as_cpp<integers>(x);
+    return integers(x);
   } else if (TYPEOF(x) == REALSXP) {
-    doubles xn = as_cpp<doubles>(x);
-    size_t len = (xn.size());
-    writable::integers ret = writable::integers(len);
-    for (size_t i = 0; i < len; ++i) {
-      double el = xn[i];
-      if (!is_convertable_without_loss_to_integer(el)) {
+    doubles xn(x);
+    writable::integers ret(xn.size());
+    std::transform(xn.begin(), xn.end(), ret.begin(), [](double value) {
+      if (ISNA(value)) {
+        return NA_INTEGER;
+      }
+      if (!is_convertible_without_loss_to_integer(value)) {
         throw std::runtime_error("All elements must be integer-like");
       }
-      ret[i] = (static_cast<int>(el));
-    }
-
+      return static_cast<int>(value);
+    });
     return ret;
   }
 
