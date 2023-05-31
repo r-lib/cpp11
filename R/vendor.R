@@ -59,5 +59,43 @@ cpp_vendor <- function(path = ".") {
     writeLines(c(cpp11_header, readLines(f)), file.path(new, basename(f)))
   }
 
+  # Additional steps to make vendoring work ----
+
+  # 1. Check if `src/Makevars` exists
+  makevars_exists <- file.exists("src/Makevars")
+
+  # 2. If makevars exists, it should have a line that reads `PKG_CPPFLAGS = -I../inst/include`
+  if (isTRUE(makevars_exists)) {
+    makevars <- readLines("src/Makevars")
+    if (!any(grepl("PKG_CPPFLAGS = -I../inst/include", makevars))) {
+      # add the line
+      makevars <- c(makevars, "PKG_CPPFLAGS = -I../inst/include")
+
+      writeLines(makevars, "src/Makevars")
+
+      # warn about the change
+      cat("`PKG_CPPFLAGS = -I../inst/include` was added to src/Makevars\n")
+    }
+  } else {
+    # create the file
+    writeLines("PKG_CPPFLAGS = -I../inst/include", "src/Makevars")
+
+    # warn about the change
+    cat("A new src/Makevars file was created\n")
+  }
+
+  # 3. `DESCRIPTION` now should not have `LinkingTo: cpp11` or `LinkingTo: \n\tcpp11`
+  description <- readLines("DESCRIPTION")
+
+  # remove the lines
+  description <- description[!grepl("LinkingTo: cpp11", description)]
+  description <- description[!grepl("LinkingTo: ", description)]
+  description <- description[!grepl("    cpp11", description)]
+
+  writeLines(description, "DESCRIPTION")
+
+  # warn about the change
+  cat("`LinkingTo: cpp11` was removed from DESCRIPTION\n")
+
   invisible(new)
 }
