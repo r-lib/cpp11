@@ -69,7 +69,7 @@ jobs:
           sudo apt update
           sudo apt-get install -y g++-4.8
           mkdir ~/.R/
-          echo $'CXX1X=g++-4.8\nCXX11=g++-4.8\nCC=gcc-4.8\nCXX=g++-4.8 -std=gnu++11' >> ~/.R/Makevars
+          echo $'CXX1X=g++-4.8\nCXX11=g++-4.8\nCC=gcc-4.8 -std=c99\nCXX=g++-4.8 -std=gnu++11' >> ~/.R/Makevars
 
       - name: Install macOS system dependencies
         if: runner.os == 'macOS'
