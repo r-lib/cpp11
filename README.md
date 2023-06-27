@@ -16,7 +16,6 @@ To add cpp11 to an existing package, put your C++ files in the `src/` directory 
 
 ```
 LinkingTo: cpp11
-SystemRequirements: C++11
 ```
 
 Then decorate C++ functions you want to expose to R with `[[cpp11::register]]`. 
