@@ -28,3 +28,4 @@ script.R
 ^doc$
 ^Meta$
 ^CRAN-SUBMISSION$
+.vscode
