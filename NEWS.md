@@ -1,4 +1,6 @@
-# cpp11 (development version)
+# cpp11 0.4.4
+
+* Davis Vaughan is now the maintainer. 
 
 * `as_doubles()` and `as_integers()` now propagate missing values correctly
    (#265, #319).
@@ -11,7 +13,8 @@
   (r-lib/systemfonts#98).
 
 * `cpp_register()` gains an argument `extension=` governing the file extension of
-  the `src/cpp11` file. By default it's `.cpp`, but `.cc` is now supported as well (#292, @MichaelChirico)
+  the `src/cpp11` file. By default it's `.cpp`, but `.cc` is now supported 
+  as well (#292, @MichaelChirico)
 
 # cpp11 0.4.3
 
