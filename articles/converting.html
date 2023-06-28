@@ -8,12 +8,12 @@
 <meta name="description" content="cpp11">
 <title>Converting from Rcpp • cpp11</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.2/font.css" rel="stylesheet">
-<link href="../deps/Source_Code_Pro-0.4.2/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.6/font.css" rel="stylesheet">
+<link href="../deps/Source_Code_Pro-0.4.6/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Converting from Rcpp">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Converting from Rcpp">
 <meta property="og:description" content="cpp11">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -28,7 +28,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">cpp11</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.4</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -97,12 +97,23 @@
 
     
     
-<p>In many cases there is no need to convert a package from Rcpp. If the code is already written and you don’t have a very compelling need to use cpp11 I would recommend you continue to use Rcpp. However if you <em>do</em> feel like your project will benefit from using cpp11 this vignette will provide some guidance and doing the conversion.</p>
-<p>It is also a place to highlight some of the largest differences between Rcpp and cpp11.</p>
+<p>In many cases there is no need to convert a package from Rcpp. If the
+code is already written and you don’t have a very compelling need to use
+cpp11 I would recommend you continue to use Rcpp. However if you
+<em>do</em> feel like your project will benefit from using cpp11 this
+vignette will provide some guidance and doing the conversion.</p>
+<p>It is also a place to highlight some of the largest differences
+between Rcpp and cpp11.</p>
 <div class="section level2">
 <h2 id="class-comparison-table">Class comparison table<a class="anchor" aria-label="anchor" href="#class-comparison-table"></a>
 </h2>
 <table class="table">
+<colgroup>
+<col width="25%">
+<col width="25%">
+<col width="25%">
+<col width="25%">
+</colgroup>
 <thead><tr class="header">
 <th>Rcpp</th>
 <th>cpp11 (read-only)</th>
@@ -117,9 +128,21 @@
 <td>&lt;cpp11/doubles.hpp&gt;</td>
 </tr>
 <tr class="even">
+<td>NumericMatrix</td>
+<td>doubles_matrix&lt;&gt;</td>
+<td>writable::doubles_matrix&lt;&gt;</td>
+<td>&lt;cpp11/doubles.hpp&gt;</td>
+</tr>
+<tr class="odd">
 <td>IntegerVector</td>
 <td>integers</td>
 <td>writable::integers</td>
+<td>&lt;cpp11/integers.hpp&gt;</td>
+</tr>
+<tr class="even">
+<td>IntegerMatrix</td>
+<td>integers_matrix&lt;&gt;</td>
+<td>writable::integers_matrix&lt;&gt;</td>
 <td>&lt;cpp11/integers.hpp&gt;</td>
 </tr>
 <tr class="odd">
@@ -218,15 +241,30 @@
 <div class="section level2">
 <h2 id="read-only-vs-writable-vectors">Read-only vs writable vectors<a class="anchor" aria-label="anchor" href="#read-only-vs-writable-vectors"></a>
 </h2>
-<p>The largest difference between cpp11 and Rcpp classes is that Rcpp classes modify their data in place, whereas cpp11 classes require copying the data to a writable class for modification.</p>
-<p>The default classes, e.g. <code>cpp11::doubles</code> are <em>read-only</em> classes that do not permit modification. If you want to modify the data you need to use the classes in the <code>cpp11::writable</code> namespace, e.g. <code>cpp11::writable::doubles</code>.</p>
-<p>In addition use the <code>writable</code> variants if you need to create a new R vector entirely in C++.</p>
+<p>The largest difference between cpp11 and Rcpp classes is that Rcpp
+classes modify their data in place, whereas cpp11 classes require
+copying the data to a writable class for modification.</p>
+<p>The default classes, e.g. <code>cpp11::doubles</code> are
+<em>read-only</em> classes that do not permit modification. If you want
+to modify the data you need to use the classes in the
+<code>cpp11::writable</code> namespace,
+e.g. <code>cpp11::writable::doubles</code>.</p>
+<p>In addition use the <code>writable</code> variants if you need to
+create a new R vector entirely in C++.</p>
 </div>
 <div class="section level2">
 <h2 id="fewer-implicit-conversions">Fewer implicit conversions<a class="anchor" aria-label="anchor" href="#fewer-implicit-conversions"></a>
 </h2>
-<p>Rcpp also allows very flexible implicit conversions, e.g. if you pass a <code>REALSXP</code> to a function that takes a <code>Rcpp::IntegerVector()</code> it is implicitly converted to a <code>INTSXP</code>. These conversions are nice for usability, but require (implicit) duplication of the data, with the associated runtime costs.</p>
-<p>cpp11 throws an error in these cases. If you want the implicit coercions you can add a call to <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer()</a></code> or <code><a href="https://rdrr.io/r/base/double.html" class="external-link">as.double()</a></code> as appropriate from R when you call the function.</p>
+<p>Rcpp also allows very flexible implicit conversions, e.g. if you pass
+a <code>REALSXP</code> to a function that takes a
+<code>Rcpp::IntegerVector()</code> it is implicitly converted to a
+<code>INTSXP</code>. These conversions are nice for usability, but
+require (implicit) duplication of the data, with the associated runtime
+costs.</p>
+<p>cpp11 throws an error in these cases. If you want the implicit
+coercions you can add a call to <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer()</a></code> or
+<code><a href="https://rdrr.io/r/base/double.html" class="external-link">as.double()</a></code> as appropriate from R when you call the
+function.</p>
 </div>
 <div class="section level2">
 <h2 id="calling-r-functions-from-c">Calling R functions from C++<a class="anchor" aria-label="anchor" href="#calling-r-functions-from-c"></a>
@@ -242,8 +280,15 @@
 <div class="section level2">
 <h2 id="appending-behavior">Appending behavior<a class="anchor" aria-label="anchor" href="#appending-behavior"></a>
 </h2>
-<p>One major difference in Rcpp and cpp11 is how vectors are grown. Rcpp vectors have a <code>push_back()</code> method, but unlike <code>std::vector()</code> no additional space is reserved when pushing. This makes calling <code>push_back()</code> repeatably very expensive, as the entire vector has to be copied each call.</p>
-<p>In contrast <code>cpp11</code> vectors grow efficiently, reserving extra space. Because of this you can do ~10,000,000 vector appends with cpp11 in approximately the same amount of time that Rcpp does 10,000, as this benchmark demonstrates.</p>
+<p>One major difference in Rcpp and cpp11 is how vectors are grown. Rcpp
+vectors have a <code>push_back()</code> method, but unlike
+<code>std::vector()</code> no additional space is reserved when pushing.
+This makes calling <code>push_back()</code> repeatably very expensive,
+as the entire vector has to be copied each call.</p>
+<p>In contrast <code>cpp11</code> vectors grow efficiently, reserving
+extra space. Because of this you can do ~10,000,000 vector appends with
+cpp11 in approximately the same amount of time that Rcpp does 10,000, as
+this benchmark demonstrates.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">cpp11test</span><span class="op">)</span></span>
 <span><span class="va">grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>len <span class="op">=</span> <span class="fl">10</span> <span class="op">^</span> <span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span>, pkg <span class="op">=</span> <span class="st">"cpp11"</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -381,7 +426,16 @@
 <div class="section level2">
 <h2 id="random-number-behavior">Random Number behavior<a class="anchor" aria-label="anchor" href="#random-number-behavior"></a>
 </h2>
-<p>Rcpp unconditionally includes calls to <code>GetRNGstate()</code> and <code>PutRNGstate()</code> before each wrapped function. This ensures that if any C++ code calls the R API functions <code>unif_rand()</code>, <code>norm_rand()</code>, <code>exp_rand()</code> or <code>R_unif_index()</code> the random seed state is set accordingly. cpp11 does <em>not</em> do this, so you must include the calls to <code>GetRNGstate()</code> and <code>PutRNGstate()</code> <em>yourself</em> if you use any of those functions in your C++ code. See <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Random-numbers" class="external-link">R-exts 6.3 - Random number generation</a> for details on these functions.</p>
+<p>Rcpp unconditionally includes calls to <code>GetRNGstate()</code> and
+<code>PutRNGstate()</code> before each wrapped function. This ensures
+that if any C++ code calls the R API functions <code>unif_rand()</code>,
+<code>norm_rand()</code>, <code>exp_rand()</code> or
+<code>R_unif_index()</code> the random seed state is set accordingly.
+cpp11 does <em>not</em> do this, so you must include the calls to
+<code>GetRNGstate()</code> and <code>PutRNGstate()</code>
+<em>yourself</em> if you use any of those functions in your C++ code.
+See <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Random-numbers" class="external-link">R-exts
+6.3 - Random number generation</a> for details on these functions.</p>
 <p>One convenient way to do safely is to use a simple class:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> local_rng <span class="op">{</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
@@ -405,19 +459,25 @@
 <ol style="list-style-type: decimal">
 <li>Add cpp11 to <code>LinkingTo</code>
 </li>
-<li>Add C++11 to <code>SystemRequirements</code>
+<li>Convert all instances of <code>// [[Rcpp::export]]</code> to
+<code>[[cpp11::register]]</code>
 </li>
-<li>Convert all instances of <code>// [[Rcpp::export]]</code> to <code>[[cpp11::register]]</code>
-</li>
-<li>Clean and recompile the package, e.g. <code>pkgbuild::clean_dll()</code> <code><a href="https://pkgload.r-lib.org/reference/load_all.html" class="external-link">pkgload::load_all()</a></code>
+<li>Clean and recompile the package,
+e.g. <code>pkgbuild::clean_dll()</code>
+<code><a href="https://pkgload.r-lib.org/reference/load_all.html" class="external-link">pkgload::load_all()</a></code>
 </li>
 <li>Run tests <code>devtools::test()</code>
 </li>
 <li>Start converting function by function
 <ul>
-<li>Remember you can usually inter-convert between cpp11 and Rcpp classes by going through <code>SEXP</code> if needed.</li>
-<li>Converting the code a bit at a time (and regularly running your tests) is the best way to do the conversion correctly and make progress</li>
-<li>Doing a separate commit after converting each file (or possibly each function) can make finding any regressions with <a href="https://youtu.be/KKeucpfAuuA" class="external-link">git bisect</a> much easier in the future.</li>
+<li>Remember you can usually inter-convert between cpp11 and Rcpp
+classes by going through <code>SEXP</code> if needed.</li>
+<li>Converting the code a bit at a time (and regularly running your
+tests) is the best way to do the conversion correctly and make
+progress</li>
+<li>Doing a separate commit after converting each file (or possibly each
+function) can make finding any regressions with <a href="https://youtu.be/KKeucpfAuuA" class="external-link">git bisect</a> much easier in the
+future.</li>
 </ul>
 </li>
 </ol>
@@ -428,36 +488,61 @@
 <div class="section level3">
 <h3 id="stl-includes">STL includes<a class="anchor" aria-label="anchor" href="#stl-includes"></a>
 </h3>
-<p>Rcpp.h includes a number of STL headers automatically, notably <code>&lt;string&gt;</code> and <code>&lt;vector&gt;</code>, however the cpp11 headers generally do not. If you have errors like</p>
+<p>Rcpp.h includes a number of STL headers automatically, notably
+<code>&lt;string&gt;</code> and <code>&lt;vector&gt;</code>, however the
+cpp11 headers generally do not. If you have errors like</p>
 <blockquote>
 <p>error: no type named ‘string’ in namespace ‘std’</p>
 </blockquote>
-<p>You will need to include the appropriate STL header, in this case <code>&lt;string&gt;</code>.</p>
+<p>You will need to include the appropriate STL header, in this case
+<code>&lt;string&gt;</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="r-api-includes">R API includes<a class="anchor" aria-label="anchor" href="#r-api-includes"></a>
 </h3>
-<p>cpp11 conflicts with macros declared by some R headers unless the macros <code>R_NO_REMAP</code> and <code>STRICT_R_HEADERS</code> are defined. If you include <code>cpp11/R.hpp</code> before any R headers these macros will be defined appropriately, otherwise you may see errors like</p>
+<p>cpp11 conflicts with macros declared by some R headers unless the
+macros <code>R_NO_REMAP</code> and <code>STRICT_R_HEADERS</code> are
+defined. If you include <code>cpp11/R.hpp</code> before any R headers
+these macros will be defined appropriately, otherwise you may see errors
+like</p>
 <blockquote>
-<p>R headers were included before cpp11 headers and at least one of R_NO_REMAP or STRICT_R_HEADERS was not defined.</p>
+<p>R headers were included before cpp11 headers and at least one of
+R_NO_REMAP or STRICT_R_HEADERS was not defined.</p>
 </blockquote>
-<p>Which indicate that you must either change your include order or add preprocessor definitions for <code>R_NO_REMAP</code> and <code>STRICT_R_HEADERS</code>. Note that transitive includes of R headers (for example, those included by <code>Rcpp.h</code>) can also introduce the conflicting macros.</p>
+<p>Which indicate that you must either change your include order or add
+preprocessor definitions for <code>R_NO_REMAP</code> and
+<code>STRICT_R_HEADERS</code>. Note that transitive includes of R
+headers (for example, those included by <code>Rcpp.h</code>) can also
+introduce the conflicting macros.</p>
 </div>
 <div class="section level3">
 <h3 id="type-aliases">Type aliases<a class="anchor" aria-label="anchor" href="#type-aliases"></a>
 </h3>
-<p>If you use typedefs for cpp11 types or define custom types you will need to define them in a <code>pkgname_types.hpp</code> file so that <code><a href="../reference/cpp_register.html">cpp_register()</a></code> can include it in the generated code.</p>
+<p>If you use typedefs for cpp11 types or define custom types you will
+need to define them in a <code>pkgname_types.hpp</code> file so that
+<code><a href="../reference/cpp_register.html">cpp_register()</a></code> can include it in the generated code.</p>
 </div>
 <div class="section level3">
 <h3 id="cpp11stop-and-cpp11warning-with-stdstring">
-<code>cpp11::stop()</code> and <code>cpp11::warning()</code> with <code>std::string</code><a class="anchor" aria-label="anchor" href="#cpp11stop-and-cpp11warning-with-stdstring"></a>
+<code>cpp11::stop()</code> and <code>cpp11::warning()</code> with
+<code>std::string</code><a class="anchor" aria-label="anchor" href="#cpp11stop-and-cpp11warning-with-stdstring"></a>
 </h3>
-<p><code><a href="https://rdrr.io/r/base/stop.html" class="external-link">cpp11::stop()</a></code> and <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">cpp11::warning()</a></code> are thin wrappers around <code>Rf_stop()</code> and <code>Rf_warning()</code>. These are simple C functions with a <code>printf()</code> API, so do not understand C++ objects like <code>std::string</code>. Therefore you need to call <code>obj.c_str()</code> when passing character data to them.</p>
+<p><code><a href="https://rdrr.io/r/base/stop.html" class="external-link">cpp11::stop()</a></code> and <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">cpp11::warning()</a></code> are thin
+wrappers around <code>Rf_stop()</code> and <code>Rf_warning()</code>.
+These are simple C functions with a <code>printf()</code> API, so do not
+understand C++ objects like <code>std::string</code>. Therefore you need
+to call <code>obj.c_str()</code> when passing character data to
+them.</p>
 </div>
 <div class="section level3">
 <h3 id="logical-vector-construction">Logical vector construction<a class="anchor" aria-label="anchor" href="#logical-vector-construction"></a>
 </h3>
-<p>If you are constructing a length 1 logical vector you may need to explicitly use a <code>r_bool()</code> object in the initializer list rather than <code>TRUE</code>, <code>FALSE</code> or <code>NA_INTEGER</code>. This issue only occurs with the clang compiler, not gcc. When constructing vectors with more than one element this is not an issue</p>
+<p>If you are constructing a length 1 logical vector you may need to
+explicitly use a <code>r_bool()</code> object in the initializer list
+rather than <code>TRUE</code>, <code>FALSE</code> or
+<code>NA_INTEGER</code>. This issue only occurs with the clang compiler,
+not gcc. When constructing vectors with more than one element this is
+not an issue</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// bad</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>cpp11<span class="op">::</span>writable<span class="op">::</span>logicals<span class="op">({</span>FALSE<span class="op">});</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -478,12 +563,12 @@
   <footer><div class="container">
   <div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by <a href="http://jimhester.com" class="external-link">Jim Hester</a>, <a href="https://github.com/romainfrancois" class="external-link">Romain François</a>, <a href="https://www.rstudio.com" class="external-link"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" width="72"></a>.</p>
+<p>Developed by <a href="https://github.com/DavisVaughan" class="external-link">Davis Vaughan</a>, <a href="https://jennybryan.org" class="external-link">Jennifer Bryan</a>, <a href="http://jimhester.com" class="external-link">Jim Hester</a>, <a href="https://github.com/romainfrancois" class="external-link">Romain François</a>, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" style="margin-bottom: 3px;"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
   </div></footer>
