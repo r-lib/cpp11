@@ -102,8 +102,7 @@
 <h2 id="using-cpp11-in-a-package">Using cpp11 in a package<a class="anchor" aria-label="anchor" href="#using-cpp11-in-a-package"></a>
 </h2>
 <p>To add cpp11 to an existing package, put your C++ files in the <code>src/</code> directory and add the following to your DESCRIPTION file:</p>
-<pre><code><span><span class="va">LinkingTo</span><span class="op">:</span> <span class="va">cpp11</span></span>
-<span><span class="va">SystemRequirements</span><span class="op">:</span> <span class="va">C</span><span class="op">+</span><span class="op">+</span><span class="fl">11</span></span></code></pre>
+<pre><code><span><span class="va">LinkingTo</span><span class="op">:</span> <span class="va">cpp11</span></span></code></pre>
 <p>Then decorate C++ functions you want to expose to R with <code>[[cpp11::register]]</code>. <em>Note that this is a <a href="https://en.cppreference.com/w/cpp/language/attributes" class="external-link">C++11 attribute</a>, not a comment like is used in Rcpp.</em></p>
 <p>cpp11 is a header only library with no hard dependencies and does not use a shared library, so it is straightforward and reliable to use in packages without fear of compile-time and run-time mismatches.</p>
 <p>Alternatively, you can <a href="https://cpp11.r-lib.org/articles/motivations.html#vendoring">vendor</a> the current installed version of cpp11 headers into your package with <code>cpp11::vendor_cpp11()</code>. This ensures the headers will remain unchanged until you explicitly update them.</p>
