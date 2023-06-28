@@ -165,7 +165,6 @@ void foo() {
 ## Mechanics of converting a package from Rcpp
 
 1. Add cpp11 to `LinkingTo`
-1. Add C++11 to `SystemRequirements`
 1. Convert all instances of `// [[Rcpp::export]]` to `[[cpp11::register]]`
 1. Clean and recompile the package, e.g. `pkgbuild::clean_dll()` `pkgload::load_all()`
 1. Run tests `devtools::test()`

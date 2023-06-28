@@ -1107,7 +1107,6 @@ Then add the following to your `DESCRIPTION` file:
 
     ```
     LinkingTo: cpp11
-    SystemRequirements: C++11
     ```
 
 and add the following [roxygen](https://roxygen2.r-lib.org/) directive somewhere in your package's R files. (A common location is `R/pkgname-package.R`)
