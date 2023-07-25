@@ -54,34 +54,20 @@ inline void set_option(SEXP name, SEXP value) {
   SETCAR(opt, value);
 }
 
-inline Rboolean* setup_should_unwind_protect() {
+inline Rboolean& get_should_unwind_protect() {
   SEXP should_unwind_protect_sym = Rf_install("cpp11_should_unwind_protect");
   SEXP should_unwind_protect_sexp = Rf_GetOption1(should_unwind_protect_sym);
-
   if (should_unwind_protect_sexp == R_NilValue) {
-    // Allocate and initialize once, then let R manage it.
-    // That makes this a shared global across all compilation units.
     should_unwind_protect_sexp = PROTECT(Rf_allocVector(LGLSXP, 1));
-    SET_LOGICAL_ELT(should_unwind_protect_sexp, 0, TRUE);
     detail::set_option(should_unwind_protect_sym, should_unwind_protect_sexp);
     UNPROTECT(1);
   }
 
-  return reinterpret_cast<Rboolean*>(LOGICAL(should_unwind_protect_sexp));
-}
+  Rboolean* should_unwind_protect =
+      reinterpret_cast<Rboolean*>(LOGICAL(should_unwind_protect_sexp));
+  should_unwind_protect[0] = TRUE;
 
-inline Rboolean* access_should_unwind_protect() {
-  // Setup is run once per compilation unit, but all compilation units
-  // share the same global option, so each compilation unit's static pointer
-  // will point to the same object.
-  static Rboolean* p_should_unwind_protect = setup_should_unwind_protect();
-  return p_should_unwind_protect;
-}
-
-inline Rboolean get_should_unwind_protect() { return *access_should_unwind_protect(); }
-
-inline void set_should_unwind_protect(Rboolean should_unwind_protect) {
-  *access_should_unwind_protect() = should_unwind_protect;
+  return should_unwind_protect[0];
 }
 
 }  // namespace detail
@@ -94,11 +80,12 @@ inline void set_should_unwind_protect(Rboolean should_unwind_protect) {
 template <typename Fun, typename = typename std::enable_if<std::is_same<
                             decltype(std::declval<Fun&&>()()), SEXP>::value>::type>
 SEXP unwind_protect(Fun&& code) {
-  if (detail::get_should_unwind_protect() == FALSE) {
+  static auto should_unwind_protect = detail::get_should_unwind_protect();
+  if (should_unwind_protect == FALSE) {
     return std::forward<Fun>(code)();
   }
 
-  detail::set_should_unwind_protect(FALSE);
+  should_unwind_protect = FALSE;
 
   static SEXP token = [] {
     SEXP res = R_MakeUnwindCont();
@@ -108,7 +95,7 @@ SEXP unwind_protect(Fun&& code) {
 
   std::jmp_buf jmpbuf;
   if (setjmp(jmpbuf)) {
-    detail::set_should_unwind_protect(TRUE);
+    should_unwind_protect = TRUE;
     throw unwind_exception(token);
   }
 
@@ -133,7 +120,7 @@ SEXP unwind_protect(Fun&& code) {
   // unset it here before returning the value ourselves.
   SETCAR(token, R_NilValue);
 
-  detail::set_should_unwind_protect(TRUE);
+  should_unwind_protect = TRUE;
 
   return res;
 }
