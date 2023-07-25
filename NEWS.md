@@ -1,4 +1,8 @@
-# cpp11 (development version)
+# cpp11 0.4.5
+
+* On 2023-07-20, cpp11 was temporarily rolled back to 0.4.3 manually by CRAN due
+  to a bug in 0.4.4 which we could not immediately fix due to the cpp11
+  maintainer being on vacation.
 
 # cpp11 0.4.4
 
