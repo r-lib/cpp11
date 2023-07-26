@@ -54,22 +54,6 @@ inline void set_option(SEXP name, SEXP value) {
   SETCAR(opt, value);
 }
 
-inline Rboolean& get_should_unwind_protect() {
-  SEXP should_unwind_protect_sym = Rf_install("cpp11_should_unwind_protect");
-  SEXP should_unwind_protect_sexp = Rf_GetOption1(should_unwind_protect_sym);
-  if (should_unwind_protect_sexp == R_NilValue) {
-    should_unwind_protect_sexp = PROTECT(Rf_allocVector(LGLSXP, 1));
-    detail::set_option(should_unwind_protect_sym, should_unwind_protect_sexp);
-    UNPROTECT(1);
-  }
-
-  Rboolean* should_unwind_protect =
-      reinterpret_cast<Rboolean*>(LOGICAL(should_unwind_protect_sexp));
-  should_unwind_protect[0] = TRUE;
-
-  return should_unwind_protect[0];
-}
-
 }  // namespace detail
 
 #ifdef HAS_UNWIND_PROTECT
@@ -80,13 +64,6 @@ inline Rboolean& get_should_unwind_protect() {
 template <typename Fun, typename = typename std::enable_if<std::is_same<
                             decltype(std::declval<Fun&&>()()), SEXP>::value>::type>
 SEXP unwind_protect(Fun&& code) {
-  static auto should_unwind_protect = detail::get_should_unwind_protect();
-  if (should_unwind_protect == FALSE) {
-    return std::forward<Fun>(code)();
-  }
-
-  should_unwind_protect = FALSE;
-
   static SEXP token = [] {
     SEXP res = R_MakeUnwindCont();
     R_PreserveObject(res);
@@ -95,7 +72,6 @@ SEXP unwind_protect(Fun&& code) {
 
   std::jmp_buf jmpbuf;
   if (setjmp(jmpbuf)) {
-    should_unwind_protect = TRUE;
     throw unwind_exception(token);
   }
 
@@ -119,8 +95,6 @@ SEXP unwind_protect(Fun&& code) {
   // R_UwindProtect does a normal exit the memory shouldn't be protected, so we
   // unset it here before returning the value ourselves.
   SETCAR(token, R_NilValue);
-
-  should_unwind_protect = TRUE;
 
   return res;
 }
