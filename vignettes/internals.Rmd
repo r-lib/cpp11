@@ -31,22 +31,21 @@ You can load the package in an interactive R session
 devtools::load_all()
 ```
 
-Or run the tests with
+Or run the cpp11 tests with
 
 ```r
 devtools::test()
 ```
 
-`test()` will also re-compile the package if needed, so you do not always have to run `load_all()`.
+There are more extensive tests in the `cpp11test` directory. Generally when developing the C++ headers I run R with its working directory in the `cpp11test` directory and use `devtools::test()` to run the cpp11tests.
 
-If you change the cpp11 headers you will need to clean and recompile the cpp11test package
+If you change the cpp11 headers you will need to install the new version of cpp11 and then clean and recompile the cpp11test package:
 
 ```r
+# Assuming your working directory is `cpp11test/`
 devtools::clean_dll()
 devtools::load_all()
 ```
-
-Generally when developing the C++ headers I run R with its working directory in the `cpp11test` directory and use `devtools::test()` to run the cpp11tests.
 
 To calculate code coverage of the cpp11 package run the following from the `cpp11` root directory.
 
@@ -63,8 +62,6 @@ You can run `make format` to re-format all code in the project. If your system d
 You may need to link the newly installed version 10. To do so, run `brew unlink clang-format` followed by `brew link clang-format@10`.
 
 Alternatively many IDEs support automatically running `clang-format` every time files are written.
-
-
 
 ## Code organization
 
