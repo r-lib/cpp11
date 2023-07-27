@@ -1,8 +1,11 @@
 # cpp11 (development version)
 
-* TODO (something about both the performance optimization being removed, and
-  the danger of using nested unwind_protect() calls from within the same .Call
-  entry point)
+* Nested calls to `cpp11::unwind_protect()` are no longer supported or
+  encouraged. Previously, this was something that could be done for performance
+  improvements, but ultimately this feature has proven to cause more problems
+  than it is worth and is very hard to use safely. For more information, see the
+  new `vignette("FAQ")` section titled "Should I call `cpp11::unwind_protect()`
+  manually?" (#327).
 
 # cpp11 0.4.5
 
