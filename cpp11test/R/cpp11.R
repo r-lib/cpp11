@@ -223,3 +223,11 @@ rcpp_sum_dbl_accumulate_ <- function(x_sxp) {
 rcpp_grow_ <- function(n_sxp) {
   .Call(`_cpp11test_rcpp_grow_`, n_sxp)
 }
+
+test_destruction_inner <- function() {
+  invisible(.Call(`_cpp11test_test_destruction_inner`))
+}
+
+test_destruction_outer <- function() {
+  invisible(.Call(`_cpp11test_test_destruction_outer`))
+}
