@@ -6,6 +6,8 @@
   than it is worth and is very hard to use safely. For more information, see the
   new `vignette("FAQ")` section titled "Should I call `cpp11::unwind_protect()`
   manually?" (#327).
+  
+* The features and bug fixes from cpp11 0.4.4 have been added back in.
 
 # cpp11 0.4.5
 
