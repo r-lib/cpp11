@@ -67,7 +67,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="cpp11-development-version">cpp11 (development version)<a class="anchor" aria-label="anchor" href="#cpp11-development-version"></a></h2>
-</div>
+<ul><li>Nested calls to <code>cpp11::unwind_protect()</code> are no longer supported or encouraged. Previously, this was something that could be done for performance improvements, but ultimately this feature has proven to cause more problems than it is worth and is very hard to use safely. For more information, see the new <code><a href="../articles/FAQ.html">vignette("FAQ")</a></code> section titled “Should I call <code>cpp11::unwind_protect()</code> manually?” (<a href="https://github.com/r-lib/cpp11/issues/327" class="external-link">#327</a>).</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.5" id="cpp11-045">cpp11 0.4.5<a class="anchor" aria-label="anchor" href="#cpp11-045"></a></h2><p class="text-muted">CRAN release: 2023-07-20</p>
 <ul><li>On 2023-07-20, cpp11 was temporarily rolled back to 0.4.3 manually by CRAN due to a bug in 0.4.4 which we could not immediately fix due to the cpp11 maintainer being on vacation.</li>

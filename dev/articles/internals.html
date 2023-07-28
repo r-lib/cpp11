@@ -109,19 +109,19 @@
 <p>You can load the package in an interactive R session</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>Or run the tests with</p>
+<p>Or run the cpp11 tests with</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">test</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><code>test()</code> will also re-compile the package if needed, so
-you do not always have to run <code>load_all()</code>.</p>
-<p>If you change the cpp11 headers you will need to clean and recompile
-the cpp11test package</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">clean_dll</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>Generally when developing the C++ headers I run R with its working
-directory in the <code>cpp11test</code> directory and use
+<p>There are more extensive tests in the <code>cpp11test</code>
+directory. Generally when developing the C++ headers I run R with its
+working directory in the <code>cpp11test</code> directory and use
 <code>devtools::test()</code> to run the cpp11tests.</p>
+<p>If you change the cpp11 headers you will need to install the new
+version of cpp11 and then clean and recompile the cpp11test package:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Assuming your working directory is `cpp11test/`</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">clean_dll</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>To calculate code coverage of the cpp11 package run the following
 from the <code>cpp11</code> root directory.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
