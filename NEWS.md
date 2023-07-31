@@ -1,4 +1,4 @@
-# cpp11 (development version)
+# cpp11 0.4.6
 
 * Nested calls to `cpp11::unwind_protect()` are no longer supported or
   encouraged. Previously, this was something that could be done for performance
