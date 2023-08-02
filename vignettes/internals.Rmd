@@ -123,6 +123,9 @@ Calling `preserved.release()` on this returned token will release the protection
 
 This scheme scales in O(1) time to release or insert an object vs O(N) or worse time with `R_PreserveObject()` / `R_ReleaseObject()`.
 
+Each compilation unit has its own unique protection list, which avoids the need to manage a "global" protection list shared across compilation units within the same package and across packages.
+A previous version of cpp11 used a global protection list, but this caused [multiple issues](https://github.com/r-lib/cpp11/issues/330).
+
 These functions are defined in [protect.hpp](https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/protect.hpp)
 
 ### Unwind Protect
