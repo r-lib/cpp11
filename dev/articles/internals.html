@@ -235,6 +235,12 @@ the linked list.</p>
 <p>This scheme scales in O(1) time to release or insert an object vs
 O(N) or worse time with <code>R_PreserveObject()</code> /
 <code>R_ReleaseObject()</code>.</p>
+<p>Each compilation unit has its own unique protection list, which
+avoids the need to manage a “global” protection list shared across
+compilation units within the same package and across packages. A
+previous version of cpp11 used a global protection list, but this caused
+<a href="https://github.com/r-lib/cpp11/issues/330" class="external-link">multiple
+issues</a>.</p>
 <p>These functions are defined in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/protect.hpp" class="external-link">protect.hpp</a></p>
 </div>
 <div class="section level3">
