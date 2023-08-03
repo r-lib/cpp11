@@ -246,18 +246,20 @@ issues</a>.</p>
 <div class="section level3">
 <h3 id="unwind-protect">Unwind Protect<a class="anchor" aria-label="anchor" href="#unwind-protect"></a>
 </h3>
-<p>In R 3.5+ cpp11 uses <code>R_UnwindProtect</code> to protect (most)
-calls to the R API that could fail. These are usually those that
-allocate memory, though in truth most R API functions could error along
-some paths. If an error happends under <code>R_UnwindProtect</code>
-cpp11 will throw a C++ exception. This exception is caught by the try
-catch block defined in the <code>BEGIN_CPP11</code> macro in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/declarations.hpp" class="external-link">cpp11/declarations.hpp</a>.
+<p>cpp11 uses <code>R_UnwindProtect()</code> to protect (most) calls to
+the R API that could fail. These are usually those that allocate memory,
+though in truth most R API functions could error along some paths. If an
+error happens under <code>R_UnwindProtect()</code>, cpp11 will throw a
+C++ exception. This exception is caught by the try/catch block defined
+in the <code>BEGIN_CPP11</code> macro in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/declarations.hpp" class="external-link">cpp11/declarations.hpp</a>.
 The exception will cause any C++ destructors to run, freeing any
-resources held by C++ objects. After the try catch block exits the R
+resources held by C++ objects. After the try/catch block exits, the R
 error unwinding is then continued by <code>R_ContinueUnwind()</code> and
 a normal R error results.</p>
-<p>In R versions prior to 3.5 <code>R_UnwindProtect()</code> is not
-available. Unfortunately the options to emulate it are not ideal.</p>
+<p>We require R &gt;=3.5 to use cpp11, but when it was created we wanted
+to support back to R 3.3, but <code>R_ContinueUnwind()</code> wasn’t
+available until R 3.5. Below are a few other options we considered to
+support older R versions:</p>
 <ol style="list-style-type: decimal">
 <li>Using <code>R_TopLevelExec()</code> works to avoid the C long jump,
 but because the code is always run in a top level context any errors or
@@ -271,24 +273,19 @@ be an option, but implementing this is convoluted and it would impact
 performance, perhaps severely.</li>
 <li>Have <code>cpp11::unwind_protect()</code> be a no-op for these
 versions. This means any resources held by C++ objects would leak,
-including cpp11::r_vector / cpp11::sexp objects.</li>
+including <code>cpp11::r_vector</code> / <code>cpp11::sexp</code>
+objects.</li>
 </ol>
-<p>None of these options is perfect, here are some pros and cons for
+<p>None of these options were perfect, here are some pros and cons for
 each.</p>
 <ol style="list-style-type: decimal">
 <li>Causes behavior changes and test failures, so it was ruled out.</li>
-<li>Was also ruled out since we want to support back to R 3.3.</li>
+<li>Was also ruled out since we wanted to support back to R 3.3.</li>
 <li>Was ruled out partially because the implementation would be somewhat
 tricky and more because performance would suffer greatly.</li>
-<li>is what we now do in cpp11. It leaks protected objects when there
-are R API errors.</li>
+<li>Is what we ended up doing before requiring R 3.5. It leaked
+protected objects when there were R API errors.</li>
 </ol>
-<p>If packages are concerned about the leaked memory they can call
-<code>cpp11::preserved.release_all()</code> as needed to release the
-current protections for all objects managed by cpp11. This is not done
-automatically because in some cases the protections should persist
-beyond the <code><a href="https://rdrr.io/r/base/CallExternal.html" class="external-link">.Call()</a></code> boundry, e.g. in vroom altrep objects
-for example.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
