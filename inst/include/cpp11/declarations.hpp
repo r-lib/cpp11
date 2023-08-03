@@ -4,6 +4,11 @@
 #include <string>
 #include <vector>
 
+// Davis: From what I can tell, you'd only ever define this if you need to include
+// `declarations.hpp` manually in a file, i.e. to possibly use `BEGIN_CPP11` with a
+// custom `END_CPP11`, as textshaping does do. Otherwise, `declarations.hpp` is included
+// in `code.cpp` and should contain all of the cpp11 type definitions that the generated
+// function signatures need to link against.
 #ifndef CPP11_PARTIAL
 #include "cpp11.hpp"
 namespace writable = ::cpp11::writable;
