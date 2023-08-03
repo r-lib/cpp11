@@ -1,5 +1,16 @@
 # cpp11 (development version)
 
+* R >=3.5.0 is now required to use cpp11. This is in line with (and even goes
+  beyond) the tidyverse standard of supporting the previous 5 minor releases of
+  R. It also ensures that `R_UnwindProtect()` is available to avoid C++ memory
+  leaks (#332).
+  
+* `cpp11::preserved.release_all()` has been removed. This was intended to
+  support expert developers on R <3.5.0 when cpp11 used a global protection
+  list. Since cpp11 no longer uses a global protection list and requires R
+  >=3.5.0, it is no longer needed. As far as we can tell, no package was
+  actively using this (#332).
+
 * cpp11 now creates one protection list per compilation unit, rather than one global
   protection list shared across compilation units and across packages. This greatly
   reduces the complexity of managing the protection list state and should make it easier

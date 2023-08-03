@@ -17,6 +17,8 @@ Description: Provides a header only, C++11 interface to R's C
 License: MIT + file LICENSE
 URL: https://cpp11.r-lib.org, https://github.com/r-lib/cpp11
 BugReports: https://github.com/r-lib/cpp11/issues
+Depends:
+    R (>= 3.5.0)
 Suggests:
     bench,
     brio,

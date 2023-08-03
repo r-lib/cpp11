@@ -253,13 +253,6 @@ static struct {
       return R_NilValue;
     }
 
-#ifdef CPP11_USE_PRESERVE_OBJECT
-    PROTECT(obj);
-    R_PreserveObject(obj);
-    UNPROTECT(1);
-    return obj;
-#endif
-
     PROTECT(obj);
 
     static SEXP list_ = get_preserve_list();
@@ -290,28 +283,10 @@ static struct {
     REprintf("---\n");
   }
 
-  // This is currently unused, but client packages could use it to free leaked resources
-  // in older R versions if needed
-  void release_all() {
-#if !defined(CPP11_USE_PRESERVE_OBJECT)
-    static SEXP list_ = get_preserve_list();
-    SEXP first = CDR(list_);
-    if (first != R_NilValue) {
-      SETCAR(first, R_NilValue);
-      SETCDR(list_, R_NilValue);
-    }
-#endif
-  }
-
   void release(SEXP cell) {
     if (cell == R_NilValue) {
       return;
     }
-
-#ifdef CPP11_USE_PRESERVE_OBJECT
-    R_ReleaseObject(cell);
-    return;
-#endif
 
     // Get a reference to the cells before and after the token.
     SEXP lhs = CAR(cell);
