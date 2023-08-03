@@ -13,6 +13,12 @@ using namespace ::cpp11;
 #include <R_ext/Rdynload.h>
 
 namespace cpp11 {
+// No longer used, but was previously used in `code.cpp` code generation in cpp11 0.1.0.
+// `code.cpp` could be generated with cpp11 0.1.0, but the package could be compiled with
+// cpp11 >0.1.0, so `unmove()` must exist in newer cpp11 too. Eventually remove this once
+// we decide enough time has gone by since `unmove()` was removed.
+// https://github.com/r-lib/cpp11/issues/88
+// https://github.com/r-lib/cpp11/pull/75
 template <class T>
 T& unmove(T&& t) {
   return t;
