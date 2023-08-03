@@ -329,15 +329,15 @@ static struct {
   // This avoids issues with sharing preserve list state across compilation units
   // and across packages, which has historically caused many issues (#330).
   static SEXP get_preserve_list() {
-    static SEXP out = R_NilValue;
+    static SEXP out = init_preserve_list();
+    return out;
+  }
 
-    if (out == R_NilValue) {
-      // Initialize the list exactly once per compilation unit,
-      // and let R manage its memory
-      out = new_preserve_list();
-      R_PreserveObject(out);
-    }
-
+  static SEXP init_preserve_list() {
+    // Initialize the list exactly once per compilation unit,
+    // and let R manage its memory
+    SEXP out = new_preserve_list();
+    R_PreserveObject(out);
     return out;
   }
 
