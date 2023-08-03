@@ -31,31 +31,6 @@ class unwind_exception : public std::exception {
   unwind_exception(SEXP token_) : token(token_) {}
 };
 
-namespace detail {
-// We deliberately avoid using safe[] in the below code, as this code runs
-// when the shared library is loaded and will not be wrapped by
-// `CPP11_UNWIND`, so if an error occurs we will not catch the C++ exception
-// that safe emits.
-inline void set_option(SEXP name, SEXP value) {
-  static SEXP opt = SYMVALUE(Rf_install(".Options"));
-  SEXP t = opt;
-  while (CDR(t) != R_NilValue) {
-    if (TAG(CDR(t)) == name) {
-      opt = CDR(t);
-      SET_TAG(opt, name);
-      SETCAR(opt, value);
-      return;
-    }
-    t = CDR(t);
-  }
-  SETCDR(t, Rf_allocList(1));
-  opt = CDR(t);
-  SET_TAG(opt, name);
-  SETCAR(opt, value);
-}
-
-}  // namespace detail
-
 #ifdef HAS_UNWIND_PROTECT
 
 /// Unwind Protection from C longjmp's, like those used in R error handling
@@ -350,58 +325,24 @@ static struct {
   }
 
  private:
-  // The preserved list singleton is stored in a XPtr within an R global option.
-  //
-  // It is not constructed as a static variable directly since many
-  // translation units may be compiled, resulting in unrelated instances of each
-  // static variable.
-  //
-  // We cannot store it in the cpp11 namespace, as cpp11 likely will not be loaded by
-  // packages.
-  // We cannot store it in R's global environment, as that is against CRAN
-  // policies.
-  // We instead store it as an XPtr in the global options, which avoids issues
-  // both copying and serializing.
-  static SEXP get_preserve_xptr_addr() {
-    static SEXP preserve_xptr_sym = Rf_install("cpp11_preserve_xptr");
-    SEXP preserve_xptr = Rf_GetOption1(preserve_xptr_sym);
-
-    if (TYPEOF(preserve_xptr) != EXTPTRSXP) {
-      return R_NilValue;
-    }
-    auto addr = R_ExternalPtrAddr(preserve_xptr);
-    if (addr == nullptr) {
-      return R_NilValue;
-    }
-    return static_cast<SEXP>(addr);
-  }
-
-  static void set_preserve_xptr(SEXP value) {
-    static SEXP preserve_xptr_sym = Rf_install("cpp11_preserve_xptr");
-
-    SEXP xptr = PROTECT(R_MakeExternalPtr(value, R_NilValue, R_NilValue));
-    detail::set_option(preserve_xptr_sym, xptr);
-    UNPROTECT(1);
-  }
-
+  // Each compilation unit purposefully gets its own preserve list.
+  // This avoids issues with sharing preserve list state across compilation units
+  // and across packages, which has historically caused many issues (#330).
   static SEXP get_preserve_list() {
-    static SEXP preserve_list = R_NilValue;
-    if (TYPEOF(preserve_list) != LISTSXP) {
-      preserve_list = get_preserve_xptr_addr();
-      if (TYPEOF(preserve_list) != LISTSXP) {
-        preserve_list = Rf_cons(R_NilValue, Rf_cons(R_NilValue, R_NilValue));
-        R_PreserveObject(preserve_list);
-        set_preserve_xptr(preserve_list);
-      }
+    static SEXP out = init_preserve_list();
+    return out;
+  }
 
-      // NOTE: Because older versions of cpp11 (<= 0.4.2) initialized the
-      // precious_list with a single cell, we might need to detect and update
-      // an existing empty precious list so that we have a second cell following.
-      if (CDR(preserve_list) == R_NilValue)
-        SETCDR(preserve_list, Rf_cons(R_NilValue, R_NilValue));
-    }
+  static SEXP init_preserve_list() {
+    // Initialize the list exactly once per compilation unit,
+    // and let R manage its memory
+    SEXP out = new_preserve_list();
+    R_PreserveObject(out);
+    return out;
+  }
 
-    return preserve_list;
+  static SEXP new_preserve_list() {
+    return Rf_cons(R_NilValue, Rf_cons(R_NilValue, R_NilValue));
   }
 
 } preserved;

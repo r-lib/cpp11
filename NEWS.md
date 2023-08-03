@@ -1,5 +1,11 @@
 # cpp11 (development version)
 
+* cpp11 now creates one protection list per compilation unit, rather than one global
+  protection list shared across compilation units and across packages. This greatly
+  reduces the complexity of managing the protection list state and should make it easier
+  to make changes to the protection list structure in the future without breaking packages
+  compiled with older versions of cpp11 (#330).
+
 * Nested calls to `cpp11::unwind_protect()` are no longer supported or
   encouraged. Previously, this was something that could be done for performance
   improvements, but ultimately this feature has proven to cause more problems
