@@ -255,20 +255,21 @@ static struct {
 
     PROTECT(obj);
 
-    static SEXP list_ = get_preserve_list();
+    static SEXP list = get_preserve_list();
 
-    // Get references to head, tail of the precious list.
-    SEXP head = list_;
-    SEXP tail = CDR(list_);
+    // Get references to the head of the precious list and the next element
+    // after the head
+    SEXP head = list;
+    SEXP next = CDR(list);
 
-    // Add a new cell that points to the current head + tail.
-    SEXP cell = PROTECT(Rf_cons(head, tail));
+    // Add a new cell that points to the current head + next.
+    SEXP cell = PROTECT(Rf_cons(head, next));
     SET_TAG(cell, obj);
 
-    // Update the head + tail to point at the newly-created cell,
-    // effectively inserting that cell between the current head + tail.
+    // Update the head + next to point at the newly-created cell,
+    // effectively inserting that cell between the current head + next.
     SETCDR(head, cell);
-    SETCAR(tail, cell);
+    SETCAR(next, cell);
 
     UNPROTECT(2);
 
@@ -276,9 +277,9 @@ static struct {
   }
 
   void print() {
-    static SEXP list_ = get_preserve_list();
-    for (SEXP head = list_; head != R_NilValue; head = CDR(head)) {
-      REprintf("%x CAR: %x CDR: %x TAG: %x\n", head, CAR(head), CDR(head), TAG(head));
+    static SEXP list = get_preserve_list();
+    for (SEXP cell = list; cell != R_NilValue; cell = CDR(cell)) {
+      REprintf("%x CAR: %x CDR: %x TAG: %x\n", cell, CAR(cell), CDR(cell), TAG(cell));
     }
     REprintf("---\n");
   }
