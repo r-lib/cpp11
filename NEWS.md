@@ -1,4 +1,4 @@
-# cpp11 (development version)
+# cpp11 0.4.6
 
 * R >=3.5.0 is now required to use cpp11. This is in line with (and even goes
   beyond) the tidyverse standard of supporting the previous 5 minor releases of
