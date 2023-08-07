@@ -43,9 +43,6 @@
 
 * Minor performance improvements to the cpp11 protect code. (@kevinushey)
 
-* Silenced an unknown attribute warning specific to the Intel compiler
-  (r-lib/systemfonts#98).
-
 * `cpp_register()` gains an argument `extension=` governing the file extension of
   the `src/cpp11` file. By default it's `.cpp`, but `.cc` is now supported 
   as well (#292, @MichaelChirico)
