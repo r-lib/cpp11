@@ -1,4 +1,4 @@
-# cpp11 (development version)
+# cpp11 0.4.6
 
 * R >=3.5.0 is now required to use cpp11. This is in line with (and even goes
   beyond) the tidyverse standard of supporting the previous 5 minor releases of
@@ -42,9 +42,6 @@
 * Fixed a performance issue related to nested `unwind_protect()` calls (#298).
 
 * Minor performance improvements to the cpp11 protect code. (@kevinushey)
-
-* Silenced an unknown attribute warning specific to the Intel compiler
-  (r-lib/systemfonts#98).
 
 * `cpp_register()` gains an argument `extension=` governing the file extension of
   the `src/cpp11` file. By default it's `.cpp`, but `.cc` is now supported 
