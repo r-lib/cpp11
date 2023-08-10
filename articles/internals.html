@@ -28,7 +28,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">cpp11</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -108,19 +108,19 @@
 <p>You can load the package in an interactive R session</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>Or run the tests with</p>
+<p>Or run the cpp11 tests with</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">test</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><code>test()</code> will also re-compile the package if needed, so
-you do not always have to run <code>load_all()</code>.</p>
-<p>If you change the cpp11 headers you will need to clean and recompile
-the cpp11test package</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">clean_dll</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>Generally when developing the C++ headers I run R with its working
-directory in the <code>cpp11test</code> directory and use
+<p>There are more extensive tests in the <code>cpp11test</code>
+directory. Generally when developing the C++ headers I run R with its
+working directory in the <code>cpp11test</code> directory and use
 <code>devtools::test()</code> to run the cpp11tests.</p>
+<p>If you change the cpp11 headers you will need to install the new
+version of cpp11 and then clean and recompile the cpp11test package:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Assuming your working directory is `cpp11test/`</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">clean_dll</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>To calculate code coverage of the cpp11 package run the following
 from the <code>cpp11</code> root directory.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -234,23 +234,31 @@ the linked list.</p>
 <p>This scheme scales in O(1) time to release or insert an object vs
 O(N) or worse time with <code>R_PreserveObject()</code> /
 <code>R_ReleaseObject()</code>.</p>
+<p>Each compilation unit has its own unique protection list, which
+avoids the need to manage a “global” protection list shared across
+compilation units within the same package and across packages. A
+previous version of cpp11 used a global protection list, but this caused
+<a href="https://github.com/r-lib/cpp11/issues/330" class="external-link">multiple
+issues</a>.</p>
 <p>These functions are defined in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/protect.hpp" class="external-link">protect.hpp</a></p>
 </div>
 <div class="section level3">
 <h3 id="unwind-protect">Unwind Protect<a class="anchor" aria-label="anchor" href="#unwind-protect"></a>
 </h3>
-<p>In R 3.5+ cpp11 uses <code>R_UnwindProtect</code> to protect (most)
-calls to the R API that could fail. These are usually those that
-allocate memory, though in truth most R API functions could error along
-some paths. If an error happends under <code>R_UnwindProtect</code>
-cpp11 will throw a C++ exception. This exception is caught by the try
-catch block defined in the <code>BEGIN_CPP11</code> macro in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/declarations.hpp" class="external-link">cpp11/declarations.hpp</a>.
+<p>cpp11 uses <code>R_UnwindProtect()</code> to protect (most) calls to
+the R API that could fail. These are usually those that allocate memory,
+though in truth most R API functions could error along some paths. If an
+error happens under <code>R_UnwindProtect()</code>, cpp11 will throw a
+C++ exception. This exception is caught by the try/catch block defined
+in the <code>BEGIN_CPP11</code> macro in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/declarations.hpp" class="external-link">cpp11/declarations.hpp</a>.
 The exception will cause any C++ destructors to run, freeing any
-resources held by C++ objects. After the try catch block exits the R
+resources held by C++ objects. After the try/catch block exits, the R
 error unwinding is then continued by <code>R_ContinueUnwind()</code> and
 a normal R error results.</p>
-<p>In R versions prior to 3.5 <code>R_UnwindProtect()</code> is not
-available. Unfortunately the options to emulate it are not ideal.</p>
+<p>We require R &gt;=3.5 to use cpp11, but when it was created we wanted
+to support back to R 3.3, but <code>R_ContinueUnwind()</code> wasn’t
+available until R 3.5. Below are a few other options we considered to
+support older R versions:</p>
 <ol style="list-style-type: decimal">
 <li>Using <code>R_TopLevelExec()</code> works to avoid the C long jump,
 but because the code is always run in a top level context any errors or
@@ -264,24 +272,19 @@ be an option, but implementing this is convoluted and it would impact
 performance, perhaps severely.</li>
 <li>Have <code>cpp11::unwind_protect()</code> be a no-op for these
 versions. This means any resources held by C++ objects would leak,
-including cpp11::r_vector / cpp11::sexp objects.</li>
+including <code>cpp11::r_vector</code> / <code>cpp11::sexp</code>
+objects.</li>
 </ol>
-<p>None of these options is perfect, here are some pros and cons for
+<p>None of these options were perfect, here are some pros and cons for
 each.</p>
 <ol style="list-style-type: decimal">
 <li>Causes behavior changes and test failures, so it was ruled out.</li>
-<li>Was also ruled out since we want to support back to R 3.3.</li>
+<li>Was also ruled out since we wanted to support back to R 3.3.</li>
 <li>Was ruled out partially because the implementation would be somewhat
 tricky and more because performance would suffer greatly.</li>
-<li>is what we now do in cpp11. It leaks protected objects when there
-are R API errors.</li>
+<li>Is what we ended up doing before requiring R 3.5. It leaked
+protected objects when there were R API errors.</li>
 </ol>
-<p>If packages are concerned about the leaked memory they can call
-<code>cpp11::preserved.release_all()</code> as needed to release the
-current protections for all objects managed by cpp11. This is not done
-automatically because in some cases the protections should persist
-beyond the <code><a href="https://rdrr.io/r/base/CallExternal.html" class="external-link">.Call()</a></code> boundry, e.g. in vroom altrep objects
-for example.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

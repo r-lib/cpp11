@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">cpp11</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,6 +66,14 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.6" id="cpp11-046">cpp11 0.4.6<a class="anchor" aria-label="anchor" href="#cpp11-046"></a></h2><p class="text-muted">CRAN release: 2023-08-10</p>
+<ul><li><p>R &gt;=3.5.0 is now required to use cpp11. This is in line with (and even goes beyond) the tidyverse standard of supporting the previous 5 minor releases of R. It also ensures that <code>R_UnwindProtect()</code> is available to avoid C++ memory leaks (<a href="https://github.com/r-lib/cpp11/issues/332" class="external-link">#332</a>).</p></li>
+<li><p><code>cpp11::preserved.release_all()</code> has been removed. This was intended to support expert developers on R &lt;3.5.0 when cpp11 used a global protection list. Since cpp11 no longer uses a global protection list and requires R &gt;=3.5.0, it is no longer needed. As far as we can tell, no package was actively using this (<a href="https://github.com/r-lib/cpp11/issues/332" class="external-link">#332</a>).</p></li>
+<li><p>cpp11 now creates one protection list per compilation unit, rather than one global protection list shared across compilation units and across packages. This greatly reduces the complexity of managing the protection list state and should make it easier to make changes to the protection list structure in the future without breaking packages compiled with older versions of cpp11 (<a href="https://github.com/r-lib/cpp11/issues/330" class="external-link">#330</a>).</p></li>
+<li><p>Nested calls to <code>cpp11::unwind_protect()</code> are no longer supported or encouraged. Previously, this was something that could be done for performance improvements, but ultimately this feature has proven to cause more problems than it is worth and is very hard to use safely. For more information, see the new <code><a href="../articles/FAQ.html">vignette("FAQ")</a></code> section titled “Should I call <code>cpp11::unwind_protect()</code> manually?” (<a href="https://github.com/r-lib/cpp11/issues/327" class="external-link">#327</a>).</p></li>
+<li><p>The features and bug fixes from cpp11 0.4.4 have been added back in.</p></li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.5" id="cpp11-045">cpp11 0.4.5<a class="anchor" aria-label="anchor" href="#cpp11-045"></a></h2><p class="text-muted">CRAN release: 2023-07-20</p>
 <ul><li>On 2023-07-20, cpp11 was temporarily rolled back to 0.4.3 manually by CRAN due to a bug in 0.4.4 which we could not immediately fix due to the cpp11 maintainer being on vacation.</li>
 </ul></div>
@@ -75,7 +83,6 @@
 <li><p><code>as_doubles()</code> and <code>as_integers()</code> now propagate missing values correctly (<a href="https://github.com/r-lib/cpp11/issues/265" class="external-link">#265</a>, <a href="https://github.com/r-lib/cpp11/issues/319" class="external-link">#319</a>).</p></li>
 <li><p>Fixed a performance issue related to nested <code>unwind_protect()</code> calls (<a href="https://github.com/r-lib/cpp11/issues/298" class="external-link">#298</a>).</p></li>
 <li><p>Minor performance improvements to the cpp11 protect code. (<a href="https://github.com/kevinushey" class="external-link">@kevinushey</a>)</p></li>
-<li><p>Silenced an unknown attribute warning specific to the Intel compiler (r-lib/systemfonts#98).</p></li>
 <li><p><code><a href="../reference/cpp_register.html">cpp_register()</a></code> gains an argument <code>extension=</code> governing the file extension of the <code>src/cpp11</code> file. By default it’s <code>.cpp</code>, but <code>.cc</code> is now supported as well (<a href="https://github.com/r-lib/cpp11/issues/292" class="external-link">#292</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
 </ul></div>
     <div class="section level2">

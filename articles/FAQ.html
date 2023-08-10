@@ -28,7 +28,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">cpp11</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -380,12 +380,259 @@ this.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fl">2L</span>, <span class="fl">3L</span>, <span class="fl">4L</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Internal.html" class="external-link">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; @5572928cf338 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span></span>
+<span><span class="co">#&gt; @557cd1693a78 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span></span>
 <span><span class="fu">add_one</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Internal.html" class="external-link">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; @5572928cf338 13 INTSXP g0c2 [REF(6)] (len=4, tl=0) 2,3,4,5</span></span>
+<span><span class="co">#&gt; @557cd1693a78 13 INTSXP g0c2 [REF(6)] (len=4, tl=0) 2,3,4,5</span></span>
 <span><span class="va">x</span></span>
 <span><span class="co">#&gt; [1] 2 3 4 5</span></span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="should-i-call-cpp11unwind_protect-manually">15. Should I call <code>cpp11::unwind_protect()</code>
+manually?<a class="anchor" aria-label="anchor" href="#should-i-call-cpp11unwind_protect-manually"></a>
+</h4>
+<p><code>cpp11::unwind_protect()</code> is cpp11’s way of safely calling
+R’s C API. In short, it allows you to run a function that might throw an
+R error, catch the <code>longjmp()</code> of that error, promote it to
+an exception that is thrown and caught by a try/catch that cpp11 sets up
+for you at <code><a href="https://rdrr.io/r/base/CallExternal.html" class="external-link">.Call()</a></code> time (which allows destructors to run),
+and finally tells R to continue unwinding the stack now that the C++
+objects have had a chance to destruct as needed.</p>
+<p>Since <code>cpp11::unwind_protect()</code> takes an arbitrary
+function, you may be wondering if you should use it for your own custom
+needs. In general, we advise against this because this is an extremely
+advanced feature that is prone to subtle and hard to debug issues.</p>
+<div class="section level5">
+<h5 id="destructors">Destructors<a class="anchor" aria-label="anchor" href="#destructors"></a>
+</h5>
+<p>The following setup for <code>test_destructor_ok()</code> with a
+manual call to <code>unwind_protect()</code> would work:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> A <span class="op">{</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a> <span class="kw">public</span><span class="op">:</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">~</span>A<span class="op">();</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>A<span class="op">::~</span>A<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  Rprintf<span class="op">(</span><span class="st">"hi from the destructor!"</span><span class="op">);</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> test_destructor_ok<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  A a<span class="op">{};</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  cpp11<span class="op">::</span>unwind_protect<span class="op">([&amp;]</span> <span class="op">{</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    Rf_error<span class="op">(</span><span class="st">"oh no!"</span><span class="op">);</span>  </span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  <span class="op">});</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> test_destructor_bad<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>  cpp11<span class="op">::</span>unwind_protect<span class="op">([&amp;]</span> <span class="op">{</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>    A a<span class="op">{};</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>    Rf_error<span class="op">(</span><span class="st">"oh no!"</span><span class="op">);</span>  </span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>  <span class="op">});</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">test_destructor_ok</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error: oh no!</span></span>
+<span><span class="co">#&gt; hi from the destructor!</span></span></code></pre></div>
+<p>But if you happen to move <code>a</code> into the
+<code>unwind_protect()</code>, then it won’t be destructed, and you’ll
+end up with a memory leak at best, and a much more sinister issue if
+your destructor is important:</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">test_destructor_bad</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error: oh no!</span></span></code></pre></div>
+<p>In general, the only code that can be called within
+<code>unwind_protect()</code> is “pure” C code or C++ code that only
+uses POD (plain-old-data) types and no exceptions. If you mix complex
+C++ objects with R’s C API within <code>unwind_protect()</code>, then
+any R errors will result in a jump that prevents your destructors from
+running.</p>
+</div>
+<div class="section level5">
+<h5 id="nested-unwind_protect">Nested <code>unwind_protect()</code><a class="anchor" aria-label="anchor" href="#nested-unwind_protect"></a>
+</h5>
+<p>Another issue that can arise has to do with <em>nested</em> calls to
+<code>unwind_protect()</code>. It is very hard (if not impossible) to
+end up with invalidly nested <code>unwind_protect()</code> calls when
+using the typical cpp11 API, but you can manually create a scenario like
+the following:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> test_nested<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  cpp11<span class="op">::</span>unwind_protect<span class="op">([&amp;]</span> <span class="op">{</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    cpp11<span class="op">::</span>unwind_protect<span class="op">([&amp;]</span> <span class="op">{</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>      Rf_error<span class="op">(</span><span class="st">"oh no!"</span><span class="op">);</span>  </span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">});</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">});</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>If you were to run <code>test_nested()</code> from R, it would likely
+crash or hang your R session due to the following chain of events:</p>
+<ul>
+<li>
+<code>test_nested()</code> sets up a try/catch to catch unwind
+exceptions</li>
+<li>The outer <code>unwind_protect()</code> is called. It uses the C
+function <code>R_UnwindProtect()</code> to call its lambda
+function.</li>
+<li>The inner <code>unwind_protect()</code> is called. It again uses
+<code>R_UnwindProtect()</code>, this time to call
+<code>Rf_error()</code>.</li>
+<li>
+<code>Rf_error()</code> performs a <code>longjmp()</code> which is
+caught by the inner <code>unwind_protect()</code> and promoted to an
+exception.</li>
+<li>That exception is thrown, but because we are in the outer call to
+<code>R_UnwindProtect()</code> (a C function), we end up throwing that
+exception <em>across</em> C stack frames. This is <em>undefined
+behavior</em>, which is known to have caused R to crash on certain
+platforms.</li>
+</ul>
+<p>You might think that you’d never do this, but the same scenario can
+also occur with a combination of 1 call to <code>unwind_protect()</code>
+combined with usage of the cpp11 API:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> test_hidden_nested<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  cpp11<span class="op">::</span>unwind_protect<span class="op">([&amp;]</span> <span class="op">{</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    cpp11<span class="op">::</span>stop<span class="op">(</span><span class="st">"oh no!"</span><span class="op">);</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">});</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Because <code><a href="https://rdrr.io/r/base/stop.html" class="external-link">cpp11::stop()</a></code> (and most of the cpp11 API) uses
+<code>unwind_protect()</code> internally, we’ve indirectly ended up in a
+nested <code>unwind_protect()</code> scenario again.</p>
+<p>In general, if you must use <code>unwind_protect()</code> then you
+must be very careful not to use any of the cpp11 API inside of the
+<code>unwind_protect()</code> call.</p>
+<p>It is worth pointing out that calling out to an R function from cpp11
+which then calls back into cpp11 is still safe, i.e. if the registered
+version of the imaginary <code>test_outer()</code> function below was
+called from R, then that would work:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> test_inner<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  cpp11<span class="op">::</span>stop<span class="op">(</span><span class="st">"oh no!"</span><span class="op">)</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> test_outer<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> fn <span class="op">=</span> cpp11<span class="op">::</span>package<span class="op">(</span><span class="st">"mypackage"</span><span class="op">)[</span><span class="st">"test_inner"</span><span class="op">]</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  fn<span class="op">();</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>This might seem unsafe because <code>cpp11::package()</code> uses
+<code>unwind_protect()</code> to call the R function for
+<code>test_inner()</code>, which then goes back into C++ to call
+<code><a href="https://rdrr.io/r/base/stop.html" class="external-link">cpp11::stop()</a></code>, which itself uses
+<code>unwind_protect()</code>, so it seems like we are in a nested
+scenario, but this scenario does actually work. It makes more sense if
+we analyze it one step at a time:</p>
+<ul>
+<li>Call the R function for <code>test_outer()</code>
+</li>
+<li>A try/catch is set up to catch unwind exceptions</li>
+<li>The C++ function for <code>test_outer()</code> is called</li>
+<li>
+<code>cpp11::package()</code> uses <code>unwind_protect()</code> to
+call the R function for <code>test_inner()</code>
+</li>
+<li>Call the R function for <code>test_inner()</code>
+</li>
+<li>A try/catch is set up to catch unwind exceptions (<em>this is the
+key!</em>)</li>
+<li>The C++ function for <code>test_inner()</code> is called</li>
+<li>
+<code>cpp11::stop("oh no!")</code> is called, which uses
+<code>unwind_protect()</code> to call <code>Rf_error()</code>, causing a
+<code>longjmp()</code>, which is caught by that
+<code>unwind_protect()</code> and promoted to an exception.</li>
+<li>That exception is thrown, but this time it is caught by the
+try/catch set up by <code>test_inner()</code> as we entered it from the
+R side. This prevents that exception from crossing the C++ -&gt; C
+boundary.</li>
+<li>The try/catch calls <code>R_ContinueUnwind()</code>, which
+<code>longjmp()</code>s again, and now the <code>unwind_protect()</code>
+set up by <code>cpp11::package()</code> catches that, and promotes it to
+an exception.</li>
+<li>That exception is thrown and caught by the try/catch set up by
+<code>test_outer()</code>.</li>
+<li>The try/catch calls <code>R_ContinueUnwind()</code>, which
+<code>longjmp()</code>s again, and at this point we can safely let the
+<code>longjmp()</code> proceed to force an R error.</li>
+</ul>
+</div>
+</div>
+<div class="section level4">
+<h4 id="ok-but-i-really-want-to-call-cpp11unwind_protect-manually">16. Ok but I really want to call
+<code>cpp11::unwind_protect()</code> manually<a class="anchor" aria-label="anchor" href="#ok-but-i-really-want-to-call-cpp11unwind_protect-manually"></a>
+</h4>
+<p>If you’ve read the above bullet and still feel like you need to call
+<code>unwind_protect()</code>, then you should keep in mind the
+following when writing the function to unwind-protect:</p>
+<ul>
+<li>You shouldn’t create any C++ objects that have destructors.</li>
+<li>You shouldn’t use any parts of the cpp11 API that may call
+<code>unwind_protect()</code>.</li>
+<li>You must be very careful not to call <code>unwind_protect()</code>
+in a nested manner.</li>
+</ul>
+<p>In other words, if you only use plain-old-data types, are careful to
+never throw exceptions, and only use R’s C API, then you can use
+<code>unwind_protect()</code>.</p>
+<p>One place you may want to do this is when working with long character
+vectors. Unfortunately, due to the way cpp11 must protect the individual
+CHARSXP objects that make up a character vector, it can currently be
+quite slow to use the cpp11 API for this. Consider this example of
+extracting out individual elements with <code>x[i]</code> vs using the
+native R API:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>cpp11<span class="op">::</span>sexp test_extract_cpp11<span class="op">(</span>cpp11<span class="op">::</span>strings x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">R_xlen_t</span> size <span class="op">=</span> x<span class="op">.</span>size<span class="op">();</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">R_xlen_t</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> size<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span> x<span class="op">[</span>i<span class="op">];</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> R_NilValue<span class="op">;</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>cpp11<span class="op">::</span>sexp test_extract_r_api<span class="op">(</span>cpp11<span class="op">::</span>strings x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">R_xlen_t</span> size <span class="op">=</span> x<span class="op">.</span>size<span class="op">();</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> SEXP data<span class="op">{</span>x<span class="op">};</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>  cpp11<span class="op">::</span>unwind_protect<span class="op">([&amp;]</span> <span class="op">{</span></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">R_xlen_t</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> size<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>      <span class="op">(</span><span class="dt">void</span><span class="op">)</span> STRING_ELT<span class="op">(</span>data<span class="op">,</span> i<span class="op">);</span></span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>  <span class="op">});</span></span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> R_NilValue<span class="op">;</span></span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">letters</span>, <span class="fl">1e6</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="http://bench.r-lib.org/reference/mark.html" class="external-link">mark</a></span><span class="op">(</span></span>
+<span>  <span class="fu">test_extract_cpp11</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, </span>
+<span>  <span class="fu">test_extract_r_api</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Some expressions had a GC in every iteration; so filtering is</span></span>
+<span><span class="co">#&gt; disabled.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
+<span><span class="co">#&gt;   expression                 min   median `itr/sec` mem_alloc `gc/sec`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> test_extract_cpp11(x)  66.73ms  70.31ms      13.7        0B     25.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> test_extract_r_api(x)   2.07ms   2.48ms     393.         0B      0</span></span></code></pre></div>
+<p>We plan to improve on this in the future, but for now this is one of
+the only places where we feel it is reasonable to call
+<code>unwind_protect()</code> manually.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
