@@ -67,8 +67,8 @@
 #' @export
 cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11"), dir = tempfile()) {
   stop_unless_installed(c("brio", "callr", "cli", "decor", "desc", "glue", "tibble", "vctrs"))
-  if (!missing(file) && !file.exists(file)) {
-    stop("Can't find `file` at this path:\n", file, "\n", call. = FALSE)
+  if (!missing(file) && !all(file.exists(file))) {
+    stop("Can't find `file` at this path:\n", file[!file.exists(file)][[1]], "\n", call. = FALSE)
   }
 
   dir.create(dir, showWarnings = FALSE, recursive = TRUE)
@@ -87,8 +87,8 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     stop("`file` must have a `.cpp` or `.cc` extension")
   }
 
-  name <- generate_cpp_name(file)
-  package <- tools::file_path_sans_ext(name)
+  name <- vapply(file, generate_cpp_name, character(1))
+  package <- tools::file_path_sans_ext(name[[1]])
 
   orig_dir <- normalizePath(dirname(file), winslash = "/")
   new_dir <- normalizePath(file.path(dir, "src"), winslash = "/")
@@ -112,7 +112,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   funs <- get_registered_functions(all_decorations, "cpp11::register", quiet = quiet)
   cpp_functions_definitions <- generate_cpp_functions(funs, package = package)
 
-  cpp_path <- file.path(dirname(new_file_path), "cpp11.cpp")
+  cpp_path <- file.path(dirname(new_file_path[[1]]), "cpp11.cpp")
   brio::write_lines(c('#include "cpp11/declarations.hpp"', "using namespace ::cpp11;", cpp_functions_definitions), cpp_path)
 
   linking_to <- union(get_linking_to(all_decorations), "cpp11")
@@ -140,7 +140,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     stop("Compilation failed.", call. = FALSE)
   }
 
-  shared_lib <- file.path(dir, "src", paste0(tools::file_path_sans_ext(new_file_name), .Platform$dynlib.ext))
+  shared_lib <- file.path(dir, "src", paste0(package, .Platform$dynlib.ext))
   r_path <- file.path(dir, "R", "cpp11.R")
   brio::write_lines(r_functions, r_path)
   source(r_path, local = env)
