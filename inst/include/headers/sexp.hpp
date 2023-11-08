@@ -4,9 +4,9 @@
 
 #include <string>  // for string, basic_string
 
-#include "cpp11/R.hpp"                // for SEXP, SEXPREC, REAL_ELT, R_NilV...
-#include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
-#include "cpp11/protect.hpp"          // for preserved
+#include "headers/R.hpp"                // for SEXP, SEXPREC, REAL_ELT, R_NilV...
+#include "headers/attribute_proxy.hpp"  // for attribute_proxy
+#include "headers/protect.hpp"          // for preserved
 
 namespace cpp11 {
 

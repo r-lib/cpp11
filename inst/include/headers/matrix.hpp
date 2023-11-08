@@ -3,11 +3,11 @@
 #include <iterator>
 #include <string>  // for string
 
-#include "cpp11/R.hpp"         // for SEXP, SEXPREC, R_xlen_t, INT...
-#include "cpp11/r_bool.hpp"    // for r_bool
-#include "cpp11/r_string.hpp"  // for r_string
-#include "cpp11/r_vector.hpp"  // for r_vector
-#include "cpp11/sexp.hpp"      // for sexp
+#include "headers/R.hpp"         // for SEXP, SEXPREC, R_xlen_t, INT...
+#include "headers/r_bool.hpp"    // for r_bool
+#include "headers/r_string.hpp"  // for r_string
+#include "headers/r_vector.hpp"  // for r_vector
+#include "headers/sexp.hpp"      // for sexp
 
 namespace cpp11 {
 

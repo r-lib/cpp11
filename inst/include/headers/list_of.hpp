@@ -2,8 +2,8 @@
 
 #include <string>  // for string, basic_string
 
-#include "cpp11/R.hpp"     // for R_xlen_t, SEXP, SEXPREC, LONG_VECTOR_SUPPORT
-#include "cpp11/list.hpp"  // for list
+#include "headers/R.hpp"     // for R_xlen_t, SEXP, SEXPREC, LONG_VECTOR_SUPPORT
+#include "headers/list.hpp"  // for list
 
 namespace cpp11 {
 

@@ -1,8 +1,8 @@
 #include "Rversion.h"
-#include "cpp11/doubles.hpp"
-#include "cpp11/function.hpp"
-#include "cpp11/integers.hpp"
-#include "cpp11/strings.hpp"
+#include "headers/doubles.hpp"
+#include "headers/function.hpp"
+#include "headers/integers.hpp"
+#include "headers/strings.hpp"
 
 #include <testthat.h>
 

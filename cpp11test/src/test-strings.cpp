@@ -1,6 +1,6 @@
 #include <cstring>
-#include "cpp11/sexp.hpp"
-#include "cpp11/strings.hpp"
+#include "headers/sexp.hpp"
+#include "headers/strings.hpp"
 
 #include <testthat.h>
 

@@ -68,7 +68,7 @@ external packages. This is equivalent to putting those packages in the
 \examples{
 
 cpp_source(
-  code = '#include "cpp11/integers.hpp"
+  code = '#include "headers/integers.hpp"
 
   [[cpp11::register]]
   int num_odd(cpp11::integers x) {
@@ -88,7 +88,7 @@ if (interactive() && require("progress")) {
 
 cpp_source(
   code = '
-#include <cpp11/R.hpp>
+#include <headers/R.hpp>
 #include <RProgress.h>
 
 [[cpp11::linking_to("progress")]]

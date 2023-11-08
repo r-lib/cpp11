@@ -7,8 +7,8 @@
 #include <string>       // for string, basic_string
 #include <type_traits>  // for decay, enable_if, is_same, is_convertible
 
-#include "cpp11/R.hpp"        // for SEXP, SEXPREC, Rf_xlength, R_xlen_t
-#include "cpp11/protect.hpp"  // for stop, protect, safe, protect::function
+#include "headers/R.hpp"        // for SEXP, SEXPREC, Rf_xlength, R_xlen_t
+#include "headers/protect.hpp"  // for stop, protect, safe, protect::function
 
 namespace cpp11 {
 

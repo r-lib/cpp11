@@ -1,6 +1,6 @@
 #include <cstring>
-#include "cpp11/doubles.hpp"
-#include "cpp11/protect.hpp"
+#include "headers/doubles.hpp"
+#include "headers/protect.hpp"
 
 [[cpp11::register]] SEXP cpp11_safe_(SEXP x_sxp) {
   SEXP err = R_NilValue;

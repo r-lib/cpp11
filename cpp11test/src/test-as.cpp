@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-#include "cpp11/declarations.hpp"
+#include "headers/declarations.hpp"
 
 #include <testthat.h>
 

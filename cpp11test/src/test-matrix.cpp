@@ -1,7 +1,7 @@
-#include "cpp11/doubles.hpp"
-#include "cpp11/function.hpp"
-#include "cpp11/integers.hpp"
-#include "cpp11/matrix.hpp"
+#include "headers/doubles.hpp"
+#include "headers/function.hpp"
+#include "headers/integers.hpp"
+#include "headers/matrix.hpp"
 
 #include <testthat.h>
 

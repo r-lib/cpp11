@@ -1,5 +1,5 @@
-#include "cpp11/function.hpp"
-#include "cpp11/protect.hpp"
+#include "headers/function.hpp"
+#include "headers/protect.hpp"
 #include "testthat.h"
 
 #ifdef HAS_UNWIND_PROTECT

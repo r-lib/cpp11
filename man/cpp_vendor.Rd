@@ -4,10 +4,10 @@
 \alias{cpp_vendor}
 \title{Vendor the cpp11 dependency}
 \usage{
-cpp_vendor(path = ".")
+cpp_vendor(path = "./src/vendor")
 }
 \arguments{
-\item{path}{The path to the package root directory}
+\item{path}{The path to vendor the code into.}
 }
 \value{
 The file path to the vendored code (invisibly).
@@ -18,11 +18,11 @@ project is using. It is often used in the go language community.
 }
 \details{
 This function vendors cpp11 into your package by copying the cpp11
-headers into the \code{inst/include} folder of your package and adding
-'cpp11 version: XYZ' to the top of the files, where XYZ is the version of
-cpp11 currently installed on your machine.
+headers into the \code{src/vendor} folder and adding 'cpp11 version: XYZ' to the
+top of the files, where XYZ is the version of cpp11 currently installed on
+your machine.
 
-If you choose to vendor the headers you should \emph{remove} \code{LinkingTo: cpp11} from your DESCRIPTION.
+If you choose to vendor the headers you should \emph{remove} \code{LinkingTo: cpp11} from your DESCRIPTION. This is done automatically by this function.
 
 \strong{Note}: vendoring places the responsibility of updating the code on
 \strong{you}. Bugfixes and new features in cpp11 will not be available for your
@@ -36,7 +36,7 @@ dir.create(dir)
 # vendor the cpp11 headers into the directory
 cpp_vendor(dir)
 
-list.files(file.path(dir, "inst", "include", "cpp11"))
+list.files(file.path(dir, "src", "vendor"))
 
 # cleanup
 unlink(dir, recursive = TRUE)

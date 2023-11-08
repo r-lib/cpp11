@@ -1,5 +1,5 @@
 #include <numeric>
-#include "cpp11/doubles.hpp"
+#include "headers/doubles.hpp"
 
 [[cpp11::register]] double sum_dbl_for_(cpp11::doubles x) {
   double sum = 0.;

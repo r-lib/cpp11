@@ -13,11 +13,11 @@
 #include <type_traits>       // for decay, is_same, enable_if, is_c...
 #include <utility>           // for declval
 
-#include "cpp11/R.hpp"                // for R_xlen_t, SEXP, SEXPREC, Rf_xle...
-#include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
-#include "cpp11/protect.hpp"          // for preserved
-#include "cpp11/r_string.hpp"         // for r_string
-#include "cpp11/sexp.hpp"             // for sexp
+#include "headers/R.hpp"                // for R_xlen_t, SEXP, SEXPREC, Rf_xle...
+#include "headers/attribute_proxy.hpp"  // for attribute_proxy
+#include "headers/protect.hpp"          // for preserved
+#include "headers/r_string.hpp"         // for r_string
+#include "headers/sexp.hpp"             // for sexp
 
 namespace cpp11 {
 

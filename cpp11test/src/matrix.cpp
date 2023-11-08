@@ -1,6 +1,6 @@
-#include "cpp11/matrix.hpp"
+#include "headers/matrix.hpp"
 #include "Rmath.h"
-#include "cpp11/doubles.hpp"
+#include "headers/doubles.hpp"
 using namespace cpp11;
 
 [[cpp11::register]] SEXP gibbs_cpp(int N, int thin) {

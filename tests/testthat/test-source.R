@@ -2,7 +2,7 @@ test_that("cpp_source works with the `code` parameter", {
   skip_on_os("solaris")
   dll_info <- cpp_source(
     code = '
-    #include "cpp11/integers.hpp"
+    #include "headers/integers.hpp"
 
     [[cpp11::register]]
     int num_odd(cpp11::integers x) {
@@ -131,7 +131,7 @@ test_that("check_valid_attributes does not return an error if all registers are 
   }'))
   expect_error_free(
     cpp11::cpp_source(clean = TRUE,
-      code = '#include <cpp11/R.hpp>
+      code = '#include <headers/R.hpp>
               #include <RProgress.h>
 
               [[cpp11::linking_to("progress")]]
@@ -197,7 +197,7 @@ test_that("check_valid_attributes returns an error if one or more registers is i
   expect_error(
     cpp11::cpp_source(
       code = '
-      #include <cpp11/R.hpp>
+      #include <headers/R.hpp>
       #include <RProgress.h>
       [[cpp11::link_to("progress")]]
       [[cpp11::register]] void show_progress() {

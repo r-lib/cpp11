@@ -5,11 +5,11 @@
 #include <type_traits>  // for is_convertible, enable_if
 
 #include "R_ext/Boolean.h"    // for Rboolean
-#include "cpp11/R.hpp"        // for SEXP, SEXPREC, ...
-#include "cpp11/as.hpp"       // for as_sexp
-#include "cpp11/protect.hpp"  // for unwind_protect, preserved
-#include "cpp11/r_vector.hpp"
-#include "cpp11/sexp.hpp"  // for sexp
+#include "headers/R.hpp"        // for SEXP, SEXPREC, ...
+#include "headers/as.hpp"       // for as_sexp
+#include "headers/protect.hpp"  // for unwind_protect, preserved
+#include "headers/r_vector.hpp"
+#include "headers/sexp.hpp"  // for sexp
 
 namespace cpp11 {
 

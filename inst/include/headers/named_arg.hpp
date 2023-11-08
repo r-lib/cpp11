@@ -4,9 +4,9 @@
 
 #include <initializer_list>  // for initializer_list
 
-#include "cpp11/R.hpp"     // for SEXP, SEXPREC, literals
-#include "cpp11/as.hpp"    // for as_sexp
-#include "cpp11/sexp.hpp"  // for sexp
+#include "headers/R.hpp"     // for SEXP, SEXPREC, literals
+#include "headers/as.hpp"    // for as_sexp
+#include "headers/sexp.hpp"  // for sexp
 
 namespace cpp11 {
 class named_arg {

@@ -1,7 +1,7 @@
-#include "cpp11/as.hpp"
-#include "cpp11/environment.hpp"
-#include "cpp11/function.hpp"
-#include "cpp11/strings.hpp"
+#include "headers/as.hpp"
+#include "headers/environment.hpp"
+#include "headers/function.hpp"
+#include "headers/strings.hpp"
 
 #include <testthat.h>
 

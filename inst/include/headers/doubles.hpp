@@ -5,12 +5,12 @@
 #include <initializer_list>  // for initializer_list
 
 #include "R_ext/Arith.h"        // for ISNA
-#include "cpp11/R.hpp"          // for SEXP, SEXPREC, Rf_allocVector, REAL
-#include "cpp11/as.hpp"         // for as_sexp
-#include "cpp11/named_arg.hpp"  // for named_arg
-#include "cpp11/protect.hpp"    // for SEXP, SEXPREC, REAL_ELT, R_Preserve...
-#include "cpp11/r_vector.hpp"   // for vector, vector<>::proxy, vector<>::...
-#include "cpp11/sexp.hpp"       // for sexp
+#include "headers/R.hpp"          // for SEXP, SEXPREC, Rf_allocVector, REAL
+#include "headers/as.hpp"         // for as_sexp
+#include "headers/named_arg.hpp"  // for named_arg
+#include "headers/protect.hpp"    // for SEXP, SEXPREC, REAL_ELT, R_Preserve...
+#include "headers/r_vector.hpp"   // for vector, vector<>::proxy, vector<>::...
+#include "headers/sexp.hpp"       // for sexp
 
 // Specializations for doubles
 

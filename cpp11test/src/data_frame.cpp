@@ -1,6 +1,6 @@
-#include "cpp11/integers.hpp"
-#include "cpp11/list.hpp"
-#include "cpp11/strings.hpp"
+#include "headers/integers.hpp"
+#include "headers/list.hpp"
+#include "headers/strings.hpp"
 
 [[cpp11::register]] SEXP data_frame_() {
   using namespace cpp11::literals;

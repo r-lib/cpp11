@@ -89,7 +89,7 @@ cpp_register <- function(path = ".", quiet = !is_interactive(), extension = c(".
 
   extra_includes <-  character()
   if (pkg_links_to_rcpp(path)) {
-    extra_includes <- c(extra_includes, "#include <cpp11/R.hpp>", "#include <Rcpp.h>", "using namespace Rcpp;")
+    extra_includes <- c(extra_includes, "#include <headers/R.hpp>", "#include <Rcpp.h>", "using namespace Rcpp;")
   }
 
   pkg_types <- c(
@@ -114,7 +114,7 @@ cpp_register <- function(path = ".", quiet = !is_interactive(), extension = c(".
       // clang-format off
 
       {extra_includes}
-      #include "cpp11/declarations.hpp"
+      #include "headers/declarations.hpp"
       #include <R_ext/Visibility.h>
 
       {cpp_functions_definitions}

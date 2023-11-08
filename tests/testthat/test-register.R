@@ -83,7 +83,7 @@ describe("get_call_entries", {
 // clang-format off
 
 
-#include \"cpp11/declarations.hpp\"
+#include \"headers/declarations.hpp\"
 #include <R_ext/Visibility.h>
 
 // multiple.cpp
@@ -583,7 +583,7 @@ foo <- function() {
 // clang-format off
 
 
-#include \"cpp11/declarations.hpp\"
+#include \"headers/declarations.hpp\"
 #include <R_ext/Visibility.h>
 
 // single.cpp

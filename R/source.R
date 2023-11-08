@@ -24,7 +24,7 @@
 #' @examples
 #'
 #' cpp_source(
-#'   code = '#include "cpp11/integers.hpp"
+#'   code = '#include "headers/integers.hpp"
 #'
 #'   [[cpp11::register]]
 #'   int num_odd(cpp11::integers x) {
@@ -44,7 +44,7 @@
 #'
 #' cpp_source(
 #'   code = '
-#' #include <cpp11/R.hpp>
+#' #include <headers/R.hpp>
 #' #include <RProgress.h>
 #'
 #' [[cpp11::linking_to("progress")]]
@@ -113,7 +113,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   cpp_functions_definitions <- generate_cpp_functions(funs, package = package)
 
   cpp_path <- file.path(dirname(new_file_path), "cpp11.cpp")
-  brio::write_lines(c('#include "cpp11/declarations.hpp"', "using namespace ::cpp11;", cpp_functions_definitions), cpp_path)
+  brio::write_lines(c('#include "headers/declarations.hpp"', "using namespace ::cpp11;", cpp_functions_definitions), cpp_path)
 
   linking_to <- union(get_linking_to(all_decorations), "cpp11")
 

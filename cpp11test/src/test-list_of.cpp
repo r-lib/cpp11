@@ -1,7 +1,7 @@
-#include "cpp11/doubles.hpp"
-#include "cpp11/list.hpp"
-#include "cpp11/list_of.hpp"
-#include "cpp11/strings.hpp"
+#include "headers/doubles.hpp"
+#include "headers/list.hpp"
+#include "headers/list_of.hpp"
+#include "headers/strings.hpp"
 
 #include <testthat.h>
 

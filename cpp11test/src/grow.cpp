@@ -1,4 +1,4 @@
-#include "cpp11/doubles.hpp"
+#include "headers/doubles.hpp"
 
 [[cpp11::register]] cpp11::writable::doubles grow_(R_xlen_t n) {
   cpp11::writable::doubles x;

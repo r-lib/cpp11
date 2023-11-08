@@ -4,10 +4,10 @@
 #include <type_traits>  // for is_convertible, enable_if
 
 #include "R_ext/Memory.h"     // for vmaxget, vmaxset
-#include "cpp11/R.hpp"        // for SEXP, SEXPREC, Rf_mkCharCE, Rf_translat...
-#include "cpp11/as.hpp"       // for as_sexp
-#include "cpp11/protect.hpp"  // for unwind_protect, protect, protect::function
-#include "cpp11/sexp.hpp"     // for sexp
+#include "headers/R.hpp"        // for SEXP, SEXPREC, Rf_mkCharCE, Rf_translat...
+#include "headers/as.hpp"       // for as_sexp
+#include "headers/protect.hpp"  // for unwind_protect, protect, protect::function
+#include "headers/sexp.hpp"     // for sexp
 
 namespace cpp11 {
 

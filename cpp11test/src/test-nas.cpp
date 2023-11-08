@@ -1,7 +1,7 @@
-#include "cpp11/doubles.hpp"
-#include "cpp11/integers.hpp"
-#include "cpp11/r_bool.hpp"
-#include "cpp11/r_string.hpp"
+#include "headers/doubles.hpp"
+#include "headers/integers.hpp"
+#include "headers/r_bool.hpp"
+#include "headers/r_string.hpp"
 
 #include <testthat.h>
 

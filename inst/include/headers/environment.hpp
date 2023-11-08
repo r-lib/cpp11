@@ -3,17 +3,17 @@
 #include <string>  // for string, basic_string
 
 #include "Rversion.h"         // for R_VERSION, R_Version
-#include "cpp11/R.hpp"        // for SEXP, SEXPREC, Rf_install, Rf_findVarIn...
-#include "cpp11/as.hpp"       // for as_sexp
-#include "cpp11/protect.hpp"  // for protect, protect::function, safe, unwin...
-#include "cpp11/sexp.hpp"     // for sexp
+#include "headers/R.hpp"        // for SEXP, SEXPREC, Rf_install, Rf_findVarIn...
+#include "headers/as.hpp"       // for as_sexp
+#include "headers/protect.hpp"  // for protect, protect::function, safe, unwin...
+#include "headers/sexp.hpp"     // for sexp
 
 #if R_VERSION >= R_Version(4, 0, 0)
 #define HAS_REMOVE_VAR_FROM_FRAME
 #endif
 
 #ifndef HAS_REMOVE_VAR_FROM_FRAME
-#include "cpp11/function.hpp"
+#include "headers/function.hpp"
 #endif
 
 namespace cpp11 {

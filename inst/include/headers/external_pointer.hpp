@@ -4,11 +4,11 @@
 #include <memory>       // for bad_weak_ptr
 #include <type_traits>  // for add_lvalue_reference
 
-#include "cpp11/R.hpp"         // for SEXP, SEXPREC, TYPEOF, R_NilValue, R_C...
-#include "cpp11/protect.hpp"   // for protect, safe, protect::function
-#include "cpp11/r_bool.hpp"    // for r_bool
-#include "cpp11/r_vector.hpp"  // for type_error
-#include "cpp11/sexp.hpp"      // for sexp
+#include "headers/R.hpp"         // for SEXP, SEXPREC, TYPEOF, R_NilValue, R_C...
+#include "headers/protect.hpp"   // for protect, safe, protect::function
+#include "headers/r_bool.hpp"    // for r_bool
+#include "headers/r_vector.hpp"  // for type_error
+#include "headers/sexp.hpp"      // for sexp
 
 namespace cpp11 {
 

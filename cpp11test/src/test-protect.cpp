@@ -12,7 +12,7 @@
 // clang-format on
 
 #define CPP11_USE_FMT
-#include "cpp11/protect.hpp"
+#include "headers/protect.hpp"
 #include "testthat.h"
 
 #ifdef HAS_UNWIND_PROTECT

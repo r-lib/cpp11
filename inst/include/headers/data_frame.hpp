@@ -7,10 +7,10 @@
 #include <utility>           // for move
 
 #include "R_ext/Arith.h"              // for NA_INTEGER
-#include "cpp11/R.hpp"                // for Rf_xlength, SEXP, SEXPREC, INTEGER
-#include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
-#include "cpp11/list.hpp"             // for list, r_vector<>::r_vector, r_v...
-#include "cpp11/r_vector.hpp"         // for r_vector
+#include "headers/R.hpp"                // for Rf_xlength, SEXP, SEXPREC, INTEGER
+#include "headers/attribute_proxy.hpp"  // for attribute_proxy
+#include "headers/list.hpp"             // for list, r_vector<>::r_vector, r_v...
+#include "headers/r_vector.hpp"         // for r_vector
 
 namespace cpp11 {
 

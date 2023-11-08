@@ -1,5 +1,5 @@
 #include <numeric>
-#include "cpp11/integers.hpp"
+#include "headers/integers.hpp"
 
 [[cpp11::register]] double sum_int_for_(cpp11::integers x) {
   double sum = 0.;

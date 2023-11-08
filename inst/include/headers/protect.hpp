@@ -6,8 +6,8 @@
 #include <string>     // for string, basic_string
 #include <tuple>      // for tuple, make_tuple
 
-// NB: cpp11/R.hpp must precede R_ext/Error.h to ensure R_NO_REMAP is defined
-#include "cpp11/R.hpp"  // for SEXP, SEXPREC, CDR, R_NilValue, CAR, R_Pres...
+// NB: headers/R.hpp must precede R_ext/Error.h to ensure R_NO_REMAP is defined
+#include "headers/R.hpp"  // for SEXP, SEXPREC, CDR, R_NilValue, CAR, R_Pres...
 
 #include "R_ext/Boolean.h"  // for Rboolean
 #include "R_ext/Error.h"    // for Rf_error, Rf_warning
