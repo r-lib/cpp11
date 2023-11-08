@@ -422,10 +422,26 @@ extern "C" SEXP _cpp11test_rcpp_grow_(SEXP n_sxp) {
     return cpp11::as_sexp(rcpp_grow_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(n_sxp)));
   END_CPP11
 }
+// test-protect-nested.cpp
+void test_destruction_inner();
+extern "C" SEXP _cpp11test_test_destruction_inner() {
+  BEGIN_CPP11
+    test_destruction_inner();
+    return R_NilValue;
+  END_CPP11
+}
+// test-protect-nested.cpp
+void test_destruction_outer();
+extern "C" SEXP _cpp11test_test_destruction_outer() {
+  BEGIN_CPP11
+    test_destruction_outer();
+    return R_NilValue;
+  END_CPP11
+}
 
 extern "C" {
 /* .Call calls */
-extern SEXP run_testthat_tests(SEXP);
+extern SEXP run_testthat_tests(void *);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_col_sums",                 (DL_FUNC) &_cpp11test_col_sums,                 1},
@@ -483,6 +499,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_sum_int_for2_",            (DL_FUNC) &_cpp11test_sum_int_for2_,            1},
     {"_cpp11test_sum_int_for_",             (DL_FUNC) &_cpp11test_sum_int_for_,             1},
     {"_cpp11test_sum_int_foreach_",         (DL_FUNC) &_cpp11test_sum_int_foreach_,         1},
+    {"_cpp11test_test_destruction_inner",   (DL_FUNC) &_cpp11test_test_destruction_inner,   0},
+    {"_cpp11test_test_destruction_outer",   (DL_FUNC) &_cpp11test_test_destruction_outer,   0},
     {"_cpp11test_upper_bound",              (DL_FUNC) &_cpp11test_upper_bound,              2},
     {"run_testthat_tests",                  (DL_FUNC) &run_testthat_tests,                  1},
     {NULL, NULL, 0}
