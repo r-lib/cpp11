@@ -15,7 +15,7 @@
 #' **you**. Bugfixes and new features in cpp11 will not be available for your
 #' code until you run `cpp_vendor()` again.
 #'
-#' @param path The path to vendor the code into.
+#' @param path The path to vendor the code into. The default is `src/vendor/`.
 #' @return The file path to the vendored code (invisibly).
 #' @export
 #' @examples
@@ -31,13 +31,17 @@
 #' # cleanup
 #' unlink(dir, recursive = TRUE)
 cpp_vendor <- function(path = "./src/vendor") {
-  new <- file.path(path, "cpp11")
-
-  if (dir.exists(new)) {
-    stop("'", new, "' already exists\n * run unlink('", new, "', recursive = TRUE)", call. = FALSE)
+  if (dir.exists(path)) {
+    cat(sprintf("The directory '%s' already exists. Do you want to overwrite it?\n", path))
+    if (utils::menu(c("Yes", "No"), graphics = FALSE) == 1L) {
+      unlink(path, recursive = TRUE)
+    } else {
+      return(FALSE)
+    }
   }
 
-  dir.create(new, recursive = TRUE, showWarnings = FALSE)
+  dir.create(path, recursive = TRUE, showWarnings = FALSE)
+  dir.create(file.path(path, "cpp11"), recursive = TRUE, showWarnings = FALSE)
 
   current <- system.file("include", "cpp11", package = "cpp11")
   if (!nzchar(current)) {
@@ -52,11 +56,11 @@ cpp_vendor <- function(path = "./src/vendor") {
 
   writeLines(
     c(cpp11_header, readLines(system.file("include", "cpp11.hpp", package = "cpp11"))),
-    file.path(dirname(new), "cpp11.hpp")
+    file.path(path, "cpp11.hpp")
   )
 
   for (f in files) {
-    writeLines(c(cpp11_header, readLines(f)), file.path(new, basename(f)))
+    writeLines(c(cpp11_header, readLines(f)), file.path(path, "cpp11", basename(f)))
   }
 
   # Additional steps to make vendoring work ----
@@ -67,7 +71,7 @@ cpp_vendor <- function(path = "./src/vendor") {
   # 2. If makevars exists, it should have a line that reads
   # `PKG_CPPFLAGS = -I../inst/include` or similar
 
-  vendor_line <- paste0(" -I", new)
+  vendor_line <- " -I vendor/"
 
   if (isTRUE(makevars_exists)) {
     makevars <- readLines("src/Makevars")
@@ -121,5 +125,5 @@ cpp_vendor <- function(path = "./src/vendor") {
     cat("`LinkingTo: cpp11` was removed from DESCRIPTION.\n")
   }
 
-  invisible(new)
+  invisible(path)
 }
