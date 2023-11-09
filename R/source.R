@@ -36,14 +36,14 @@
 #'     }
 #'     return total;
 #'   }
-#'   ')
+#'   '
+#' )
 #'
 #' num_odd(as.integer(c(1:10, 15, 23)))
 #'
 #' if (interactive() && require("progress")) {
-#'
-#' cpp_source(
-#'   code = '
+#'   cpp_source(
+#'     code = '
 #' #include <headers/R.hpp>
 #' #include <RProgress.h>
 #'
@@ -59,9 +59,10 @@
 #'     pb.tick();
 #'   }
 #' }
-#' ')
+#' '
+#'   )
 #'
-#' show_progress()
+#'   show_progress()
 #' }
 #'
 #' @export
@@ -96,7 +97,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   # file now points to another location
   file.copy(file, file.path(new_dir, name))
 
-  #change variable name to reflect this
+  # change variable name to reflect this
   new_file_path <- file.path(new_dir, name)
   new_file_name <- basename(new_file_path)
 
@@ -106,7 +107,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
     all_decorations <- decor::cpp_decorations(dir, is_attribute = TRUE)
   )
 
-  #provide original path for error messages
+  # provide original path for error messages
   check_valid_attributes(all_decorations, file = orig_file_path)
 
   funs <- get_registered_functions(all_decorations, "cpp11::register", quiet = quiet)
@@ -156,7 +157,7 @@ generate_cpp_name <- function(name, loaded_dlls = c("cpp11", names(getLoadedDLLs
   root <- tools::file_path_sans_ext(basename(name))
   count <- 2
   new_name <- root
-  while(new_name %in% loaded_dlls) {
+  while (new_name %in% loaded_dlls) {
     new_name <- sprintf("%s_%i", root, count)
     count <- count + 1
   }
@@ -184,12 +185,17 @@ generate_makevars <- function(includes, cxx_std) {
 #' @rdname cpp_source
 #' @export
 cpp_function <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11")) {
-  cpp_source(code = paste(c('#include "cpp11.hpp"',
+  cpp_source(
+    code = paste(
+      c(
+        '#include "cpp11.hpp"',
         "using namespace ::cpp11;",
         "namespace writable = ::cpp11::writable;",
         "[[cpp11::register]]",
-        code),
-      collapse = "\n"),
+        code
+      ),
+      collapse = "\n"
+    ),
     env = env,
     clean = clean,
     quiet = quiet,
@@ -202,15 +208,20 @@ utils::globalVariables("f")
 #' @rdname cpp_source
 #' @export
 cpp_eval <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11")) {
-  cpp_source(code = paste(c('#include "cpp11.hpp"',
+  cpp_source(
+    code = paste(
+      c(
+        '#include "cpp11.hpp"',
         "using namespace ::cpp11;",
         "namespace writable = ::cpp11::writable;",
         "[[cpp11::register]]",
         "SEXP f() { return as_sexp(",
         code,
         ");",
-        "}"),
-      collapse = "\n"),
+        "}"
+      ),
+      collapse = "\n"
+    ),
     env = env,
     clean = clean,
     quiet = quiet,

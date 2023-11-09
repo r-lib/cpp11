@@ -14,7 +14,8 @@ test_that("cpp_source works with the `code` parameter", {
       }
       return total;
     }
-    ', clean = TRUE)
+    ', clean = TRUE
+  )
   on.exit(dyn.unload(dll_info[["path"]]))
 
   expect_equal(num_odd(as.integer(c(1:10, 15, 23))), 7)
@@ -28,7 +29,8 @@ test_that("cpp_source works with the `file` parameter", {
     bool always_true() {
       return true;
     }
-    ", tf)
+    ", tf
+  )
   on.exit(unlink(tf))
 
   dll_info <- cpp_source(tf, clean = TRUE, quiet = TRUE)
@@ -45,7 +47,8 @@ test_that("cpp_source works with files called `cpp11.cpp`", {
     bool always_true() {
       return true;
     }
-    ", tf)
+    ", tf
+  )
   on.exit(unlink(tf))
 
   dll_info <- cpp_source(tf, clean = TRUE, quiet = TRUE)
@@ -55,14 +58,16 @@ test_that("cpp_source works with files called `cpp11.cpp`", {
 })
 
 test_that("cpp_source returns original file name on error", {
-
   expect_output(try(cpp_source(test_path("single_error.cpp"), clean = TRUE), silent = TRUE),
-               normalizePath(test_path("single_error.cpp"), winslash = "/"), fixed = TRUE)
+    normalizePath(test_path("single_error.cpp"), winslash = "/"),
+    fixed = TRUE
+  )
 
-  #error generated for incorrect attributes is separate from compilation errors
+  # error generated for incorrect attributes is separate from compilation errors
   expect_error(cpp_source(test_path("single_incorrect.cpp"), clean = TRUE),
-                normalizePath(test_path("single_incorrect.cpp"), winslash = "/"), fixed = TRUE)
-
+    normalizePath(test_path("single_incorrect.cpp"), winslash = "/"),
+    fixed = TRUE
+  )
 })
 
 test_that("cpp_source lets you set the C++ standard", {
@@ -77,7 +82,8 @@ test_that("cpp_source lets you set the C++ standard", {
       auto str = "hello_world"s;
       return str;
     }
-    ', tf)
+    ', tf
+  )
   on.exit(unlink(tf))
 
   dll_info <- cpp_source(tf, clean = TRUE, quiet = TRUE, cxx_std = "CXX14")
@@ -97,9 +103,9 @@ test_that("generate_cpp_name works", {
     "foo_2.cpp"
   )
 
-expect_equal(
-  generate_cpp_name("foo.cpp", loaded_dlls = c("foo", "foo_2")),
-  "foo_3.cpp"
+  expect_equal(
+    generate_cpp_name("foo.cpp", loaded_dlls = c("foo", "foo_2")),
+    "foo_3.cpp"
   )
 })
 
@@ -128,9 +134,11 @@ test_that("check_valid_attributes does not return an error if all registers are 
     cpp11::writable::list x;
     x.push_back({"foo"_nm = 1});
     return x;
-  }'))
+  }')
+  )
   expect_error_free(
-    cpp11::cpp_source(clean = TRUE,
+    cpp11::cpp_source(
+      clean = TRUE,
       code = '#include <headers/R.hpp>
               #include <RProgress.h>
 
@@ -145,7 +153,8 @@ test_that("check_valid_attributes does not return an error if all registers are 
                   pb.tick();
                 }
               }
-              ')
+              '
+    )
   )
 })
 
@@ -164,7 +173,8 @@ test_that("check_valid_attributes returns an error if one or more registers is i
     cpp11::writable::list x;
     x.push_back({"foo"_nm = 1});
     return x;
-  }'))
+  }')
+  )
 
   expect_error(
     cpp11::cpp_source(code = '#include <cpp11.hpp>
@@ -174,7 +184,8 @@ test_that("check_valid_attributes returns an error if one or more registers is i
     cpp11::writable::list x;
     x.push_back({"foo"_nm = 1});
     return x;
-  }'))
+  }')
+  )
 
   expect_error(
     cpp11::cpp_source(code = '#include <cpp11.hpp>
@@ -190,7 +201,8 @@ test_that("check_valid_attributes returns an error if one or more registers is i
     cpp11::writable::list x;
     x.push_back({"foo"_nm = 1});
     return x;
-  }'))
+  }')
+  )
 
 
 
@@ -208,7 +220,9 @@ test_that("check_valid_attributes returns an error if one or more registers is i
           pb.tick();
         }
       }
-'))
+'
+    )
+  )
 })
 
 test_that("cpp_source(d) functions work after sourcing file more than once", {

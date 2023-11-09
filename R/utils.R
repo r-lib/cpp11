@@ -43,18 +43,18 @@ is_windows <- function() {
 # use for stop_if_not_installed(), because rlang itself could be one of the
 # input pkgs.
 is_interactive <- function() {
-    opt <- getOption("rlang_interactive", NULL)
-    if (!is.null(opt)) {
-        return(opt)
-    }
-    if (isTRUE(getOption("knitr.in.progress"))) {
-        return(FALSE)
-    }
-    if (isTRUE(getOption("rstudio.notebook.executing"))) {
-        return(FALSE)
-    }
-    if (identical(Sys.getenv("TESTTHAT"), "true")) {
-        return(FALSE)
-    }
-    interactive()
+  opt <- getOption("rlang_interactive", NULL)
+  if (!is.null(opt)) {
+    return(opt)
+  }
+  if (isTRUE(getOption("knitr.in.progress"))) {
+    return(FALSE)
+  }
+  if (isTRUE(getOption("rstudio.notebook.executing"))) {
+    return(FALSE)
+  }
+  if (identical(Sys.getenv("TESTTHAT"), "true")) {
+    return(FALSE)
+  }
+  interactive()
 }

@@ -99,19 +99,17 @@ Because of this you can do ~10,000,000 vector appends with cpp11 in approximatel
 
 ```{r, message = FALSE, eval = should_run_benchmarks()}
 library(cpp11test)
-grid <- expand.grid(len = 10 ^ (0:7), pkg = "cpp11", stringsAsFactors = FALSE)
+grid <- expand.grid(len = 10^(0:7), pkg = "cpp11", stringsAsFactors = FALSE)
 grid <- rbind(
   grid,
-  expand.grid(len = 10 ^ (0:4), pkg = "rcpp", stringsAsFactors = FALSE)
+  expand.grid(len = 10^(0:4), pkg = "rcpp", stringsAsFactors = FALSE)
 )
-b_grow <- bench::press(.grid = grid,
-  {
-    fun = match.fun(sprintf("%sgrow_", ifelse(pkg == "cpp11", "", paste0(pkg, "_"))))
-    bench::mark(
-      fun(len)
-    )
-  }
-)[c("len", "pkg", "min", "mem_alloc", "n_itr", "n_gc")]
+b_grow <- bench::press(.grid = grid, {
+  fun <- match.fun(sprintf("%sgrow_", ifelse(pkg == "cpp11", "", paste0(pkg, "_"))))
+  bench::mark(
+    fun(len)
+  )
+})[c("len", "pkg", "min", "mem_alloc", "n_itr", "n_gc")]
 saveRDS(b_grow, "growth.Rds", version = 2)
 ```
 

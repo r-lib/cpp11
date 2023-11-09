@@ -37,7 +37,7 @@ cpp_vendor <- function(path = "./src/vendor") {
     stop("'", new, "' already exists\n * run unlink('", new, "', recursive = TRUE)", call. = FALSE)
   }
 
-  dir.create(new , recursive = TRUE, showWarnings = FALSE)
+  dir.create(new, recursive = TRUE, showWarnings = FALSE)
 
   current <- system.file("include", "cpp11", package = "cpp11")
   if (!nzchar(current)) {
@@ -107,10 +107,10 @@ cpp_vendor <- function(path = "./src/vendor") {
     grepl("LinkingTo: cpp11", description),
     grepl("LinkingTo: ", description),
     grepl("    cpp11", description)
-  ) 
+  )
 
   if (isTRUE(cpp11_in_desc)) {
-  # remove the lines
+    # remove the lines
     description <- description[!grepl("LinkingTo: cpp11", description)]
     description <- description[!grepl("LinkingTo: ", description)]
     description <- description[!grepl("    cpp11", description)]

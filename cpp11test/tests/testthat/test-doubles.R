@@ -1,5 +1,4 @@
 test_that("doubles iterators work with normal vectors", {
-
   len <- 1e5
   set.seed(42)
   x <- rnorm(len)
@@ -12,7 +11,6 @@ test_that("doubles iterators work with normal vectors", {
 })
 
 test_that("doubles iterators work with altrep vectors", {
-
   len <- 1e5
   seq_double <- function(x) as.double(seq_len(x))
 

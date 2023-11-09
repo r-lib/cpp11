@@ -5,7 +5,8 @@ test_that("cpp11::stop formatting works", {
 
   test2 <- c(3, 5, 7)
   expect_error(my_stop("You've tested this {} times", test2[1]), "You've tested this 3 times",
-               fixed = TRUE)
+    fixed = TRUE
+  )
 })
 test_that("cpp11::warning formatting works", {
   test1 <- "warning"
