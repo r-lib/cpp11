@@ -22,30 +22,95 @@ In many cases there is no need to convert a package from Rcpp.
 If the code is already written and you don't have a very compelling need to use cpp11 I would recommend you continue to use Rcpp.
 However if you _do_ feel like your project will benefit from using cpp11 this vignette will provide some guidance and doing the conversion.
 
-It is also a place to highlight some of the largest differences between Rcpp and cpp11.
+## Getting started
 
-## Class comparison table
+1. Add cpp11 by calling `usethis::use_cpp11()`.
 
-| Rcpp                    | cpp11 (read-only)     | cpp11 (writable)            | cpp11 header                 |
-| ---                     | ---                   | ---                         | ---                          |
-| NumericVector           | doubles               | writable::doubles           | <cpp11/doubles.hpp>          |
-| NumericMatrix           | doubles_matrix<>      | writable::doubles_matrix<>  | <cpp11/doubles.hpp>          |
-| IntegerVector           | integers              | writable::integers          | <cpp11/integers.hpp>         |
-| IntegerMatrix           | integers_matrix<>     | writable::integers_matrix<> | <cpp11/integers.hpp>         |
-| CharacterVector         | strings               | writable::strings           | <cpp11/strings.hpp>          |
-| RawVector               | raws                  | writable::raws              | <cpp11/raws.hpp>             |
-| List                    | list                  | writable::list              | <cpp11/list.hpp>             |
-| RObject                 | sexp                  |                             | <cpp11/sexp.hpp>             |
-| XPtr                    |                       | external_pointer            | <cpp11/external_pointer.hpp> |
-| Environment             |                       | environment                 | <cpp11/environment.hpp>      |
-| Function                |                       | function                    | <cpp11/function.hpp>         |
-| Environment (namespace) |                       | package                     | <cpp11/function.hpp>         |
-| wrap                    |                       | as_sexp                     | <cpp11/as.hpp>               |
-| as                      |                       | as_cpp                      | <cpp11/as.hpp>               |
-| stop                    | stop                  |                             | <cpp11/protect.hpp>          |
-| checkUserInterrupt      | check_user_interrupt  |                             | <cpp11/protect.hpp>          |
+1. Start converting function by function.
 
-## Incomplete list of Rcpp features not included in cpp11
+    Converting the code a bit at a time (and regularly running your tests) is the best way to do the conversion correctly and make progress. Doing a separate commit after converting each file (or possibly each function) can make finding any regressions with [git bisect](https://youtu.be/KKeucpfAuuA) much easier in the future.
+  
+    1. Convert `#include <Rcpp.h>` to `#include <cpp11.hpp>`.
+    1. Convert all instances of `// [[Rcpp::export]]` to `[[cpp11::register]]`.
+    1. Grep for `Rcpp::` and replace with the equivalent cpp11 function using the cheatsheets below.
+
+1. Remove Rcpp
+    1. Remove Rcpp from the `LinkingTo` and `Imports` fields.
+    1. Remove `@importFrom Rcpp sourceCpp`.
+    1. Delete `src/RccpExports.cpp` and `R/RcppExports.R`.
+    1. Delete `src/Makevars` if it only contains `PKG_CPPFLAGS=-DSTRICT_R_HEADERS`.
+    1. Clean out old compiled code with `pkgbuild::clean_dll()`.
+    1. Re-document the package to update the `NAMESPACE`.
+
+## Cheatsheet
+
+### Vectors
+
+| Rcpp                    | cpp11 (read-only)     | cpp11 (writable)            |
+| ---                     | ---                   | ---                         |
+| NumericVector           | doubles               | writable::doubles           |
+| NumericMatrix           | doubles_matrix<>      | writable::doubles_matrix<>  |
+| IntegerVector           | integers              | writable::integers          |
+| IntegerMatrix           | integers_matrix<>     | writable::integers_matrix<> |
+| CharacterVector         | strings               | writable::strings           |
+| RawVector               | raws                  | writable::raws              |
+| List                    | list                  | writable::list              |
+| RObject                 | sexp                  |                             |
+
+Note that each cpp11 vector class has a read-only and writeable version. 
+The default classes, e.g. `cpp11::doubles` are *read-only* classes that do not permit modification.
+If you want to modify the data you or create a new vector, use the writeable variant.
+
+Another major difference in Rcpp and cpp11 is how vectors are grown.
+Rcpp vectors have a `push_back()` method, but unlike `std::vector()` no additional space is reserved when pushing.
+This makes calling `push_back()` repeatably very expensive, as the entire vector has to be copied each call.
+In contrast `cpp11` vectors grow efficiently, reserving extra space.
+See <https://cpp11.r-lib.org/articles/motivations.html#growing-vectors> for more details.
+
+Rcpp also allows very flexible implicit conversions, e.g. if you pass a `REALSXP` to a function that takes a `Rcpp::IntegerVector()` it is implicitly converted to a `INTSXP`.
+These conversions are nice for usability, but require (implicit) duplication of the data, with the associated runtime costs.
+cpp11 throws an error in these cases. If you want the implicit coercions you can add a call to `as.integer()` or `as.double()` as appropriate from R when you call the function.
+
+### Other objects
+
+| Rcpp                    | cpp11                       |
+| ---                     | ---                         |
+| XPtr                    | external_pointer            |
+| Environment             | environment                 |
+| Function                | function                    |
+| Environment (namespace) | package                     |
+
+### Functions
+
+| Rcpp                                    | cpp11                    |
+| ---                                     | ---                      |
+|`wrap()`                                 | `as_sexp()`              |
+|`as()`                                   | `as_cpp()`               |
+|`stop()`                                 | `stop()`                 |
+|`checkUserInterrupt()`                   | `check_user_interrupt()` |
+|`CharacterVector::create("a", "b", "c")` | `{"a", "b", "c"}`        |
+
+Note that `cpp11::stop()` and `cpp11::warning()` are thin wrappers around `Rf_stop()` and `Rf_warning()`.
+These are simple C functions with a `printf()` API, so they do not understand C++ objects like `std::string`.
+Therefore you need to call `obj.c_str()` when passing string data to them.
+
+### R functions
+
+Calling R functions from C++ is similar to using Rcpp.
+
+```c++
+// Rcpp -----------------------------------------------
+Rcpp::Function as_tibble("as_tibble", Rcpp::Environment::namespace_env("tibble"));
+as_tibble(x, Rcpp::Named(".rows", num_rows), Rcpp::Named(".name_repair", name_repair));
+
+// cpp11 -----------------------------------------------
+using namespace cpp11::literals; // so we can use ""_nm syntax
+
+auto as_tibble = cpp11::package("tibble")["as_tibble"];
+as_tibble(x, ".rows"_nm = num_rows, ".name_repair"_nm = name_repair);
+```
+
+### Unsupported Rcpp features
 
 - None of [Modules](https://CRAN.R-project.org/package=Rcpp/vignettes/Rcpp-modules.pdf)
 - None of [Sugar](https://CRAN.R-project.org/package=Rcpp/vignettes/Rcpp-sugar.pdf)
@@ -55,90 +120,10 @@ It is also a place to highlight some of the largest differences between Rcpp and
   - No support for roxygen2 comments
   - No interfaces
 
-## Read-only vs writable vectors
+### RNGs
 
-The largest difference between cpp11 and Rcpp classes is that Rcpp classes modify their data in place, whereas cpp11 classes require copying the data to a writable class for modification.
-
-The default classes, e.g. `cpp11::doubles` are *read-only* classes that do not permit modification.
-If you want to modify the data you need to use the classes in the `cpp11::writable` namespace, e.g. `cpp11::writable::doubles`.
-
-In addition use the `writable` variants if you need to create a new R vector entirely in C++.
-
-## Fewer implicit conversions
-
-Rcpp also allows very flexible implicit conversions, e.g. if you pass a `REALSXP` to a function that takes a `Rcpp::IntegerVector()` it is implicitly converted to a `INTSXP`.
-These conversions are nice for usability, but require (implicit) duplication of the data, with the associated runtime costs.
-
-cpp11 throws an error in these cases. If you want the implicit coercions you can add a call to `as.integer()` or `as.double()` as appropriate from R when you call the function.
-
-## Calling R functions from C++
-
-Calling R functions from C++ is similar to using Rcpp.
-
-```c++
-Rcpp::Function as_tibble("as_tibble", Rcpp::Environment::namespace_env("tibble"));
-as_tibble(x, Rcpp::Named(".rows", num_rows), Rcpp::Named(".name_repair", name_repair));
-```
-
-```c++
-using namespace cpp11::literals; // so we can use ""_nm syntax
-
-auto as_tibble = cpp11::package("tibble")["as_tibble"];
-as_tibble(x, ".rows"_nm = num_rows, ".name_repair"_nm = name_repair);
-```
-
-
-## Appending behavior
-
-One major difference in Rcpp and cpp11 is how vectors are grown.
-Rcpp vectors have a `push_back()` method, but unlike `std::vector()` no additional space is reserved when pushing.
-This makes calling `push_back()` repeatably very expensive, as the entire vector has to be copied each call.
-
-In contrast `cpp11` vectors grow efficiently, reserving extra space.
-Because of this you can do ~10,000,000 vector appends with cpp11 in approximately the same amount of time that Rcpp does 10,000, as this benchmark demonstrates.
-
-```{r, message = FALSE, eval = should_run_benchmarks()}
-library(cpp11test)
-grid <- expand.grid(len = 10 ^ (0:7), pkg = "cpp11", stringsAsFactors = FALSE)
-grid <- rbind(
-  grid,
-  expand.grid(len = 10 ^ (0:4), pkg = "rcpp", stringsAsFactors = FALSE)
-)
-b_grow <- bench::press(.grid = grid,
-  {
-    fun = match.fun(sprintf("%sgrow_", ifelse(pkg == "cpp11", "", paste0(pkg, "_"))))
-    bench::mark(
-      fun(len)
-    )
-  }
-)[c("len", "pkg", "min", "mem_alloc", "n_itr", "n_gc")]
-saveRDS(b_grow, "growth.Rds", version = 2)
-```
-
-```{r, echo = FALSE, dev = "svg", fig.ext = "svg", eval = capabilities("cairo")}
-b_grow <- readRDS("growth.Rds")
-library(ggplot2)
-ggplot(b_grow, aes(x = len, y = min, color = pkg)) +
-  geom_point() +
-  geom_line() +
-  bench::scale_y_bench_time() +
-  scale_x_log10(
-    breaks = scales::trans_breaks("log10", function(x) 10^x),
-    labels = scales::trans_format("log10", scales::math_format(10^.x))
-  ) +
-  coord_fixed() +
-  theme(panel.grid.minor = element_blank()) +
-  labs(title = "log-log plot of vector size vs construction time", x = NULL, y = NULL)
-```
-
-```{r, echo = FALSE}
-knitr::kable(b_grow)
-```
-
-## Random Number behavior
-
-Rcpp unconditionally includes calls to `GetRNGstate()` and `PutRNGstate()` before each wrapped function. 
-This ensures that if any C++ code calls the R API functions `unif_rand()`, `norm_rand()`, `exp_rand()` or `R_unif_index()` the random seed state is set accordingly.
+Rcpp includes calls to `GetRNGstate()` and `PutRNGstate()` around the wrapped function. 
+This ensures that if any C++ code calls the R API functions `unif_rand()`, `norm_rand()`, `exp_rand()`, or `R_unif_index()` the random seed state is set accordingly.
 cpp11 does _not_ do this, so you must include the calls to `GetRNGstate()` and `PutRNGstate()` _yourself_ if you use any of those functions in your C++ code.
 See [R-exts 6.3 - Random number generation](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Random-numbers) for details on these functions.
 
@@ -162,16 +147,6 @@ void foo() {
 }
 ```
 
-## Mechanics of converting a package from Rcpp
-
-1. Add cpp11 to `LinkingTo`
-1. Convert all instances of `// [[Rcpp::export]]` to `[[cpp11::register]]`
-1. Clean and recompile the package, e.g. `pkgbuild::clean_dll()` `pkgload::load_all()`
-1. Run tests `devtools::test()`
-1. Start converting function by function
-   - Remember you can usually inter-convert between cpp11 and Rcpp classes by going through `SEXP` if needed.
-   - Converting the code a bit at a time (and regularly running your tests) is the best way to do the conversion correctly and make progress
-   - Doing a separate commit after converting each file (or possibly each function) can make finding any regressions with [git bisect](https://youtu.be/KKeucpfAuuA) much easier in the future.
 
 ## Common issues when converting
 
@@ -179,14 +154,29 @@ void foo() {
 
 Rcpp.h includes a number of STL headers automatically, notably `<string>` and `<vector>`, however the cpp11 headers generally do not. If you have errors like
 
-> error: no type named 'string' in namespace 'std'
+```
+error: no type named 'string' in namespace 'std'
+```
 
 You will need to include the appropriate STL header, in this case `<string>`.
+
+### Strict headers
+
+If you see something like this:
+
+```
+ In file included from file.cpp:1:
+ In file included from path/cpp11/include/cpp11.hpp:3:
+ path/cpp11/include/cpp11/R.hpp:12:9: warning: 'STRICT_R_HEADERS' macro redefined [-Wmacro-redefined]
+ #define STRICT_R_HEADERS
+```
+
+Make sure to remove `PKG_CPPFLAGS=-DSTRICT_R_HEADERS` from `src/Makevars`.
 
 ### R API includes
 
 cpp11 conflicts with macros declared by some R headers unless the macros `R_NO_REMAP` and `STRICT_R_HEADERS` are defined.
-If you include `cpp11/R.hpp` before any R headers these macros will be defined appropriately, otherwise you may see errors like
+If you include `cpp11.hpp` (or, at a minimum, `cpp11/R.hpp`) before any R headers these macros will be defined appropriately, otherwise you may see errors like
 
 > R headers were included before cpp11 headers and at least one of R_NO_REMAP or STRICT_R_HEADERS was not defined.
 
@@ -196,12 +186,6 @@ Note that transitive includes of R headers (for example, those included by `Rcpp
 ### Type aliases
 
 If you use typedefs for cpp11 types or define custom types you will need to define them in a `pkgname_types.hpp` file so that `cpp_register()` can include it in the generated code.
-
-### `cpp11::stop()` and `cpp11::warning()` with `std::string`
-
-`cpp11::stop()` and `cpp11::warning()` are thin wrappers around `Rf_stop()` and `Rf_warning()`.
-These are simple C functions with a `printf()` API, so do not understand C++ objects like `std::string`.
-Therefore you need to call `obj.c_str()` when passing character data to them.
 
 ### Logical vector construction
 
