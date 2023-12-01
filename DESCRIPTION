@@ -36,7 +36,7 @@ Suggests:
     rmarkdown,
     scales,
     Rcpp,
-    testthat,
+    testthat (>= 3.2.0),
     tibble,
     utils,
     vctrs,
