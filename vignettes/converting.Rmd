@@ -31,7 +31,7 @@ However if you _do_ feel like your project will benefit from using cpp11 this vi
     Converting the code a bit at a time (and regularly running your tests) is the best way to do the conversion correctly and make progress. Doing a separate commit after converting each file (or possibly each function) can make finding any regressions with [git bisect](https://youtu.be/KKeucpfAuuA) much easier in the future.
   
     1. Convert `#include <Rcpp.h>` to `#include <cpp11.hpp>`.
-    1. Convert all instances of `// [[Rcpp::export]]` to `[[cpp11::register]]`
+    1. Convert all instances of `// [[Rcpp::export]]` to `[[cpp11::register]]`.
     1. Grep for `Rcpp::` and replace with the equivalent cpp11 function using the cheatsheets below.
 
 1. Remove Rcpp
@@ -40,6 +40,7 @@ However if you _do_ feel like your project will benefit from using cpp11 this vi
     1. Delete `src/RccpExports.cpp` and `R/RcppExports.R`.
     1. Delete `src/Makevars` if it only contains `PKG_CPPFLAGS=-DSTRICT_R_HEADERS`.
     1. Clean out old compiled code with `pkgbuild::clean_dll()`.
+    1. Re-document the package to update the `NAMESPACE`.
 
 ## Cheatsheet
 
@@ -90,7 +91,7 @@ cpp11 throws an error in these cases. If you want the implicit coercions you can
 |`CharacterVector::create("a", "b", "c")` | `{"a", "b", "c"}`        |
 
 Note that `cpp11::stop()` and `cpp11::warning()` are thin wrappers around `Rf_stop()` and `Rf_warning()`.
-These are simple C functions with a `printf()` API, so do not understand C++ objects like `std::string`.
+These are simple C functions with a `printf()` API, so they do not understand C++ objects like `std::string`.
 Therefore you need to call `obj.c_str()` when passing string data to them.
 
 ### R functions
@@ -119,11 +120,10 @@ as_tibble(x, ".rows"_nm = num_rows, ".name_repair"_nm = name_repair);
   - No support for roxygen2 comments
   - No interfaces
 
-
 ### RNGs
 
-Rcpp includes calls to `GetRNGstate()` and `PutRNGstate()` around wrapped function. 
-This ensures that if any C++ code calls the R API functions `unif_rand()`, `norm_rand()`, `exp_rand()` or `R_unif_index()` the random seed state is set accordingly.
+Rcpp includes calls to `GetRNGstate()` and `PutRNGstate()` around the wrapped function. 
+This ensures that if any C++ code calls the R API functions `unif_rand()`, `norm_rand()`, `exp_rand()`, or `R_unif_index()` the random seed state is set accordingly.
 cpp11 does _not_ do this, so you must include the calls to `GetRNGstate()` and `PutRNGstate()` _yourself_ if you use any of those functions in your C++ code.
 See [R-exts 6.3 - Random number generation](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Random-numbers) for details on these functions.
 
@@ -165,9 +165,9 @@ You will need to include the appropriate STL header, in this case `<string>`.
 If you see something like this:
 
 ```
- In file included from BqField.cpp:2:
- In file included from /Users/hadleywickham/Library/R/arm64/4.3/library/cpp11/include/cpp11.hpp:3:
- /Users/hadleywickham/Library/R/arm64/4.3/library/cpp11/include/cpp11/R.hpp:12:9: warning: 'STRICT_R_HEADERS' macro redefined [-Wmacro-redefined]
+ In file included from file.cpp:1:
+ In file included from path/cpp11/include/cpp11.hpp:3:
+ path/cpp11/include/cpp11/R.hpp:12:9: warning: 'STRICT_R_HEADERS' macro redefined [-Wmacro-redefined]
  #define STRICT_R_HEADERS
 ```
 
@@ -176,7 +176,7 @@ Make sure to remove `PKG_CPPFLAGS=-DSTRICT_R_HEADERS` from `src/Makevars`.
 ### R API includes
 
 cpp11 conflicts with macros declared by some R headers unless the macros `R_NO_REMAP` and `STRICT_R_HEADERS` are defined.
-If you include `cpp11.hpp` before any R headers these macros will be defined appropriately, otherwise you may see errors like
+If you include `cpp11.hpp` (or, at a minimum, `cpp11/R.hpp`) before any R headers these macros will be defined appropriately, otherwise you may see errors like
 
 > R headers were included before cpp11 headers and at least one of R_NO_REMAP or STRICT_R_HEADERS was not defined.
 
