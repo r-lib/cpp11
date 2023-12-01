@@ -1102,27 +1102,27 @@ There are several benefits of moving code from a stand-alone C++ source file to 
 
 1. Packages provide additional infrastructure for testing, documentation, and consistency.
 
-To add `cpp11` to an existing package first put your C++ files in the `src/` directory of your package.
-Then add the following to your `DESCRIPTION` file:
+To add `cpp11` to an existing package first put your C++ files in the `src/` directory of your package. 
 
-    ```
+Then the easiest way to configure everything is to call `usethis::use_cpp11()`. Alternatively:
+
+* Add this to your `DESCRIPTION` file:
+  
+    ```yaml
     LinkingTo: cpp11
     ```
 
-and add the following [roxygen](https://roxygen2.r-lib.org/) directive somewhere in your package's R files. (A common location is `R/pkgname-package.R`)
+* And add the following [roxygen](https://roxygen2.r-lib.org/) directive somewhere in your package's R files. (A common location is `R/pkgname-package.R`)
 
-    ```
+    ```R
     #' @useDynLib pkgname, .registration = TRUE
     ```
 
-You'll then need to run [`devtools::document()`](https://devtools.r-lib.org/reference/document.html) to update your `NAMESPACE` file to include the `useDynLib` statement.
+* You'll then need to run [`devtools::document()`](https://devtools.r-lib.org/reference/document.html) to update your `NAMESPACE` file to include the `useDynLib` statement.
 
-The easiest way to set this up is to call `usethis::use_cpp11()`, which will do the above steps for your automatically.
-
-Before building the package, you'll need to run `cpp11::cpp_register()`.
+If you don't use `devtools::load_all()`, you'll also need to run `cpp11::cpp_register()` before building the package.
 This function scans the C++ files for `[[cpp11::register]]` attributes and generates the binding code required to make the functions available in R.
 Re-run `cpp11::cpp_register()` whenever functions are added, removed, or have their signatures changed.
-If you are using `devtools` to develop your package this is done automatically by the pkgbuild package when your package has `LinkingTo: cpp11` in its DESCRIPTION file.
 
 ## Learning more {#more}
 
