@@ -1,4 +1,4 @@
-# cpp11 (development version)
+# cpp11 0.4.7
 
 * Internal changes requested by CRAN to fix invalid format string tokens
   (@paleolimbot, #345).
