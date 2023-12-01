@@ -8,8 +8,8 @@
 <meta name="description" content="cpp11">
 <title>FAQ • cpp11</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.7/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.7/font.css" rel="stylesheet">
 <link href="../deps/Source_Code_Pro-0.4.7/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -381,10 +381,10 @@ this.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fl">2L</span>, <span class="fl">3L</span>, <span class="fl">4L</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Internal.html" class="external-link">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; @55c1fb134b98 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span></span>
+<span><span class="co">#&gt; @55a9212f4658 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span></span>
 <span><span class="fu">add_one</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Internal.html" class="external-link">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; @55c1fb134b98 13 INTSXP g0c2 [REF(6)] (len=4, tl=0) 2,3,4,5</span></span>
+<span><span class="co">#&gt; @55a9212f4658 13 INTSXP g0c2 [REF(6)] (len=4, tl=0) 2,3,4,5</span></span>
 <span><span class="va">x</span></span>
 <span><span class="co">#&gt; [1] 2 3 4 5</span></span></code></pre></div>
 </div>
@@ -629,8 +629,8 @@ native R API:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">#&gt;   expression                 min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> test_extract_cpp11(x)  69.73ms  73.89ms      13.1        0B     24.3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> test_extract_r_api(x)   2.71ms   2.85ms     340.         0B      0</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> test_extract_cpp11(x)  39.66ms  41.31ms      23.2        0B     44.4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> test_extract_r_api(x)   2.16ms   2.17ms     460.         0B      0</span></span></code></pre></div>
 <p>We plan to improve on this in the future, but for now this is one of
 the only places where we feel it is reasonable to call
 <code>unwind_protect()</code> manually.</p>
