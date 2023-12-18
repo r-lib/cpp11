@@ -92,22 +92,21 @@ template <typename T>
 enable_if_integral<T, T> as_cpp(SEXP from) {
   if (Rf_isInteger(from)) {
     if (Rf_xlength(from) == 1) {
-      return INTEGER_ELT(from, 0);
+      return static_cast<T>(INTEGER_ELT(from, 0));
     }
   } else if (Rf_isReal(from)) {
     if (Rf_xlength(from) == 1) {
-      if (ISNA(REAL_ELT(from, 0))) {
-        return NA_INTEGER;
-      }
       double value = REAL_ELT(from, 0);
-      if (is_convertible_without_loss_to_integer(value)) {
-        return value;
+      if (ISNA(value) && sizeof(T) >= sizeof(int)) {
+        return static_cast<T>(NA_INTEGER);
+      } else if (!ISNA(value) && is_convertible_without_loss_to_integer(value)) {
+        return static_cast<T>(value);
       }
     }
   } else if (Rf_isLogical(from)) {
     if (Rf_xlength(from) == 1) {
-      if (LOGICAL_ELT(from, 0) == NA_LOGICAL) {
-        return NA_INTEGER;
+      if (LOGICAL_ELT(from, 0) == NA_LOGICAL && sizeof(T) >= sizeof(int)) {
+        return static_cast<T>(NA_INTEGER);
       }
     }
   }

@@ -76,7 +76,7 @@ class sexp {
 
   operator SEXP() const { return data_; }
   operator double() const { return REAL_ELT(data_, 0); }
-  operator size_t() const { return REAL_ELT(data_, 0); }
+  operator size_t() const { return static_cast<size_t>(REAL_ELT(data_, 0)); }
   operator bool() const { return LOGICAL_ELT(data_, 0); }
   SEXP data() const { return data_; }
 };
