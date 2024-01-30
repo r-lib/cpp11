@@ -32,22 +32,7 @@
 #' unlink(dir, recursive = TRUE)
 cpp_vendor <- function(path = "./src/vendor") {
   if (dir.exists(path)) {
-    cat(
-      sprintf(
-        "The directory '%s' already exists. Do you want to overwrite it?\n",
-        path
-      )
-    )
-    if (interactive()) {
-      if (utils::menu(c("Yes", "No"), graphics = FALSE) == 1L) {
-        unlink(path, recursive = TRUE)
-      } else {
-        return(FALSE)
-      }
-    } else {
-      message("Running in non-interactive mode. Exiting.")
-      return(FALSE)
-    }
+    stop("'", path, "' already exists\n * run unlink('", path, "', recursive = TRUE)", call. = FALSE)
   }
 
   dir.create(path, recursive = TRUE, showWarnings = FALSE)

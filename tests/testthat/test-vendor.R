@@ -3,17 +3,17 @@ describe("cpp_vendor", {
     pkg <- local_package()
     mockery::stub(cpp_vendor, "system.file", "")
     expect_error(
-      cpp_vendor(pkg_path(pkg)),
+      cpp_vendor(paste0(pkg_path(pkg), "/src/vendor")),
       "cpp11 is not installed"
     )
   })
 
   it("errors if cpp11 is already vendored", {
     pkg <- local_package()
-    cpp_vendor(pkg_path(pkg))
+    cpp_vendor(paste0(pkg_path(pkg), "/src/vendor"))
 
     expect_error(
-      cpp_vendor(pkg_path(pkg)),
+      cpp_vendor(paste0(pkg_path(pkg), "/src/vendor")),
       "already exists"
     )
   })
