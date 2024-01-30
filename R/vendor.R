@@ -32,98 +32,168 @@
 #' unlink(dir, recursive = TRUE)
 cpp_vendor <- function(path = "./src/vendor") {
   if (dir.exists(path)) {
-    cat(sprintf("The directory '%s' already exists. Do you want to overwrite it?\n", path))
-    if (utils::menu(c("Yes", "No"), graphics = FALSE) == 1L) {
-      unlink(path, recursive = TRUE)
+    cat(
+      sprintf(
+        "The directory '%s' already exists. Do you want to overwrite it?\n",
+        path
+      )
+    )
+    if (interactive()) {
+      if (utils::menu(c("Yes", "No"), graphics = FALSE) == 1L) {
+        unlink(path, recursive = TRUE)
+      } else {
+        return(FALSE)
+      }
     } else {
+      message("Running in non-interactive mode. Exiting.")
       return(FALSE)
     }
   }
 
   dir.create(path, recursive = TRUE, showWarnings = FALSE)
-  dir.create(file.path(path, "cpp11"), recursive = TRUE, showWarnings = FALSE)
 
-  current <- system.file("include", "cpp11", package = "cpp11")
-  if (!nzchar(current)) {
+  # Vendor cpp11 ----
+
+  dir.create(
+    file.path(path, "cpp11"),
+    recursive = TRUE,
+    showWarnings = FALSE
+  )
+
+  current_cpp11 <- system.file(
+    "include",
+    "cpp11",
+    package = "cpp11"
+  )
+
+  if (!nzchar(current_cpp11)) {
     stop("cpp11 is not installed", call. = FALSE)
   }
 
   cpp11_version <- utils::packageVersion("cpp11")
 
-  cpp11_header <- sprintf("// cpp11 version: %s\n// vendored on: %s", cpp11_version, Sys.Date())
-
-  files <- list.files(current, full.names = TRUE)
-
-  writeLines(
-    c(cpp11_header, readLines(system.file("include", "cpp11.hpp", package = "cpp11"))),
-    file.path(path, "cpp11.hpp")
+  cpp11_header <- sprintf(
+    "// cpp11 version: %s\n// vendored on: %s",
+    cpp11_version,
+    Sys.Date()
   )
 
-  for (f in files) {
-    writeLines(c(cpp11_header, readLines(f)), file.path(path, "cpp11", basename(f)))
-  }
+  write_header(
+    path, "cpp11.hpp", "cpp11",
+    cpp11_header
+  )
+
+  copy_files(
+    list.files(current_cpp11, full.names = TRUE),
+    path, "cpp11", cpp11_header
+  )
 
   # Additional steps to make vendoring work ----
 
   # 1. Check if `src/Makevars` exists
   makevars_exists <- file.exists("src/Makevars")
+  makevars.win_exists <- file.exists("src/Makevars.win")
 
   # 2. If makevars exists, it should have a line that reads
   # `PKG_CPPFLAGS = -I../inst/include` or similar
 
   vendor_line <- " -I vendor/"
 
+  makevars_file <- "src/Makevars"
   if (isTRUE(makevars_exists)) {
-    makevars <- readLines("src/Makevars")
-
-    if (any(grepl("^PKG_CPPFLAGS", makevars))) {
-      cat("There is a `PKG_CPPFLAGS` line in src/Makevars. It will be modified.\n")
-
-      # which line contains `PKG_CPPFLAGS`?
-      cppflags_line <- grep("^PKG_CPPFLAGS", makevars)
-
-      # append the vendoring line
-      if (!grepl(vendor_line, makevars[cppflags_line])) {
-        makevars[cppflags_line] <- paste0(makevars[cppflags_line], vendor_line)
-      }
-
-      writeLines(makevars, "src/Makevars")
-    } else {
-      # add the line
-      makevars <- c(makevars, paste0("PKG_CPPFLAGS = ", vendor_line))
-
-      writeLines(makevars, "src/Makevars")
-    }
-
-    cat("The existing src/Makevars was modified. Please check it.\n")
+    makevars <- readLines(makevars_file)
+    alter_makevars(makevars, makevars_file, vendor_line)
   } else {
-    # create the file
-    writeLines(paste0("PKG_CPPFLAGS = ", vendor_line), "src/Makevars")
-
-    # warn about the change
-    cat("A new src/Makevars file was created.\n")
+    create_makevars(makevars_file)
   }
 
-  # 3. `DESCRIPTION` now should not have `LinkingTo: cpp11` or `LinkingTo: \n\tcpp11`
-  description <- readLines("DESCRIPTION")
+  makevars.win_file <- "src/Makevars.win"
+  if (isTRUE(makevars.win_exists)) {
+    makevars.win <- readLines(makevars.win_file)
+    alter_makevars(makevars.win, makevars.win_file, vendor_line)
+  } else {
+    create_makevars(makevars.win_file)
+  }
 
-  cpp11_in_desc <- any(
-    grepl("LinkingTo: cpp11", description),
+  # 3. `DESCRIPTION` now should not have `LinkingTo: cpp11armadillo` or
+  #    `LinkingTo: \n\tcpp11armadillo`
+  description_file <- "DESCRIPTION"
+  description <- readLines(description_file)
+
+  cpp11armadillo_in_desc <- any(
+    grepl("LinkingTo: cpp11, cpp11armadillo", description),
     grepl("LinkingTo: ", description),
-    grepl("    cpp11", description)
+    grepl("    cpp11,", description),
+    grepl("    cpp11armadillo", description)
   )
 
-  if (isTRUE(cpp11_in_desc)) {
+  if (isTRUE(cpp11armadillo_in_desc)) {
     # remove the lines
-    description <- description[!grepl("LinkingTo: cpp11", description)]
+    description <- description[!grepl(
+      "LinkingTo: cpp11, cpp11armadillo",
+      description
+    )]
     description <- description[!grepl("LinkingTo: ", description)]
-    description <- description[!grepl("    cpp11", description)]
+    description <- description[!grepl("    cpp11,", description)]
+    description <- description[!grepl("    cpp11armadillo", description)]
 
-    writeLines(description, "DESCRIPTION")
+    writeLines(description, description_file)
 
     # warn about the change
-    cat("`LinkingTo: cpp11` was removed from DESCRIPTION.\n")
+    cat("`LinkingTo: cpp11, cpp11armadillo` was removed from DESCRIPTION.\n")
   }
 
   invisible(path)
+}
+
+alter_makevars <- function(makevars, makevars_file, vendor_line) {
+  if (any(grepl("^PKG_CPPFLAGS", makevars))) {
+    cat(
+      "There is a `PKG_CPPFLAGS` line in src/Makevars. It will be modified.\n"
+    )
+
+    # which line contains `PKG_CPPFLAGS`?
+    cppflags_line <- grep("^PKG_CPPFLAGS", makevars)
+
+    # append the vendoring line
+    if (!grepl(vendor_line, makevars[cppflags_line])) {
+      makevars[cppflags_line] <- paste0(makevars[cppflags_line], vendor_line)
+    }
+
+    writeLines(makevars, makevars_file)
+  } else {
+    # add the line
+    makevars <- c(makevars, paste0("PKG_CPPFLAGS = ", vendor_line))
+
+    writeLines(makevars, makevars_file)
+  }
+}
+
+create_makevars <- function(filename, vendor_line) {
+  # create the file
+  writeLines(paste0("PKG_CPPFLAGS = ", vendor_line), filename)
+
+  # warn about the change
+  cat("A new src/Makevars file was created.\n")
+}
+
+write_header <- function(path, header, pkg, cpp11_header) {
+  writeLines(
+    c(
+      cpp11_header,
+      readLines(
+        system.file("include", header, package = pkg)
+      )
+    ),
+    file.path(path, header)
+  )
+}
+
+copy_files <- function(files, path, out, cpp11_header) {
+  for (f in files) {
+    writeLines(
+      c(cpp11_header, readLines(f)),
+      file.path(path, out, basename(f))
+    )
+  }
 }
