@@ -8,30 +8,6 @@ data_frame_ <- function() {
   .Call(`_cpp11test_data_frame_`)
 }
 
-my_stop_n1fmt <- function(mystring) {
-  invisible(.Call(`_cpp11test_my_stop_n1fmt`, mystring))
-}
-
-my_stop_n2fmt <- function(mystring, myarg) {
-  invisible(.Call(`_cpp11test_my_stop_n2fmt`, mystring, myarg))
-}
-
-my_warning_n1fmt <- function(mystring) {
-  invisible(.Call(`_cpp11test_my_warning_n1fmt`, mystring))
-}
-
-my_warning_n2fmt <- function(mystring, myarg) {
-  invisible(.Call(`_cpp11test_my_warning_n2fmt`, mystring, myarg))
-}
-
-my_message_n1fmt <- function(mystring) {
-  invisible(.Call(`_cpp11test_my_message_n1fmt`, mystring))
-}
-
-my_message_n2fmt <- function(mystring, myarg) {
-  invisible(.Call(`_cpp11test_my_message_n2fmt`, mystring, myarg))
-}
-
 my_stop <- function(mystring, myarg) {
   invisible(.Call(`_cpp11test_my_stop`, mystring, myarg))
 }
@@ -54,6 +30,30 @@ my_message <- function(mystring, myarg) {
 
 my_message_n1 <- function(mystring) {
   invisible(.Call(`_cpp11test_my_message_n1`, mystring))
+}
+
+my_stop_n1fmt <- function(mystring) {
+  invisible(.Call(`_cpp11test_my_stop_n1fmt`, mystring))
+}
+
+my_stop_n2fmt <- function(mystring, myarg) {
+  invisible(.Call(`_cpp11test_my_stop_n2fmt`, mystring, myarg))
+}
+
+my_warning_n1fmt <- function(mystring) {
+  invisible(.Call(`_cpp11test_my_warning_n1fmt`, mystring))
+}
+
+my_warning_n2fmt <- function(mystring, myarg) {
+  invisible(.Call(`_cpp11test_my_warning_n2fmt`, mystring, myarg))
+}
+
+my_message_n1fmt <- function(mystring) {
+  invisible(.Call(`_cpp11test_my_message_n1fmt`, mystring))
+}
+
+my_message_n2fmt <- function(mystring, myarg) {
+  invisible(.Call(`_cpp11test_my_message_n2fmt`, mystring, myarg))
 }
 
 remove_altrep <- function(x) {
@@ -160,34 +160,6 @@ cpp11_safe_ <- function(x_sxp) {
   .Call(`_cpp11test_cpp11_safe_`, x_sxp)
 }
 
-sum_dbl_for_ <- function(x) {
-  .Call(`_cpp11test_sum_dbl_for_`, x)
-}
-
-sum_dbl_for2_ <- function(x_sxp) {
-  .Call(`_cpp11test_sum_dbl_for2_`, x_sxp)
-}
-
-sum_dbl_for3_ <- function(x_sxp) {
-  .Call(`_cpp11test_sum_dbl_for3_`, x_sxp)
-}
-
-sum_dbl_foreach_ <- function(x) {
-  .Call(`_cpp11test_sum_dbl_foreach_`, x)
-}
-
-sum_dbl_foreach2_ <- function(x_sxp) {
-  .Call(`_cpp11test_sum_dbl_foreach2_`, x_sxp)
-}
-
-sum_dbl_accumulate_ <- function(x) {
-  .Call(`_cpp11test_sum_dbl_accumulate_`, x)
-}
-
-sum_dbl_accumulate2_ <- function(x_sxp) {
-  .Call(`_cpp11test_sum_dbl_accumulate2_`, x_sxp)
-}
-
 sum_int_for_ <- function(x) {
   .Call(`_cpp11test_sum_int_for_`, x)
 }
@@ -222,6 +194,34 @@ rcpp_sum_dbl_accumulate_ <- function(x_sxp) {
 
 rcpp_grow_ <- function(n_sxp) {
   .Call(`_cpp11test_rcpp_grow_`, n_sxp)
+}
+
+sum_dbl_for_ <- function(x) {
+  .Call(`_cpp11test_sum_dbl_for_`, x)
+}
+
+sum_dbl_for2_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_dbl_for2_`, x_sxp)
+}
+
+sum_dbl_for3_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_dbl_for3_`, x_sxp)
+}
+
+sum_dbl_foreach_ <- function(x) {
+  .Call(`_cpp11test_sum_dbl_foreach_`, x)
+}
+
+sum_dbl_foreach2_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_dbl_foreach2_`, x_sxp)
+}
+
+sum_dbl_accumulate_ <- function(x) {
+  .Call(`_cpp11test_sum_dbl_accumulate_`, x)
+}
+
+sum_dbl_accumulate2_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_dbl_accumulate2_`, x_sxp)
 }
 
 test_destruction_inner <- function() {

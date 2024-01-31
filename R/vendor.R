@@ -132,13 +132,15 @@ cpp_vendor <- function(path = "./src/vendor") {
 }
 
 alter_makevars <- function(makevars, makevars_file, vendor_line) {
-  if (any(grepl("^PKG_CPPFLAGS", makevars))) {
-    cat(
-      "There is a `PKG_CPPFLAGS` line in src/Makevars. It will be modified.\n"
-    )
-
+  if (any(grepl("^PKG_CPPFLAGS|^# PKG_CPPFLAGS|^#PKG_CPPFLAGS", makevars))) {
     # which line contains `PKG_CPPFLAGS`?
     cppflags_line <- grep("^PKG_CPPFLAGS|^# PKG_CPPFLAGS|^#PKG_CPPFLAGS", makevars)
+
+    if (length(cppflags_line) > 1) {
+      if (any(grepl(vendor_line, makevars[cppflags_line]))) {
+        return(TRUE)
+      }
+    }
 
     # append the vendoring line
     if (!grepl(vendor_line, makevars[cppflags_line])) {
@@ -146,6 +148,8 @@ alter_makevars <- function(makevars, makevars_file, vendor_line) {
     }
 
     writeLines(makevars, makevars_file)
+
+    cat(paste0(makevars_file, "was modified.\n"))
   } else {
     # add the line
     makevars <- c(makevars, paste0("PKG_CPPFLAGS = ", vendor_line))
