@@ -89,7 +89,7 @@ cpp_vendor <- function(path = "./src/vendor") {
     makevars <- readLines(makevars_file)
     alter_makevars(makevars, makevars_file, vendor_line)
   } else {
-    create_makevars(makevars_file)
+    create_makevars(makevars_file, vendor_line)
   }
 
   makevars.win_file <- "src/Makevars.win"
@@ -97,7 +97,7 @@ cpp_vendor <- function(path = "./src/vendor") {
     makevars.win <- readLines(makevars.win_file)
     alter_makevars(makevars.win, makevars.win_file, vendor_line)
   } else {
-    create_makevars(makevars.win_file)
+    create_makevars(makevars.win_file, vendor_line)
   }
 
   # 3. `DESCRIPTION` now should not have `LinkingTo: cpp11armadillo` or
@@ -138,7 +138,7 @@ alter_makevars <- function(makevars, makevars_file, vendor_line) {
     )
 
     # which line contains `PKG_CPPFLAGS`?
-    cppflags_line <- grep("^PKG_CPPFLAGS", makevars)
+    cppflags_line <- grep("^PKG_CPPFLAGS|^# PKG_CPPFLAGS|^#PKG_CPPFLAGS", makevars)
 
     # append the vendoring line
     if (!grepl(vendor_line, makevars[cppflags_line])) {
