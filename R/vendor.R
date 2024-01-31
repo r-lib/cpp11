@@ -15,32 +15,30 @@
 #' **you**. Bugfixes and new features in cpp11 will not be available for your
 #' code until you run `cpp_vendor()` again.
 #'
-#' @param path The path to vendor the code into. The default is `src/vendor/`.
+#' @param path The path to vendor the code into. The default is `./inst/include/`.
 #' @return The file path to the vendored code (invisibly).
 #' @export
 #' @examples
 #' # create a new directory
-#' dir <- tempfile()
+#' dir <- tempdir()
 #' dir.create(dir)
 #'
 #' # vendor the cpp11 headers into the directory
 #' cpp_vendor(dir)
 #'
-#' list.files(file.path(dir, "src", "vendor"))
-#'
 #' # cleanup
 #' unlink(dir, recursive = TRUE)
-cpp_vendor <- function(path = "./src/vendor") {
-  if (dir.exists(path)) {
-    stop("'", path, "' already exists\n * run unlink('", path, "', recursive = TRUE)", call. = FALSE)
-  }
+cpp_vendor <- function(path = "./inst/include") {
+  new <- file.path(path, "cpp11")
 
-  dir.create(path, recursive = TRUE, showWarnings = FALSE)
+  if (dir.exists(new)) {
+    stop("'", new, "' already exists\n * run unlink('", new, "', recursive = TRUE)", call. = FALSE)
+  }
 
   # Vendor cpp11 ----
 
   dir.create(
-    file.path(path, "cpp11"),
+    new,
     recursive = TRUE,
     showWarnings = FALSE
   )
@@ -75,95 +73,14 @@ cpp_vendor <- function(path = "./src/vendor") {
 
   # Additional steps to make vendoring work ----
 
-  # 1. Check if `src/Makevars` exists
-  makevars_exists <- file.exists("src/Makevars")
-  makevars.win_exists <- file.exists("src/Makevars.win")
+  message(paste(
+    "Makevars and/or Makevars.win should have a line such as",
+    "'PKG_CPPFLAGS = -I../inst/include'"
+  ))
 
-  # 2. If makevars exists, it should have a line that reads
-  # `PKG_CPPFLAGS = -I../inst/include` or similar
-
-  vendor_line <- " -I vendor/"
-
-  makevars_file <- "src/Makevars"
-  if (isTRUE(makevars_exists)) {
-    makevars <- readLines(makevars_file)
-    alter_makevars(makevars, makevars_file, vendor_line)
-  } else {
-    create_makevars(makevars_file, vendor_line)
-  }
-
-  makevars.win_file <- "src/Makevars.win"
-  if (isTRUE(makevars.win_exists)) {
-    makevars.win <- readLines(makevars.win_file)
-    alter_makevars(makevars.win, makevars.win_file, vendor_line)
-  } else {
-    create_makevars(makevars.win_file, vendor_line)
-  }
-
-  # 3. `DESCRIPTION` now should not have `LinkingTo: cpp11armadillo` or
-  #    `LinkingTo: \n\tcpp11armadillo`
-  description_file <- "DESCRIPTION"
-  description <- readLines(description_file)
-
-  cpp11armadillo_in_desc <- any(
-    grepl("LinkingTo: cpp11, cpp11armadillo", description),
-    grepl("LinkingTo: ", description),
-    grepl("    cpp11,", description),
-    grepl("    cpp11armadillo", description)
-  )
-
-  if (isTRUE(cpp11armadillo_in_desc)) {
-    # remove the lines
-    description <- description[!grepl(
-      "LinkingTo: cpp11, cpp11armadillo",
-      description
-    )]
-    description <- description[!grepl("LinkingTo: ", description)]
-    description <- description[!grepl("    cpp11,", description)]
-    description <- description[!grepl("    cpp11armadillo", description)]
-
-    writeLines(description, description_file)
-
-    # warn about the change
-    cat("`LinkingTo: cpp11, cpp11armadillo` was removed from DESCRIPTION.\n")
-  }
+  message("DESCRIPTION should not have lines such as 'LinkingTo: cpp11'")
 
   invisible(path)
-}
-
-alter_makevars <- function(makevars, makevars_file, vendor_line) {
-  if (any(grepl("^PKG_CPPFLAGS|^# PKG_CPPFLAGS|^#PKG_CPPFLAGS", makevars))) {
-    # which line contains `PKG_CPPFLAGS`?
-    cppflags_line <- grep("^PKG_CPPFLAGS|^# PKG_CPPFLAGS|^#PKG_CPPFLAGS", makevars)
-
-    if (length(cppflags_line) > 1) {
-      if (any(grepl(vendor_line, makevars[cppflags_line]))) {
-        return(TRUE)
-      }
-    }
-
-    # append the vendoring line
-    if (!grepl(vendor_line, makevars[cppflags_line])) {
-      makevars[cppflags_line] <- paste0(makevars[cppflags_line], vendor_line)
-    }
-
-    writeLines(makevars, makevars_file)
-
-    cat(paste0(makevars_file, "was modified.\n"))
-  } else {
-    # add the line
-    makevars <- c(makevars, paste0("PKG_CPPFLAGS = ", vendor_line))
-
-    writeLines(makevars, makevars_file)
-  }
-}
-
-create_makevars <- function(filename, vendor_line) {
-  # create the file
-  writeLines(paste0("PKG_CPPFLAGS = ", vendor_line), filename)
-
-  # warn about the change
-  cat("A new src/Makevars file was created.\n")
 }
 
 write_header <- function(path, header, pkg, cpp11_header) {

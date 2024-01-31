@@ -4,10 +4,10 @@
 \alias{cpp_vendor}
 \title{Vendor the cpp11 dependency}
 \usage{
-cpp_vendor(path = "./src/vendor")
+cpp_vendor(path = "./inst/include")
 }
 \arguments{
-\item{path}{The path to vendor the code into.}
+\item{path}{The path to vendor the code into. The default is \verb{./inst/include/}.}
 }
 \value{
 The file path to the vendored code (invisibly).
@@ -30,13 +30,11 @@ code until you run \code{cpp_vendor()} again.
 }
 \examples{
 # create a new directory
-dir <- tempfile()
+dir <- tempdir()
 dir.create(dir)
 
 # vendor the cpp11 headers into the directory
 cpp_vendor(dir)
-
-list.files(file.path(dir, "src", "vendor"))
 
 # cleanup
 unlink(dir, recursive = TRUE)
