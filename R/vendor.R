@@ -9,13 +9,14 @@
 #' cpp11 currently installed on your machine.
 #'
 #' If you choose to vendor the headers you should _remove_ `LinkingTo:
-#' cpp11` from your DESCRIPTION.
+#' cpp11` from your DESCRIPTION. This is done automatically by this function.
 #'
 #' **Note**: vendoring places the responsibility of updating the code on
 #' **you**. Bugfixes and new features in cpp11 will not be available for your
 #' code until you run `cpp_vendor()` again.
 #'
-#' @inheritParams cpp_register
+#' @param path The path to vendor the code into. The default is
+#'  `./inst/include/`.
 #' @return The file path to the vendored code (invisibly).
 #' @export
 #' @examples
@@ -30,12 +31,14 @@
 #'
 #' # cleanup
 #' unlink(dir, recursive = TRUE)
-cpp_vendor <- function(path = ".") {
-  new <- file.path(path, "inst", "include", "cpp11")
+cpp_vendor <- function(path = "./inst/include/") {
+  new <- file.path(path, "cpp11")
 
   if (dir.exists(new)) {
     stop("'", new, "' already exists\n * run unlink('", new, "', recursive = TRUE)", call. = FALSE)
   }
+
+  # Vendor cpp11 ----
 
   dir.create(new , recursive = TRUE, showWarnings = FALSE)
 
@@ -48,16 +51,37 @@ cpp_vendor <- function(path = ".") {
 
   cpp11_header <- sprintf("// cpp11 version: %s\n// vendored on: %s", cpp11_version, Sys.Date())
 
-  files <- list.files(current, full.names = TRUE)
+  write_header(path, "cpp11.hpp", "cpp11", cpp11_header)
 
-  writeLines(
-    c(cpp11_header, readLines(system.file("include", "cpp11.hpp", package = "cpp11"))),
-    file.path(dirname(new), "cpp11.hpp")
-  )
+  copy_files(list.files(current, full.names = TRUE), path, "cpp11", cpp11_header)
 
-  for (f in files) {
-    writeLines(c(cpp11_header, readLines(f)), file.path(new, basename(f)))
-  }
+  # Additional steps to make vendoring work ----
+
+  message(paste(
+    "Makevars and/or Makevars.win should have a line such as",
+    "'PKG_CPPFLAGS = -I../inst/include'"
+  ))
+
+  message("DESCRIPTION should not have lines such as 'LinkingTo: cpp11'")
 
   invisible(new)
+}
+
+write_header <- function(path, header, pkg, cpp11_header) {
+  writeLines(
+    c(
+      cpp11_header,
+      readLines(system.file("include", header, package = pkg))
+    ),
+    file.path(path, header)
+  )
+}
+
+copy_files <- function(files, path, out, cpp11_header) {
+  for (f in files) {
+    writeLines(
+      c(cpp11_header, readLines(f)),
+      file.path(path, out, basename(f))
+    )
+  }
 }
