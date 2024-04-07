@@ -32,7 +32,7 @@
 #' # cleanup
 #' unlink(dir, recursive = TRUE)
 cpp_vendor <- function(path = "./inst/include/") {
-  new <- file.path(path, "cpp11")
+  new <- file.path(path)
 
   if (dir.exists(new)) {
     stop("'", new, "' already exists\n * run unlink('", new, "', recursive = TRUE)", call. = FALSE)
@@ -40,9 +40,11 @@ cpp_vendor <- function(path = "./inst/include/") {
 
   # Vendor cpp11 ----
 
-  dir.create(new , recursive = TRUE, showWarnings = FALSE)
+  dir.create(new, recursive = TRUE, showWarnings = FALSE)
+  dir.create(file.path(new, "cpp11"), recursive = TRUE, showWarnings = FALSE)
 
   current <- system.file("include", "cpp11", package = "cpp11")
+
   if (!nzchar(current)) {
     stop("cpp11 is not installed", call. = FALSE)
   }
@@ -51,18 +53,50 @@ cpp_vendor <- function(path = "./inst/include/") {
 
   cpp11_header <- sprintf("// cpp11 version: %s\n// vendored on: %s", cpp11_version, Sys.Date())
 
-  write_header(path, "cpp11.hpp", "cpp11", cpp11_header)
+  main_header <- list.files(current, pattern = "\\.hpp$", full.names = TRUE)
+  headers <- list.files(file.path(current, "cpp11"), pattern = "\\.hpp$", full.names = TRUE)
 
-  copy_files(list.files(current, full.names = TRUE), path, "cpp11", cpp11_header)
+  writeLines(c(cpp11_header, readLines(main_header)), file.path(new, basename(main_header)))
+
+  for (h in headers) {
+    writeLines(c(cpp11_header, readLines(h)), file.path(new, "cpp11", basename(h)))
+  }
 
   # Additional steps to make vendoring work ----
 
-  message(paste(
-    "Makevars and/or Makevars.win should have a line such as",
-    "'PKG_CPPFLAGS = -I../inst/include'"
+  message(sprintf(
+    "Adding PKG_CPPFLAGS = -I../%s to src/Makevars and src/Makevars.win.",
+    new
   ))
 
-  message("DESCRIPTION should not have lines such as 'LinkingTo: cpp11'")
+  makevars <- "src/Makevars"
+  makevars_win <- "src/Makevars.win"
+  makevars_line <- paste0("PKG_CPPFLAGS = -I ../", new)
+
+  if (file.exists(makevars)) {
+    if (!any(grepl(paste0("^PKG_CPPFLAGS\\s*=\\s*-I\\s*\\.\\./", new), readLines(makevars)))) {
+      writeLines(c(readLines(makevars), makevars_line), makevars)
+    }
+  } else {
+    writeLines(makevars_line, makevars)
+  }
+
+  if (file.exists(makevars_win)) {
+    if (!any(grepl(paste0("^PKG_CPPFLAGS\\s*=\\s*-I\\s*\\.\\./", new), readLines(makevars_win)))) {
+      writeLines(c(readLines(makevars_win), makevars_line), makevars_win)
+    }
+  } else {
+    writeLines(makevars_line, makevars_win)
+  }
+
+  message("Removing 'LinkingTo: cpp11' from DESCRIPTION.")
+
+  desc <- readLines("DESCRIPTION")
+  desc <- desc[!grepl("^LinkingTo:\\s*cpp11", desc)]
+  desc <- gsub("^LinkingTo:\\s*cpp11,\\s*", "LinkingTo: ", desc)
+  desc <- gsub(",\\s*cpp11", "", desc)
+
+  writeLines(descr, "DESCRIPTION")
 
   invisible(new)
 }
