@@ -91,10 +91,28 @@ cpp_vendor <- function(path = "./inst/include/") {
 
   message("Removing 'LinkingTo: cpp11' from DESCRIPTION.")
 
-  desc <- readLines("DESCRIPTION")
-  desc <- desc[!grepl("^LinkingTo:\\s*cpp11", desc)]
-  desc <- gsub("^LinkingTo:\\s*cpp11,\\s*", "LinkingTo: ", desc)
-  desc <- gsub(",\\s*cpp11", "", desc)
+  descr <- readLines("DESCRIPTION")
+  linking_to <- which(grepl("^LinkingTo:", descr))
+
+  if (length(linking_to) > 0) {
+    linking_to_end <- which(!grepl("^\\s", descr[-(1:linking_to)]))
+    if (length(linking_to_end) > 0) {
+      linking_to_end <- linking_to_end[1] + linking_to - 1
+    } else {
+      linking_to_end <- length(descr)
+    }
+    linking_to_str <- paste(descr[linking_to:linking_to_end], collapse = "")
+    linking_to_str <- gsub("\\s+", " ", linking_to_str)
+    descr[linking_to] <- linking_to_str
+    descr <- descr[-((linking_to + 1):linking_to_end)]
+    linking_to_str <- gsub("\\s*cpp11(,|\\s*\\(.*\\))?", "", linking_to_str, perl = TRUE)
+    linking_to_str <- gsub(",\\s*$", "", linking_to_str)
+    descr[linking_to] <- linking_to_str
+  }
+
+  if (grepl("^LinkingTo:\\s*$", descr[linking_to])) {
+    descr <- descr[-linking_to]
+  }
 
   writeLines(descr, "DESCRIPTION")
 
