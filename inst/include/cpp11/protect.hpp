@@ -31,47 +31,6 @@ class unwind_exception : public std::exception {
   unwind_exception(SEXP token_) : token(token_) {}
 };
 
-namespace detail {
-// We deliberately avoid using safe[] in the below code, as this code runs
-// when the shared library is loaded and will not be wrapped by
-// `CPP11_UNWIND`, so if an error occurs we will not catch the C++ exception
-// that safe emits.
-inline void set_option(SEXP name, SEXP value) {
-  static SEXP opt = SYMVALUE(Rf_install(".Options"));
-  SEXP t = opt;
-  while (CDR(t) != R_NilValue) {
-    if (TAG(CDR(t)) == name) {
-      opt = CDR(t);
-      SET_TAG(opt, name);
-      SETCAR(opt, value);
-      return;
-    }
-    t = CDR(t);
-  }
-  SETCDR(t, Rf_allocList(1));
-  opt = CDR(t);
-  SET_TAG(opt, name);
-  SETCAR(opt, value);
-}
-
-inline Rboolean& get_should_unwind_protect() {
-  SEXP should_unwind_protect_sym = Rf_install("cpp11_should_unwind_protect");
-  SEXP should_unwind_protect_sexp = Rf_GetOption1(should_unwind_protect_sym);
-  if (should_unwind_protect_sexp == R_NilValue) {
-    should_unwind_protect_sexp = PROTECT(Rf_allocVector(LGLSXP, 1));
-    detail::set_option(should_unwind_protect_sym, should_unwind_protect_sexp);
-    UNPROTECT(1);
-  }
-
-  Rboolean* should_unwind_protect =
-      reinterpret_cast<Rboolean*>(LOGICAL(should_unwind_protect_sexp));
-  should_unwind_protect[0] = TRUE;
-
-  return should_unwind_protect[0];
-}
-
-}  // namespace detail
-
 #ifdef HAS_UNWIND_PROTECT
 
 /// Unwind Protection from C longjmp's, like those used in R error handling
@@ -80,13 +39,6 @@ inline Rboolean& get_should_unwind_protect() {
 template <typename Fun, typename = typename std::enable_if<std::is_same<
                             decltype(std::declval<Fun&&>()()), SEXP>::value>::type>
 SEXP unwind_protect(Fun&& code) {
-  static auto should_unwind_protect = detail::get_should_unwind_protect();
-  if (should_unwind_protect == FALSE) {
-    return std::forward<Fun>(code)();
-  }
-
-  should_unwind_protect = FALSE;
-
   static SEXP token = [] {
     SEXP res = R_MakeUnwindCont();
     R_PreserveObject(res);
@@ -95,7 +47,6 @@ SEXP unwind_protect(Fun&& code) {
 
   std::jmp_buf jmpbuf;
   if (setjmp(jmpbuf)) {
-    should_unwind_protect = TRUE;
     throw unwind_exception(token);
   }
 
@@ -119,8 +70,6 @@ SEXP unwind_protect(Fun&& code) {
   // R_UwindProtect does a normal exit the memory shouldn't be protected, so we
   // unset it here before returning the value ourselves.
   SETCAR(token, R_NilValue);
-
-  should_unwind_protect = TRUE;
 
   return res;
 }
@@ -304,27 +253,23 @@ static struct {
       return R_NilValue;
     }
 
-#ifdef CPP11_USE_PRESERVE_OBJECT
-    PROTECT(obj);
-    R_PreserveObject(obj);
-    UNPROTECT(1);
-    return obj;
-#endif
-
     PROTECT(obj);
 
-    static SEXP list_ = get_preserve_list();
+    static SEXP list = get_preserve_list();
 
-    // Add a new cell that points to the previous end.
-    SEXP cell = PROTECT(Rf_cons(list_, CDR(list_)));
+    // Get references to the head of the precious list and the next element
+    // after the head
+    SEXP head = list;
+    SEXP next = CDR(list);
 
+    // Add a new cell that points to the current head + next.
+    SEXP cell = PROTECT(Rf_cons(head, next));
     SET_TAG(cell, obj);
 
-    SETCDR(list_, cell);
-
-    if (CDR(cell) != R_NilValue) {
-      SETCAR(CDR(cell), cell);
-    }
+    // Update the head + next to point at the newly-created cell,
+    // effectively inserting that cell between the current head + next.
+    SETCDR(head, cell);
+    SETCAR(next, cell);
 
     UNPROTECT(2);
 
@@ -332,100 +277,52 @@ static struct {
   }
 
   void print() {
-    static SEXP list_ = get_preserve_list();
-    for (SEXP head = list_; head != R_NilValue; head = CDR(head)) {
-      REprintf("%x CAR: %x CDR: %x TAG: %x\n", head, CAR(head), CDR(head), TAG(head));
+    static SEXP list = get_preserve_list();
+    for (SEXP cell = list; cell != R_NilValue; cell = CDR(cell)) {
+      REprintf("%p CAR: %p CDR: %p TAG: %p\n", reinterpret_cast<void*>(cell),
+               reinterpret_cast<void*>(CAR(cell)), reinterpret_cast<void*>(CDR(cell)),
+               reinterpret_cast<void*>(TAG(cell)));
     }
     REprintf("---\n");
   }
 
-  // This is currently unused, but client packages could use it to free leaked resources
-  // in older R versions if needed
-  void release_all() {
-#if !defined(CPP11_USE_PRESERVE_OBJECT)
-    static SEXP list_ = get_preserve_list();
-    SEXP first = CDR(list_);
-    if (first != R_NilValue) {
-      SETCAR(first, R_NilValue);
-      SETCDR(list_, R_NilValue);
-    }
-#endif
-  }
-
-  void release(SEXP token) {
-    if (token == R_NilValue) {
+  void release(SEXP cell) {
+    if (cell == R_NilValue) {
       return;
     }
 
-#ifdef CPP11_USE_PRESERVE_OBJECT
-    R_ReleaseObject(token);
-    return;
-#endif
+    // Get a reference to the cells before and after the token.
+    SEXP lhs = CAR(cell);
+    SEXP rhs = CDR(cell);
 
-    SEXP before = CAR(token);
-
-    SEXP after = CDR(token);
-
-    if (before == R_NilValue && after == R_NilValue) {
-      Rf_error("should never happen");
-    }
-
-    SETCDR(before, after);
-
-    if (after != R_NilValue) {
-      SETCAR(after, before);
-    }
+    // Remove the cell from the precious list -- effectively, we do this
+    // by updating the 'lhs' and 'rhs' references to point at each-other,
+    // effectively removing any references to the cell in the pairlist.
+    SETCDR(lhs, rhs);
+    SETCAR(rhs, lhs);
   }
 
  private:
-  // The preserved list singleton is stored in a XPtr within an R global option.
-  //
-  // It is not constructed as a static variable directly since many
-  // translation units may be compiled, resulting in unrelated instances of each
-  // static variable.
-  //
-  // We cannot store it in the cpp11 namespace, as cpp11 likely will not be loaded by
-  // packages.
-  // We cannot store it in R's global environment, as that is against CRAN
-  // policies.
-  // We instead store it as an XPtr in the global options, which avoids issues
-  // both copying and serializing.
-  static SEXP get_preserve_xptr_addr() {
-    static SEXP preserve_xptr_sym = Rf_install("cpp11_preserve_xptr");
-    SEXP preserve_xptr = Rf_GetOption1(preserve_xptr_sym);
-
-    if (TYPEOF(preserve_xptr) != EXTPTRSXP) {
-      return R_NilValue;
-    }
-    auto addr = R_ExternalPtrAddr(preserve_xptr);
-    if (addr == nullptr) {
-      return R_NilValue;
-    }
-    return static_cast<SEXP>(addr);
-  }
-
-  static void set_preserve_xptr(SEXP value) {
-    static SEXP preserve_xptr_sym = Rf_install("cpp11_preserve_xptr");
-
-    SEXP xptr = PROTECT(R_MakeExternalPtr(value, R_NilValue, R_NilValue));
-    detail::set_option(preserve_xptr_sym, xptr);
-    UNPROTECT(1);
-  }
-
+  // Each compilation unit purposefully gets its own preserve list.
+  // This avoids issues with sharing preserve list state across compilation units
+  // and across packages, which has historically caused many issues (#330).
   static SEXP get_preserve_list() {
-    static SEXP preserve_list = R_NilValue;
-
-    if (TYPEOF(preserve_list) != LISTSXP) {
-      preserve_list = get_preserve_xptr_addr();
-      if (TYPEOF(preserve_list) != LISTSXP) {
-        preserve_list = Rf_cons(R_NilValue, R_NilValue);
-        R_PreserveObject(preserve_list);
-        set_preserve_xptr(preserve_list);
-      }
-    }
-
-    return preserve_list;
+    static SEXP out = init_preserve_list();
+    return out;
   }
-}  // namespace cpp11
-preserved;
+
+  static SEXP init_preserve_list() {
+    // Initialize the list exactly once per compilation unit,
+    // and let R manage its memory
+    SEXP out = new_preserve_list();
+    R_PreserveObject(out);
+    return out;
+  }
+
+  static SEXP new_preserve_list() {
+    return Rf_cons(R_NilValue, Rf_cons(R_NilValue, R_NilValue));
+  }
+
+} preserved;
+
 }  // namespace cpp11

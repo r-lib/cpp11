@@ -1,5 +1,61 @@
 # cpp11 (development version)
 
+# cpp11 0.4.7
+
+* Internal changes requested by CRAN to fix invalid format string tokens
+  (@paleolimbot, #345).
+
+# cpp11 0.4.6
+
+* R >=3.5.0 is now required to use cpp11. This is in line with (and even goes
+  beyond) the tidyverse standard of supporting the previous 5 minor releases of
+  R. It also ensures that `R_UnwindProtect()` is available to avoid C++ memory
+  leaks (#332).
+  
+* `cpp11::preserved.release_all()` has been removed. This was intended to
+  support expert developers on R <3.5.0 when cpp11 used a global protection
+  list. Since cpp11 no longer uses a global protection list and requires R
+  >=3.5.0, it is no longer needed. As far as we can tell, no package was
+  actively using this (#332).
+
+* cpp11 now creates one protection list per compilation unit, rather than one
+  global protection list shared across compilation units and across packages.
+  This greatly reduces the complexity of managing the protection list state and
+  should make it easier to make changes to the protection list structure in the
+  future without breaking packages compiled with older versions of cpp11 (#330).
+
+* Nested calls to `cpp11::unwind_protect()` are no longer supported or
+  encouraged. Previously, this was something that could be done for performance
+  improvements, but ultimately this feature has proven to cause more problems
+  than it is worth and is very hard to use safely. For more information, see the
+  new `vignette("FAQ")` section titled "Should I call `cpp11::unwind_protect()`
+  manually?" (#327).
+  
+* The features and bug fixes from cpp11 0.4.4 have been added back in.
+
+# cpp11 0.4.5
+
+* On 2023-07-20, cpp11 was temporarily rolled back to 0.4.3 manually by CRAN due
+  to a bug in 0.4.4 which we could not immediately fix due to the cpp11
+  maintainer being on vacation.
+
+# cpp11 0.4.4
+
+* Davis Vaughan is now the maintainer. 
+
+* `as_doubles()` and `as_integers()` now propagate missing values correctly
+   (#265, #319).
+
+* Fixed a performance issue related to nested `unwind_protect()` calls (#298).
+
+* Minor performance improvements to the cpp11 protect code. (@kevinushey)
+
+* `cpp_register()` gains an argument `extension=` governing the file extension of
+  the `src/cpp11` file. By default it's `.cpp`, but `.cc` is now supported 
+  as well (#292, @MichaelChirico)
+
+# cpp11 0.4.3
+
 * Modernized the GitHub Actions workflows and updated some internal tests to
   better align with changes in those workflows and the latest version of R
   (#279).

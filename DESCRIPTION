@@ -1,20 +1,14 @@
 Package: cpp11
 Title: A C++11 Interface for R's C Interface
-Version: 0.4.2.9000
+Version: 0.4.7.9000
 Authors@R: 
-    c(person(given = "Jim",
-             family = "Hester",
-             role = "aut",
-             comment = c(ORCID = "0000-0002-2739-7082")),
-      person(given = "Romain",
-             family = "François",
-             role = c("aut", "cre"),
-             email = "romain@rstudio.com"),
-      person(given = "Benjamin",
-             family = "Kietzman",
-             role = "ctb"),
-      person(given = "RStudio",
-             role = c("cph", "fnd")))
+    c(
+      person("Davis", "Vaughan", email = "davis@posit.co", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-4777-038X")),
+      person("Jim","Hester", role = "aut", comment = c(ORCID = "0000-0002-2739-7082")),
+      person("Romain", "François", role = "aut", comment = c(ORCID = "0000-0002-2444-4226")),
+      person("Benjamin", "Kietzman", role = "ctb"),
+      person("Posit Software, PBC", role = c("cph", "fnd"))
+    )
 Description: Provides a header only, C++11 interface to R's C
     interface.  Compared to other approaches 'cpp11' strives to be safe
     against long jumps from the C API as well as C++ exceptions, conform
@@ -23,6 +17,8 @@ Description: Provides a header only, C++11 interface to R's C
 License: MIT + file LICENSE
 URL: https://cpp11.r-lib.org, https://github.com/r-lib/cpp11
 BugReports: https://github.com/r-lib/cpp11/issues
+Depends:
+    R (>= 3.5.0)
 Suggests:
     bench,
     brio,
@@ -40,13 +36,14 @@ Suggests:
     rmarkdown,
     scales,
     Rcpp,
-    testthat,
+    testthat (>= 3.2.0),
     tibble,
     utils,
     vctrs,
     withr
 VignetteBuilder: 
     knitr
+Config/Needs/website: tidyverse/tidytemplate
 Config/testthat/edition: 3
 Config/Needs/cpp11/cpp_register: 
     brio,
@@ -58,5 +55,4 @@ Config/Needs/cpp11/cpp_register:
     vctrs
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
-SystemRequirements: C++11
+RoxygenNote: 7.2.3

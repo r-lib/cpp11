@@ -29,22 +29,23 @@ inline SEXP r_vector<r_bool>::valid_type(SEXP data) {
 
 template <>
 inline r_bool r_vector<r_bool>::operator[](const R_xlen_t pos) const {
-  return is_altrep_ ? static_cast<r_bool>(LOGICAL_ELT(data_, pos)) : data_p_[pos];
+  return is_altrep_ ? LOGICAL_ELT(data_, pos) : data_p_[pos];
 }
 
 template <>
-inline r_bool* r_vector<r_bool>::get_p(bool is_altrep, SEXP data) {
+inline typename r_vector<r_bool>::underlying_type* r_vector<r_bool>::get_p(bool is_altrep,
+                                                                           SEXP data) {
   if (is_altrep) {
     return nullptr;
   } else {
-    return reinterpret_cast<r_bool*>(LOGICAL(data));
+    return LOGICAL(data);
   }
 }
 
 template <>
 inline void r_vector<r_bool>::const_iterator::fill_buf(R_xlen_t pos) {
   length_ = std::min(64_xl, data_->size() - pos);
-  LOGICAL_GET_REGION(data_->data_, pos, length_, reinterpret_cast<int*>(buf_.data()));
+  LOGICAL_GET_REGION(data_->data_, pos, length_, buf_.data());
   block_start_ = pos;
 }
 
@@ -66,7 +67,7 @@ inline typename r_vector<r_bool>::proxy& r_vector<r_bool>::proxy::operator=(
 template <>
 inline r_vector<r_bool>::proxy::operator r_bool() const {
   if (p_ == nullptr) {
-    return static_cast<r_bool>(LOGICAL_ELT(data_, index_));
+    return LOGICAL_ELT(data_, index_);
   } else {
     return *p_;
   }
@@ -100,7 +101,7 @@ inline r_vector<r_bool>::r_vector(std::initializer_list<named_arg> il)
       ++n_protected;
       auto it = il.begin();
       for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
-        data_p_[i] = static_cast<r_bool>(LOGICAL_ELT(it->value(), 0));
+        data_p_[i] = LOGICAL_ELT(it->value(), 0);
         SET_STRING_ELT(names, i, Rf_mkCharCE(it->name(), CE_UTF8));
       }
       UNPROTECT(n_protected);
@@ -121,7 +122,7 @@ inline void r_vector<r_bool>::reserve(R_xlen_t new_capacity) {
 
   preserved.release(old_protect);
 
-  data_p_ = reinterpret_cast<r_bool*>(LOGICAL(data_));
+  data_p_ = LOGICAL(data_);
   capacity_ = new_capacity;
 }
 

@@ -31,22 +31,21 @@ You can load the package in an interactive R session
 devtools::load_all()
 ```
 
-Or run the tests with
+Or run the cpp11 tests with
 
 ```r
 devtools::test()
 ```
 
-`test()` will also re-compile the package if needed, so you do not always have to run `load_all()`.
+There are more extensive tests in the `cpp11test` directory. Generally when developing the C++ headers I run R with its working directory in the `cpp11test` directory and use `devtools::test()` to run the cpp11tests.
 
-If you change the cpp11 headers you will need to clean and recompile the cpp11test package
+If you change the cpp11 headers you will need to install the new version of cpp11 and then clean and recompile the cpp11test package:
 
 ```r
+# Assuming your working directory is `cpp11test/`
 devtools::clean_dll()
 devtools::load_all()
 ```
-
-Generally when developing the C++ headers I run R with its working directory in the `cpp11test` directory and use `devtools::test()` to run the cpp11tests.
 
 To calculate code coverage of the cpp11 package run the following from the `cpp11` root directory.
 
@@ -63,8 +62,6 @@ You can run `make format` to re-format all code in the project. If your system d
 You may need to link the newly installed version 10. To do so, run `brew unlink clang-format` followed by `brew link clang-format@10`.
 
 Alternatively many IDEs support automatically running `clang-format` every time files are written.
-
-
 
 ## Code organization
 
@@ -126,31 +123,31 @@ Calling `preserved.release()` on this returned token will release the protection
 
 This scheme scales in O(1) time to release or insert an object vs O(N) or worse time with `R_PreserveObject()` / `R_ReleaseObject()`.
 
+Each compilation unit has its own unique protection list, which avoids the need to manage a "global" protection list shared across compilation units within the same package and across packages.
+A previous version of cpp11 used a global protection list, but this caused [multiple issues](https://github.com/r-lib/cpp11/issues/330).
+
 These functions are defined in [protect.hpp](https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/protect.hpp)
 
 ### Unwind Protect
 
-In R 3.5+ cpp11 uses `R_UnwindProtect` to protect (most) calls to the R API that could fail.
+cpp11 uses `R_UnwindProtect()` to protect (most) calls to the R API that could fail.
 These are usually those that allocate memory, though in truth most R API functions could error along some paths.
-If an error happends under `R_UnwindProtect` cpp11 will throw a C++ exception.
-This exception is caught by the try catch block defined in the `BEGIN_CPP11` macro in [cpp11/declarations.hpp](https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/declarations.hpp).
+If an error happens under `R_UnwindProtect()`, cpp11 will throw a C++ exception.
+This exception is caught by the try/catch block defined in the `BEGIN_CPP11` macro in [cpp11/declarations.hpp](https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/declarations.hpp).
 The exception will cause any C++ destructors to run, freeing any resources held by C++ objects.
-After the try catch block exits the R error unwinding is then continued by `R_ContinueUnwind()` and a normal R error results.
+After the try/catch block exits, the R error unwinding is then continued by `R_ContinueUnwind()` and a normal R error results.
 
-In R versions prior to 3.5 `R_UnwindProtect()` is not available.
-Unfortunately the options to emulate it are not ideal.
+We require R >=3.5 to use cpp11, but when it was created we wanted to support back to R 3.3, but `R_ContinueUnwind()` wasn't available until R 3.5.
+Below are a few other options we considered to support older R versions:
 
 1. Using `R_TopLevelExec()` works to avoid the C long jump, but because the code is always run in a top level context any errors or messages thrown cannot be caught by `tryCatch()` or similar techniques.
 2. Using `R_TryCatch()` is not available prior to R 3.4, and also has a serious bug in R 3.4 (fixed in R 3.5).
 3. Calling the R level `tryCatch()` function which contains an expression that runs a C function which then runs the C++ code would be an option, but implementing this is convoluted and it would impact performance, perhaps severely.
-4. Have `cpp11::unwind_protect()` be a no-op for these versions. This means any resources held by C++ objects would leak, including cpp11::r_vector / cpp11::sexp objects.
+4. Have `cpp11::unwind_protect()` be a no-op for these versions. This means any resources held by C++ objects would leak, including `cpp11::r_vector` / `cpp11::sexp` objects.
 
-None of these options is perfect, here are some pros and cons for each.
+None of these options were perfect, here are some pros and cons for each.
 
 1. Causes behavior changes and test failures, so it was ruled out.
-2. Was also ruled out since we want to support back to R 3.3.
+2. Was also ruled out since we wanted to support back to R 3.3.
 3. Was ruled out partially because the implementation would be somewhat tricky and more because performance would suffer greatly.
-4. is what we now do in cpp11. It leaks protected objects when there are R API errors.
-
-If packages are concerned about the leaked memory they can call `cpp11::preserved.release_all()` as needed to release the current protections for all objects managed by cpp11.
-This is not done automatically because in some cases the protections should persist beyond the `.Call()` boundry, e.g. in vroom altrep objects for example.
+4. Is what we ended up doing before requiring R 3.5. It leaked protected objects when there were R API errors.

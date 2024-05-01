@@ -34,7 +34,8 @@ inline r_string r_vector<r_string>::operator[](const R_xlen_t pos) const {
 }
 
 template <>
-inline r_string* r_vector<r_string>::get_p(bool, SEXP) {
+inline typename r_vector<r_string>::underlying_type* r_vector<r_string>::get_p(bool,
+                                                                               SEXP) {
   return nullptr;
 }
 

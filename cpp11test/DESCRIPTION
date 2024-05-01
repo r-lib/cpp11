@@ -20,5 +20,4 @@ Suggests:
     xml2
 LazyData: true
 Roxygen: list(markdown = TRUE)
-SystemRequirements: C++11
 RoxygenNote: 7.1.1
