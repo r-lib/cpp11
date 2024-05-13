@@ -4,11 +4,12 @@
 \alias{cpp_vendor}
 \title{Vendor the cpp11 dependency}
 \usage{
-cpp_vendor(path = "./inst/include/")
+cpp_vendor(dir = NULL, subdir = "/inst/include")
 }
 \arguments{
-\item{path}{The path to vendor the code into. The default is
-\verb{./inst/include/}.}
+\item{dir}{The directoyy to vendor the code into.}
+
+\item{subdir}{The subdirectory to vendor the code into.}
 }
 \value{
 The file path to the vendored code (invisibly).
@@ -22,8 +23,6 @@ This function vendors cpp11 into your package by copying the cpp11
 headers into the \code{inst/include} folder of your package and adding
 'cpp11 version: XYZ' to the top of the files, where XYZ is the version of
 cpp11 currently installed on your machine.
-
-If you choose to vendor the headers you should \emph{remove} \code{LinkingTo: cpp11} from your DESCRIPTION. This is done automatically by this function.
 
 \strong{Note}: vendoring places the responsibility of updating the code on
 \strong{you}. Bugfixes and new features in cpp11 will not be available for your

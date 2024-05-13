@@ -12,7 +12,8 @@
 #' **you**. Bugfixes and new features in cpp11 will not be available for your
 #' code until you run `cpp_vendor()` again.
 #'
-#' @param path The path to vendor the code into.
+#' @param dir The directoyy to vendor the code into.
+#' @param subdir The subdirectory to vendor the code into.
 #' @return The file path to the vendored code (invisibly).
 #' @export
 #' @examples
@@ -27,42 +28,53 @@
 #'
 #' # cleanup
 #' unlink(dir, recursive = TRUE)
-cpp_vendor <- function(path = NULL) {
-  if (is.null(path)) {
+cpp_vendor <- function(dir = NULL, subdir = "/inst/include") {
+  if (is.null(dir)) {
     stop("You must provide a path to vendor the code into", call. = FALSE)
-  } else {
-    path <- paste0(path, "/inst/include")
   }
-  
-  new <- file.path(path)
 
-  if (dir.exists(new)) {
-    stop("'", new, "' already exists\n * run unlink('", new, "', recursive = TRUE)", call. = FALSE)
+  path <- paste0(dir, subdir)
+
+  path2 <- file.path(path, "cpp11")
+  if (dir.exists(path2)) {
+    stop("'", path2, "' already exists\n * run unlink('", path2, "', recursive = TRUE)", call. = FALSE)
   }
 
   # Vendor cpp11 ----
 
-  dir.create(new, recursive = TRUE, showWarnings = FALSE)
-  dir.create(file.path(new, "cpp11"), recursive = TRUE, showWarnings = FALSE)
+  dir.create(
+    path2,
+    recursive = TRUE,
+    showWarnings = FALSE
+  )
 
-  current <- system.file("include", "cpp11", package = "cpp11")
+  current_cpp11 <- system.file(
+    "include",
+    "cpp11",
+    package = "cpp11"
+  )
 
-  if (!nzchar(current)) {
+  if (!nzchar(current_cpp11)) {
     stop("cpp11 is not installed", call. = FALSE)
   }
 
   cpp11_version <- utils::packageVersion("cpp11")
 
-  cpp11_header <- sprintf("// cpp11 version: %s\n// vendored on: %s", cpp11_version, Sys.Date())
+  cpp11_header <- sprintf(
+    "// cpp11 version: %s\n// vendored on: %s",
+    cpp11_version,
+    Sys.Date()
+  )
 
-  main_header <- list.files(current, pattern = "\\.hpp$", full.names = TRUE)
-  headers <- list.files(file.path(current, "cpp11"), pattern = "\\.hpp$", full.names = TRUE)
+  write_header(
+    path, "cpp11.hpp", "cpp11",
+    cpp11_header
+  )
 
-  writeLines(c(cpp11_header, readLines(main_header)), file.path(new, basename(main_header)))
-
-  for (h in headers) {
-    writeLines(c(cpp11_header, readLines(h)), file.path(new, "cpp11", basename(h)))
-  }
+  copy_files(
+    list.files(current_cpp11, full.names = TRUE),
+    path, "cpp11", cpp11_header
+  )
 
   # Additional steps to make vendoring work ----
 
@@ -73,23 +85,25 @@ cpp_vendor <- function(path = NULL) {
 
   message("DESCRIPTION should not have lines such as 'LinkingTo: cpp11'")
 
-  invisible(new)
+  invisible(path)
 }
 
-write_header <- function(path, header, pkg, cpp11_header) {
+write_header <- function(path, header, pkg, cpp11armadillo_header) {
   writeLines(
     c(
-      cpp11_header,
-      readLines(system.file("include", header, package = pkg))
+      cpp11armadillo_header,
+      readLines(
+        system.file("include", header, package = pkg)
+      )
     ),
     file.path(path, header)
   )
 }
 
-copy_files <- function(files, path, out, cpp11_header) {
+copy_files <- function(files, path, out, cpp11armadillo_header) {
   for (f in files) {
     writeLines(
-      c(cpp11_header, readLines(f)),
+      c(cpp11armadillo_header, readLines(f)),
       file.path(path, out, basename(f))
     )
   }

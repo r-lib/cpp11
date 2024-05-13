@@ -22,10 +22,10 @@ describe("cpp_vendor", {
     pkg <- local_package()
     p <- pkg_path(pkg)
 
-    cpp_vendor(file.path(pkg_path(pkg), "inst/include"))
+    cpp_vendor(pkg_path(pkg))
 
-    expect_true(dir.exists(file.path(p, "cpp11")))
-    expect_true(file.exists(file.path(p, "cpp11.hpp")))
-    expect_true(file.exists(file.path(p, "cpp11", "declarations.hpp")))
+    expect_true(dir.exists(file.path(p, "inst", "include", "cpp11")))
+    expect_true(file.exists(file.path(p, "inst", "include", "cpp11.hpp")))
+    expect_true(file.exists(file.path(p, "inst", "include", "cpp11", "declarations.hpp")))
   })
 })
