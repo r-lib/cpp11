@@ -8,15 +8,11 @@
 #' 'cpp11 version: XYZ' to the top of the files, where XYZ is the version of
 #' cpp11 currently installed on your machine.
 #'
-#' If you choose to vendor the headers you should _remove_ `LinkingTo:
-#' cpp11` from your DESCRIPTION. This is done automatically by this function.
-#'
 #' **Note**: vendoring places the responsibility of updating the code on
 #' **you**. Bugfixes and new features in cpp11 will not be available for your
 #' code until you run `cpp_vendor()` again.
 #'
-#' @param path The path to vendor the code into. The default is
-#'  `./inst/include/`.
+#' @param path The path to vendor the code into.
 #' @return The file path to the vendored code (invisibly).
 #' @export
 #' @examples
@@ -31,7 +27,13 @@
 #'
 #' # cleanup
 #' unlink(dir, recursive = TRUE)
-cpp_vendor <- function(path = "./inst/include/") {
+cpp_vendor <- function(path = NULL) {
+  if (is.null(path)) {
+    stop("You must provide a path to vendor the code into", call. = FALSE)
+  } else {
+    path <- paste0(path, "/inst/include")
+  }
+  
   new <- file.path(path)
 
   if (dir.exists(new)) {
@@ -64,57 +66,12 @@ cpp_vendor <- function(path = "./inst/include/") {
 
   # Additional steps to make vendoring work ----
 
-  message(sprintf(
-    "Adding PKG_CPPFLAGS = -I../%s to src/Makevars and src/Makevars.win.",
-    new
+  message(paste(
+    "Makevars and/or Makevars.win should have a line such as",
+    "'PKG_CPPFLAGS = -I../inst/include'"
   ))
 
-  makevars <- "src/Makevars"
-  makevars_win <- "src/Makevars.win"
-  makevars_line <- paste0("PKG_CPPFLAGS = -I ../", new)
-
-  if (file.exists(makevars)) {
-    if (!any(grepl(paste0("^PKG_CPPFLAGS\\s*=\\s*-I\\s*\\.\\./", new), readLines(makevars)))) {
-      writeLines(c(readLines(makevars), makevars_line), makevars)
-    }
-  } else {
-    writeLines(makevars_line, makevars)
-  }
-
-  if (file.exists(makevars_win)) {
-    if (!any(grepl(paste0("^PKG_CPPFLAGS\\s*=\\s*-I\\s*\\.\\./", new), readLines(makevars_win)))) {
-      writeLines(c(readLines(makevars_win), makevars_line), makevars_win)
-    }
-  } else {
-    writeLines(makevars_line, makevars_win)
-  }
-
-  message("Removing 'LinkingTo: cpp11' from DESCRIPTION.")
-
-  descr <- readLines("DESCRIPTION")
-  linking_to <- which(grepl("^LinkingTo:", descr))
-
-  if (length(linking_to) > 0) {
-    linking_to_end <- which(!grepl("^\\s", descr[-(1:linking_to)]))
-    if (length(linking_to_end) > 0) {
-      linking_to_end <- linking_to_end[1] + linking_to - 1
-    } else {
-      linking_to_end <- length(descr)
-    }
-    linking_to_str <- paste(descr[linking_to:linking_to_end], collapse = "")
-    linking_to_str <- gsub("\\s+", " ", linking_to_str)
-    descr[linking_to] <- linking_to_str
-    descr <- descr[-((linking_to + 1):linking_to_end)]
-    linking_to_str <- gsub("\\s*cpp11(,|\\s*\\(.*\\))?", "", linking_to_str, perl = TRUE)
-    linking_to_str <- gsub(",\\s*$", "", linking_to_str)
-    descr[linking_to] <- linking_to_str
-  }
-
-  if (grepl("^LinkingTo:\\s*$", descr[linking_to])) {
-    descr <- descr[-linking_to]
-  }
-
-  writeLines(descr, "DESCRIPTION")
+  message("DESCRIPTION should not have lines such as 'LinkingTo: cpp11'")
 
   invisible(new)
 }
