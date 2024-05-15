@@ -32,7 +32,6 @@ jobs:
           - {os: ubuntu-20.04,   r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-20.04,   r: 'release'}
           - {os: ubuntu-20.04,   r: 'release', custom: 'no-cpp11test'}
-          - {os: ubuntu-20.04,   r: 'release', custom: 'gcc 4.8'}
           - {os: ubuntu-20.04,   r: 'oldrel-1'}
           - {os: ubuntu-20.04,   r: 'oldrel-2'}
           - {os: ubuntu-20.04,   r: 'oldrel-3'}
@@ -52,25 +51,7 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
-
-      - name : Install compiler version
-        # We check on this old compiler specifically to support CentOS 7,
-        # which uses this gcc version. RStudio products support CentOS 7 through
-        # June 2024.
-        # https://github.com/r-lib/cpp11/pull/78
-        # https://www.rstudio.com/about/platform-support/
-        # Ubuntu 20.04 technically dropped support for gcc 4.8, so we have to
-        # add old archives back in manually to install it
-        # https://github.com/r-lib/cpp11/pull/279
-        if: matrix.config.custom == 'gcc 4.8'
-        run: |
-          echo "deb http://dk.archive.ubuntu.com/ubuntu/ xenial main" | sudo tee -a /etc/apt/sources.list
-          echo "deb http://dk.archive.ubuntu.com/ubuntu/ xenial universe" | sudo tee -a /etc/apt/sources.list
-          sudo apt update
-          sudo apt-get install -y g++-4.8
-          mkdir ~/.R/
-          echo $'CXX1X=g++-4.8\nCXX11=g++-4.8\nCC=gcc-4.8 -std=c99\nCXX=g++-4.8 -std=gnu++11' >> ~/.R/Makevars
-
+          
       - name: Install macOS system dependencies
         if: runner.os == 'macOS'
         run: brew install --cask xquartz
