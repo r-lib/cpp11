@@ -896,14 +896,7 @@ inline void r_vector<T>::clear() {
 }
 
 inline SEXP truncate(SEXP x, R_xlen_t length, R_xlen_t capacity) {
-#if R_VERSION >= R_Version(3, 4, 0)
-  SETLENGTH(x, length);
-  SET_TRUELENGTH(x, capacity);
-  SET_GROWABLE_BIT(x);
-#else
-  x = safe[Rf_lengthgets](x, length);
-#endif
-  return x;
+  return safe[Rf_lengthgets](x, length);
 }
 
 template <typename T>
