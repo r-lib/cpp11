@@ -73,6 +73,22 @@ git clone https://github.com/RcppCore/Rcpp.git
 <h3 id="ensure-you-use-syssetenvcpp11_eval--true-devtoolssubmit_cran-when-submitting">Ensure you use <code>Sys.setenv("CPP11_EVAL" = "true"); devtools::submit_cran()</code> when submitting.<a class="anchor" aria-label="anchor" href="#ensure-you-use-syssetenvcpp11_eval--true-devtoolssubmit_cran-when-submitting"></a></h3>
 <p>If you forget to set <code>CPP_EVAL = "true"</code> then the vignette chunks will not run properly and the vignettes will not be rendered properly.</p>
 </div>
+<div class="section level3">
+<h3 id="usage-with-clangd">Usage with clangd<a class="anchor" aria-label="anchor" href="#usage-with-clangd"></a></h3>
+<p>Since cpp11 is header only, if you use clangd you’ll have a bit of an issue because tools like bear and pkgload won’t know how to generate the <code>compile_commands.json</code> file. Instead, you can create it manually with something like this, which seems to work well. Note that the paths are specific to your computer.</p>
+<pre><code>[
+    {
+        "command": "g++ -std=gnu++11 -I\"/Users/davis/files/r/packages/cpp11/inst/include\" -I\"/Library/Frameworks/R.framework/Resources/include\" -I\"/opt/homebrew/include\" -Wall -pedantic",
+        "file": "R.hpp",
+        "directory": "/Users/davis/files/r/packages/cpp11/inst/include/cpp11"
+    }
+]</code></pre>
+<p>Key notes:</p>
+<ul><li>Only doing this for <code>R.hpp</code> seems to be enough. I imagine this could be any of the header files, but it is reasonable to pick the “root” one that pretty much all others include.</li>
+<li>Using <code>-std=gnu++11</code> to keep us honest about only C++11 features.</li>
+<li>Using <code>-I\"/Library/Frameworks/R.framework/Resources/include\"</code> for access to the R headers.</li>
+<li>Using <code>-I\"/Users/davis/files/r/packages/cpp11/inst/include\"</code> as a “self include”, which seems to be the key to the whole thing.</li>
+</ul></div>
 </div>
 <div class="section level2">
 <h2 id="future-directions">Future directions<a class="anchor" aria-label="anchor" href="#future-directions"></a></h2>
