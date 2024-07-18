@@ -441,7 +441,7 @@ extern "C" SEXP _cpp11test_test_destruction_outer() {
 
 extern "C" {
 /* .Call calls */
-extern SEXP run_testthat_tests(void *);
+extern SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_col_sums",                 (DL_FUNC) &_cpp11test_col_sums,                 1},
