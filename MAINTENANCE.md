@@ -40,6 +40,27 @@ These only happen with the urlchecker package, they can be safely ignored and th
 
 If you forget to set `CPP_EVAL = "true"` then the vignette chunks will not run properly and the vignettes will not be rendered properly.
 
+### Usage with clangd
+
+Since cpp11 is header only, if you use clangd you'll have a bit of an issue because tools like bear and pkgload won't know how to generate the `compile_commands.json` file. Instead, you can create it manually with something like this, which seems to work well. Note that the paths are specific to your computer.
+
+```
+[
+    {
+        "command": "g++ -std=gnu++11 -I\"/Users/davis/files/r/packages/cpp11/inst/include\" -I\"/Library/Frameworks/R.framework/Resources/include\" -I\"/opt/homebrew/include\" -Wall -pedantic",
+        "file": "R.hpp",
+        "directory": "/Users/davis/files/r/packages/cpp11/inst/include/cpp11"
+    }
+]
+```
+
+Key notes:
+
+- Only doing this for `R.hpp` seems to be enough. I imagine this could be any of the header files, but it is reasonable to pick the "root" one that pretty much all others include.
+- Using `-std=gnu++11` to keep us honest about only C++11 features.
+- Using `-I\"/Library/Frameworks/R.framework/Resources/include\"` for access to the R headers.
+- Using `-I\"/Users/davis/files/r/packages/cpp11/inst/include\"` as a "self include", which seems to be the key to the whole thing.
+
 ## Future directions
 
 Some work could be spent in smoothing out the `cpp_source()` / knitr chunk experience.
