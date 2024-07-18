@@ -82,6 +82,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
+          pak-version: devel
           needs: check
 
       - name: Install cpp11test
