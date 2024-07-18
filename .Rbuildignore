@@ -29,3 +29,4 @@ script.R
 ^Meta$
 ^CRAN-SUBMISSION$
 .vscode
+^\.cache$
