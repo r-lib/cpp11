@@ -69,12 +69,18 @@ git clone https://github.com/RcppCore/Rcpp.git
 &gt;</code></pre>
 <p>These only happen with the urlchecker package, they can be safely ignored and the real CRAN checks will not show them.</p>
 </div>
-<div class="section level3">
-<h3 id="ensure-you-use-syssetenvcpp11_eval--true-devtoolssubmit_cran-when-submitting">Ensure you use <code>Sys.setenv("CPP11_EVAL" = "true"); devtools::submit_cran()</code> when submitting.<a class="anchor" aria-label="anchor" href="#ensure-you-use-syssetenvcpp11_eval--true-devtoolssubmit_cran-when-submitting"></a></h3>
+</div>
+<div class="section level2">
+<h2 id="ensure-you-use-syssetenvcpp11_eval--true-devtoolssubmit_cran-when-submitting">Ensure you use <code>Sys.setenv("CPP11_EVAL" = "true"); devtools::submit_cran()</code> when submitting.<a class="anchor" aria-label="anchor" href="#ensure-you-use-syssetenvcpp11_eval--true-devtoolssubmit_cran-when-submitting"></a></h2>
 <p>If you forget to set <code>CPP_EVAL = "true"</code> then the vignette chunks will not run properly and the vignettes will not be rendered properly.</p>
 </div>
-<div class="section level3">
-<h3 id="usage-with-clangd">Usage with clangd<a class="anchor" aria-label="anchor" href="#usage-with-clangd"></a></h3>
+<div class="section level2">
+<h2 id="regenerating-benchmark-objects-used-in-motivationsrmd">Regenerating benchmark objects used in <code>motivations.Rmd</code>
+<a class="anchor" aria-label="anchor" href="#regenerating-benchmark-objects-used-in-motivationsrmd"></a></h2>
+<p>If you need to regenerate the benchmark objects (RDS objects) utilized in <code>motivations.Rmd</code>, then you should set <code>Sys.setenv("CPP11TEST_SHOULD_RUN_BENCHMARKS" = "TRUE")</code> before running the Rmd. You’ll also need to make sure that cpp11test is actually installed. See <code>cpp11test:::should_run_benchmarks()</code> for more.</p>
+</div>
+<div class="section level2">
+<h2 id="usage-with-clangd">Usage with clangd<a class="anchor" aria-label="anchor" href="#usage-with-clangd"></a></h2>
 <p>Since cpp11 is header only, if you use clangd you’ll have a bit of an issue because tools like bear and pkgload won’t know how to generate the <code>compile_commands.json</code> file. Instead, you can create it manually with something like this, which seems to work well. Note that the paths are specific to your computer.</p>
 <pre><code>[
     {
@@ -89,7 +95,6 @@ git clone https://github.com/RcppCore/Rcpp.git
 <li>Using <code>-I\"/Library/Frameworks/R.framework/Resources/include\"</code> for access to the R headers.</li>
 <li>Using <code>-I\"/Users/davis/files/r/packages/cpp11/inst/include\"</code> as a “self include”, which seems to be the key to the whole thing.</li>
 </ul></div>
-</div>
 <div class="section level2">
 <h2 id="future-directions">Future directions<a class="anchor" aria-label="anchor" href="#future-directions"></a></h2>
 <p>Some work could be spent in smoothing out the <code><a href="reference/cpp_source.html">cpp_source()</a></code> / knitr chunk experience. Our main focus and use cases were in R packages, so that usage is more tested. Because we don’t typically use cpp11 in non package contexts those use cases may not be as nice.</p>
