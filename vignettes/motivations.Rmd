@@ -5,6 +5,9 @@ vignette: >
   %\VignetteIndexEntry{Motivations for cpp11}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+editor:
+  markdown:
+    wrap: sentence
 ---
 
 ```{r, include = FALSE}
@@ -28,7 +31,7 @@ should_run_benchmarks <- function(x) {
 # Motivations
 
 R and S have a long history of interacting with compiled languages.
-In fact the original version of S written in the late 1970s was mainly a wrapper around FORTRAN routines. [(History-of-S)](https://www.r-project.org/conferences/useR-2006/Slides/Chambers.pdf)
+In fact the original version of S written in the late 1970s was mainly a wrapper around FORTRAN routines [(History-of-S)](https://www.r-project.org/conferences/useR-2006/Slides/Chambers.pdf).
 Released in 2000, the [cxx](https://cran.r-project.org/package=cxx) package was an early prototype of C++ bindings to R.
 [Rcpp](https://cran.r-project.org/package=Rcpp) was first published to CRAN in 2008, and [Rcpp11](https://cran.r-project.org/package=Rcpp11) in 2014.
 Of these `Rcpp` has by far the widest adoption, with over 2000 reverse dependencies as of 2020.
@@ -40,26 +43,28 @@ cpp11 is a ground up rewrite of C++ bindings to R with different design trade-of
 
 Changes that motivated cpp11 include:
 
-- Enforcing [copy-on-write semantics](#copy-on-write-semantics).
-- Improving the [safety](#improve-safety) of using the R API from C++ code.
-- Supporting [ALTREP objects](#altrep-support).
-- Using [UTF-8 strings](#utf-8-everywhere) everywhere.
-- Applying newer [C++11 features](#c11-features).
-- Having a more straightforward, [simpler implementation](#simpler-implementation).
-- Faster [compilation time](#compilation-speed) with lower memory requirements.
-- Being *completely* [header only](#header-only) to avoid ABI issues.
-- Capable of [vendoring](#vendoring) if desired.
-- More robust [protection](#protection) using a much more efficient linked list data structure.
-- [Growing vectors](#growing-vectors) more efficiently.
+-   Enforcing [copy-on-write semantics](#copy-on-write-semantics).
+-   Improving the [safety](#improve-safety) of using the R API from C++ code.
+-   Supporting [ALTREP objects](#altrep-support).
+-   Using [UTF-8 strings](#utf-8-everywhere) everywhere.
+-   Applying newer [C++11 features](#c11-features).
+-   Having a more straightforward, [simpler implementation](#simpler-implementation).
+-   Faster [compilation time](#compilation-speed) with lower memory requirements.
+-   Being *completely* [header only](#header-only) to avoid ABI issues.
+-   Capable of [vendoring](#vendoring) if desired.
+-   More robust [protection](#protection) using a much more efficient linked list data structure.
+-   [Growing vectors](#growing-vectors) more efficiently.
 
-## Copy-on-write semantics
+## Copy-on-write semantics {#copy-on-write-semantics}
 
 R uses [copy-on-write](https://adv-r.hadley.nz/names-values.html#copy-on-modify) (also called copy-on-modify) semantics.
 Lets say you have two variables `x` and `y` that both point to the same underlying data.
+
 ```{r}
 x <- c(1, 2, 3)
 y <- x
 ```
+
 If you modify `y`, R will first copy the values of `x` to a new position, then point `y` to the new location and only after the copy modify `y`.
 This allows `x` to retain the original values.
 
@@ -71,18 +76,19 @@ x
 ```
 
 C++ does not have copy-on-write built into the language, however it has related concepts, copy-by-value and copy-by-reference.
-Copy-by-value works similarly to R, except that R only copies when something is changed, C++ _always_ copies.
+Copy-by-value works similarly to R, except that R only copies when something is changed, C++ *always* copies.
 
-```cpp
+``` cpp
 int x = 42;
 int y = x;
 y = 0;
 // x is still == 42
 ```
 
-Copy-by-reference does the opposite, both `x` and `y` always point to the *same* underlying value. In C++ you specify a reference with `&`.
+Copy-by-reference does the opposite, both `x` and `y` always point to the *same* underlying value.
+In C++ you specify a reference with `&`.
 
-```cpp
+``` cpp
 int x = 42;
 int &y = x;
 y = 0;
@@ -109,7 +115,7 @@ NumericVector times_two_rcpp(NumericVector x) {
 }
 ```
 
-If you do this with regular R functions, you will see the value of `y` is `x` * 2, but the value of `x` is unchanged.
+If you do this with regular R functions, you will see the value of `y` is `x` \* 2, but the value of `x` is unchanged.
 
 ```{r}
 x <- c(1, 2, 3)
@@ -154,7 +160,7 @@ z
 x
 ```
 
-## Improve safety
+## Improve safety {#improve-safety}
 
 Internally R is written in C, not C++.
 In general C and C++ work well together, a large part of C++'s success is due to its high interoperability with C code.
@@ -176,7 +182,8 @@ Crucially long jumps are *incompatible* with C++ [destructors](https://isocpp.or
 If a long jump occurs the destructors of any active C++ objects are not run, and therefore any resources (such as memory, file handles, etc.) managed by those objects will cause a [resource leak](https://en.wikipedia.org/wiki/Resource_leak).
 
 For example, the following unsafe code would leak the memory allocated in the C++ `std::vector` `x` when the R API function `Rf_allocVector()` fails (since you can't create a vector of `-1` size).
-```cpp
+
+``` cpp
 std::vector<double> x({1., 2., 3.});
 
 SEXP y = PROTECT(Rf_allocVector(REALSXP, -1));
@@ -186,8 +193,7 @@ cpp11 provides two mechanisms to make interfacing with Rs C API and C++ code saf
 `cpp11::unwind_protect()` takes a functional object (a C++11 lamdba function or `std::function`) and converts any C long jumps encountered to C++ exceptions.
 Now instead of a C long jump happening when the `Rf_allocVector()` call fails, a C++ exception occurs, which *does* trigger the `std::vector` destructor, so that memory is automatically released.
 
-
-```cpp
+``` cpp
 std::vector<double> x({1., 2., 3.});
 
 SEXP y;
@@ -198,7 +204,7 @@ unwind_protect([]() {
 
 `cpp11::safe()` is a more concise way to wrap a particular R API function with `unwind_protect()`.
 
-```cpp
+``` cpp
 std::vector<double> x({1., 2., 3.});
 
 SEXP y = PROTECT(safe[Rf_allocVector](REALSXP, -1));
@@ -216,17 +222,17 @@ This is done without developer facing code changes.
 
 With both C and C++ sides of the coin covered we can safely use R's C API and C++ code together with C++ objects without leaking resources.
 
-## Altrep support
+## Altrep support {#altrep-support}
 
 [ALTREP](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html) which stands for **ALT**ernative **REP**resntations is a feature introduced in R 3.5.
 ALTREP allows R internals and package authors to define alternative ways of representing data to R.
 One example of the use of altrep is the `:` operator.
 
-Prior to R 3.5 `:` generated a full vector for the entire sequence. e.g. `1:1000` would require 1000 individual values.
+Prior to R 3.5 `:` generated a full vector for the entire sequence.
+e.g. `1:1000` would require 1000 individual values.
 As of R 3.5 this sequence is instead represented by an ALTREP vector, so *none* of the values actually exist in memory.
 Instead each time R access a particular value in the sequence that value is computed on-the-fly.
-This saves memory and excution time, and allows users to use sequences which
-would otherwise be too big to fit in memory.
+This saves memory and excution time, and allows users to use sequences which would otherwise be too big to fit in memory.
 
 ```{r, R.options = list(max.print = 20)}
 1:1e9
@@ -314,7 +320,7 @@ knitr::kable(readRDS("sum.Rds"))
 
 [cpp11test/src/sum.cpp](https://github.com/r-lib/cpp11/blob/main/cpp11test/src/sum.cpp) contains the code ran in these benchmarks.
 
-## UTF-8 everywhere
+## UTF-8 everywhere {#utf-8-everywhere}
 
 R has complicated support for Unicode strings and non-ASCII code pages, whose behavior often differs substantially on different operating systems, particularly Windows.
 Correctly dealing with this is challenging and often feels like whack a mole.
@@ -328,19 +334,19 @@ Concretely cpp11 always uses `Rf_translateCharUTF8()` when obtaining `const char
 
 <!--TODO: unicode examples?-->
 
-## C++11 features
+## C++11 features {#c11-features}
 
 C++11 provides a host of new features to the C++ language.
 cpp11 uses a number of these including
 
-- [move semantics](https://en.cppreference.com/w/cpp/language/move_constructor)
-- [type traits](https://en.cppreference.com/w/cpp/header/type_traits)
-- [initializer_list](https://en.cppreference.com/w/cpp/utility/initializer_list)
-- [variadic templates / parameter packs](https://en.cppreference.com/w/cpp/language/parameter_pack)
-- [user defined literals](https://en.cppreference.com/w/cpp/language/user_literal)
-- [user defined attributes](https://en.cppreference.com/w/cpp/language/attributes)
+-   [move semantics](https://en.cppreference.com/w/cpp/language/move_constructor)
+-   [type traits](https://en.cppreference.com/w/cpp/header/type_traits)
+-   [initializer_list](https://en.cppreference.com/w/cpp/utility/initializer_list)
+-   [variadic templates / parameter packs](https://en.cppreference.com/w/cpp/language/parameter_pack)
+-   [user defined literals](https://en.cppreference.com/w/cpp/language/user_literal)
+-   [user defined attributes](https://en.cppreference.com/w/cpp/language/attributes)
 
-## Simpler implementation
+## Simpler implementation {#simpler-implementation}
 
 Rcpp is very ambitious, with a number of advanced features, including [modules](https://cran.r-project.org/package=Rcpp/vignettes/Rcpp-modules.pdf), [sugar](https://cran.r-project.org/package=Rcpp/vignettes/Rcpp-sugar.pdf) and extensive support for [attributes](https://CRAN.R-project.org/package=Rcpp/vignettes/Rcpp-attributes.pdf).
 While these are useful features, many R packages do not use one or any of these advanced features.
@@ -369,14 +375,14 @@ git ls-files -- inst/include | while read f; do git blame -w --line-porcelain --
 ```
 
 This limited scope allows the implementation to be much simpler, the headers in Rcpp 1.0.4 have 74,658 lines of code (excluding blank or commented lines) in 379 files.
-Some headers in Rcpp are automatically generated, removing these still gives you  25,249 lines of code in 357 files.
+Some headers in Rcpp are automatically generated, removing these still gives you 25,249 lines of code in 357 files.
 In contrast the headers in cpp11 contain only 1,734 lines of code in 19 files.
 
 This reduction in complexity should make cpp11 an easier project to maintain and ensure correctness, particularly around interactions with the R garbage collector.
 
 <!--TODO: mention rchk compatibility here?-->
 
-## Compilation speed
+## Compilation speed {#compilation-speed}
 
 Rcpp always bundles all of its headers together, which causes slow compilation times and high peak memory usage when compiling.
 The headers in cpp11 are more easily decoupled, so you only can include only the particular headers you actually use in a source file.
@@ -390,26 +396,22 @@ Here are some real examples of the reduction in compile time and peak memory usa
 gtime -f %M:%e R CMD INSTALL --libs-only --use-vanilla .
 ```
 
-| package  | Rcpp compile time | cpp11 compile time | Rcpp peak memory | cpp11 peak memory | Rcpp commit          | cpp11 commit         |
-| ---      | ---               | ---                | ---              | ---               | ---                  | ---                  |
-| haven    | 17.42s            | 7.13s              | 428MB            | 204MB             | [a3cf75a4][haven]    | [978cb034][haven]    |
-| readr    | 124.13s           | 81.08s             | 969MB            | 684MB             | [ec0d8989][readr]    | [aa89ff72][readr]    |
-| roxygen2 | 17.34s            | 4.24s              | 371MB            | 109MB             | [6f081b75][roxygen2] | [e8e1e22d][roxygen2] |
-| tidyr    | 14.25s            | 3.34s              | 363MB            | 83MB              | [3899ed51][tidyr]    | [60f7c7d4][tidyr]    |
+| package | Rcpp compile time | cpp11 compile time | Rcpp peak memory | cpp11 peak memory | Rcpp commit | cpp11 commit |
+|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+| haven | 17.42s | 7.13s | 428MB | 204MB | [a3cf75a4](https://github.com/tidyverse/haven/compare/a3cf75a4...978cb034) | [978cb034](https://github.com/tidyverse/haven/compare/a3cf75a4...978cb034) |
+| readr | 124.13s | 81.08s | 969MB | 684MB | [ec0d8989](https://github.com/tidyverse/readr/compare/ec0d8989...aa89ff72) | [aa89ff72](https://github.com/tidyverse/readr/compare/ec0d8989...aa89ff72) |
+| roxygen2 | 17.34s | 4.24s | 371MB | 109MB | [6f081b75](https://github.com/r-lib/roxygen2/compare/6f081b75...e8e1e22d) | [e8e1e22d](https://github.com/r-lib/roxygen2/compare/6f081b75...e8e1e22d) |
+| tidyr | 14.25s | 3.34s | 363MB | 83MB | [3899ed51](https://github.com/tidyverse/tidyr/compare/3899ed51...60f7c7d4) | [60f7c7d4](https://github.com/tidyverse/tidyr/compare/3899ed51...60f7c7d4) |
 
-[haven]: https://github.com/tidyverse/haven/compare/a3cf75a4...978cb034
-[readr]: https://github.com/tidyverse/readr/compare/ec0d8989...aa89ff72
-[roxygen2]: https://github.com/r-lib/roxygen2/compare/6f081b75...e8e1e22d
-[tidyr]: https://github.com/tidyverse/tidyr/compare/3899ed51...60f7c7d4
-
-## Header only
+## Header only {#header-only}
 
 Rcpp has long been a *mostly* [header only](https://en.wikipedia.org/wiki/Header-only) library, however is not a *completely* header only library.
-There have been [cases](https://github.com/tidyverse/dplyr/issues/2308) when a package was first installed with version X of Rcpp, and then a newer version of Rcpp was later installed. Then when the original package X was loaded R would crash, because the [Application Binary Interface](https://en.wikipedia.org/wiki/Application_binary_interface) of Rcpp had changed between the two versions.
+There have been [cases](https://github.com/tidyverse/dplyr/issues/2308) when a package was first installed with version X of Rcpp, and then a newer version of Rcpp was later installed.
+Then when the original package X was loaded R would crash, because the [Application Binary Interface](https://en.wikipedia.org/wiki/Application_binary_interface) of Rcpp had changed between the two versions.
 
 Because cpp11 consists of exclusively headers this issue does not occur.
 
-## Vendoring
+## Vendoring {#vendoring}
 
 In the go community the concept of [vendoring](https://go.googlesource.com/proposal/+/master/design/25719-go15vendor.md) is widespread.
 Vendoring means that you copy the code for the dependencies into your project's source tree.
@@ -421,14 +423,13 @@ Vendoring has advantages and drawbacks however.
 The advantage is that changes to the cpp11 project could never break your existing code.
 The drawbacks are both minor, your package size is now slightly larger, and major, you no longer get bugfixes and new features until you explicitly update cpp11.
 
-I think the majority of packages should use `LinkingTo: cpp11` and _not_ vendor the cpp11 dependency.
+I think the majority of packages should use `LinkingTo: cpp11` and *not* vendor the cpp11 dependency.
 However, vendoring can be appropriate for certain situations.
 
-## Protection
+## Protection {#protection}
 
-cpp11 uses a custom double linked list data structure to track objects it is
-managing. This structure is much more efficient for large numbers of objects
-than using `R_PreserveObject()` / `R_ReleaseObjects()` as is done in Rcpp.
+cpp11 uses a custom double linked list data structure to track objects it is managing.
+This structure is much more efficient for large numbers of objects than using `R_PreserveObject()` / `R_ReleaseObjects()` as is done in Rcpp.
 
 ```{r, message = FALSE, eval = should_run_benchmarks()}
 library(cpp11test)
@@ -467,14 +468,14 @@ Whereas it is linear or worse with the number of objects being tracked for Rcpp.
 knitr::kable(b_release)
 ```
 
-## Growing vectors
+## Growing vectors {#growing-vectors}
 
 One major difference in Rcpp and cpp11 is how vectors are grown.
 Rcpp vectors have a `push_back()` method, but unlike `std::vector()` no additional space is reserved when pushing.
 This makes calling `push_back()` repeatably very expensive, as the entire vector has to be copied each call.
 
 In contrast `cpp11` vectors grow efficiently, reserving extra space.
-Because of this you can do ~10,000,000 vector appends with cpp11 in approximately the same amount of time that Rcpp does 10,000, as this benchmark demonstrates.
+Because of this you can do \~10,000,000 vector appends with cpp11 in approximately the same amount of time that Rcpp does 10,000, as this benchmark demonstrates.
 
 ```{r, message = FALSE, eval = should_run_benchmarks()}
 grid <- expand.grid(len = 10 ^ (0:7), pkg = "cpp11", stringsAsFactors = FALSE)
