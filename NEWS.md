@@ -1,5 +1,10 @@
 # cpp11 (development version)
 
+* Dropped support for gcc 4.8, mainly an issue for extremely old CentOS 7
+  systems which used that as their default compiler. As of June 2024, CentOS 7
+  is past its Vendor end of support date and therefore also out of scope for
+  Posit at this time (#359).
+
 # cpp11 0.4.7
 
 * Internal changes requested by CRAN to fix invalid format string tokens
