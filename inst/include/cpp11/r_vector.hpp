@@ -897,33 +897,28 @@ inline void r_vector<T>::clear() {
   length_ = 0;
 }
 
-inline SEXP truncate(SEXP x, R_xlen_t length, R_xlen_t capacity) {
-#if R_VERSION >= R_Version(3, 4, 0)
-  SETLENGTH(x, length);
-  SET_TRUELENGTH(x, capacity);
-  SET_GROWABLE_BIT(x);
-#else
-  x = safe[Rf_lengthgets](x, length);
-#endif
-  return x;
-}
-
 template <typename T>
 inline r_vector<T>::operator SEXP() const {
+  // This is a bit gross. Do we really need the `SEXP` operator to be `const`?
+  // We immediately throw the constness away because this operation mutates.
   auto* p = const_cast<r_vector<T>*>(this);
+
   if (data_ == R_NilValue) {
+    // Specially call out the `NULL` case, which can occur if immediately
+    // returning a default constructed writable `r_vector` as a `SEXP`.
     p->resize(0);
     return data_;
   }
+
   if (length_ < capacity_) {
-    p->data_ = truncate(p->data_, length_, capacity_);
-    SEXP nms = names();
-    auto nms_size = Rf_xlength(nms);
-    if ((nms_size > 0) && (length_ < nms_size)) {
-      nms = truncate(nms, length_, capacity_);
-      names() = nms;
-    }
+    // Truncate the vector to its `length_`. This unfortunately typically forces
+    // an allocation if the user has called `push_back()` on a writable
+    // `r_vector`. Importantly, going through `resize()` updates: `data_` and
+    // protection of it, `data_p_`, and `capacity_`.
+    p->resize(length_);
+    return data_;
   }
+
   return data_;
 }
 
