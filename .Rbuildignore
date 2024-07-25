@@ -30,3 +30,5 @@ script.R
 ^CRAN-SUBMISSION$
 .vscode
 ^\.cache$
+^docs$
+^pkgdown$
