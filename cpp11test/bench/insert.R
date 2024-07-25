@@ -1,10 +1,10 @@
-pkgload::load_all()
+pkgload::load_all("cpp11test")
 
 bench::press(
   len = as.integer(10^(0:4)),
   {
     bench::mark(
-      .Call(cpp11_insert_, len)
+      cpp11_insert_(len)
     )
   }
 )
