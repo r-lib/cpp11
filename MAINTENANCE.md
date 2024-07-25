@@ -36,11 +36,15 @@ git clone https://github.com/RcppCore/Rcpp.git
 These only happen with the urlchecker package, they can be safely ignored and the real CRAN checks will not show them.
 
 
-### Ensure you use `Sys.setenv("CPP11_EVAL" = "true"); devtools::submit_cran()` when submitting.
+## Ensure you use `Sys.setenv("CPP11_EVAL" = "true"); devtools::submit_cran()` when submitting.
 
 If you forget to set `CPP_EVAL = "true"` then the vignette chunks will not run properly and the vignettes will not be rendered properly.
 
-### Usage with clangd
+## Regenerating benchmark objects used in `motivations.Rmd`
+
+If you need to regenerate the benchmark objects (RDS objects) utilized in `motivations.Rmd`, then you should set `Sys.setenv("CPP11TEST_SHOULD_RUN_BENCHMARKS" = "TRUE")` before running the Rmd. You'll also need to make sure that cpp11test is actually installed. See `cpp11test:::should_run_benchmarks()` for more.
+
+## Usage with clangd
 
 Since cpp11 is header only, if you use clangd you'll have a bit of an issue because tools like bear and pkgload won't know how to generate the `compile_commands.json` file. Instead, you can create it manually with something like this, which seems to work well. Note that the paths are specific to your computer.
 
