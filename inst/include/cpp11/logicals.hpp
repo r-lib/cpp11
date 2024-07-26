@@ -7,7 +7,7 @@
 #include "cpp11/R.hpp"                // for SEXP, SEXPREC, Rf_all...
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/named_arg.hpp"        // for named_arg
-#include "cpp11/protect.hpp"          // for preserved
+#include "cpp11/protect.hpp"          // for store_insert, store_release
 #include "cpp11/r_bool.hpp"           // for r_bool
 #include "cpp11/r_vector.hpp"         // for r_vector, r_vector<>::proxy
 #include "cpp11/sexp.hpp"             // for sexp
@@ -80,7 +80,7 @@ inline bool operator==(const r_vector<r_bool>::proxy& lhs, r_bool rhs) {
 template <>
 inline r_vector<r_bool>::r_vector(std::initializer_list<r_bool> il)
     : cpp11::r_vector<r_bool>(Rf_allocVector(LGLSXP, il.size())), capacity_(il.size()) {
-  protect_ = preserved.insert(data_);
+  protect_ = detail::store_insert(data_);
   auto it = il.begin();
   for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
     SET_LOGICAL_ELT(data_, i, *it);
@@ -91,7 +91,7 @@ template <>
 inline r_vector<r_bool>::r_vector(std::initializer_list<named_arg> il)
     : cpp11::r_vector<r_bool>(safe[Rf_allocVector](LGLSXP, il.size())),
       capacity_(il.size()) {
-  protect_ = preserved.insert(data_);
+  protect_ = detail::store_insert(data_);
   int n_protected = 0;
 
   try {
@@ -107,7 +107,7 @@ inline r_vector<r_bool>::r_vector(std::initializer_list<named_arg> il)
       UNPROTECT(n_protected);
     });
   } catch (const unwind_exception& e) {
-    preserved.release(protect_);
+    detail::store_release(protect_);
     UNPROTECT(n_protected);
     throw e;
   }
@@ -118,9 +118,9 @@ inline void r_vector<r_bool>::reserve(R_xlen_t new_capacity) {
   data_ = data_ == R_NilValue ? safe[Rf_allocVector](LGLSXP, new_capacity)
                               : safe[Rf_xlengthgets](data_, new_capacity);
   SEXP old_protect = protect_;
-  protect_ = preserved.insert(data_);
+  protect_ = detail::store_insert(data_);
 
-  preserved.release(old_protect);
+  detail::store_release(old_protect);
 
   data_p_ = LOGICAL(data_);
   capacity_ = new_capacity;

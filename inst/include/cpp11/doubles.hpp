@@ -84,7 +84,7 @@ template <>
 inline r_vector<double>::r_vector(std::initializer_list<named_arg> il)
     : cpp11::r_vector<double>(safe[Rf_allocVector](REALSXP, il.size())),
       capacity_(il.size()) {
-  protect_ = preserved.insert(data_);
+  protect_ = detail::store_insert(data_);
   int n_protected = 0;
 
   try {
@@ -100,7 +100,7 @@ inline r_vector<double>::r_vector(std::initializer_list<named_arg> il)
       UNPROTECT(n_protected);
     });
   } catch (const unwind_exception& e) {
-    preserved.release(protect_);
+    detail::store_release(protect_);
     UNPROTECT(n_protected);
     throw e;
   }
@@ -111,8 +111,8 @@ inline void r_vector<double>::reserve(R_xlen_t new_capacity) {
   data_ = data_ == R_NilValue ? safe[Rf_allocVector](REALSXP, new_capacity)
                               : safe[Rf_xlengthgets](data_, new_capacity);
   SEXP old_protect = protect_;
-  protect_ = preserved.insert(data_);
-  preserved.release(old_protect);
+  protect_ = detail::store_insert(data_);
+  detail::store_release(old_protect);
 
   data_p_ = REAL(data_);
   capacity_ = new_capacity;
