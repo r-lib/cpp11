@@ -56,3 +56,15 @@
 
   return x;
 }
+
+[[cpp11::register]] SEXP rcpp_push_and_truncate_(SEXP size_sxp) {
+  R_xlen_t size = INTEGER(size_sxp)[0];
+
+  // Allocate `size` worth of doubles (filled with garbage data)
+  Rcpp::NumericVector out(size);
+
+  // Push 1 more past the existing capacity
+  out.push_back(0);
+
+  return out;
+}
