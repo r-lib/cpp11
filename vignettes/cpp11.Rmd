@@ -5,6 +5,9 @@ vignette: >
   %\VignetteIndexEntry{Get started with cpp11}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+editor:
+  markdown:
+    wrap: sentence
 ---
 
 ```{r, include = FALSE}
@@ -26,43 +29,43 @@ In this vignette you'll learn how to improve performance by rewriting key functi
 This magic comes by way of the [cpp11](https://github.com/r-lib/cpp11) package.
 
 cpp11 makes it very simple to connect C++ to R.
-While it is _possible_ to write C or Fortran code for use in R, it will be painful by comparison.
+While it is *possible* to write C or Fortran code for use in R, it will be painful by comparison.
 cpp11 provides a clean, approachable API that lets you write high-performance code, insulated from R's more complex C API.
 
 Typical bottlenecks that C++ can address include:
 
-* Loops that can't be easily vectorised because subsequent iterations depend on previous ones.
+-   Loops that can't be easily vectorised because subsequent iterations depend on previous ones.
 
-* Recursive functions, or problems which involve calling functions millions of times.
-  The overhead of calling a function in C++ is much lower than in R.
+-   Recursive functions, or problems which involve calling functions millions of times.
+    The overhead of calling a function in C++ is much lower than in R.
 
-* Problems that require advanced data structures and algorithms that R doesn't provide.
-  Through the standard template library (STL), C++ has efficient implementations of many important data structures, from ordered maps to double-ended queues.
+-   Problems that require advanced data structures and algorithms that R doesn't provide.
+    Through the standard template library (STL), C++ has efficient implementations of many important data structures, from ordered maps to double-ended queues.
 
 The aim of this vignette is to discuss only those aspects of C++ and cpp11 that are absolutely necessary to help you eliminate bottlenecks in your code.
 We won't spend much time on advanced features like object-oriented programming or templates because the focus is on writing small, self-contained functions, not big programs.
 A working knowledge of C++ is helpful, but not essential.
 Many good tutorials and references are freely available, including <https://www.learncpp.com/> and <https://en.cppreference.com/w/cpp>.
-For more advanced topics, the _Effective C++_ series by Scott Meyers is a popular choice.
+For more advanced topics, the *Effective C++* series by Scott Meyers is a popular choice.
 
 ### Outline
 
-* Section [intro](#intro) teaches you how to write C++ by converting simple R functions to their C++ equivalents.
-  You'll learn how C++ differs from R, and what the key scalar, vector, and matrix classes are called.
+-   Section [intro](#intro) teaches you how to write C++ by converting simple R functions to their C++ equivalents.
+    You'll learn how C++ differs from R, and what the key scalar, vector, and matrix classes are called.
 
-* Section [cpp_source](#cpp-source) shows you how to use `cpp11::cpp_source()` to load a C++ file from disk in the same way you use `source()` to load a file of R code.
+-   Section [cpp_source](#cpp-source) shows you how to use `cpp11::cpp_source()` to load a C++ file from disk in the same way you use `source()` to load a file of R code.
 
-* Section [classes](#classes) discusses how to modify attributes from cpp11, and mentions some of the other important classes.
+-   Section [classes](#classes) discusses how to modify attributes from cpp11, and mentions some of the other important classes.
 
-* Section [na](#na) teaches you how to work with R's missing values in C++.
+-   Section [na](#na) teaches you how to work with R's missing values in C++.
 
-* Section [stl](#stl) shows you how to use some of the most important data structures and algorithms from the standard template library, or STL, built-in to C++.
+-   Section [stl](#stl) shows you how to use some of the most important data structures and algorithms from the standard template library, or STL, built-in to C++.
 
-* Section [case-studies](#case-studies) shows two real case studies where cpp11 was used to get considerable performance improvements.
+-   Section [case-studies](#case-studies) shows two real case studies where cpp11 was used to get considerable performance improvements.
 
-* Section [package](#package) teaches you how to add C++ code to an R package.
+-   Section [package](#package) teaches you how to add C++ code to an R package.
 
-* Section [more](#more) concludes the vignette with pointers to more resources to help you learn cpp11 and C++.
+-   Section [more](#more) concludes the vignette with pointers to more resources to help you learn cpp11 and C++.
 
 ### Prerequisites
 
@@ -75,9 +78,9 @@ library(cpp11)
 You'll also need a working C++ compiler.
 To get it:
 
-* On Windows, install [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
-* On Mac, install Xcode from the app store.
-* On Linux, `sudo apt-get install r-base-dev` or similar.
+-   On Windows, install [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
+-   On Mac, install Xcode from the app store.
+-   On Linux, `sudo apt-get install r-base-dev` or similar.
 
 ## Getting started with C++ {#intro}
 
@@ -99,10 +102,10 @@ There's a lot going on underneath the hood but cpp11 takes care of all the detai
 The following sections will teach you the basics by translating simple R functions to their C++ equivalents.
 We'll start simple with a function that has no inputs and a scalar output, and then make it progressively more complicated:
 
-* Scalar input and scalar output
-* Vector input and scalar output
-* Vector input and vector output
-* Matrix input and vector output
+-   Scalar input and scalar output
+-   Vector input and scalar output
+-   Vector input and vector output
+-   Matrix input and vector output
 
 ### No inputs, scalar output
 
@@ -115,7 +118,7 @@ one <- function() 1L
 
 The equivalent C++ function is:
 
-```cpp
+``` cpp
 int one() {
   return 1;
 }
@@ -131,19 +134,18 @@ cpp_function('int one() {
 
 This small function illustrates a number of important differences between R and C++:
 
-* The syntax to create a function looks like the syntax to call a function;
-  you don't use assignment to create functions as you do in R.
+-   The syntax to create a function looks like the syntax to call a function; you don't use assignment to create functions as you do in R.
 
-* You must declare the type of output the function returns.
-  This function returns an `int` (a scalar integer).
-  The classes for the most common types of R vectors are: `doubles`, `integers`, `strings`, and `logicals`.
+-   You must declare the type of output the function returns.
+    This function returns an `int` (a scalar integer).
+    The classes for the most common types of R vectors are: `doubles`, `integers`, `strings`, and `logicals`.
 
-* Scalars and vectors are different.
-  The scalar equivalents of numeric, integer, character, and logical vectors are: `double`, `int`, `String`, and `bool`.
+-   Scalars and vectors are different.
+    The scalar equivalents of numeric, integer, character, and logical vectors are: `double`, `int`, `String`, and `bool`.
 
-* You must use an explicit `return` statement to return a value from a function.
+-   You must use an explicit `return` statement to return a value from a function.
 
-* Every statement is terminated by a `;`.
+-   Every statement is terminated by a `;`.
 
 ### Scalar input, scalar output
 
@@ -172,11 +174,12 @@ cpp_function('int sign_cpp(int x) {
 
 In the C++ version:
 
-* We declare the type of each input in the same way we declare the type of the output.
-  While this makes the code a little more verbose, it also makes clear the type of input the function needs.
+-   We declare the type of each input in the same way we declare the type of the output.
+    While this makes the code a little more verbose, it also makes clear the type of input the function needs.
 
-* The `if` syntax is identical --- while there are some big differences between R and C++, there are also lots of similarities! C++ also has a `while` statement that works the same way as R's.
-  As in R you can use `break` to exit the loop, but to skip one iteration you need to use `continue` instead of `next`.
+-   The `if` syntax is identical --- while there are some big differences between R and C++, there are also lots of similarities!
+    C++ also has a `while` statement that works the same way as R's.
+    As in R you can use `break` to exit the loop, but to skip one iteration you need to use `continue` instead of `next`.
 
 ### Vector input, scalar output
 
@@ -210,21 +213,22 @@ cpp_function('double sum_cpp(doubles x) {
 
 The C++ version is similar, but:
 
-* To find the length of the vector, we use the `.size()` method, which returns an integer.
-  C++ methods are called with `.` (i.e., a full stop).
+-   To find the length of the vector, we use the `.size()` method, which returns an integer.
+    C++ methods are called with `.` (i.e., a full stop).
 
-* The `for` statement has a different syntax: `for(init; check; increment)`.
-  This loop is initialised by creating a new variable called `i` with value 0.
-  Before each iteration we check that `i < n`, and terminate the loop if it's not.
-  After each iteration, we increment the value of `i` by one, using the special prefix operator `++` which increases the value of `i` by 1.
+-   The `for` statement has a different syntax: `for(init; check; increment)`.
+    This loop is initialised by creating a new variable called `i` with value 0.
+    Before each iteration we check that `i < n`, and terminate the loop if it's not.
+    After each iteration, we increment the value of `i` by one, using the special prefix operator `++` which increases the value of `i` by 1.
 
-* In C++, vector indices start at 0, which means that the last element is at position `n - 1`.
-  I'll say this again because it's so important: __IN C++, VECTOR INDICES START AT 0__! This is a very common source of bugs when converting R functions to C++.
+-   In C++, vector indices start at 0, which means that the last element is at position `n - 1`.
+    I'll say this again because it's so important: **IN C++, VECTOR INDICES START AT 0**!
+    This is a very common source of bugs when converting R functions to C++.
 
-* Use `=` for assignment, not `<-`.
+-   Use `=` for assignment, not `<-`.
 
-* C++ provides operators that modify in-place: `total += x[i]` is equivalent to `total = total + x[i]`.
-  Similar in-place operators are `-=`, `*=`, and `/=`.
+-   C++ provides operators that modify in-place: `total += x[i]` is equivalent to `total = total + x[i]`.
+    Similar in-place operators are `-=`, `*=`, and `/=`.
 
 This is a good example of where C++ is much more efficient than R.
 As shown by the following microbenchmark, `sum_cpp()` is competitive with the built-in (and highly optimised) `sum()`, while `sum_r()` is several orders of magnitude slower.
@@ -266,12 +270,12 @@ cpp_function('doubles pdist_cpp(double x, doubles ys) {
 
 This function introduces a few new concepts:
 
-* Because we are creating a new vector we need to use `writable::doubles` rather than the read-only `doubles`.
+-   Because we are creating a new vector we need to use `writable::doubles` rather than the read-only `doubles`.
 
-* We create a new numeric vector of length `n` with a constructor: `cpp11::writable::doubles out(n)`.
-  Another useful way of making a vector is to copy an existing one: `cpp11::doubles zs(ys)`.
+-   We create a new numeric vector of length `n` with a constructor: `cpp11::writable::doubles out(n)`.
+    Another useful way of making a vector is to copy an existing one: `cpp11::doubles zs(ys)`.
 
-* C++ uses `pow()`, not `^`, for exponentiation.
+-   C++ uses `pow()`, not `^`, for exponentiation.
 
 Note that because the R version is fully vectorised, it's already going to be fast.
 
@@ -284,7 +288,7 @@ bench::mark(
 ```
 
 On my computer, it takes around 5 ms with a 1 million element `y` vector.
-The C++ function is about 2.5 times faster, ~2 ms, but assuming it took you 10 minutes to write the C++ function, you'd need to run it ~200,000 times to make rewriting worthwhile.
+The C++ function is about 2.5 times faster, \~2 ms, but assuming it took you 10 minutes to write the C++ function, you'd need to run it \~200,000 times to make rewriting worthwhile.
 The reason why the C++ function is faster is subtle, and relates to memory management.
 The R version needs to create an intermediate vector the same length as y (`x - ys`), and allocating memory is an expensive operation.
 The C++ function avoids this overhead because it uses an intermediate scalar.
@@ -302,19 +306,20 @@ This lets you take advantage of text editor support for C++ files (e.g., syntax 
 
 Your stand-alone C++ file should have extension `.cpp`, and needs to start with:
 
-```cpp
+``` cpp
 #include "cpp11.hpp"
 using namespace cpp11;
 ```
 
 And for each function that you want available within R, you need to prefix it with:
 
-```cpp
+``` cpp
 [[cpp11::register]]
 ```
 
 If you're familiar with roxygen2, you might wonder how this relates to `@export`.
-`cpp11::register` registers a C++ function to be called from R. `@export` controls whether a function is exported from a package and made available to the user.
+`cpp11::register` registers a C++ function to be called from R.
+`@export` controls whether a function is exported from a package and made available to the user.
 
 To compile the C++ code, use `cpp_source("path/to/file.cpp")`.
 This will create the matching R functions and add them to your current session.
@@ -344,12 +349,9 @@ For the remainder of this vignette C++ code will be presented stand-alone rather
 If you want to try compiling and/or modifying the examples you should paste them into a C++ source file that includes the elements described above.
 This is easy to do in RMarkdown by using `{cpp11}` instead of `{r}` at the beginning of your code blocks.
 
-
 ### Exercises
 
-1. With the basics of C++ in hand, it's now a great time to practice by reading and writing some simple C++ functions.
-   For each of the following functions, read the code and figure out what the corresponding base R function is.
-   You might not understand every part of the code yet, but you should be able to figure out the basics of what the function does.
+1.  With the basics of C++ in hand, it's now a great time to practice by reading and writing some simple C++ functions. For each of the following functions, read the code and figure out what the corresponding base R function is. You might not understand every part of the code yet, but you should be able to figure out the basics of what the function does.
 
 ```{cpp11}
 #include "cpp11.hpp"
@@ -406,21 +408,21 @@ int f4(cpp11::function pred, list x) {
 }
 ```
 
-1.  To practice your function writing skills, convert the following functions
-    into C++. For now, assume the inputs have no missing values.
+1.  To practice your function writing skills, convert the following functions into C++.
+    For now, assume the inputs have no missing values.
 
-    1. `all()`.
+    1.  `all()`.
 
-    2. `cumprod()`, `cummin()`, `cummax()`.
+    2.  `cumprod()`, `cummin()`, `cummax()`.
 
-    3. `diff()`. Start by assuming lag 1, and then generalise for lag `n`.
+    3.  `diff()`.
+        Start by assuming lag 1, and then generalise for lag `n`.
 
-    4. `range()`.
+    4.  `range()`.
 
-    5. `var()`. Read about the approaches you can take on
-       [Wikipedia](https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance).
-       Whenever implementing a numerical algorithm, it's always good to check
-       what is already known about the problem.
+    5.  `var()`.
+        Read about the approaches you can take on [Wikipedia](https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance).
+        Whenever implementing a numerical algorithm, it's always good to check what is already known about the problem.
 
 ## Other classes {#classes}
 
@@ -491,13 +493,13 @@ call_with_one(paste)
 
 Calling R functions with positional arguments is obvious:
 
-```cpp
+``` cpp
 f("y", 1);
 ```
 
 But you need a special syntax for named arguments:
 
-```cpp
+``` cpp
 using namespace cpp11::literals;
 
 f("x"_nm = "y", "value"_nm = 1);
@@ -510,6 +512,7 @@ cpp11 also provides `.names()` as an alias for the `names` attribute.
 The following code snippet illustrates these methods.
 Note the use of `{}` [initializer list](https://en.cppreference.com/w/cpp/utility/initializer_list) syntax.
 This allows you to create an R vector from C++ scalar values:
+
 ```{r attribs, engine = "cpp11"}
 #include "cpp11.hpp"
 using namespace cpp11;
@@ -526,13 +529,15 @@ doubles attribs() {
 ```
 
 ## Missing values {#na}
+
 If you're working with missing values, you need to know two things:
 
-* How R's missing values behave in C++'s scalars (e.g., `double`).
+-   How R's missing values behave in C++'s scalars (e.g., `double`).
 
-* How to get and set missing values in vectors (e.g., `doubles`).
+-   How to get and set missing values in vectors (e.g., `doubles`).
 
 ### Scalars
+
 The following code explores what happens when you take one of R's missing values, coerce it into a scalar, and then coerce back to an R vector.
 Note that this kind of experimentation is a useful way to figure out what any operation does.
 
@@ -549,6 +554,7 @@ list scalar_missings() {
   return writable::list({as_sexp(int_s), as_sexp(chr_s), as_sexp(lgl_s), as_sexp(num_s)});
 }
 ```
+
 ```{r}
 str(scalar_missings())
 ```
@@ -557,6 +563,7 @@ With the exception of `bool`, things look pretty good here: all of the missing v
 However, as we'll see in the following sections, things are not quite as straightforward as they seem.
 
 #### Integers
+
 With integers, missing values are stored as the smallest integer.
 If you don't do anything to them, they'll be preserved.
 But, since C++ doesn't know that the smallest integer has this special behaviour, if you do anything to it you're likely to get an incorrect value: for example, `cpp_eval('NA_INTEGER + 1')` gives -2147483647.
@@ -564,6 +571,7 @@ But, since C++ doesn't know that the smallest integer has this special behaviour
 So if you want to work with missing values in integers, either use a length 1 `integers` or be very careful with your code.
 
 #### Doubles
+
 With doubles, you may be able to get away with ignoring missing values and working with NaNs (not a number).
 This is because R's NA is a special type of IEEE 754 floating point number NaN.
 So any logical expression that involves a NaN (or in C++, NAN) always evaluates as FALSE:
@@ -574,8 +582,8 @@ cpp_eval("NAN < 1")
 cpp_eval("NAN > 1")
 cpp_eval("NAN == NAN")
 ```
-(Here I'm using `cpp_eval()` which allows you to see the result of running a single C++ expression, making it excellent for this sort of interactive experimentation.)
-But be careful when combining them with Boolean values:
+
+(Here I'm using `cpp_eval()` which allows you to see the result of running a single C++ expression, making it excellent for this sort of interactive experimentation.) But be careful when combining them with Boolean values:
 
 ```{r}
 cpp_eval("NAN && TRUE")
@@ -583,6 +591,7 @@ cpp_eval("NAN || FALSE")
 ```
 
 However, in numeric contexts NaNs will propagate NAs:
+
 ```{r}
 cpp_eval("NAN + 1")
 cpp_eval("NAN - 1")
@@ -591,14 +600,17 @@ cpp_eval("NAN * 1")
 ```
 
 ### Strings
+
 `String` is a scalar string class introduced by cpp11, so it knows how to deal with missing values.
 
 ### Boolean
+
 C++'s `bool` has two possible values (`true` or `false`), a logical vector in R has three (`TRUE`, `FALSE`, and `NA`).
 If you coerce a length 1 logical vector, make sure it doesn't contain any missing values; otherwise they will be converted to TRUE.
 One way to fix this is to use `int` instead, as this can represent `TRUE`, `FALSE`, and `NA`.
 
 ### Vectors {#vectors-cpp11}
+
 With vectors, you need to use a missing value specific to the type of vector, `NA_REAL`, `NA_INTEGER`, `NA_LOGICAL`, `NA_STRING`:
 
 ```{r, engine = "cpp11"}
@@ -623,13 +635,13 @@ str(missing_sampler())
 
 ### Exercises
 
-1. Rewrite any of the functions from the first exercise to deal with missing values.
-   If `na_rm` is true, ignore the missing values.
-   If `na_rm` is false, return a missing value if the input contains any missing values.
-   Some good functions to practice with are `min()`, `max()`, `range()`, `mean()`, and `var()`.
+1.  Rewrite any of the functions from the first exercise to deal with missing values.
+    If `na_rm` is true, ignore the missing values.
+    If `na_rm` is false, return a missing value if the input contains any missing values.
+    Some good functions to practice with are `min()`, `max()`, `range()`, `mean()`, and `var()`.
 
-1. Rewrite `cumsum()` and `diff()` so they can handle missing values.
-   Note that these functions have slightly more complicated behaviour.
+2.  Rewrite `cumsum()` and `diff()` so they can handle missing values.
+    Note that these functions have slightly more complicated behaviour.
 
 ## Standard Template Library {#stl}
 
@@ -647,9 +659,9 @@ Iterators are used extensively in the STL: many functions either accept or retur
 They are the next step up from basic loops, abstracting away the details of the underlying data structure.
 Iterators have three main operators:
 
-1. Advance with `++`.
-1. Get the value they refer to, or __dereference__, with `*`.
-1. Compare with `==`.
+1.  Advance with `++`.
+2.  Get the value they refer to, or **dereference**, with `*`.
+3.  Compare with `==`.
 
 For example we could re-write our sum function using iterators:
 
@@ -670,15 +682,13 @@ double sum2(doubles x) {
 
 The main changes are in the for loop:
 
-* We start at `x.begin()` and loop until we get to `x.end()`. A small
-  optimization is to store the value of the end iterator so we don't need to
-  look it up each time. This only saves about 2 ns per iteration, so it's only
-  important when the calculations in the loop are very simple.
+-   We start at `x.begin()` and loop until we get to `x.end()`.
+    A small optimization is to store the value of the end iterator so we don't need to look it up each time.
+    This only saves about 2 ns per iteration, so it's only important when the calculations in the loop are very simple.
 
-* Instead of indexing into x, we use the dereference operator to get its
-  current value: `*it`.
+-   Instead of indexing into x, we use the dereference operator to get its current value: `*it`.
 
-* Notice we use `auto` rather than giving the type of the iterator.
+-   Notice we use `auto` rather than giving the type of the iterator.
 
 This code can be simplified still further through the use of a C++11 feature: range-based for loops.
 
@@ -761,15 +771,15 @@ local({
 
 The key points are:
 
-* We step through two iterators (input and output) simultaneously.
+-   We step through two iterators (input and output) simultaneously.
 
-* We can assign into an dereferenced iterator (`out_it`) to change the values in `out`.
+-   We can assign into an dereferenced iterator (`out_it`) to change the values in `out`.
 
-* `upper_bound()` returns an iterator.
-  If we wanted the value of the `upper_bound()` we could dereference it; to figure out its location, we use the `distance()` function.
+-   `upper_bound()` returns an iterator.
+    If we wanted the value of the `upper_bound()` we could dereference it; to figure out its location, we use the `distance()` function.
 
 When in doubt, it is generally better to use algorithms from the STL than hand rolled loops.
-In _Effective STL_, Scott Meyers gives three reasons: efficiency, correctness, and maintainability.
+In *Effective STL*, Scott Meyers gives three reasons: efficiency, correctness, and maintainability.
 Algorithms from the STL are written by C++ experts to be extremely efficient, and they have been around for a long time so they are well tested.
 Using standard algorithms also makes the intent of your code more clear, helping to make it more readable and more maintainable.
 
@@ -830,7 +840,8 @@ list rle_cpp(doubles x) {
 }
 ```
 
-(An alternative implementation would be to replace `i` with the iterator `lengths.rbegin()` which always points to the last element of the vector. You might want to try implementing that.)
+(An alternative implementation would be to replace `i` with the iterator `lengths.rbegin()` which always points to the last element of the vector.
+You might want to try implementing that.)
 
 Other methods of a vector are described at <https://en.cppreference.com/w/cpp/container/vector>.
 
@@ -867,6 +878,7 @@ logicals duplicated_cpp(integers x) {
 }
 ```
 
+````{=html}
 <!--- TODO: Add `as_sexp()` support for maps
 ### Map
 
@@ -892,23 +904,23 @@ SEXP table_cpp(doubles x) {
 }
 ```
 !-->
+````
 
 ### Exercises
 
 To practice using the STL algorithms and data structures, implement the following using R functions in C++, using the hints provided:
 
-1. `median.default()` using `partial_sort`.
+1.  `median.default()` using `partial_sort`.
 
-1. `%in%` using `unordered_set` and the `find()` or `count()` methods.
+2.  `%in%` using `unordered_set` and the `find()` or `count()` methods.
 
-1. `unique()` using an `unordered_set` (challenge: do it in one line!).
+3.  `unique()` using an `unordered_set` (challenge: do it in one line!).
 
-1. `min()` using `std::min()`, or `max()` using `std::max()`.
+4.  `min()` using `std::min()`, or `max()` using `std::max()`.
 
-1. `which.min()` using `min_element`, or `which.max()` using `max_element`.
+5.  `which.min()` using `min_element`, or `which.max()` using `max_element`.
 
-1. `setdiff()`, `union()`, and `intersect()` for integers using sorted ranges
-   and `set_union`, `set_intersection` and `set_difference`.
+6.  `setdiff()`, `union()`, and `intersect()` for integers using sorted ranges and `set_union`, `set_intersection` and `set_difference`.
 
 ## Case studies {#case-studies}
 
@@ -939,13 +951,14 @@ gibbs_r <- function(N, thin) {
 }
 ```
 
-This is relatively straightforward to convert to C++.  We:
+This is relatively straightforward to convert to C++.
+We:
 
-* Add type declarations to all variables.
+-   Add type declarations to all variables.
 
-* Use `(` instead of `[` to index into the matrix.
+-   Use `(` instead of `[` to index into the matrix.
 
-* Include "Rmath.h" and call the functions with `Rf_`.
+-   Include "Rmath.h" and call the functions with `Rf_`.
 
 ```{r, engine = "cpp11"}
 #include "cpp11/matrix.hpp"
@@ -1022,7 +1035,8 @@ There are two ways we could attack this problem.
 If you have a good R vocabulary, you might immediately see how to vectorise the function (using `ifelse()`, `pmin()`, and `pmax()`).
 Alternatively, we could rewrite `vacc1a()` and `vacc1()` in C++, using our knowledge that loops and function calls have much lower overhead in C++.
 
-Either approach is fairly straightforward. In R:
+Either approach is fairly straightforward.
+In R:
 
 ```{r}
 vacc2 <- function(age, female, ily) {
@@ -1034,7 +1048,7 @@ vacc2 <- function(age, female, ily) {
 }
 ```
 
-(If you've worked R a lot you might recognise some potential bottlenecks in this code: `ifelse`, `pmin`, and `pmax` are known to be slow, and could be replaced with `p * 0.75 + p * 0.5 * female`, `p[p < 0] <- 0`, `p[p > 1] <- 1`.  You might want to try timing those variations.)
+(If you've worked R a lot you might recognise some potential bottlenecks in this code: `ifelse`, `pmin`, and `pmax` are known to be slow, and could be replaced with `p * 0.75 + p * 0.5 * female`, `p[p < 0] <- 0`, `p[p > 1] <- 1`. You might want to try timing those variations.)
 
 Or in C++:
 
@@ -1077,7 +1091,8 @@ stopifnot(
 )
 ```
 
-The original blog post forgot to do this, and introduced a bug in the C++ version: it used `0.004` instead of `0.04`.  Finally, we can benchmark our three approaches:
+The original blog post forgot to do this, and introduced a bug in the C++ version: it used `0.004` instead of `0.04`.
+Finally, we can benchmark our three approaches:
 
 ```{r}
 bench::mark(
@@ -1096,29 +1111,31 @@ I was a little surprised that the C++ was so much faster, but it is because the 
 The same C++ code that is used with `cpp_source()` can also be bundled into a package.
 There are several benefits of moving code from a stand-alone C++ source file to a package:
 
-1. Your code can be made available to users without C++ development tools.
+1.  Your code can be made available to users without C++ development tools.
 
-1. Multiple source files and their dependencies are handled automatically by the R package build system.
+2.  Multiple source files and their dependencies are handled automatically by the R package build system.
 
-1. Packages provide additional infrastructure for testing, documentation, and consistency.
+3.  Packages provide additional infrastructure for testing, documentation, and consistency.
 
-To add `cpp11` to an existing package first put your C++ files in the `src/` directory of your package. 
+To add `cpp11` to an existing package first put your C++ files in the `src/` directory of your package.
 
-Then the easiest way to configure everything is to call `usethis::use_cpp11()`. Alternatively:
+Then the easiest way to configure everything is to call `usethis::use_cpp11()`.
+Alternatively:
 
-* Add this to your `DESCRIPTION` file:
-  
-    ```yaml
+-   Add this to your `DESCRIPTION` file:
+
+    ``` yaml
     LinkingTo: cpp11
     ```
 
-* And add the following [roxygen](https://roxygen2.r-lib.org/) directive somewhere in your package's R files. (A common location is `R/pkgname-package.R`)
+-   And add the following [roxygen](https://roxygen2.r-lib.org/) directive somewhere in your package's R files.
+    (A common location is `R/pkgname-package.R`)
 
-    ```R
+    ``` r
     #' @useDynLib pkgname, .registration = TRUE
     ```
 
-* You'll then need to run [`devtools::document()`](https://devtools.r-lib.org/reference/document.html) to update your `NAMESPACE` file to include the `useDynLib` statement.
+-   You'll then need to run [`devtools::document()`](https://devtools.r-lib.org/reference/document.html) to update your `NAMESPACE` file to include the `useDynLib` statement.
 
 If you don't use `devtools::load_all()`, you'll also need to run `cpp11::cpp_register()` before building the package.
 This function scans the C++ files for `[[cpp11::register]]` attributes and generates the binding code required to make the functions available in R.
@@ -1129,11 +1146,12 @@ Re-run `cpp11::cpp_register()` whenever functions are added, removed, or have th
 C++ is a large, complex language that takes years to master.
 If you would like to dive deeper or write more complex functions other resources I've found helpful in learning C++ are:
 
-* [_Effective C++_](https://www.aristeia.com/books.html) and [_Effective STL_](https://www.aristeia.com/books.html)
+-   [*Effective C++*](https://www.aristeia.com/books.html) and [*Effective STL*](https://www.aristeia.com/books.html)
 
-* [_C++ Annotations_](http://www.icce.rug.nl/documents/cplusplus/cplusplus.html), aimed at knowledgeable users of C (or any other language using a C-like grammar, like Perl or Java) who would like to know more about, or make the transition to, C++.
+-   [*C++ Annotations*](http://www.icce.rug.nl/documents/cplusplus/cplusplus.html), aimed at knowledgeable users of C (or any other language using a C-like grammar, like Perl or Java) who would like to know more about, or make the transition to, C++.
 
-* [_Algorithm Libraries_](https://www.cs.helsinki.fi/u/tpkarkka/alglib/k06/), which provides a more technical, but still concise, description of important STL concepts. (Follow the links under notes.)
+-   [*Algorithm Libraries*](https://www.cs.helsinki.fi/u/tpkarkka/alglib/k06/), which provides a more technical, but still concise, description of important STL concepts.
+    (Follow the links under notes.)
 
 Writing performant code may also require you to rethink your basic approach: a solid understanding of basic data structures and algorithms is very helpful here.
-That's beyond the scope of this vignette, but I'd suggest the [_Algorithm Design Manual_](https://www.algorist.com/) MIT's [_Introduction to Algorithms_](https://web.archive.org/web/20200604134756/https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-046j-introduction-to-algorithms-sma-5503-fall-2005/), _Algorithms_ by Robert Sedgewick and Kevin Wayne which has a free [online textbook](http://algs4.cs.princeton.edu/home/) and a matching [Coursera course](https://www.coursera.org/learn/algorithms-part1).
+That's beyond the scope of this vignette, but I'd suggest the [*Algorithm Design Manual*](https://www.algorist.com/) MIT's [*Introduction to Algorithms*](https://web.archive.org/web/20200604134756/https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-046j-introduction-to-algorithms-sma-5503-fall-2005/), *Algorithms* by Robert Sedgewick and Kevin Wayne which has a free [online textbook](http://algs4.cs.princeton.edu/home/) and a matching [Coursera course](https://www.coursera.org/learn/algorithms-part1).
