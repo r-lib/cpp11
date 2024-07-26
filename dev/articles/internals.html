@@ -126,7 +126,7 @@ command line with
 lives in <a href="https://github.com/r-lib/cpp11/tree/main/inst/include" class="external-link">inst/include</a>.
 R code used to register functions and for
 <code><a href="../reference/cpp_source.html">cpp11::cpp_source()</a></code> is in <a href="https://github.com/r-lib/cpp11/tree/main/R" class="external-link">R/</a>. Tests for
-<em>only</em> the code in <code>R/</code> is in <a href="https://github.com/r-lib/cpp11/tree/main/tests/testthat" class="external-link">tests/testthat/</a>
+<em>only</em> the code in <code>R/</code> is in <a href="https://github.com/r-lib/cpp11/tree/main/tests/testthat" class="external-link">tests/testthat/</a>.
 The rest of the code is in a separate <a href="https://github.com/r-lib/cpp11/tree/main/cpp11test" class="external-link">cpp11test/</a>
 package included in the source tree. Inside <a href="https://github.com/r-lib/cpp11/tree/main/cpp11test/src" class="external-link">cpp11test/src</a>
 the files that start with <code>test-</code> are C++ tests using the <a href="https://testthat.r-lib.org/reference/use_catch.html" class="external-link">Catch</a>
@@ -153,11 +153,11 @@ support in testthat. In addition there are some regular R tests in <a href="http
 <h2 id="vector-classes">Vector classes<a class="anchor" aria-label="anchor" href="#vector-classes"></a>
 </h2>
 <p>All of the basic r_vector classes are class templates, the base
-template is defined in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/r_vector.hpp" class="external-link">cpp11/r_vector.hpp</a>
+template is defined in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/r_vector.hpp" class="external-link">cpp11/r_vector.hpp</a>.
 The template parameter is the type of <strong>value</strong> the
 particular R vector stores, e.g. <code>double</code> for
 <code>cpp11::doubles</code>. This differs from Rcpp, whose first
-template parameter is the R vector type, e.g. <code>REALSXP</code>.</p>
+template parameter is the R vector type, e.g. <code>REALSXP</code>.</p>
 <p>The file first has the class declarations, then function definitions
 further down in the file. Specializations for the various types are in
 separate files, e.g. <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/doubles.hpp" class="external-link">cpp11/doubles.hpp</a>,
