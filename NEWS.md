@@ -9,7 +9,8 @@
 
   A side effect of this new approach is that the `preserved` object exposed
   through `protect.hpp` no longer exists. We don't believe that anyone was using
-  this.
+  this. This also means you should no longer see "unused variable" warnings
+  about `preserved` (#249).
 
 * Dropped support for gcc 4.8, mainly an issue for extremely old CentOS 7
   systems which used that as their default compiler. As of June 2024, CentOS 7
