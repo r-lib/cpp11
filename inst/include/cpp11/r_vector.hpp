@@ -672,7 +672,9 @@ inline r_vector<T>::r_vector(const SEXP& data, bool is_altrep)
 
 template <typename T>
 inline r_vector<T>::r_vector(SEXP&& data)
-    : cpp11::r_vector<T>(data), protect_(detail::store_insert(data_)), capacity_(length_) {}
+    : cpp11::r_vector<T>(data),
+      protect_(detail::store_insert(data_)),
+      capacity_(length_) {}
 
 template <typename T>
 inline r_vector<T>::r_vector(SEXP&& data, bool is_altrep)
