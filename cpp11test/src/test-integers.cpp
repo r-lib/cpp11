@@ -223,7 +223,6 @@ context("integers-C++") {
     R_xlen_t after = cpp11::detail::store::count();
 
     expect_true(before == 0);
-    // TODO: This should be 1 but writable vectors are being double protected
-    expect_true(after - before == 2);
+    expect_true(after - before == 1);
   }
 }
