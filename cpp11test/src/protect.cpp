@@ -68,7 +68,6 @@
   }
 
   for (R_xlen_t i = n - 1; i >= 0; --i) {
-    SEXP x = res[i];
     res.pop_back();
   }
 }
