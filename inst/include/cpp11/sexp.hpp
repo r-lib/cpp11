@@ -6,7 +6,7 @@
 
 #include "cpp11/R.hpp"                // for SEXP, SEXPREC, REAL_ELT, R_NilV...
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
-#include "cpp11/protect.hpp"          // for store_insert, store_release
+#include "cpp11/protect.hpp"          // for store
 
 namespace cpp11 {
 
@@ -19,14 +19,14 @@ class sexp {
  public:
   sexp() = default;
 
-  sexp(SEXP data) : data_(data), preserve_token_(detail::store_insert(data_)) {
+  sexp(SEXP data) : data_(data), preserve_token_(detail::store::insert(data_)) {
     // REprintf("created %p %p\n", reinterpret_cast<void*>(data_),
     //          reinterpret_cast<void*>(preserve_token_));
   }
 
   sexp(const sexp& rhs) {
     data_ = rhs.data_;
-    preserve_token_ = detail::store_insert(data_);
+    preserve_token_ = detail::store::insert(data_);
     // REprintf("copied %p new protect %p\n", reinterpret_cast<void*>(rhs.data_),
     //          reinterpret_cast<void*>(preserve_token_));
   }
@@ -42,10 +42,10 @@ class sexp {
   }
 
   sexp& operator=(const sexp& rhs) {
-    detail::store_release(preserve_token_);
+    detail::store::release(preserve_token_);
 
     data_ = rhs.data_;
-    preserve_token_ = detail::store_insert(data_);
+    preserve_token_ = detail::store::insert(data_);
     // REprintf("assigned %p\n", reinterpret_cast<void*>(rhs.data_));
     return *this;
   }
@@ -56,7 +56,7 @@ class sexp {
   //*this = tmp;
   //}
 
-  ~sexp() { detail::store_release(preserve_token_); }
+  ~sexp() { detail::store::release(preserve_token_); }
 
   attribute_proxy<sexp> attr(const char* name) const {
     return attribute_proxy<sexp>(*this, name);

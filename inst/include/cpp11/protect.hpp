@@ -265,28 +265,36 @@ namespace detail {
 //
 // > A static local variable in an extern inline function always refers to the
 //   same object. 7.1.2/4 - C++98/C++14 (n3797)
+namespace store {
 
-inline SEXP new_store() {
+inline SEXP init() {
   SEXP out = Rf_cons(R_NilValue, Rf_cons(R_NilValue, R_NilValue));
   R_PreserveObject(out);
   return out;
 }
 
-inline SEXP store() {
+inline SEXP get() {
   // Note the `static` local variable in the inline extern function here! Guarantees we
   // have 1 unique preserve list across all compilation units in the package.
-  static SEXP out = new_store();
+  static SEXP out = init();
   return out;
 }
 
-inline SEXP store_insert(SEXP x) {
+inline R_xlen_t count() {
+  const R_xlen_t head = 1;
+  const R_xlen_t tail = 1;
+  SEXP list = get();
+  return Rf_xlength(list) - head - tail;
+}
+
+inline SEXP insert(SEXP x) {
   if (x == R_NilValue) {
     return R_NilValue;
   }
 
   PROTECT(x);
 
-  SEXP list = store();
+  SEXP list = get();
 
   // Get references to the head of the preserve list and the next element
   // after the head
@@ -307,7 +315,7 @@ inline SEXP store_insert(SEXP x) {
   return cell;
 }
 
-inline void store_release(SEXP cell) {
+inline void release(SEXP cell) {
   if (cell == R_NilValue) {
     return;
   }
@@ -323,8 +331,8 @@ inline void store_release(SEXP cell) {
   SETCAR(rhs, lhs);
 }
 
-inline void store_print() {
-  SEXP list = store();
+inline void print() {
+  SEXP list = get();
   for (SEXP cell = list; cell != R_NilValue; cell = CDR(cell)) {
     REprintf("%p CAR: %p CDR: %p TAG: %p\n", reinterpret_cast<void*>(cell),
              reinterpret_cast<void*>(CAR(cell)), reinterpret_cast<void*>(CDR(cell)),
@@ -332,6 +340,8 @@ inline void store_print() {
   }
   REprintf("---\n");
 }
+
+}  // namespace store
 
 }  // namespace detail
 

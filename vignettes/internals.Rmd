@@ -126,8 +126,8 @@ Each node in the list uses the head (`CAR`) part to point to the previous node, 
 The `TAG` is used to point to the object being protected.
 The head and tail of the list have `R_NilValue` as their `CAR` and `CDR` pointers respectively.
 
-Calling `cpp11::detail::store_insert()` with a regular R object will add a new node to the list and return a protect token corresponding to the node added.
-Calling `cpp11::detail::store_release()` on this returned token will release the protection by unlinking the node from the linked list.
+Calling `cpp11::detail::store::insert()` with a regular R object will add a new node to the list and return a protect token corresponding to the node added.
+Calling `cpp11::detail::store::release()` on this returned token will release the protection by unlinking the node from the linked list.
 These two functions are considered internal to cpp11, so do not use them in your packages.
 
 This scheme scales in O(1) time to release or insert an object vs O(N) or worse time with `R_PreserveObject()` / `R_ReleaseObject()`.

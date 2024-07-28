@@ -9,7 +9,7 @@
 #include "cpp11/as.hpp"               // for as_sexp
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/named_arg.hpp"        // for named_arg
-#include "cpp11/protect.hpp"          // for store_insert, store_release
+#include "cpp11/protect.hpp"          // for store
 #include "cpp11/r_vector.hpp"         // for r_vector, r_vector<>::proxy
 #include "cpp11/sexp.hpp"             // for sexp
 
@@ -87,10 +87,10 @@ inline void r_vector<int>::reserve(R_xlen_t new_capacity) {
   SEXP old_protect = protect_;
 
   // Protect the new data
-  protect_ = detail::store_insert(data_);
+  protect_ = detail::store::insert(data_);
 
   // Release the old protection;
-  detail::store_release(old_protect);
+  detail::store::release(old_protect);
 
   data_p_ = INTEGER(data_);
   capacity_ = new_capacity;
@@ -100,7 +100,7 @@ template <>
 inline r_vector<int>::r_vector(std::initializer_list<named_arg> il)
     : cpp11::r_vector<int>(safe[Rf_allocVector](INTSXP, il.size())),
       capacity_(il.size()) {
-  protect_ = detail::store_insert(data_);
+  protect_ = detail::store::insert(data_);
   int n_protected = 0;
 
   try {
@@ -116,7 +116,7 @@ inline r_vector<int>::r_vector(std::initializer_list<named_arg> il)
       UNPROTECT(n_protected);
     });
   } catch (const unwind_exception& e) {
-    detail::store_release(protect_);
+    detail::store::release(protect_);
     UNPROTECT(n_protected);
     throw e;
   }
