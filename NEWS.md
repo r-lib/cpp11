@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* Fixed an issue where writable vectors were being protected twice (#365).
+
 * Removed usage of the following non-API functions:
   * `SETLENGTH()`
   * `SET_TRUELENGTH()`
