@@ -1,5 +1,8 @@
 # cpp11 (development version)
 
+* Read only `r_vector`s now have a move constructor and move assignment
+  operator (#365).
+
 * Fixed an issue where writable vectors were being protected twice (#365).
 
 * Removed usage of the following non-API functions:
