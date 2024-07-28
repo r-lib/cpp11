@@ -2,6 +2,7 @@
 #include "cpp11/integers.hpp"
 #include "cpp11/list.hpp"
 #include "cpp11/logicals.hpp"
+#include "cpp11/protect.hpp"
 #include "cpp11/raws.hpp"
 #include "cpp11/strings.hpp"
 
@@ -161,5 +162,23 @@ context("list-C++") {
 
     expect_true(Rf_xlength(y) == 0);
     expect_true(y != R_NilValue);
+  }
+
+  test_that("writable list vector temporary isn't leaked (#338)") {
+    R_xlen_t before = cpp11::detail::store::count();
+
+    // +1 from `x` allocation
+    cpp11::writable::list x(1);
+
+    // Calls move assignment operator `operator=(r_vector<T>&& rhs)`
+    // +1 from `rhs` allocation and move into `x`
+    // -1 from old `x` release
+    x = cpp11::writable::list(1);
+
+    R_xlen_t after = cpp11::detail::store::count();
+
+    expect_true(before == 0);
+    // TODO: This should be 1 but writable vectors are being double protected
+    expect_true(after - before == 2);
   }
 }

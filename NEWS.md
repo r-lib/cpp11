@@ -1,5 +1,8 @@
 # cpp11 (development version)
 
+* Fixed a memory leak with the `cpp11::writable::r_vector` move assignment
+  operator (#338).
+
 * The approach for the protection list managed by cpp11 has been tweaked
   slightly. In 0.4.6, we changed to an approach that creates one protection list
   per compilation unit, but we now believe we've found an approach that is
