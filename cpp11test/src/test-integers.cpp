@@ -2,6 +2,7 @@
 #include "cpp11/doubles.hpp"
 #include "cpp11/function.hpp"
 #include "cpp11/integers.hpp"
+#include "cpp11/protect.hpp"
 #include "cpp11/strings.hpp"
 
 #include <testthat.h>
@@ -206,5 +207,23 @@ context("integers-C++") {
 
     int y = NA_INTEGER;
     expect_true(cpp11::is_na(y));
+  }
+
+  test_that("writable integer vector temporary isn't leaked (#338)") {
+    R_xlen_t before = cpp11::detail::store::count();
+
+    // +1 from `x` allocation
+    cpp11::writable::integers x(1);
+
+    // Calls move assignment operator `operator=(r_vector<T>&& rhs)`
+    // +1 from `rhs` allocation and move into `x`
+    // -1 from old `x` release
+    x = cpp11::writable::integers(1);
+
+    R_xlen_t after = cpp11::detail::store::count();
+
+    expect_true(before == 0);
+    // TODO: This should be 1 but writable vectors are being double protected
+    expect_true(after - before == 2);
   }
 }

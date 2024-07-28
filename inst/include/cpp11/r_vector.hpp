@@ -843,7 +843,7 @@ inline r_vector<T>& r_vector<T>::operator=(r_vector<T>&& rhs) {
   SEXP old_protect = protect_;
 
   data_ = rhs.data_;
-  protect_ = detail::store::insert(data_);
+  protect_ = rhs.protect_;
 
   detail::store::release(old_protect);
 
