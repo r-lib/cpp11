@@ -203,21 +203,22 @@ to the previous node, and the <code>CDR</code> part to point to the next
 node. The <code>TAG</code> is used to point to the object being
 protected. The head and tail of the list have <code>R_NilValue</code> as
 their <code>CAR</code> and <code>CDR</code> pointers respectively.</p>
-<p>Calling <code>preserved.insert()</code> with a regular R object will
-add a new node to the list and return a protect token corresponding to
-the node added. Calling <code>preserved.release()</code> on this
-returned token will release the protection by unlinking the node from
-the linked list.</p>
+<p>Calling <code>cpp11::detail::store::insert()</code> with a regular R
+object will add a new node to the list and return a protect token
+corresponding to the node added. Calling
+<code>cpp11::detail::store::release()</code> on this returned token will
+release the protection by unlinking the node from the linked list. These
+two functions are considered internal to cpp11, so do not use them in
+your packages.</p>
 <p>This scheme scales in O(1) time to release or insert an object vs
 O(N) or worse time with <code>R_PreserveObject()</code> /
 <code>R_ReleaseObject()</code>.</p>
-<p>Each compilation unit has its own unique protection list, which
-avoids the need to manage a “global” protection list shared across
-compilation units within the same package and across packages. A
-previous version of cpp11 used a global protection list, but this caused
-<a href="https://github.com/r-lib/cpp11/issues/330" class="external-link">multiple
+<p>Each package has its own unique protection list, which avoids the
+need to manage a “global” protection list shared across packages. A
+previous version of cpp11 used a global protection list stored in an R
+global option, but this caused <a href="https://github.com/r-lib/cpp11/issues/330" class="external-link">multiple
 issues</a>.</p>
-<p>These functions are defined in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/protect.hpp" class="external-link">protect.hpp</a></p>
+<p>These functions are defined in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/protect.hpp" class="external-link">protect.hpp</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="unwind-protect">Unwind Protect<a class="anchor" aria-label="anchor" href="#unwind-protect"></a>

@@ -43,7 +43,11 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="cpp11-development-version">cpp11 (development version)<a class="anchor" aria-label="anchor" href="#cpp11-development-version"></a></h2>
-<ul><li>Dropped support for gcc 4.8, mainly an issue for extremely old CentOS 7 systems which used that as their default compiler. As of June 2024, CentOS 7 is past its Vendor end of support date and therefore also out of scope for Posit at this time (<a href="https://github.com/r-lib/cpp11/issues/359" class="external-link">#359</a>).</li>
+<ul><li>
+<p>The approach for the protection list managed by cpp11 has been tweaked slightly. In 0.4.6, we changed to an approach that creates one protection list per compilation unit, but we now believe we’ve found an approach that is guaranteed by the C++ standard to create one protection list per package, which makes slightly more sense and still has all the benefits of the reduced maintanence burden mentioned in the 0.4.6 news bullet (<a href="https://github.com/r-lib/cpp11/issues/364" class="external-link">#364</a>).</p>
+<p>A side effect of this new approach is that the <code>preserved</code> object exposed through <code>protect.hpp</code> no longer exists. We don’t believe that anyone was using this. This also means you should no longer see “unused variable” warnings about <code>preserved</code> (<a href="https://github.com/r-lib/cpp11/issues/249" class="external-link">#249</a>).</p>
+</li>
+<li><p>Dropped support for gcc 4.8, mainly an issue for extremely old CentOS 7 systems which used that as their default compiler. As of June 2024, CentOS 7 is past its Vendor end of support date and therefore also out of scope for Posit at this time (<a href="https://github.com/r-lib/cpp11/issues/359" class="external-link">#359</a>).</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.7" id="cpp11-047">cpp11 0.4.7<a class="anchor" aria-label="anchor" href="#cpp11-047"></a></h2><p class="text-muted">CRAN release: 2023-12-02</p>
