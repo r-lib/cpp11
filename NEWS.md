@@ -16,7 +16,7 @@
   beyond) the tidyverse standard of supporting the previous 5 minor releases of
   R. It also ensures that `R_UnwindProtect()` is available to avoid C++ memory
   leaks (#332).
-  
+
 * `cpp11::preserved.release_all()` has been removed. This was intended to
   support expert developers on R <3.5.0 when cpp11 used a global protection
   list. Since cpp11 no longer uses a global protection list and requires R
@@ -35,7 +35,7 @@
   than it is worth and is very hard to use safely. For more information, see the
   new `vignette("FAQ")` section titled "Should I call `cpp11::unwind_protect()`
   manually?" (#327).
-  
+
 * The features and bug fixes from cpp11 0.4.4 have been added back in.
 
 # cpp11 0.4.5
@@ -46,7 +46,7 @@
 
 # cpp11 0.4.4
 
-* Davis Vaughan is now the maintainer. 
+* Davis Vaughan is now the maintainer.
 
 * `as_doubles()` and `as_integers()` now propagate missing values correctly
    (#265, #319).
@@ -56,7 +56,7 @@
 * Minor performance improvements to the cpp11 protect code. (@kevinushey)
 
 * `cpp_register()` gains an argument `extension=` governing the file extension of
-  the `src/cpp11` file. By default it's `.cpp`, but `.cc` is now supported 
+  the `src/cpp11` file. By default it's `.cpp`, but `.cc` is now supported
   as well (#292, @MichaelChirico)
 
 # cpp11 0.4.3
@@ -65,7 +65,7 @@
   better align with changes in those workflows and the latest version of R
   (#279).
 
-* `cpp_source()` errors on non-existent file (#261). 
+* `cpp_source()` errors on non-existent file (#261).
 
 * `cpp_register()` is quiet by default when R is non interactive (#289).
 
@@ -83,7 +83,7 @@
 
 ## New Features
 
-* New opt-in message formatting with the {fmt} C++ library for `cpp11::messages()` `cpp11::stop()` and `cpp11::warning()`. 
+* New opt-in message formatting with the {fmt} C++ library for `cpp11::messages()` `cpp11::stop()` and `cpp11::warning()`.
   Set the `CPP11_USE_FMT` macro to use this feature in your package. (@sbearrows, #169, #208)
 * New `as_double()` and `as_integer()` methods to coerce integers to doubles and doubles to integers to doubles (@sbearrows, #46)
 * `cpp11::matrix` iterators can now be used either row-wise or column-wise (the default) depending on the user's choice (@alyst, #229)
