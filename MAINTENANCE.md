@@ -51,7 +51,7 @@ Since cpp11 is header only, if you use clangd you'll have a bit of an issue beca
 ```
 [
     {
-        "command": "g++ -std=gnu++11 -I\"/Users/davis/files/r/packages/cpp11/inst/include\" -I\"/Library/Frameworks/R.framework/Resources/include\" -I\"/opt/homebrew/include\" -Wall -pedantic",
+        "command": "g++ -std=gnu++11 -I\"/Users/davis/files/r/packages/cpp11/inst/include\" -I\"/Library/Frameworks/R.framework/Resources/include\" -I\"/Users/davis/Library/R/arm64/4.4/library/Rcpp/include\" -I\"/Users/davis/Library/R/arm64/4.4/library/testthat/include\" -I\"/opt/homebrew/include\" -Wall -pedantic",
         "file": "R.hpp",
         "directory": "/Users/davis/files/r/packages/cpp11/inst/include/cpp11"
     }
@@ -64,6 +64,13 @@ Key notes:
 - Using `-std=gnu++11` to keep us honest about only C++11 features.
 - Using `-I\"/Library/Frameworks/R.framework/Resources/include\"` for access to the R headers.
 - Using `-I\"/Users/davis/files/r/packages/cpp11/inst/include\"` as a "self include", which seems to be the key to the whole thing.
+
+If you are modifying any tests or benchmarks, you also need:
+
+- `-I\"/Users/davis/Library/R/arm64/4.4/library/Rcpp/include\"` for Rcpp headers.
+- `-I\"/Users/davis/Library/R/arm64/4.4/library/testthat/include\"` for testthat headers related to Catch tests.
+
+Note that this is specific to a path on your machine and the R version you are currently working with.
 
 ## Future directions
 
