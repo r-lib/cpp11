@@ -18,8 +18,8 @@
 
 [[cpp11::register]] void protect_one_cpp11_(SEXP x, int n) {
   for (R_xlen_t i = 0; i < n; ++i) {
-    SEXP p = cpp11::preserved.insert(x);
-    cpp11::preserved.release(p);
+    SEXP p = cpp11::detail::store::insert(x);
+    cpp11::detail::store::release(p);
   }
 }
 
@@ -32,18 +32,6 @@
 
 // The internal protections here are actually uneeded, but it is a useful way to benchmark
 // them
-//
-// clang-format off
-#ifdef __clang__
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Wunused-variable"
-#endif
-
-#ifdef __GNUC__
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-variable"
-#endif
-// clang-format on
 
 [[cpp11::register]] void protect_many_(int n) {
 #ifdef CPP11_BENCH
@@ -63,12 +51,12 @@
 [[cpp11::register]] void protect_many_cpp11_(int n) {
   std::vector<SEXP> res;
   for (R_xlen_t i = 0; i < n; ++i) {
-    res.push_back(cpp11::preserved.insert(Rf_ScalarInteger(n)));
+    res.push_back(cpp11::detail::store::insert(Rf_ScalarInteger(n)));
   }
 
   for (R_xlen_t i = n - 1; i >= 0; --i) {
     SEXP x = res[i];
-    cpp11::preserved.release(x);
+    cpp11::detail::store::release(x);
     res.pop_back();
   }
 }

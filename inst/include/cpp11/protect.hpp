@@ -245,84 +245,104 @@ void warning(const std::string& fmt, Args... args) {
 }
 #endif
 
-/// A doubly-linked list of preserved objects, allowing O(1) insertion/release of
-/// objects compared to O(N preserved) with R_PreserveObject.
-static struct {
-  SEXP insert(SEXP obj) {
-    if (obj == R_NilValue) {
-      return R_NilValue;
-    }
+namespace detail {
 
-    PROTECT(obj);
+// A doubly-linked list of preserved objects, allowing O(1) insertion/release of objects
+// compared to O(N preserved) with `R_PreserveObject()` and `R_ReleaseObject()`.
+//
+// We let R manage the memory of the list itself by calling `R_PreserveObject()` on it.
+//
+// cpp11 being a header only library makes creating a "global" preserve list a bit tricky.
+// The trick we use here is that static local variables in inline extern functions are
+// guaranteed by the standard to be unique across the whole program. Inline functions are
+// extern by default, but `static inline` functions are not, so do not change these
+// functions to `static`. If we did that, we would end up having one preserve list per
+// compilation unit instead. As it stands today, we are fairly confident that we have 1
+// preserve list per package, which seems to work nicely.
+// https://stackoverflow.com/questions/185624/what-happens-to-static-variables-in-inline-functions
+// https://stackoverflow.com/questions/51612866/global-variables-in-header-only-library
+// https://github.com/r-lib/cpp11/issues/330
+//
+// > A static local variable in an extern inline function always refers to the
+//   same object. 7.1.2/4 - C++98/C++14 (n3797)
+namespace store {
 
-    static SEXP list = get_preserve_list();
+inline SEXP init() {
+  SEXP out = Rf_cons(R_NilValue, Rf_cons(R_NilValue, R_NilValue));
+  R_PreserveObject(out);
+  return out;
+}
 
-    // Get references to the head of the precious list and the next element
-    // after the head
-    SEXP head = list;
-    SEXP next = CDR(list);
+inline SEXP get() {
+  // Note the `static` local variable in the inline extern function here! Guarantees we
+  // have 1 unique preserve list across all compilation units in the package.
+  static SEXP out = init();
+  return out;
+}
 
-    // Add a new cell that points to the current head + next.
-    SEXP cell = PROTECT(Rf_cons(head, next));
-    SET_TAG(cell, obj);
+inline R_xlen_t count() {
+  const R_xlen_t head = 1;
+  const R_xlen_t tail = 1;
+  SEXP list = get();
+  return Rf_xlength(list) - head - tail;
+}
 
-    // Update the head + next to point at the newly-created cell,
-    // effectively inserting that cell between the current head + next.
-    SETCDR(head, cell);
-    SETCAR(next, cell);
-
-    UNPROTECT(2);
-
-    return cell;
+inline SEXP insert(SEXP x) {
+  if (x == R_NilValue) {
+    return R_NilValue;
   }
 
-  void print() {
-    static SEXP list = get_preserve_list();
-    for (SEXP cell = list; cell != R_NilValue; cell = CDR(cell)) {
-      REprintf("%p CAR: %p CDR: %p TAG: %p\n", reinterpret_cast<void*>(cell),
-               reinterpret_cast<void*>(CAR(cell)), reinterpret_cast<void*>(CDR(cell)),
-               reinterpret_cast<void*>(TAG(cell)));
-    }
-    REprintf("---\n");
+  PROTECT(x);
+
+  SEXP list = get();
+
+  // Get references to the head of the preserve list and the next element
+  // after the head
+  SEXP head = list;
+  SEXP next = CDR(list);
+
+  // Add a new cell that points to the current head + next.
+  SEXP cell = PROTECT(Rf_cons(head, next));
+  SET_TAG(cell, x);
+
+  // Update the head + next to point at the newly-created cell,
+  // effectively inserting that cell between the current head + next.
+  SETCDR(head, cell);
+  SETCAR(next, cell);
+
+  UNPROTECT(2);
+
+  return cell;
+}
+
+inline void release(SEXP cell) {
+  if (cell == R_NilValue) {
+    return;
   }
 
-  void release(SEXP cell) {
-    if (cell == R_NilValue) {
-      return;
-    }
+  // Get a reference to the cells before and after the token.
+  SEXP lhs = CAR(cell);
+  SEXP rhs = CDR(cell);
 
-    // Get a reference to the cells before and after the token.
-    SEXP lhs = CAR(cell);
-    SEXP rhs = CDR(cell);
+  // Remove the cell from the preserve list -- effectively, we do this
+  // by updating the 'lhs' and 'rhs' references to point at each-other,
+  // effectively removing any references to the cell in the pairlist.
+  SETCDR(lhs, rhs);
+  SETCAR(rhs, lhs);
+}
 
-    // Remove the cell from the precious list -- effectively, we do this
-    // by updating the 'lhs' and 'rhs' references to point at each-other,
-    // effectively removing any references to the cell in the pairlist.
-    SETCDR(lhs, rhs);
-    SETCAR(rhs, lhs);
+inline void print() {
+  SEXP list = get();
+  for (SEXP cell = list; cell != R_NilValue; cell = CDR(cell)) {
+    REprintf("%p CAR: %p CDR: %p TAG: %p\n", reinterpret_cast<void*>(cell),
+             reinterpret_cast<void*>(CAR(cell)), reinterpret_cast<void*>(CDR(cell)),
+             reinterpret_cast<void*>(TAG(cell)));
   }
+  REprintf("---\n");
+}
 
- private:
-  // Each compilation unit purposefully gets its own preserve list.
-  // This avoids issues with sharing preserve list state across compilation units
-  // and across packages, which has historically caused many issues (#330).
-  static SEXP get_preserve_list() {
-    static SEXP out = init_preserve_list();
-    return out;
-  }
+}  // namespace store
 
-  static SEXP init_preserve_list() {
-    // Initialize the list exactly once per compilation unit,
-    // and let R manage its memory
-    SEXP out = new_preserve_list();
-    R_PreserveObject(out);
-    return out;
-  }
-
-  static SEXP new_preserve_list() {
-    return Rf_cons(R_NilValue, Rf_cons(R_NilValue, R_NilValue));
-  }
-
-} preserved;
+}  // namespace detail
 
 }  // namespace cpp11

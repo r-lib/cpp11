@@ -126,15 +126,16 @@ Each node in the list uses the head (`CAR`) part to point to the previous node, 
 The `TAG` is used to point to the object being protected.
 The head and tail of the list have `R_NilValue` as their `CAR` and `CDR` pointers respectively.
 
-Calling `preserved.insert()` with a regular R object will add a new node to the list and return a protect token corresponding to the node added.
-Calling `preserved.release()` on this returned token will release the protection by unlinking the node from the linked list.
+Calling `cpp11::detail::store::insert()` with a regular R object will add a new node to the list and return a protect token corresponding to the node added.
+Calling `cpp11::detail::store::release()` on this returned token will release the protection by unlinking the node from the linked list.
+These two functions are considered internal to cpp11, so do not use them in your packages.
 
 This scheme scales in O(1) time to release or insert an object vs O(N) or worse time with `R_PreserveObject()` / `R_ReleaseObject()`.
 
-Each compilation unit has its own unique protection list, which avoids the need to manage a "global" protection list shared across compilation units within the same package and across packages.
-A previous version of cpp11 used a global protection list, but this caused [multiple issues](https://github.com/r-lib/cpp11/issues/330).
+Each package has its own unique protection list, which avoids the need to manage a "global" protection list shared across packages.
+A previous version of cpp11 used a global protection list stored in an R global option, but this caused [multiple issues](https://github.com/r-lib/cpp11/issues/330).
 
-These functions are defined in [protect.hpp](https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/protect.hpp)
+These functions are defined in [protect.hpp](https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/protect.hpp).
 
 ### Unwind Protect
 

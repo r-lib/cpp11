@@ -7,7 +7,7 @@
 #include "cpp11/as.hpp"               // for as_sexp
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/named_arg.hpp"        // for named_arg
-#include "cpp11/protect.hpp"          // for preserved
+#include "cpp11/protect.hpp"          // for store
 #include "cpp11/r_string.hpp"         // for r_string
 #include "cpp11/r_vector.hpp"         // for r_vector, r_vector<>::proxy
 #include "cpp11/sexp.hpp"             // for sexp
@@ -95,7 +95,7 @@ inline SEXP alloc_if_charsxp(const SEXP data) {
 template <>
 inline r_vector<r_string>::r_vector(const SEXP& data)
     : cpp11::r_vector<r_string>(alloc_or_copy(data)),
-      protect_(preserved.insert(data_)),
+      protect_(detail::store::insert(data_)),
       capacity_(length_) {
   if (TYPEOF(data) == CHARSXP) {
     SET_STRING_ELT(data_, 0, data);
@@ -105,7 +105,7 @@ inline r_vector<r_string>::r_vector(const SEXP& data)
 template <>
 inline r_vector<r_string>::r_vector(SEXP&& data)
     : cpp11::r_vector<r_string>(alloc_if_charsxp(data)),
-      protect_(preserved.insert(data_)),
+      protect_(detail::store::insert(data_)),
       capacity_(length_) {
   if (TYPEOF(data) == CHARSXP) {
     SET_STRING_ELT(data_, 0, data);
@@ -120,7 +120,7 @@ template <>
 inline r_vector<r_string>::r_vector(std::initializer_list<named_arg> il)
     : cpp11::r_vector<r_string>(safe[Rf_allocVector](STRSXP, il.size())),
       capacity_(il.size()) {
-  protect_ = preserved.insert(data_);
+  protect_ = detail::store::insert(data_);
   int n_protected = 0;
 
   try {
@@ -136,7 +136,7 @@ inline r_vector<r_string>::r_vector(std::initializer_list<named_arg> il)
       UNPROTECT(n_protected);
     });
   } catch (const unwind_exception& e) {
-    preserved.release(protect_);
+    detail::store::release(protect_);
     UNPROTECT(n_protected);
     throw e;
   }
@@ -148,8 +148,8 @@ inline void r_vector<r_string>::reserve(R_xlen_t new_capacity) {
                               : safe[Rf_xlengthgets](data_, new_capacity);
 
   SEXP old_protect = protect_;
-  protect_ = preserved.insert(data_);
-  preserved.release(old_protect);
+  protect_ = detail::store::insert(data_);
+  detail::store::release(old_protect);
 
   capacity_ = new_capacity;
 }

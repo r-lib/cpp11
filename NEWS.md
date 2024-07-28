@@ -1,5 +1,17 @@
 # cpp11 (development version)
 
+* The approach for the protection list managed by cpp11 has been tweaked
+  slightly. In 0.4.6, we changed to an approach that creates one protection list
+  per compilation unit, but we now believe we've found an approach that is
+  guaranteed by the C++ standard to create one protection list per package,
+  which makes slightly more sense and still has all the benefits of the reduced
+  maintanence burden mentioned in the 0.4.6 news bullet (#364).
+
+  A side effect of this new approach is that the `preserved` object exposed
+  through `protect.hpp` no longer exists. We don't believe that anyone was using
+  this. This also means you should no longer see "unused variable" warnings
+  about `preserved` (#249).
+
 * Dropped support for gcc 4.8, mainly an issue for extremely old CentOS 7
   systems which used that as their default compiler. As of June 2024, CentOS 7
   is past its Vendor end of support date and therefore also out of scope for
