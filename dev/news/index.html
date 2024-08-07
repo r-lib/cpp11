@@ -43,7 +43,14 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="cpp11-development-version">cpp11 (development version)<a class="anchor" aria-label="anchor" href="#cpp11-development-version"></a></h2>
-<ul><li><p>Fixed a memory leak with the <code>cpp11::writable::r_vector</code> move assignment operator (<a href="https://github.com/r-lib/cpp11/issues/338" class="external-link">#338</a>).</p></li>
+<ul><li>
+<p>Removed usage of the following non-API functions:</p>
+<ul><li><code>SETLENGTH()</code></li>
+<li><code>SET_TRUELENGTH()</code></li>
+<li><code>SET_GROWABLE_BIT()</code></li>
+</ul><p>These functions were used as part of the efficient growable vectors that cpp11 offered, i.e. what happens under the hood when you use <code>push_back()</code>. The removal of these non-API functions means that cpp11 writable vectors that have been pushed to with <code>push_back()</code> will likely force 1 extra allocation when the conversion from <code>cpp11::writable::r_vector&lt;T&gt;</code> to <code>SEXP</code> occurs (typically when you return a result back to R). This does not affect the performance of <code>push_back()</code> itself, and in general these growable vectors are still quite efficient (<a href="https://github.com/r-lib/cpp11/issues/362" class="external-link">#362</a>).</p>
+</li>
+<li><p>Fixed a memory leak with the <code>cpp11::writable::r_vector</code> move assignment operator (<a href="https://github.com/r-lib/cpp11/issues/338" class="external-link">#338</a>).</p></li>
 <li>
 <p>The approach for the protection list managed by cpp11 has been tweaked slightly. In 0.4.6, we changed to an approach that creates one protection list per compilation unit, but we now believe we’ve found an approach that is guaranteed by the C++ standard to create one protection list per package, which makes slightly more sense and still has all the benefits of the reduced maintanence burden mentioned in the 0.4.6 news bullet (<a href="https://github.com/r-lib/cpp11/issues/364" class="external-link">#364</a>).</p>
 <p>A side effect of this new approach is that the <code>preserved</code> object exposed through <code>protect.hpp</code> no longer exists. We don’t believe that anyone was using this. This also means you should no longer see “unused variable” warnings about <code>preserved</code> (<a href="https://github.com/r-lib/cpp11/issues/249" class="external-link">#249</a>).</p>
