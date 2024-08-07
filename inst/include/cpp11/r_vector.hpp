@@ -844,7 +844,7 @@ inline r_vector<T>::r_vector(r_vector<T>&& rhs)
 
 template <typename T>
 inline r_vector<T>::r_vector(const cpp11::r_vector<T>& rhs)
-    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs)), capacity_(rhs.length_) {}
+    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs.data_)), capacity_(rhs.length_) {}
 
 template <typename T>
 inline r_vector<T>& r_vector<T>::operator=(const r_vector<T>& rhs) {
