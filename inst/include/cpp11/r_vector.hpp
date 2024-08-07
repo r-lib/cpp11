@@ -837,8 +837,27 @@ inline r_vector<T>::r_vector(const r_vector<T>& rhs)
     : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs)), capacity_(rhs.capacity_) {}
 
 template <typename T>
-inline r_vector<T>::r_vector(r_vector<T>&& rhs)
-    : cpp11::r_vector<T>(std::move(rhs)), capacity_(rhs.capacity_) {
+inline r_vector<T>::r_vector(r_vector<T>&& rhs) {
+  // We don't want to pass through to the read-only constructor from a
+  // `writable::r_vector<T>&& rhs` as that forces a truncation to be able to generate
+  // a well-formed read-only vector. Instead, we take advantage of the fact that we
+  // are going from writable input to writable output and just move everything over.
+  //
+  // This ends up looking very similar to the equivalent read-only constructor from a
+  // read-only `r_vector&& rhs`, with the addition of moving the capacity.
+  data_ = rhs.data_;
+  protect_ = rhs.protect_;
+  is_altrep_ = rhs.is_altrep_;
+  data_p_ = rhs.data_p_;
+  length_ = rhs.length_;
+  capacity_ = rhs.capacity_;
+
+  // Important for `rhs.protect_`, extra check for everything else
+  rhs.data_ = R_NilValue;
+  rhs.protect_ = R_NilValue;
+  rhs.is_altrep_ = false;
+  rhs.data_p_ = nullptr;
+  rhs.length_ = 0;
   rhs.capacity_ = 0;
 }
 
