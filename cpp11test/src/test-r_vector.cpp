@@ -273,4 +273,26 @@ context("r_vector-C++") {
     expect_true(before == 0);
     expect_true(after - before == 1);
   }
+
+  test_that("writable vector copy constructor correctly tracks the `capacity_`") {
+    cpp11::writable::integers x(2);
+    x[0] = 1;
+    x[1] = 2;
+
+    // Doubles the capacity from 2 to 4
+    x.push_back(3);
+
+    // Calls writable copy constructor.
+    // Should duplicate without truncations and retain same capacity.
+    cpp11::writable::integers y(x);
+
+    // In the past, we truncated (i.e. to size 3) but retained the same capacity of 4,
+    // so this could try to push without first resizing.
+    y.push_back(4);
+
+    expect_true(y[0] == 1);
+    expect_true(y[1] == 2);
+    expect_true(y[2] == 3);
+    expect_true(y[3] == 4);
+  }
 }
