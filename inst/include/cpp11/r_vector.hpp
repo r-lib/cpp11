@@ -899,8 +899,10 @@ inline void r_vector<T>::clear() {
 
 template <typename T>
 inline r_vector<T>::operator SEXP() const {
-  // This is a bit gross. Do we really need the `SEXP` operator to be `const`?
-  // We immediately throw the constness away because this operation mutates.
+  // Throwing away the const-ness is a bit gross, but we only modify
+  // internal details here, and updating the internal data after we resize allows
+  // statements like `Rf_setAttrib(<r_vector>, name, value)` to make sense, where
+  // people expect that the SEXP inside the `<r_vector>` gets the updated attribute.
   auto* p = const_cast<r_vector<T>*>(this);
 
   if (data_ == R_NilValue) {
