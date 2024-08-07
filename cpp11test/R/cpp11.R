@@ -224,10 +224,18 @@ rcpp_grow_ <- function(n_sxp) {
   .Call(`_cpp11test_rcpp_grow_`, n_sxp)
 }
 
+rcpp_push_and_truncate_ <- function(size_sxp) {
+  .Call(`_cpp11test_rcpp_push_and_truncate_`, size_sxp)
+}
+
 test_destruction_inner <- function() {
   invisible(.Call(`_cpp11test_test_destruction_inner`))
 }
 
 test_destruction_outer <- function() {
   invisible(.Call(`_cpp11test_test_destruction_outer`))
+}
+
+cpp11_push_and_truncate_ <- function(size_sexp) {
+  .Call(`_cpp11test_cpp11_push_and_truncate_`, size_sexp)
 }

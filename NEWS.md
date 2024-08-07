@@ -1,5 +1,19 @@
 # cpp11 (development version)
 
+* Removed usage of the following non-API functions:
+  * `SETLENGTH()`
+  * `SET_TRUELENGTH()`
+  * `SET_GROWABLE_BIT()`
+
+  These functions were used as part of the efficient growable vectors that
+  cpp11 offered, i.e. what happens under the hood when you use `push_back()`.
+  The removal of these non-API functions means that cpp11 writable vectors that
+  have been pushed to with `push_back()` will likely force 1 extra allocation
+  when the conversion from `cpp11::writable::r_vector<T>` to `SEXP` occurs
+  (typically when you return a result back to R). This does not affect the
+  performance of `push_back()` itself, and in general these growable vectors
+  are still quite efficient (#362).
+
 * Fixed a memory leak with the `cpp11::writable::r_vector` move assignment
   operator (#338).
 

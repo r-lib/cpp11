@@ -422,6 +422,13 @@ extern "C" SEXP _cpp11test_rcpp_grow_(SEXP n_sxp) {
     return cpp11::as_sexp(rcpp_grow_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(n_sxp)));
   END_CPP11
 }
+// sum_rcpp.cpp
+SEXP rcpp_push_and_truncate_(SEXP size_sxp);
+extern "C" SEXP _cpp11test_rcpp_push_and_truncate_(SEXP size_sxp) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(rcpp_push_and_truncate_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(size_sxp)));
+  END_CPP11
+}
 // test-protect-nested.cpp
 void test_destruction_inner();
 extern "C" SEXP _cpp11test_test_destruction_inner() {
@@ -438,6 +445,13 @@ extern "C" SEXP _cpp11test_test_destruction_outer() {
     return R_NilValue;
   END_CPP11
 }
+// truncate.cpp
+SEXP cpp11_push_and_truncate_(SEXP size_sexp);
+extern "C" SEXP _cpp11test_cpp11_push_and_truncate_(SEXP size_sexp) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(cpp11_push_and_truncate_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(size_sexp)));
+  END_CPP11
+}
 
 extern "C" {
 /* .Call calls */
@@ -447,6 +461,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_col_sums",                 (DL_FUNC) &_cpp11test_col_sums,                 1},
     {"_cpp11test_cpp11_add_vec_for_",       (DL_FUNC) &_cpp11test_cpp11_add_vec_for_,       2},
     {"_cpp11test_cpp11_insert_",            (DL_FUNC) &_cpp11test_cpp11_insert_,            1},
+    {"_cpp11test_cpp11_push_and_truncate_", (DL_FUNC) &_cpp11test_cpp11_push_and_truncate_, 1},
     {"_cpp11test_cpp11_release_",           (DL_FUNC) &_cpp11test_cpp11_release_,           1},
     {"_cpp11test_cpp11_safe_",              (DL_FUNC) &_cpp11test_cpp11_safe_,              1},
     {"_cpp11test_data_frame_",              (DL_FUNC) &_cpp11test_data_frame_,              0},
@@ -481,6 +496,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_protect_one_preserve_",    (DL_FUNC) &_cpp11test_protect_one_preserve_,    2},
     {"_cpp11test_protect_one_sexp_",        (DL_FUNC) &_cpp11test_protect_one_sexp_,        2},
     {"_cpp11test_rcpp_grow_",               (DL_FUNC) &_cpp11test_rcpp_grow_,               1},
+    {"_cpp11test_rcpp_push_and_truncate_",  (DL_FUNC) &_cpp11test_rcpp_push_and_truncate_,  1},
     {"_cpp11test_rcpp_release_",            (DL_FUNC) &_cpp11test_rcpp_release_,            1},
     {"_cpp11test_rcpp_sum_dbl_accumulate_", (DL_FUNC) &_cpp11test_rcpp_sum_dbl_accumulate_, 1},
     {"_cpp11test_rcpp_sum_dbl_for_",        (DL_FUNC) &_cpp11test_rcpp_sum_dbl_for_,        1},
