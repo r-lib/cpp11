@@ -151,7 +151,14 @@ class r_vector {
     rhs.length_ = 0;
   };
 
+  // `rhs` here is writable, meaning the underlying `SEXP` could have more `capacity` than
+  // a read only equivalent would expect. This means we have to go through `SEXP` first,
+  // to truncate the writable data, and then we can wrap it in a read only `r_vector`.
+  //
+  // It would be the same scenario if we came from a writable temporary, i.e.
+  // `writable::r_vector<T>&& rhs`, so we let this method handle both scenarios.
   r_vector(const writable::r_vector<T>& rhs) : r_vector(static_cast<SEXP>(rhs)) {}
+
   r_vector(named_arg) = delete;
 
   bool is_altrep() const;
