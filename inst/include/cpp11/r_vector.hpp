@@ -883,11 +883,9 @@ inline r_vector<T>& r_vector<T>::operator=(const r_vector<T>& rhs) {
   is_altrep_ = ALTREP(data_);
   data_p_ = get_p(is_altrep_, data_);
   length_ = rhs.length_;
+  capacity_ = rhs.capacity_;
 
   detail::store::release(old_protect);
-
-  // Handle fields specific to writable
-  capacity_ = rhs.capacity_;
 
   return *this;
 }
