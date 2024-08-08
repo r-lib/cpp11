@@ -295,4 +295,34 @@ context("r_vector-C++") {
     expect_true(y[2] == 3);
     expect_true(y[3] == 4);
   }
+
+  test_that(
+      "read only vector copy constructor from a writable vector correctly truncates") {
+    cpp11::writable::integers x(2);
+    x[0] = 1;
+    x[1] = 2;
+
+    // Doubles the capacity from 2 to 4, meaning the underlying SEXP has length 4 now.
+    x.push_back(3);
+    expect_true(Rf_xlength(x.data()) == 4);
+
+    // Calls read only copy constructor from a writable vector.
+    // Should truncate the SEXP before wrapping in a read only vector.
+    cpp11::integers y(x);
+    expect_true(Rf_xlength(y.data()) == 3);
+
+    // `x` is still in a good state
+    expect_true(x.data() != R_NilValue);
+    expect_true(x.size() == 3);
+
+    // Even if we get a temporary writable vector, that goes through the same copy
+    // constructor as above, because we still have to truncate before taking ownership.
+    cpp11::integers z(std::move(x));
+    expect_true(Rf_xlength(z.data()) == 3);
+
+    // So technically `x` is still in a working state after this, although that is
+    // implementation defined and up to us to decide on
+    expect_true(x.data() != R_NilValue);
+    expect_true(x.size() == 3);
+  }
 }
