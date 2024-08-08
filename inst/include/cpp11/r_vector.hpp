@@ -35,13 +35,25 @@ class r_vector;
 template <typename T>
 class r_vector {
  public:
+  // Forward declare
+  class const_iterator;
+  using underlying_type = typename traits::get_underlying_type<T>::type;
+
+ private:
+  SEXP data_ = R_NilValue;
+  SEXP protect_ = R_NilValue;
+  bool is_altrep_ = false;
+  underlying_type* data_p_ = nullptr;
+  R_xlen_t length_ = 0;
+
+ public:
   typedef ptrdiff_t difference_type;
   typedef size_t size_type;
   typedef T value_type;
   typedef T* pointer;
   typedef T& reference;
 
-  using underlying_type = typename traits::get_underlying_type<T>::type;
+  ~r_vector();
 
   r_vector() noexcept = default;
   r_vector(SEXP data);
@@ -50,8 +62,6 @@ class r_vector {
   r_vector(r_vector<T>&& x);
   r_vector(const writable::r_vector<T>& x);
   r_vector(named_arg) = delete;
-
-  ~r_vector();
 
   r_vector& operator=(const r_vector& rhs);
   r_vector& operator=(r_vector&& rhs);
@@ -62,6 +72,7 @@ class r_vector {
 #ifdef LONG_VECTOR_SUPPORT
   T operator[](const int pos) const;
 #endif
+  /// Implemented by specialization
   T operator[](const R_xlen_t pos) const;
   T operator[](const size_type pos) const;
   T operator[](const r_string& name) const;
@@ -86,7 +97,20 @@ class r_vector {
 
   r_vector<r_string> names() const;
 
+  const_iterator begin() const;
+  const_iterator end() const;
+  const_iterator cbegin() const;
+  const_iterator cend() const;
+  const_iterator find(const r_string& name) const;
+
   class const_iterator {
+   private:
+    const r_vector* data_;
+    R_xlen_t pos_;
+    std::array<underlying_type, 64 * 64> buf_;
+    R_xlen_t block_start_ = 0;
+    R_xlen_t length_ = 0;
+
    public:
     using difference_type = ptrdiff_t;
     using value_type = T;
@@ -113,30 +137,14 @@ class r_vector {
     friend class writable::r_vector<T>::iterator;
 
    private:
-    const r_vector* data_;
+    /// Implemented in specialization
     void fill_buf(R_xlen_t pos);
-
-    R_xlen_t pos_;
-    std::array<underlying_type, 64 * 64> buf_;
-    R_xlen_t block_start_ = 0;
-    R_xlen_t length_ = 0;
   };
 
-  const_iterator begin() const;
-  const_iterator end() const;
-  const_iterator cbegin() const;
-  const_iterator cend() const;
-  const_iterator find(const r_string& name) const;
-
  private:
-  SEXP data_ = R_NilValue;
-  SEXP protect_ = R_NilValue;
-  bool is_altrep_ = false;
-  underlying_type* data_p_ = nullptr;
-  R_xlen_t length_ = 0;
-
+  /// Implemented in specialization
   static underlying_type* get_p(bool is_altrep, SEXP data);
-
+  /// Implemented in specialization
   static SEXP valid_type(SEXP data);
 
   friend class writable::r_vector<T>;
@@ -150,10 +158,13 @@ using has_begin_fun = std::decay<decltype(*begin(std::declval<T>()))>;
 /// Read/write access to new or copied r_vectors
 template <typename T>
 class r_vector : public cpp11::r_vector<T> {
+ public:
+  // Forward declare
+  class proxy;
+  class iterator;
+
  private:
-  // These are necessary because type names are not directly accessible in
-  // template inheritance
-  using typename cpp11::r_vector<T>::underlying_type;
+  R_xlen_t capacity_ = 0;
 
   using cpp11::r_vector<T>::data_;
   using cpp11::r_vector<T>::data_p_;
@@ -161,76 +172,29 @@ class r_vector : public cpp11::r_vector<T> {
   using cpp11::r_vector<T>::length_;
   using cpp11::r_vector<T>::protect_;
 
-  using cpp11::r_vector<T>::get_p;
-
-  R_xlen_t capacity_ = 0;
+  using typename cpp11::r_vector<T>::underlying_type;
 
  public:
-  class proxy {
-   private:
-    const SEXP data_;
-    const R_xlen_t index_;
-    underlying_type* const p_;
-    bool is_altrep_;
-
-   public:
-    proxy(SEXP data, const R_xlen_t index, underlying_type* const p, bool is_altrep);
-
-    proxy& operator=(const T& rhs);
-    proxy& operator+=(const T& rhs);
-    proxy& operator-=(const T& rhs);
-    proxy& operator*=(const T& rhs);
-    proxy& operator/=(const T& rhs);
-    proxy& operator++(int);
-    proxy& operator--(int);
-
-    void operator++();
-    void operator--();
-
-    operator T() const;
-  };
-
   typedef ptrdiff_t difference_type;
   typedef size_t size_type;
   typedef proxy value_type;
   typedef proxy* pointer;
   typedef proxy& reference;
 
-  class iterator : public cpp11::r_vector<T>::const_iterator {
-   private:
-    const r_vector& data_;
-    using cpp11::r_vector<T>::const_iterator::block_start_;
-    using cpp11::r_vector<T>::const_iterator::pos_;
-    using cpp11::r_vector<T>::const_iterator::buf_;
-    using cpp11::r_vector<T>::const_iterator::length_;
-    using cpp11::r_vector<T>::const_iterator::fill_buf;
-
-   public:
-    using difference_type = ptrdiff_t;
-    using value_type = proxy;
-    using pointer = proxy*;
-    using reference = proxy&;
-    using iterator_category = std::forward_iterator_tag;
-
-    iterator(const r_vector& data, R_xlen_t pos);
-
-    inline iterator& operator++();
-
-    inline proxy operator*() const;
-
-    using cpp11::r_vector<T>::const_iterator::operator!=;
-
-    inline iterator& operator+=(R_xlen_t rhs);
-    inline iterator operator+(R_xlen_t rhs);
-  };
-
   r_vector() noexcept = default;
   r_vector(const SEXP& data);
   r_vector(SEXP&& data);
   r_vector(const SEXP& data, bool is_altrep);
   r_vector(SEXP&& data, bool is_altrep);
+  r_vector(const r_vector& rhs);
+  r_vector(r_vector&& rhs);
+  r_vector(const cpp11::r_vector<T>& rhs);
+  /// Implemented in specialization
   r_vector(std::initializer_list<T> il);
+  /// Implemented in specialization
   r_vector(std::initializer_list<named_arg> il);
+
+  explicit r_vector(const R_xlen_t size);
 
   template <typename Iter>
   r_vector(Iter first, Iter last);
@@ -238,34 +202,34 @@ class r_vector : public cpp11::r_vector<T> {
   template <typename V, typename W = has_begin_fun<V>>
   r_vector(const V& obj);
 
-  explicit r_vector(const R_xlen_t size);
-
-  r_vector(const r_vector& rhs);
-  r_vector(r_vector&& rhs);
-
-  r_vector(const cpp11::r_vector<T>& rhs);
-
   r_vector& operator=(const r_vector& rhs);
   r_vector& operator=(r_vector&& rhs);
 
+  operator SEXP() const;
+
 #ifdef LONG_VECTOR_SUPPORT
   proxy operator[](const int pos) const;
-  proxy at(const int pos) const;
 #endif
   proxy operator[](const R_xlen_t pos) const;
   proxy operator[](const size_type pos) const;
   proxy operator[](const r_string& name) const;
 
+#ifdef LONG_VECTOR_SUPPORT
+  proxy at(const int pos) const;
+#endif
   proxy at(const R_xlen_t pos) const;
   proxy at(const size_type pos) const;
   proxy at(const r_string& name) const;
 
+  /// Implemented in specialization
   void push_back(T value);
+  /// Implemented in `strings.hpp`
   void push_back(const named_arg& value);
   void pop_back();
 
   void resize(R_xlen_t count);
 
+  /// Implemented in specialization
   void reserve(R_xlen_t new_capacity);
 
   iterator insert(R_xlen_t pos, T value);
@@ -282,27 +246,78 @@ class r_vector : public cpp11::r_vector<T> {
 
   iterator find(const r_string& name) const;
 
-  attribute_proxy<r_vector<T>> attr(const char* name) const {
-    return attribute_proxy<r_vector<T>>(*this, name);
-  }
+  attribute_proxy<r_vector<T>> attr(const char* name) const;
+  attribute_proxy<r_vector<T>> attr(const std::string& name) const;
+  attribute_proxy<r_vector<T>> attr(SEXP name) const;
 
-  attribute_proxy<r_vector<T>> attr(const std::string& name) const {
-    return attribute_proxy<r_vector<T>>(*this, name.c_str());
-  }
+  attribute_proxy<r_vector<T>> names() const;
 
-  attribute_proxy<r_vector<T>> attr(SEXP name) const {
-    return attribute_proxy<r_vector<T>>(*this, name);
-  }
+  class proxy {
+   private:
+    const SEXP data_;
+    const R_xlen_t index_;
+    underlying_type* const p_;
+    bool is_altrep_;
 
-  attribute_proxy<r_vector<T>> names() const {
-    return attribute_proxy<r_vector<T>>(*this, R_NamesSymbol);
-  }
+   public:
+    proxy(SEXP data, const R_xlen_t index, underlying_type* const p, bool is_altrep);
 
-  operator SEXP() const;
+    /// Implemented in specialization
+    proxy& operator=(const T& rhs);
+    proxy& operator+=(const T& rhs);
+    proxy& operator-=(const T& rhs);
+    proxy& operator*=(const T& rhs);
+    proxy& operator/=(const T& rhs);
+    proxy& operator++(int);
+    proxy& operator--(int);
+
+    void operator++();
+    void operator--();
+
+    /// Implemented in specialization
+    operator T() const;
+  };
+
+  class iterator : public cpp11::r_vector<T>::const_iterator {
+   private:
+    const r_vector& data_;
+
+    using cpp11::r_vector<T>::const_iterator::block_start_;
+    using cpp11::r_vector<T>::const_iterator::pos_;
+    using cpp11::r_vector<T>::const_iterator::buf_;
+    using cpp11::r_vector<T>::const_iterator::length_;
+    using cpp11::r_vector<T>::const_iterator::fill_buf;
+
+   public:
+    using difference_type = ptrdiff_t;
+    using value_type = proxy;
+    using pointer = proxy*;
+    using reference = proxy&;
+    using iterator_category = std::forward_iterator_tag;
+
+    iterator(const r_vector& data, R_xlen_t pos);
+
+    iterator& operator++();
+
+    proxy operator*() const;
+
+    using cpp11::r_vector<T>::const_iterator::operator!=;
+
+    iterator& operator+=(R_xlen_t rhs);
+    iterator operator+(R_xlen_t rhs);
+  };
+
+ private:
+  using cpp11::r_vector<T>::get_p;
 };
 }  // namespace writable
 
 // Implementations below
+
+template <typename T>
+inline r_vector<T>::~r_vector() {
+  detail::store::release(protect_);
+}
 
 template <typename T>
 inline r_vector<T>::r_vector(const SEXP data)
@@ -361,11 +376,6 @@ inline r_vector<T>::r_vector(r_vector&& x) {
 template <typename T>
 inline r_vector<T>::r_vector(const writable::r_vector<T>& x)
     : r_vector(static_cast<SEXP>(x)) {}
-
-template <typename T>
-inline r_vector<T>::~r_vector() {
-  detail::store::release(protect_);
-}
 
 // Same reasoning as `r_vector(const r_vector& x)` constructor
 template <typename T>
@@ -657,65 +667,12 @@ inline T r_vector<T>::const_iterator::operator*() const {
 namespace writable {
 
 template <typename T>
-r_vector<T>::proxy::proxy(SEXP data, const R_xlen_t index,
-                          typename r_vector<T>::underlying_type* const p, bool is_altrep)
-    : data_(data), index_(index), p_(p), is_altrep_(is_altrep) {}
-
-template <typename T>
-inline typename r_vector<T>::proxy r_vector<T>::iterator::operator*() const {
-  if (data_.is_altrep()) {
-    return proxy(
-        data_.data(), pos_,
-        const_cast<typename r_vector<T>::underlying_type*>(&buf_[pos_ - block_start_]),
-        true);
-  } else {
-    return proxy(data_.data(), pos_,
-                 data_.data_p_ != nullptr ? &data_.data_p_[pos_] : nullptr, false);
-  }
-}
-
-template <typename T>
-r_vector<T>::iterator::iterator(const r_vector& data, R_xlen_t pos)
-    : r_vector<T>::const_iterator(&data, pos), data_(data) {}
-
-template <typename T>
-inline typename r_vector<T>::iterator& r_vector<T>::iterator::operator++() {
-  ++pos_;
-  if (data_.is_altrep() && pos_ >= block_start_ + length_) {
-    fill_buf(pos_);
-  }
-  return *this;
-}
-
-template <typename T>
-inline typename r_vector<T>::iterator& r_vector<T>::iterator::operator+=(R_xlen_t rhs) {
-  pos_ += rhs;
-  if (data_.is_altrep() && pos_ >= block_start_ + length_) {
-    fill_buf(pos_);
-  }
-  return *this;
-}
-
-template <typename T>
-inline typename r_vector<T>::iterator r_vector<T>::iterator::operator+(R_xlen_t rhs) {
-  auto it = *this;
-  it += rhs;
-  return it;
-}
-
-template <typename T>
-inline typename r_vector<T>::iterator r_vector<T>::begin() const {
-  return iterator(*this, 0);
-}
-
-template <typename T>
-inline typename r_vector<T>::iterator r_vector<T>::end() const {
-  return iterator(*this, length_);
-}
-
-template <typename T>
 inline r_vector<T>::r_vector(const SEXP& data)
     : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](data)), capacity_(length_) {}
+
+template <typename T>
+inline r_vector<T>::r_vector(SEXP&& data)
+    : cpp11::r_vector<T>(data), capacity_(length_) {}
 
 template <typename T>
 inline r_vector<T>::r_vector(const SEXP& data, bool is_altrep)
@@ -723,123 +680,15 @@ inline r_vector<T>::r_vector(const SEXP& data, bool is_altrep)
       capacity_(length_) {}
 
 template <typename T>
-inline r_vector<T>::r_vector(SEXP&& data)
-    : cpp11::r_vector<T>(data), capacity_(length_) {}
-
-template <typename T>
 inline r_vector<T>::r_vector(SEXP&& data, bool is_altrep)
     : cpp11::r_vector<T>(data, is_altrep), capacity_(length_) {}
 
 template <typename T>
-template <typename Iter>
-inline r_vector<T>::r_vector(Iter first, Iter last) : r_vector() {
-  reserve(last - first);
-  while (first != last) {
-    push_back(*first);
-    ++first;
-  }
-}
-
-template <typename T>
-template <typename V, typename W>
-inline r_vector<T>::r_vector(const V& obj) : r_vector() {
-  auto first = obj.begin();
-  auto last = obj.end();
-  reserve(last - first);
-  while (first != last) {
-    push_back(*first);
-    ++first;
-  }
-}
-
-template <typename T>
-inline r_vector<T>::r_vector(const R_xlen_t size) : r_vector() {
-  resize(size);
-}
-
-#ifdef LONG_VECTOR_SUPPORT
-template <typename T>
-inline typename r_vector<T>::proxy r_vector<T>::operator[](const int pos) const {
-  return operator[](static_cast<R_xlen_t>(pos));
-}
-
-template <typename T>
-inline typename r_vector<T>::proxy r_vector<T>::at(const int pos) const {
-  return at(static_cast<R_xlen_t>(pos));
-}
-#endif
-
-template <typename T>
-inline typename r_vector<T>::proxy r_vector<T>::operator[](const R_xlen_t pos) const {
-  if (is_altrep_) {
-    return {data_, pos, nullptr, true};
-  }
-  return {data_, pos, data_p_ != nullptr ? &data_p_[pos] : nullptr, false};
-}
-
-template <typename T>
-inline typename r_vector<T>::proxy r_vector<T>::operator[](size_type pos) const {
-  return operator[](static_cast<R_xlen_t>(pos));
-}
-
-template <typename T>
-inline typename r_vector<T>::proxy r_vector<T>::at(const R_xlen_t pos) const {
-  if (pos < 0 || pos >= length_) {
-    throw std::out_of_range("r_vector");
-  }
-  return operator[](static_cast<R_xlen_t>(pos));
-}
-
-template <typename T>
-inline typename r_vector<T>::proxy r_vector<T>::at(size_type pos) const {
-  return at(static_cast<R_xlen_t>(pos));
-}
-
-template <typename T>
-inline typename r_vector<T>::proxy r_vector<T>::operator[](const r_string& name) const {
-  SEXP names = PROTECT(this->names());
-  R_xlen_t size = Rf_xlength(names);
-
-  for (R_xlen_t pos = 0; pos < size; ++pos) {
-    auto cur = Rf_translateCharUTF8(STRING_ELT(names, pos));
-    if (name == cur) {
-      UNPROTECT(1);
-      return operator[](pos);
-    }
-  }
-
-  UNPROTECT(1);
-  throw std::out_of_range("r_vector");
-}
-
-template <typename T>
-inline typename r_vector<T>::proxy r_vector<T>::at(const r_string& name) const {
-  return operator[](name);
-}
-
-template <typename T>
-inline typename r_vector<T>::iterator r_vector<T>::find(const r_string& name) const {
-  SEXP names = PROTECT(this->names());
-  R_xlen_t size = Rf_xlength(names);
-
-  for (R_xlen_t pos = 0; pos < size; ++pos) {
-    auto cur = Rf_translateCharUTF8(STRING_ELT(names, pos));
-    if (name == cur) {
-      UNPROTECT(1);
-      return begin() + pos;
-    }
-  }
-
-  UNPROTECT(1);
-  return end();
-}
-
-template <typename T>
-inline r_vector<T>::r_vector(const r_vector<T>& rhs)
+inline r_vector<T>::r_vector(const r_vector& rhs)
     : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs)), capacity_(rhs.capacity_) {}
 
 template <typename T>
-inline r_vector<T>::r_vector(r_vector<T>&& rhs) {
+inline r_vector<T>::r_vector(r_vector&& rhs) {
   // We don't want to pass through to the read-only constructor from a
   // `writable::r_vector<T>&& rhs` as that forces a truncation to be able to generate
   // a well-formed read-only vector. Instead, we take advantage of the fact that we
@@ -868,7 +717,34 @@ inline r_vector<T>::r_vector(const cpp11::r_vector<T>& rhs)
     : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs.data_)), capacity_(rhs.length_) {}
 
 template <typename T>
-inline r_vector<T>& r_vector<T>::operator=(const r_vector<T>& rhs) {
+inline r_vector<T>::r_vector(const R_xlen_t size) : r_vector() {
+  resize(size);
+}
+
+template <typename T>
+template <typename Iter>
+inline r_vector<T>::r_vector(Iter first, Iter last) : r_vector() {
+  reserve(last - first);
+  while (first != last) {
+    push_back(*first);
+    ++first;
+  }
+}
+
+template <typename T>
+template <typename V, typename W>
+inline r_vector<T>::r_vector(const V& obj) : r_vector() {
+  auto first = obj.begin();
+  auto last = obj.end();
+  reserve(last - first);
+  while (first != last) {
+    push_back(*first);
+    ++first;
+  }
+}
+
+template <typename T>
+inline r_vector<T>& r_vector<T>::operator=(const r_vector& rhs) {
   if (data_ == rhs.data_) {
     return *this;
   }
@@ -893,7 +769,7 @@ inline r_vector<T>& r_vector<T>::operator=(const r_vector<T>& rhs) {
 }
 
 template <typename T>
-inline r_vector<T>& r_vector<T>::operator=(r_vector<T>&& rhs) {
+inline r_vector<T>& r_vector<T>::operator=(r_vector&& rhs) {
   if (data_ == rhs.data_) {
     return *this;
   }
@@ -908,6 +784,95 @@ inline r_vector<T>& r_vector<T>::operator=(r_vector<T>&& rhs) {
   rhs.capacity_ = 0;
 
   return *this;
+}
+
+template <typename T>
+inline r_vector<T>::operator SEXP() const {
+  // Throwing away the const-ness is a bit gross, but we only modify
+  // internal details here, and updating the internal data after we resize allows
+  // statements like `Rf_setAttrib(<r_vector>, name, value)` to make sense, where
+  // people expect that the SEXP inside the `<r_vector>` gets the updated attribute.
+  auto* p = const_cast<r_vector<T>*>(this);
+
+  if (data_ == R_NilValue) {
+    // Specially call out the `NULL` case, which can occur if immediately
+    // returning a default constructed writable `r_vector` as a `SEXP`.
+    p->resize(0);
+    return data_;
+  }
+
+  if (length_ < capacity_) {
+    // Truncate the vector to its `length_`. This unfortunately typically forces
+    // an allocation if the user has called `push_back()` on a writable
+    // `r_vector`. Importantly, going through `resize()` updates: `data_` and
+    // protection of it, `data_p_`, and `capacity_`.
+    p->resize(length_);
+    return data_;
+  }
+
+  return data_;
+}
+
+#ifdef LONG_VECTOR_SUPPORT
+template <typename T>
+inline typename r_vector<T>::proxy r_vector<T>::operator[](const int pos) const {
+  return operator[](static_cast<R_xlen_t>(pos));
+}
+#endif
+
+template <typename T>
+inline typename r_vector<T>::proxy r_vector<T>::operator[](const R_xlen_t pos) const {
+  if (is_altrep_) {
+    return {data_, pos, nullptr, true};
+  }
+  return {data_, pos, data_p_ != nullptr ? &data_p_[pos] : nullptr, false};
+}
+
+template <typename T>
+inline typename r_vector<T>::proxy r_vector<T>::operator[](const size_type pos) const {
+  return operator[](static_cast<R_xlen_t>(pos));
+}
+
+template <typename T>
+inline typename r_vector<T>::proxy r_vector<T>::operator[](const r_string& name) const {
+  SEXP names = PROTECT(this->names());
+  R_xlen_t size = Rf_xlength(names);
+
+  for (R_xlen_t pos = 0; pos < size; ++pos) {
+    auto cur = Rf_translateCharUTF8(STRING_ELT(names, pos));
+    if (name == cur) {
+      UNPROTECT(1);
+      return operator[](pos);
+    }
+  }
+
+  UNPROTECT(1);
+  throw std::out_of_range("r_vector");
+}
+
+#ifdef LONG_VECTOR_SUPPORT
+template <typename T>
+inline typename r_vector<T>::proxy r_vector<T>::at(const int pos) const {
+  return at(static_cast<R_xlen_t>(pos));
+}
+#endif
+
+template <typename T>
+inline typename r_vector<T>::proxy r_vector<T>::at(const R_xlen_t pos) const {
+  if (pos < 0 || pos >= length_) {
+    throw std::out_of_range("r_vector");
+  }
+  return operator[](static_cast<R_xlen_t>(pos));
+}
+
+template <typename T>
+inline typename r_vector<T>::proxy r_vector<T>::at(const size_type pos) const {
+  return at(static_cast<R_xlen_t>(pos));
+}
+
+template <typename T>
+inline typename r_vector<T>::proxy r_vector<T>::at(const r_string& name) const {
+  return operator[](name);
 }
 
 template <typename T>
@@ -953,31 +918,56 @@ inline void r_vector<T>::clear() {
 }
 
 template <typename T>
-inline r_vector<T>::operator SEXP() const {
-  // Throwing away the const-ness is a bit gross, but we only modify
-  // internal details here, and updating the internal data after we resize allows
-  // statements like `Rf_setAttrib(<r_vector>, name, value)` to make sense, where
-  // people expect that the SEXP inside the `<r_vector>` gets the updated attribute.
-  auto* p = const_cast<r_vector<T>*>(this);
-
-  if (data_ == R_NilValue) {
-    // Specially call out the `NULL` case, which can occur if immediately
-    // returning a default constructed writable `r_vector` as a `SEXP`.
-    p->resize(0);
-    return data_;
-  }
-
-  if (length_ < capacity_) {
-    // Truncate the vector to its `length_`. This unfortunately typically forces
-    // an allocation if the user has called `push_back()` on a writable
-    // `r_vector`. Importantly, going through `resize()` updates: `data_` and
-    // protection of it, `data_p_`, and `capacity_`.
-    p->resize(length_);
-    return data_;
-  }
-
-  return data_;
+inline typename r_vector<T>::iterator r_vector<T>::begin() const {
+  return iterator(*this, 0);
 }
+
+template <typename T>
+inline typename r_vector<T>::iterator r_vector<T>::end() const {
+  return iterator(*this, length_);
+}
+
+template <typename T>
+inline typename r_vector<T>::iterator r_vector<T>::find(const r_string& name) const {
+  SEXP names = PROTECT(this->names());
+  R_xlen_t size = Rf_xlength(names);
+
+  for (R_xlen_t pos = 0; pos < size; ++pos) {
+    auto cur = Rf_translateCharUTF8(STRING_ELT(names, pos));
+    if (name == cur) {
+      UNPROTECT(1);
+      return begin() + pos;
+    }
+  }
+
+  UNPROTECT(1);
+  return end();
+}
+
+template <typename T>
+inline attribute_proxy<r_vector<T>> r_vector<T>::attr(const char* name) const {
+  return attribute_proxy<r_vector<T>>(*this, name);
+}
+
+template <typename T>
+inline attribute_proxy<r_vector<T>> r_vector<T>::attr(const std::string& name) const {
+  return attribute_proxy<r_vector<T>>(*this, name.c_str());
+}
+
+template <typename T>
+inline attribute_proxy<r_vector<T>> r_vector<T>::attr(SEXP name) const {
+  return attribute_proxy<r_vector<T>>(*this, name);
+}
+
+template <typename T>
+inline attribute_proxy<r_vector<T>> r_vector<T>::names() const {
+  return attribute_proxy<r_vector<T>>(*this, R_NamesSymbol);
+}
+
+template <typename T>
+r_vector<T>::proxy::proxy(SEXP data, const R_xlen_t index,
+                          typename r_vector::underlying_type* const p, bool is_altrep)
+    : data_(data), index_(index), p_(p), is_altrep_(is_altrep) {}
 
 template <typename T>
 inline typename r_vector<T>::proxy& r_vector<T>::proxy::operator+=(const T& rhs) {
@@ -1016,13 +1006,55 @@ inline typename r_vector<T>::proxy& r_vector<T>::proxy::operator--(int) {
 }
 
 template <typename T>
+inline void r_vector<T>::proxy::operator++() {
+  operator=(static_cast<T>(*this) + 1);
+}
+
+template <typename T>
 inline void r_vector<T>::proxy::operator--() {
   operator=(static_cast<T>(*this) - 1);
 }
 
 template <typename T>
-inline void r_vector<T>::proxy::operator++() {
-  operator=(static_cast<T>(*this) + 1);
+r_vector<T>::iterator::iterator(const r_vector& data, R_xlen_t pos)
+    : r_vector::const_iterator(&data, pos), data_(data) {}
+
+template <typename T>
+inline typename r_vector<T>::iterator& r_vector<T>::iterator::operator++() {
+  ++pos_;
+  if (data_.is_altrep() && pos_ >= block_start_ + length_) {
+    fill_buf(pos_);
+  }
+  return *this;
+}
+
+template <typename T>
+inline typename r_vector<T>::proxy r_vector<T>::iterator::operator*() const {
+  if (data_.is_altrep()) {
+    return proxy(
+        data_.data(), pos_,
+        const_cast<typename r_vector::underlying_type*>(&buf_[pos_ - block_start_]),
+        true);
+  } else {
+    return proxy(data_.data(), pos_,
+                 data_.data_p_ != nullptr ? &data_.data_p_[pos_] : nullptr, false);
+  }
+}
+
+template <typename T>
+inline typename r_vector<T>::iterator& r_vector<T>::iterator::operator+=(R_xlen_t rhs) {
+  pos_ += rhs;
+  if (data_.is_altrep() && pos_ >= block_start_ + length_) {
+    fill_buf(pos_);
+  }
+  return *this;
+}
+
+template <typename T>
+inline typename r_vector<T>::iterator r_vector<T>::iterator::operator+(R_xlen_t rhs) {
+  auto it = *this;
+  it += rhs;
+  return it;
 }
 
 }  // namespace writable
