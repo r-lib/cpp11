@@ -36,7 +36,7 @@ class data_frame : public list {
     return R_NilValue;
   }
 
-  static int calc_nrow(SEXP x) {
+  static R_xlen_t calc_nrow(SEXP x) {
     auto nms = get_attrib0(x, R_RowNamesSymbol);
     bool has_short_rownames =
         (Rf_isInteger(nms) && Rf_xlength(nms) == 2 && INTEGER(nms)[0] == NA_INTEGER);
