@@ -64,6 +64,11 @@ typedef r_vector<SEXP> list;
 namespace writable {
 
 template <>
+inline SEXPTYPE r_vector<SEXP>::get_sexptype() {
+  return VECSXP;
+}
+
+template <>
 inline typename r_vector<SEXP>::proxy& r_vector<SEXP>::proxy::operator=(const SEXP& rhs) {
   SET_VECTOR_ELT(data_, index_, rhs);
   return *this;
@@ -106,18 +111,6 @@ inline r_vector<SEXP>::r_vector(std::initializer_list<named_arg> il)
     UNPROTECT(n_protected);
     throw e;
   }
-}
-
-template <>
-inline void r_vector<SEXP>::reserve(R_xlen_t new_capacity) {
-  data_ = data_ == R_NilValue ? safe[Rf_allocVector](VECSXP, new_capacity)
-                              : safe[Rf_xlengthgets](data_, new_capacity);
-
-  SEXP old_protect = protect_;
-  protect_ = detail::store::insert(data_);
-  detail::store::release(old_protect);
-
-  capacity_ = new_capacity;
 }
 
 template <>

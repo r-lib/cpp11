@@ -63,6 +63,11 @@ typedef r_vector<uint8_t> raws;
 namespace writable {
 
 template <>
+inline SEXPTYPE r_vector<uint8_t>::get_sexptype() {
+  return RAWSXP;
+}
+
+template <>
 inline typename r_vector<uint8_t>::proxy& r_vector<uint8_t>::proxy::operator=(
     const uint8_t& rhs) {
   if (is_altrep_) {
@@ -117,19 +122,6 @@ inline r_vector<uint8_t>::r_vector(std::initializer_list<named_arg> il)
     UNPROTECT(n_protected);
     throw e;
   }
-}
-
-template <>
-inline void r_vector<uint8_t>::reserve(R_xlen_t new_capacity) {
-  data_ = data_ == R_NilValue ? safe[Rf_allocVector](RAWSXP, new_capacity)
-                              : safe[Rf_xlengthgets](data_, new_capacity);
-
-  SEXP old_protect = protect_;
-  protect_ = detail::store::insert(data_);
-  detail::store::release(old_protect);
-
-  data_p_ = RAW(data_);
-  capacity_ = new_capacity;
 }
 
 template <>
