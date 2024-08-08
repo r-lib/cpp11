@@ -23,21 +23,6 @@ namespace cpp11 {
 
 using namespace cpp11::literals;
 
-class type_error : public std::exception {
- public:
-  type_error(int expected, int actual) : expected_(expected), actual_(actual) {}
-  virtual const char* what() const noexcept override {
-    snprintf(str_, 64, "Invalid input type, expected '%s' actual '%s'",
-             Rf_type2char(expected_), Rf_type2char(actual_));
-    return str_;
-  }
-
- private:
-  int expected_;
-  int actual_;
-  mutable char str_[64];
-};
-
 // Forward Declarations
 class named_arg;
 
@@ -59,144 +44,47 @@ class r_vector {
   using underlying_type = typename traits::get_underlying_type<T>::type;
 
   r_vector() noexcept = default;
-
   r_vector(SEXP data);
-
   r_vector(SEXP data, bool is_altrep);
+  r_vector(const r_vector& x);
+  r_vector(r_vector<T>&& x);
+  r_vector(const writable::r_vector<T>& x);
+  r_vector(named_arg) = delete;
+
+  ~r_vector();
+
+  r_vector& operator=(const r_vector& rhs);
+  r_vector& operator=(r_vector&& rhs);
+
+  operator SEXP() const;
+  operator sexp() const;
 
 #ifdef LONG_VECTOR_SUPPORT
   T operator[](const int pos) const;
-  T at(const int pos) const;
 #endif
   T operator[](const R_xlen_t pos) const;
   T operator[](const size_type pos) const;
   T operator[](const r_string& name) const;
 
+#ifdef LONG_VECTOR_SUPPORT
+  T at(const int pos) const;
+#endif
   T at(const R_xlen_t pos) const;
   T at(const size_type pos) const;
   T at(const r_string& name) const;
 
   bool contains(const r_string& name) const;
-
-  // Same reasoning as `r_vector(const r_vector& rhs)` constructor
-  r_vector& operator=(const r_vector& rhs) {
-    if (data_ == rhs.data_) {
-      return *this;
-    }
-
-    // Release existing object that we protect
-    detail::store::release(protect_);
-
-    data_ = rhs.data_;
-    protect_ = detail::store::insert(data_);
-    is_altrep_ = rhs.is_altrep_;
-    data_p_ = rhs.data_p_;
-    length_ = rhs.length_;
-
-    return *this;
-  };
-
-  // Same reasoning as `r_vector(r_vector&& rhs)` constructor
-  r_vector& operator=(r_vector&& rhs) {
-    if (data_ == rhs.data_) {
-      return *this;
-    }
-
-    // Release existing object that we protect
-    detail::store::release(protect_);
-
-    data_ = rhs.data_;
-    protect_ = rhs.protect_;
-    is_altrep_ = rhs.is_altrep_;
-    data_p_ = rhs.data_p_;
-    length_ = rhs.length_;
-
-    // Important for `rhs.protect_`, extra check for everything else
-    rhs.data_ = R_NilValue;
-    rhs.protect_ = R_NilValue;
-    rhs.is_altrep_ = false;
-    rhs.data_p_ = nullptr;
-    rhs.length_ = 0;
-
-    return *this;
-  };
-
-  // We are in read-only space so we can just copy over all properties except for
-  // `protect_`, which we need to manage on our own. `rhs` persists after this call, so we
-  // don't clear anything.
-  r_vector(const r_vector& rhs) {
-    data_ = rhs.data_;
-    protect_ = detail::store::insert(data_);
-    is_altrep_ = rhs.is_altrep_;
-    data_p_ = rhs.data_p_;
-    length_ = rhs.length_;
-  };
-
-  // `rhs` here is a temporary value, it is going to be destructed right after this.
-  // Take ownership over all `rhs` details, including `protect_`.
-  // Importantly, set `rhs.protect_` to `R_NilValue` to prevent the `rhs` destructor from
-  // releasing the object that we now own.
-  r_vector(r_vector&& rhs) {
-    data_ = rhs.data_;
-    protect_ = rhs.protect_;
-    is_altrep_ = rhs.is_altrep_;
-    data_p_ = rhs.data_p_;
-    length_ = rhs.length_;
-
-    // Important for `rhs.protect_`, extra check for everything else
-    rhs.data_ = R_NilValue;
-    rhs.protect_ = R_NilValue;
-    rhs.is_altrep_ = false;
-    rhs.data_p_ = nullptr;
-    rhs.length_ = 0;
-  };
-
-  // `rhs` here is writable, meaning the underlying `SEXP` could have more `capacity` than
-  // a read only equivalent would expect. This means we have to go through `SEXP` first,
-  // to truncate the writable data, and then we can wrap it in a read only `r_vector`.
-  //
-  // It would be the same scenario if we came from a writable temporary, i.e.
-  // `writable::r_vector<T>&& rhs`, so we let this method handle both scenarios.
-  r_vector(const writable::r_vector<T>& rhs) : r_vector(static_cast<SEXP>(rhs)) {}
-
-  r_vector(named_arg) = delete;
-
   bool is_altrep() const;
-
   bool named() const;
-
   R_xlen_t size() const;
-
-  operator SEXP() const;
-
-  operator sexp() const;
-
   bool empty() const;
-
-  /// Provide access to the underlying data, mainly for interface
-  /// compatibility with std::vector
   SEXP data() const;
 
-  const sexp attr(const char* name) const {
-    return SEXP(attribute_proxy<r_vector<T>>(*this, name));
-  }
+  const sexp attr(const char* name) const;
+  const sexp attr(const std::string& name) const;
+  const sexp attr(SEXP name) const;
 
-  const sexp attr(const std::string& name) const {
-    return SEXP(attribute_proxy<r_vector<T>>(*this, name.c_str()));
-  }
-
-  const sexp attr(SEXP name) const {
-    return SEXP(attribute_proxy<r_vector<T>>(*this, name));
-  }
-
-  r_vector<r_string> names() const {
-    SEXP nms = SEXP(Rf_getAttrib(data_, R_NamesSymbol));
-    if (nms == R_NilValue) {
-      return r_vector<r_string>();
-    }
-
-    return r_vector<r_string>(nms);
-  }
+  r_vector<r_string> names() const;
 
   class const_iterator {
    public:
@@ -208,19 +96,19 @@ class r_vector {
 
     const_iterator(const r_vector* data, R_xlen_t pos);
 
-    inline const_iterator operator+(R_xlen_t pos);
-    inline ptrdiff_t operator-(const const_iterator& other) const;
+    const_iterator operator+(R_xlen_t pos);
+    ptrdiff_t operator-(const const_iterator& other) const;
 
-    inline const_iterator& operator++();
-    inline const_iterator& operator--();
+    const_iterator& operator++();
+    const_iterator& operator--();
 
-    inline const_iterator& operator+=(R_xlen_t pos);
-    inline const_iterator& operator-=(R_xlen_t pos);
+    const_iterator& operator+=(R_xlen_t pos);
+    const_iterator& operator-=(R_xlen_t pos);
 
-    inline bool operator!=(const const_iterator& other) const;
-    inline bool operator==(const const_iterator& other) const;
+    bool operator!=(const const_iterator& other) const;
+    bool operator==(const const_iterator& other) const;
 
-    inline T operator*() const;
+    T operator*() const;
 
     friend class writable::r_vector<T>::iterator;
 
@@ -234,16 +122,11 @@ class r_vector {
     R_xlen_t length_ = 0;
   };
 
- public:
   const_iterator begin() const;
   const_iterator end() const;
-
   const_iterator cbegin() const;
   const_iterator cend() const;
-
   const_iterator find(const r_string& name) const;
-
-  ~r_vector() { detail::store::release(protect_); }
 
  private:
   SEXP data_ = R_NilValue;
@@ -437,6 +320,171 @@ inline r_vector<T>::r_vector(const SEXP data, bool is_altrep)
       data_p_(get_p(is_altrep, data)),
       length_(Rf_xlength(data)) {}
 
+// We are in read-only space so we can just copy over all properties except for
+// `protect_`, which we need to manage on our own. `x` persists after this call, so we
+// don't clear anything.
+template <typename T>
+inline r_vector<T>::r_vector(const r_vector& x) {
+  data_ = x.data_;
+  protect_ = detail::store::insert(data_);
+  is_altrep_ = x.is_altrep_;
+  data_p_ = x.data_p_;
+  length_ = x.length_;
+}
+
+// `x` here is a temporary value, it is going to be destructed right after this.
+// Take ownership over all `x` details, including `protect_`.
+// Importantly, set `x.protect_` to `R_NilValue` to prevent the `x` destructor from
+// releasing the object that we now own.
+template <typename T>
+inline r_vector<T>::r_vector(r_vector&& x) {
+  data_ = x.data_;
+  protect_ = x.protect_;
+  is_altrep_ = x.is_altrep_;
+  data_p_ = x.data_p_;
+  length_ = x.length_;
+
+  // Important for `x.protect_`, extra check for everything else
+  x.data_ = R_NilValue;
+  x.protect_ = R_NilValue;
+  x.is_altrep_ = false;
+  x.data_p_ = nullptr;
+  x.length_ = 0;
+}
+
+// `x` here is writable, meaning the underlying `SEXP` could have more `capacity` than
+// a read only equivalent would expect. This means we have to go through `SEXP` first,
+// to truncate the writable data, and then we can wrap it in a read only `r_vector`.
+//
+// It would be the same scenario if we came from a writable temporary, i.e.
+// `writable::r_vector<T>&& x`, so we let this method handle both scenarios.
+template <typename T>
+inline r_vector<T>::r_vector(const writable::r_vector<T>& x)
+    : r_vector(static_cast<SEXP>(x)) {}
+
+template <typename T>
+inline r_vector<T>::~r_vector() {
+  detail::store::release(protect_);
+}
+
+// Same reasoning as `r_vector(const r_vector& x)` constructor
+template <typename T>
+inline r_vector<T>& r_vector<T>::operator=(const r_vector& rhs) {
+  if (data_ == rhs.data_) {
+    return *this;
+  }
+
+  // Release existing object that we protect
+  detail::store::release(protect_);
+
+  data_ = rhs.data_;
+  protect_ = detail::store::insert(data_);
+  is_altrep_ = rhs.is_altrep_;
+  data_p_ = rhs.data_p_;
+  length_ = rhs.length_;
+
+  return *this;
+};
+
+// Same reasoning as `r_vector(r_vector&& x)` constructor
+template <typename T>
+inline r_vector<T>& r_vector<T>::operator=(r_vector&& rhs) {
+  if (data_ == rhs.data_) {
+    return *this;
+  }
+
+  // Release existing object that we protect
+  detail::store::release(protect_);
+
+  data_ = rhs.data_;
+  protect_ = rhs.protect_;
+  is_altrep_ = rhs.is_altrep_;
+  data_p_ = rhs.data_p_;
+  length_ = rhs.length_;
+
+  // Important for `rhs.protect_`, extra check for everything else
+  rhs.data_ = R_NilValue;
+  rhs.protect_ = R_NilValue;
+  rhs.is_altrep_ = false;
+  rhs.data_p_ = nullptr;
+  rhs.length_ = 0;
+
+  return *this;
+};
+
+template <typename T>
+inline r_vector<T>::operator SEXP() const {
+  return data_;
+}
+
+template <typename T>
+inline r_vector<T>::operator sexp() const {
+  return data_;
+}
+
+#ifdef LONG_VECTOR_SUPPORT
+template <typename T>
+inline T r_vector<T>::operator[](const int pos) const {
+  return operator[](static_cast<R_xlen_t>(pos));
+}
+#endif
+
+template <typename T>
+inline T r_vector<T>::operator[](const size_type pos) const {
+  return operator[](static_cast<R_xlen_t>(pos));
+}
+
+template <typename T>
+inline T r_vector<T>::operator[](const r_string& name) const {
+  SEXP names = this->names();
+  R_xlen_t size = Rf_xlength(names);
+
+  for (R_xlen_t pos = 0; pos < size; ++pos) {
+    auto cur = Rf_translateCharUTF8(STRING_ELT(names, pos));
+    if (name == cur) {
+      return operator[](pos);
+    }
+  }
+
+  throw std::out_of_range("r_vector");
+}
+
+#ifdef LONG_VECTOR_SUPPORT
+template <typename T>
+inline T r_vector<T>::at(const int pos) const {
+  return at(static_cast<R_xlen_t>(pos));
+}
+#endif
+
+template <typename T>
+inline T r_vector<T>::at(const R_xlen_t pos) const {
+  if (pos < 0 || pos >= length_) {
+    throw std::out_of_range("r_vector");
+  }
+
+  return operator[](pos);
+}
+
+template <typename T>
+inline T r_vector<T>::at(const size_type pos) const {
+  return at(static_cast<R_xlen_t>(pos));
+}
+
+template <typename T>
+inline bool r_vector<T>::contains(const r_string& name) const {
+  SEXP names = this->names();
+  R_xlen_t size = Rf_xlength(names);
+
+  for (R_xlen_t pos = 0; pos < size; ++pos) {
+    auto cur = Rf_translateCharUTF8(STRING_ELT(names, pos));
+    if (name == cur) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 template <typename T>
 inline bool r_vector<T>::is_altrep() const {
   return is_altrep_;
@@ -453,18 +501,8 @@ inline R_xlen_t r_vector<T>::size() const {
 }
 
 template <typename T>
-inline r_vector<T>::operator SEXP() const {
-  return data_;
-}
-
-template <typename T>
 inline bool r_vector<T>::empty() const {
   return (!(this->size() > 0));
-}
-
-template <typename T>
-inline r_vector<T>::operator sexp() const {
-  return data_;
 }
 
 /// Provide access to the underlying data, mainly for interface
@@ -472,6 +510,31 @@ inline r_vector<T>::operator sexp() const {
 template <typename T>
 inline SEXP r_vector<T>::data() const {
   return data_;
+}
+
+template <typename T>
+inline const sexp r_vector<T>::attr(const char* name) const {
+  return SEXP(attribute_proxy<r_vector<T>>(*this, name));
+}
+
+template <typename T>
+inline const sexp r_vector<T>::attr(const std::string& name) const {
+  return SEXP(attribute_proxy<r_vector<T>>(*this, name.c_str()));
+}
+
+template <typename T>
+inline const sexp r_vector<T>::attr(SEXP name) const {
+  return SEXP(attribute_proxy<r_vector<T>>(*this, name));
+}
+
+template <typename T>
+inline r_vector<r_string> r_vector<T>::names() const {
+  SEXP nms = Rf_getAttrib(data_, R_NamesSymbol);
+  if (nms == R_NilValue) {
+    return r_vector<r_string>();
+  } else {
+    return r_vector<r_string>(nms);
+  }
 }
 
 template <typename T>
@@ -542,19 +605,19 @@ inline typename r_vector<T>::const_iterator& r_vector<T>::const_iterator::operat
 
 template <typename T>
 inline bool r_vector<T>::const_iterator::operator!=(
-    const r_vector<T>::const_iterator& other) const {
+    const r_vector::const_iterator& other) const {
   return pos_ != other.pos_;
 }
 
 template <typename T>
 inline bool r_vector<T>::const_iterator::operator==(
-    const r_vector<T>::const_iterator& other) const {
+    const r_vector::const_iterator& other) const {
   return pos_ == other.pos_;
 }
 
 template <typename T>
 inline ptrdiff_t r_vector<T>::const_iterator::operator-(
-    const r_vector<T>::const_iterator& other) const {
+    const r_vector::const_iterator& other) const {
   return pos_ - other.pos_;
 }
 
@@ -567,51 +630,7 @@ inline typename r_vector<T>::const_iterator r_vector<T>::const_iterator::operato
 }
 
 template <typename T>
-inline T cpp11::r_vector<T>::at(R_xlen_t pos) const {
-  if (pos < 0 || pos >= length_) {
-    throw std::out_of_range("r_vector");
-  }
-
-  return operator[](pos);
-}
-
-template <typename T>
-inline T cpp11::r_vector<T>::at(size_type pos) const {
-  return at(static_cast<R_xlen_t>(pos));
-}
-
-template <typename T>
-inline T cpp11::r_vector<T>::operator[](const r_string& name) const {
-  SEXP names = this->names();
-  R_xlen_t size = Rf_xlength(names);
-
-  for (R_xlen_t pos = 0; pos < size; ++pos) {
-    auto cur = Rf_translateCharUTF8(STRING_ELT(names, pos));
-    if (name == cur) {
-      return operator[](pos);
-    }
-  }
-
-  throw std::out_of_range("r_vector");
-}
-
-template <typename T>
-inline bool cpp11::r_vector<T>::contains(const r_string& name) const {
-  SEXP names = this->names();
-  R_xlen_t size = Rf_xlength(names);
-
-  for (R_xlen_t pos = 0; pos < size; ++pos) {
-    auto cur = Rf_translateCharUTF8(STRING_ELT(names, pos));
-    if (name == cur) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-template <typename T>
-inline typename cpp11::r_vector<T>::const_iterator cpp11::r_vector<T>::find(
+inline typename r_vector<T>::const_iterator r_vector<T>::find(
     const r_string& name) const {
   SEXP names = this->names();
   R_xlen_t size = Rf_xlength(names);
@@ -633,23 +652,6 @@ inline T r_vector<T>::const_iterator::operator*() const {
   } else {
     return static_cast<T>(data_->data_p_[pos_]);
   }
-}
-
-#ifdef LONG_VECTOR_SUPPORT
-template <typename T>
-inline T r_vector<T>::operator[](const int pos) const {
-  return operator[](static_cast<R_xlen_t>(pos));
-}
-
-template <typename T>
-inline T r_vector<T>::at(const int pos) const {
-  return at(static_cast<R_xlen_t>(pos));
-}
-#endif
-
-template <typename T>
-inline T r_vector<T>::operator[](size_type pos) const {
-  return operator[](static_cast<R_xlen_t>(pos));
 }
 
 namespace writable {
@@ -1085,5 +1087,21 @@ template <typename T>
 bool operator!=(const r_vector<T>& lhs, const r_vector<T>& rhs) {
   return !(lhs == rhs);
 }
+
+// Special helper class used by specializations to throw consistent exceptions
+class type_error : public std::exception {
+ public:
+  type_error(int expected, int actual) : expected_(expected), actual_(actual) {}
+  virtual const char* what() const noexcept override {
+    snprintf(str_, 64, "Invalid input type, expected '%s' actual '%s'",
+             Rf_type2char(expected_), Rf_type2char(actual_));
+    return str_;
+  }
+
+ private:
+  int expected_;
+  int actual_;
+  mutable char str_[64];
+};
 
 }  // namespace cpp11
