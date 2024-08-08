@@ -228,8 +228,6 @@ class r_vector : public cpp11::r_vector<T> {
   void pop_back();
 
   void resize(R_xlen_t count);
-
-  /// Implemented in specialization
   void reserve(R_xlen_t new_capacity);
 
   iterator insert(R_xlen_t pos, T value);
@@ -308,6 +306,9 @@ class r_vector : public cpp11::r_vector<T> {
   };
 
  private:
+  /// Implemented in specialization
+  static SEXPTYPE get_sexptype();
+
   using cpp11::r_vector<T>::get_p;
 };
 }  // namespace writable
@@ -884,6 +885,26 @@ template <typename T>
 inline void r_vector<T>::resize(R_xlen_t count) {
   reserve(count);
   length_ = count;
+}
+
+/// Reserve a new capacity and copy all elements over
+///
+/// SAFETY: The new capacity is allowed to be smaller than the current capacity, which
+/// is used in the `SEXP` conversion operator during truncation, but if that occurs then
+/// we also need to update the `length_`, so if you need to truncate then you should call
+/// `resize()` instead.
+template <typename T>
+inline void r_vector<T>::reserve(R_xlen_t new_capacity) {
+  SEXP old_protect = protect_;
+
+  data_ = (data_ == R_NilValue) ? safe[Rf_allocVector](get_sexptype(), new_capacity)
+                                : safe[Rf_xlengthgets](data_, new_capacity);
+  protect_ = detail::store::insert(data_);
+  is_altrep_ = ALTREP(data_);
+  data_p_ = get_p(is_altrep_, data_);
+  capacity_ = new_capacity;
+
+  detail::store::release(old_protect);
 }
 
 template <typename T>

@@ -54,6 +54,11 @@ typedef r_vector<r_string> strings;
 namespace writable {
 
 template <>
+inline SEXPTYPE r_vector<r_string>::get_sexptype() {
+  return STRSXP;
+}
+
+template <>
 inline typename r_vector<r_string>::proxy& r_vector<r_string>::proxy::operator=(
     const r_string& rhs) {
   unwind_protect([&] { SET_STRING_ELT(data_, index_, rhs); });
@@ -134,18 +139,6 @@ inline r_vector<r_string>::r_vector(std::initializer_list<named_arg> il)
     UNPROTECT(n_protected);
     throw e;
   }
-}
-
-template <>
-inline void r_vector<r_string>::reserve(R_xlen_t new_capacity) {
-  data_ = data_ == R_NilValue ? safe[Rf_allocVector](STRSXP, new_capacity)
-                              : safe[Rf_xlengthgets](data_, new_capacity);
-
-  SEXP old_protect = protect_;
-  protect_ = detail::store::insert(data_);
-  detail::store::release(old_protect);
-
-  capacity_ = new_capacity;
 }
 
 template <>

@@ -55,6 +55,11 @@ typedef r_vector<double> doubles;
 namespace writable {
 
 template <>
+inline SEXPTYPE r_vector<double>::get_sexptype() {
+  return REALSXP;
+}
+
+template <>
 inline typename r_vector<double>::proxy& r_vector<double>::proxy::operator=(
     const double& rhs) {
   if (is_altrep_) {
@@ -102,18 +107,6 @@ inline r_vector<double>::r_vector(std::initializer_list<named_arg> il)
     UNPROTECT(n_protected);
     throw e;
   }
-}
-
-template <>
-inline void r_vector<double>::reserve(R_xlen_t new_capacity) {
-  data_ = data_ == R_NilValue ? safe[Rf_allocVector](REALSXP, new_capacity)
-                              : safe[Rf_xlengthgets](data_, new_capacity);
-  SEXP old_protect = protect_;
-  protect_ = detail::store::insert(data_);
-  detail::store::release(old_protect);
-
-  data_p_ = REAL(data_);
-  capacity_ = new_capacity;
 }
 
 template <>

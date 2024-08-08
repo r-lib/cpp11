@@ -56,6 +56,11 @@ typedef r_vector<int> integers;
 namespace writable {
 
 template <>
+inline SEXPTYPE r_vector<int>::get_sexptype() {
+  return INTSXP;
+}
+
+template <>
 inline typename r_vector<int>::proxy& r_vector<int>::proxy::operator=(const int& rhs) {
   if (is_altrep_) {
     // NOPROTECT: likely too costly to unwind protect every set elt
@@ -79,22 +84,6 @@ inline r_vector<int>::proxy::operator int() const {
 template <>
 inline r_vector<int>::r_vector(std::initializer_list<int> il)
     : cpp11::r_vector<int>(as_sexp(il)), capacity_(il.size()) {}
-
-template <>
-inline void r_vector<int>::reserve(R_xlen_t new_capacity) {
-  data_ = data_ == R_NilValue ? safe[Rf_allocVector](INTSXP, new_capacity)
-                              : safe[Rf_xlengthgets](data_, new_capacity);
-  SEXP old_protect = protect_;
-
-  // Protect the new data
-  protect_ = detail::store::insert(data_);
-
-  // Release the old protection;
-  detail::store::release(old_protect);
-
-  data_p_ = INTEGER(data_);
-  capacity_ = new_capacity;
-}
 
 template <>
 inline r_vector<int>::r_vector(std::initializer_list<named_arg> il)
