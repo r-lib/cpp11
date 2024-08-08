@@ -78,33 +78,87 @@ class r_vector {
 
   bool contains(const r_string& name) const;
 
+  // Same reasoning as `r_vector(const r_vector& rhs)` constructor
   r_vector& operator=(const r_vector& rhs) {
-    SEXP old_protect = protect_;
+    if (data_ == rhs.data_) {
+      return *this;
+    }
+
+    // Release existing object that we protect
+    detail::store::release(protect_);
 
     data_ = rhs.data_;
     protect_ = detail::store::insert(data_);
     is_altrep_ = rhs.is_altrep_;
     data_p_ = rhs.data_p_;
     length_ = rhs.length_;
-
-    detail::store::release(old_protect);
 
     return *this;
   };
 
-  r_vector(const r_vector& rhs) {
-    SEXP old_protect = protect_;
+  // Same reasoning as `r_vector(r_vector&& rhs)` constructor
+  r_vector& operator=(r_vector&& rhs) {
+    if (data_ == rhs.data_) {
+      return *this;
+    }
 
+    // Release existing object that we protect
+    detail::store::release(protect_);
+
+    data_ = rhs.data_;
+    protect_ = rhs.protect_;
+    is_altrep_ = rhs.is_altrep_;
+    data_p_ = rhs.data_p_;
+    length_ = rhs.length_;
+
+    // Important for `rhs.protect_`, extra check for everything else
+    rhs.data_ = R_NilValue;
+    rhs.protect_ = R_NilValue;
+    rhs.is_altrep_ = false;
+    rhs.data_p_ = nullptr;
+    rhs.length_ = 0;
+
+    return *this;
+  };
+
+  // We are in read-only space so we can just copy over all properties except for
+  // `protect_`, which we need to manage on our own. `rhs` persists after this call, so we
+  // don't clear anything.
+  r_vector(const r_vector& rhs) {
     data_ = rhs.data_;
     protect_ = detail::store::insert(data_);
     is_altrep_ = rhs.is_altrep_;
     data_p_ = rhs.data_p_;
     length_ = rhs.length_;
-
-    detail::store::release(old_protect);
   };
 
+  // `rhs` here is a temporary value, it is going to be destructed right after this.
+  // Take ownership over all `rhs` details, including `protect_`.
+  // Importantly, set `rhs.protect_` to `R_NilValue` to prevent the `rhs` destructor from
+  // releasing the object that we now own.
+  r_vector(r_vector&& rhs) {
+    data_ = rhs.data_;
+    protect_ = rhs.protect_;
+    is_altrep_ = rhs.is_altrep_;
+    data_p_ = rhs.data_p_;
+    length_ = rhs.length_;
+
+    // Important for `rhs.protect_`, extra check for everything else
+    rhs.data_ = R_NilValue;
+    rhs.protect_ = R_NilValue;
+    rhs.is_altrep_ = false;
+    rhs.data_p_ = nullptr;
+    rhs.length_ = 0;
+  };
+
+  // `rhs` here is writable, meaning the underlying `SEXP` could have more `capacity` than
+  // a read only equivalent would expect. This means we have to go through `SEXP` first,
+  // to truncate the writable data, and then we can wrap it in a read only `r_vector`.
+  //
+  // It would be the same scenario if we came from a writable temporary, i.e.
+  // `writable::r_vector<T>&& rhs`, so we let this method handle both scenarios.
   r_vector(const writable::r_vector<T>& rhs) : r_vector(static_cast<SEXP>(rhs)) {}
+
   r_vector(named_arg) = delete;
 
   bool is_altrep() const;
@@ -214,8 +268,6 @@ using has_begin_fun = std::decay<decltype(*begin(std::declval<T>()))>;
 template <typename T>
 class r_vector : public cpp11::r_vector<T> {
  private:
-  SEXP protect_ = R_NilValue;
-
   // These are necessary because type names are not directly accessible in
   // template inheritance
   using typename cpp11::r_vector<T>::underlying_type;
@@ -224,6 +276,9 @@ class r_vector : public cpp11::r_vector<T> {
   using cpp11::r_vector<T>::data_p_;
   using cpp11::r_vector<T>::is_altrep_;
   using cpp11::r_vector<T>::length_;
+  using cpp11::r_vector<T>::protect_;
+
+  using cpp11::r_vector<T>::get_p;
 
   R_xlen_t capacity_ = 0;
 
@@ -301,8 +356,6 @@ class r_vector : public cpp11::r_vector<T> {
   r_vector(const V& obj);
 
   explicit r_vector(const R_xlen_t size);
-
-  ~r_vector();
 
   r_vector(const r_vector& rhs);
   r_vector(r_vector&& rhs);
@@ -660,27 +713,20 @@ inline typename r_vector<T>::iterator r_vector<T>::end() const {
 
 template <typename T>
 inline r_vector<T>::r_vector(const SEXP& data)
-    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](data)),
-      protect_(detail::store::insert(data_)),
-      capacity_(length_) {}
+    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](data)), capacity_(length_) {}
 
 template <typename T>
 inline r_vector<T>::r_vector(const SEXP& data, bool is_altrep)
     : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](data), is_altrep),
-      protect_(detail::store::insert(data_)),
       capacity_(length_) {}
 
 template <typename T>
 inline r_vector<T>::r_vector(SEXP&& data)
-    : cpp11::r_vector<T>(data),
-      protect_(detail::store::insert(data_)),
-      capacity_(length_) {}
+    : cpp11::r_vector<T>(data), capacity_(length_) {}
 
 template <typename T>
 inline r_vector<T>::r_vector(SEXP&& data, bool is_altrep)
-    : cpp11::r_vector<T>(data, is_altrep),
-      protect_(detail::store::insert(data_)),
-      capacity_(length_) {}
+    : cpp11::r_vector<T>(data, is_altrep), capacity_(length_) {}
 
 template <typename T>
 template <typename Iter>
@@ -707,11 +753,6 @@ inline r_vector<T>::r_vector(const V& obj) : r_vector() {
 template <typename T>
 inline r_vector<T>::r_vector(const R_xlen_t size) : r_vector() {
   resize(size);
-}
-
-template <typename T>
-inline r_vector<T>::~r_vector() {
-  detail::store::release(protect_);
 }
 
 #ifdef LONG_VECTOR_SUPPORT
@@ -793,41 +834,58 @@ inline typename r_vector<T>::iterator r_vector<T>::find(const r_string& name) co
 
 template <typename T>
 inline r_vector<T>::r_vector(const r_vector<T>& rhs)
-    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs)),
-      protect_(detail::store::insert(data_)),
-      capacity_(rhs.capacity_) {}
+    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs)), capacity_(rhs.capacity_) {}
 
 template <typename T>
-inline r_vector<T>::r_vector(r_vector<T>&& rhs)
-    : cpp11::r_vector<T>(rhs), protect_(rhs.protect_), capacity_(rhs.capacity_) {
+inline r_vector<T>::r_vector(r_vector<T>&& rhs) {
+  // We don't want to pass through to the read-only constructor from a
+  // `writable::r_vector<T>&& rhs` as that forces a truncation to be able to generate
+  // a well-formed read-only vector. Instead, we take advantage of the fact that we
+  // are going from writable input to writable output and just move everything over.
+  //
+  // This ends up looking very similar to the equivalent read-only constructor from a
+  // read-only `r_vector&& rhs`, with the addition of moving the capacity.
+  data_ = rhs.data_;
+  protect_ = rhs.protect_;
+  is_altrep_ = rhs.is_altrep_;
+  data_p_ = rhs.data_p_;
+  length_ = rhs.length_;
+  capacity_ = rhs.capacity_;
+
+  // Important for `rhs.protect_`, extra check for everything else
   rhs.data_ = R_NilValue;
   rhs.protect_ = R_NilValue;
+  rhs.is_altrep_ = false;
+  rhs.data_p_ = nullptr;
+  rhs.length_ = 0;
+  rhs.capacity_ = 0;
 }
 
 template <typename T>
 inline r_vector<T>::r_vector(const cpp11::r_vector<T>& rhs)
-    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs)),
-      protect_(detail::store::insert(data_)),
-      capacity_(rhs.length_) {}
+    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs.data_)), capacity_(rhs.length_) {}
 
-// We don't release the old object until the end in case we throw an exception
-// during the duplicate.
 template <typename T>
 inline r_vector<T>& r_vector<T>::operator=(const r_vector<T>& rhs) {
   if (data_ == rhs.data_) {
     return *this;
   }
 
-  cpp11::r_vector<T>::operator=(rhs);
+  // We don't release the old object until the end in case we throw an exception
+  // during the duplicate.
+  SEXP old_protect = protect_;
 
-  auto old_protect = protect_;
-
+  // Unlike with move assignment operator, we can't just call the read only parent method.
+  // We are in writable mode, so we must duplicate the `rhs` (since it isn't a temporary
+  // we can just take ownership of) and recompute the properties from the duplicate.
   data_ = safe[Rf_shallow_duplicate](rhs.data_);
   protect_ = detail::store::insert(data_);
+  is_altrep_ = ALTREP(data_);
+  data_p_ = get_p(is_altrep_, data_);
+  length_ = rhs.length_;
+  capacity_ = rhs.capacity_;
 
   detail::store::release(old_protect);
-
-  capacity_ = rhs.capacity_;
 
   return *this;
 }
@@ -838,19 +896,14 @@ inline r_vector<T>& r_vector<T>::operator=(r_vector<T>&& rhs) {
     return *this;
   }
 
-  cpp11::r_vector<T>::operator=(rhs);
+  // Call parent read only move assignment operator to move
+  // all other properties, including protection handling
+  cpp11::r_vector<T>::operator=(std::move(rhs));
 
-  SEXP old_protect = protect_;
-
-  data_ = rhs.data_;
-  protect_ = rhs.protect_;
-
-  detail::store::release(old_protect);
-
+  // Handle fields specific to writable
   capacity_ = rhs.capacity_;
 
-  rhs.data_ = R_NilValue;
-  rhs.protect_ = R_NilValue;
+  rhs.capacity_ = 0;
 
   return *this;
 }

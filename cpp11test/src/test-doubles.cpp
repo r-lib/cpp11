@@ -233,7 +233,11 @@ context("doubles-C++") {
     w = z;
     expect_true(w.size() == 5);
     expect_true(w.data() != z.data());
-    expect_true(w.is_altrep() == z.is_altrep());
+    // Shallow duplication of objects of a very small size (like 1:5) don't result in
+    // a new ALTREP object. Make sure we check ALTREP-ness of the newly duplicated object,
+    // instead of just blindly inheriting the ALTREP-ness of the thing we duplicate.
+    expect_true(w.is_altrep() != z.is_altrep());
+    expect_true(w.is_altrep() == ALTREP(w.data()));
   }
 
   test_that("writable::doubles(SEXP) move assignment") {

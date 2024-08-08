@@ -8,7 +8,7 @@
 #include "cpp11/R.hpp"          // for SEXP, SEXPREC, Rf_allocVector, REAL
 #include "cpp11/as.hpp"         // for as_sexp
 #include "cpp11/named_arg.hpp"  // for named_arg
-#include "cpp11/protect.hpp"    // for SEXP, SEXPREC, REAL_ELT, R_Preserve...
+#include "cpp11/protect.hpp"    // for safe
 #include "cpp11/r_vector.hpp"   // for vector, vector<>::proxy, vector<>::...
 #include "cpp11/sexp.hpp"       // for sexp
 
@@ -84,7 +84,6 @@ template <>
 inline r_vector<double>::r_vector(std::initializer_list<named_arg> il)
     : cpp11::r_vector<double>(safe[Rf_allocVector](REALSXP, il.size())),
       capacity_(il.size()) {
-  protect_ = detail::store::insert(data_);
   int n_protected = 0;
 
   try {
@@ -100,7 +99,6 @@ inline r_vector<double>::r_vector(std::initializer_list<named_arg> il)
       UNPROTECT(n_protected);
     });
   } catch (const unwind_exception& e) {
-    detail::store::release(protect_);
     UNPROTECT(n_protected);
     throw e;
   }
