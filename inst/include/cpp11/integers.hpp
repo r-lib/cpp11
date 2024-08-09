@@ -45,10 +45,16 @@ inline typename r_vector<int>::underlying_type* r_vector<int>::get_p(bool is_alt
 }
 
 template <>
-inline void r_vector<int>::const_iterator::fill_buf(R_xlen_t pos) {
-  length_ = std::min(64_xl, data_->size() - pos);
-  INTEGER_GET_REGION(data_->data_, pos, length_, buf_.data());
-  block_start_ = pos;
+inline void r_vector<int>::get_region(
+    SEXP x, R_xlen_t i, R_xlen_t n,
+    typename traits::get_underlying_type<int>::type* buf) {
+  // NOPROTECT: likely too costly to unwind protect here
+  INTEGER_GET_REGION(x, i, n, buf);
+};
+
+template <>
+inline bool r_vector<int>::const_iterator::use_buf(bool is_altrep) {
+  return is_altrep;
 }
 
 typedef r_vector<int> integers;

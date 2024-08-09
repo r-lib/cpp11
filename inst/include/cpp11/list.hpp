@@ -50,8 +50,15 @@ inline typename r_vector<SEXP>::underlying_type* r_vector<SEXP>::get_p(bool, SEX
 }
 
 template <>
-inline void r_vector<SEXP>::const_iterator::fill_buf(R_xlen_t) {
-  return;
+inline void r_vector<SEXP>::get_region(
+    SEXP x, R_xlen_t i, R_xlen_t n,
+    typename traits::get_underlying_type<SEXP>::type* buf) {
+  cpp11::stop("Unreachable!");
+};
+
+template <>
+inline bool r_vector<SEXP>::const_iterator::use_buf(bool is_altrep) {
+  return false;
 }
 
 template <>

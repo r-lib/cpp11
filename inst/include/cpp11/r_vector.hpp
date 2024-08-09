@@ -138,12 +138,15 @@ class r_vector {
 
    private:
     /// Implemented in specialization
+    static bool use_buf(bool is_altrep);
     void fill_buf(R_xlen_t pos);
   };
 
  private:
   /// Implemented in specialization
   static underlying_type* get_p(bool is_altrep, SEXP data);
+  /// Implemented in specialization
+  static void get_region(SEXP x, R_xlen_t i, R_xlen_t n, underlying_type* buf);
   /// Implemented in specialization
   static SEXP valid_type(SEXP data);
 
@@ -283,6 +286,7 @@ class r_vector : public cpp11::r_vector<T> {
     using cpp11::r_vector<T>::const_iterator::pos_;
     using cpp11::r_vector<T>::const_iterator::buf_;
     using cpp11::r_vector<T>::const_iterator::length_;
+    using cpp11::r_vector<T>::const_iterator::use_buf;
     using cpp11::r_vector<T>::const_iterator::fill_buf;
 
    public:
@@ -572,7 +576,7 @@ inline typename r_vector<T>::const_iterator r_vector<T>::cend() const {
 template <typename T>
 r_vector<T>::const_iterator::const_iterator(const r_vector* data, R_xlen_t pos)
     : data_(data), pos_(pos), buf_() {
-  if (data_->is_altrep()) {
+  if (use_buf(data_->is_altrep())) {
     fill_buf(pos);
   }
 }
@@ -580,7 +584,7 @@ r_vector<T>::const_iterator::const_iterator(const r_vector* data, R_xlen_t pos)
 template <typename T>
 inline typename r_vector<T>::const_iterator& r_vector<T>::const_iterator::operator++() {
   ++pos_;
-  if (data_->is_altrep() && pos_ >= block_start_ + length_) {
+  if (use_buf(data_->is_altrep()) && pos_ >= block_start_ + length_) {
     fill_buf(pos_);
   }
   return *this;
@@ -589,7 +593,7 @@ inline typename r_vector<T>::const_iterator& r_vector<T>::const_iterator::operat
 template <typename T>
 inline typename r_vector<T>::const_iterator& r_vector<T>::const_iterator::operator--() {
   --pos_;
-  if (data_->is_altrep() && pos_ > 0 && pos_ < block_start_) {
+  if (use_buf(data_->is_altrep()) && pos_ > 0 && pos_ < block_start_) {
     fill_buf(std::max(0_xl, pos_ - 64));
   }
   return *this;
@@ -599,7 +603,7 @@ template <typename T>
 inline typename r_vector<T>::const_iterator& r_vector<T>::const_iterator::operator+=(
     R_xlen_t i) {
   pos_ += i;
-  if (data_->is_altrep() && pos_ >= block_start_ + length_) {
+  if (use_buf(data_->is_altrep()) && pos_ >= block_start_ + length_) {
     fill_buf(pos_);
   }
   return *this;
@@ -609,7 +613,7 @@ template <typename T>
 inline typename r_vector<T>::const_iterator& r_vector<T>::const_iterator::operator-=(
     R_xlen_t i) {
   pos_ -= i;
-  if (data_->is_altrep() && pos_ >= block_start_ + length_) {
+  if (use_buf(data_->is_altrep()) && pos_ >= block_start_ + length_) {
     fill_buf(std::max(0_xl, pos_ - 64));
   }
   return *this;
@@ -664,6 +668,14 @@ inline T r_vector<T>::const_iterator::operator*() const {
   } else {
     return static_cast<T>(data_->data_p_[pos_]);
   }
+}
+
+template <typename T>
+inline void r_vector<T>::const_iterator::fill_buf(R_xlen_t pos) {
+  using namespace cpp11::literals;
+  length_ = std::min(64_xl, data_->size() - pos);
+  get_region(data_->data_, pos, length_, buf_.data());
+  block_start_ = pos;
 }
 
 namespace writable {
@@ -1062,7 +1074,7 @@ r_vector<T>::iterator::iterator(const r_vector& data, R_xlen_t pos)
 template <typename T>
 inline typename r_vector<T>::iterator& r_vector<T>::iterator::operator++() {
   ++pos_;
-  if (data_.is_altrep() && pos_ >= block_start_ + length_) {
+  if (use_buf(data_.is_altrep()) && pos_ >= block_start_ + length_) {
     fill_buf(pos_);
   }
   return *this;
@@ -1070,7 +1082,7 @@ inline typename r_vector<T>::iterator& r_vector<T>::iterator::operator++() {
 
 template <typename T>
 inline typename r_vector<T>::proxy r_vector<T>::iterator::operator*() const {
-  if (data_.is_altrep()) {
+  if (use_buf(data_.is_altrep())) {
     return proxy(
         data_.data(), pos_,
         const_cast<typename r_vector::underlying_type*>(&buf_[pos_ - block_start_]),
@@ -1084,7 +1096,7 @@ inline typename r_vector<T>::proxy r_vector<T>::iterator::operator*() const {
 template <typename T>
 inline typename r_vector<T>::iterator& r_vector<T>::iterator::operator+=(R_xlen_t rhs) {
   pos_ += rhs;
-  if (data_.is_altrep() && pos_ >= block_start_ + length_) {
+  if (use_buf(data_.is_altrep()) && pos_ >= block_start_ + length_) {
     fill_buf(pos_);
   }
   return *this;

@@ -44,10 +44,16 @@ inline typename r_vector<double>::underlying_type* r_vector<double>::get_p(bool 
 }
 
 template <>
-inline void r_vector<double>::const_iterator::fill_buf(R_xlen_t pos) {
-  length_ = std::min(64_xl, data_->size() - pos);
-  REAL_GET_REGION(data_->data_, pos, length_, buf_.data());
-  block_start_ = pos;
+inline void r_vector<double>::get_region(
+    SEXP x, R_xlen_t i, R_xlen_t n,
+    typename traits::get_underlying_type<double>::type* buf) {
+  // NOPROTECT: likely too costly to unwind protect here
+  REAL_GET_REGION(x, i, n, buf);
+};
+
+template <>
+inline bool r_vector<double>::const_iterator::use_buf(bool is_altrep) {
+  return is_altrep;
 }
 
 typedef r_vector<double> doubles;
