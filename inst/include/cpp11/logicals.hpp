@@ -35,11 +35,6 @@ inline SEXP r_vector<r_bool>::valid_type(SEXP data) {
 }
 
 template <>
-inline r_bool r_vector<r_bool>::operator[](const R_xlen_t pos) const {
-  return is_altrep_ ? LOGICAL_ELT(data_, pos) : data_p_[pos];
-}
-
-template <>
 inline typename r_vector<r_bool>::underlying_type* r_vector<r_bool>::get_p(bool is_altrep,
                                                                            SEXP data) {
   if (is_altrep) {

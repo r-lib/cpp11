@@ -72,7 +72,6 @@ class r_vector {
 #ifdef LONG_VECTOR_SUPPORT
   T operator[](const int pos) const;
 #endif
-  /// Implemented by specialization
   T operator[](const R_xlen_t pos) const;
   T operator[](const size_type pos) const;
   T operator[](const r_string& name) const;
@@ -446,6 +445,13 @@ inline T r_vector<T>::operator[](const int pos) const {
   return operator[](static_cast<R_xlen_t>(pos));
 }
 #endif
+
+template <typename T>
+inline T r_vector<T>::operator[](const R_xlen_t pos) const {
+  // Handles ALTREP, VECSXP, and STRSXP cases through `get_elt()`
+  const underlying_type elt = (data_p_ != nullptr) ? data_p_[pos] : get_elt(data_, pos);
+  return static_cast<T>(elt);
+}
 
 template <typename T>
 inline T r_vector<T>::operator[](const size_type pos) const {

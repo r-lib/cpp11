@@ -43,12 +43,6 @@ inline SEXP r_vector<uint8_t>::valid_type(SEXP data) {
 }
 
 template <>
-inline uint8_t r_vector<uint8_t>::operator[](const R_xlen_t pos) const {
-  // NOPROTECT: likely too costly to unwind protect every elt
-  return is_altrep_ ? RAW_ELT(data_, pos) : data_p_[pos];
-}
-
-template <>
 inline typename r_vector<uint8_t>::underlying_type* r_vector<uint8_t>::get_p(
     bool is_altrep, SEXP data) {
   if (is_altrep) {

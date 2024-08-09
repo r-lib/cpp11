@@ -33,11 +33,6 @@ inline SEXP r_vector<SEXP>::valid_type(SEXP data) {
 }
 
 template <>
-inline SEXP r_vector<SEXP>::operator[](const R_xlen_t pos) const {
-  return VECTOR_ELT(data_, pos);
-}
-
-template <>
 inline SEXP r_vector<SEXP>::operator[](const r_string& name) const {
   SEXP names = this->names();
   R_xlen_t size = Rf_xlength(names);
