@@ -67,7 +67,8 @@ inline void r_vector<r_string>::set_elt(
 template <>
 inline typename r_vector<r_string>::proxy& r_vector<r_string>::proxy::operator=(
     const r_string& rhs) {
-  unwind_protect([&] { SET_STRING_ELT(data_, index_, rhs); });
+  // NOPROTECT: likely too costly to unwind protect every elt
+  SET_STRING_ELT(data_, index_, rhs);
   return *this;
 }
 
@@ -169,7 +170,8 @@ inline void r_vector<r_string>::push_back(r_string value) {
   while (length_ >= capacity_) {
     reserve(capacity_ == 0 ? 1 : capacity_ *= 2);
   }
-  unwind_protect([&] { SET_STRING_ELT(data_, length_, value); });
+  // NOPROTECT: likely too costly to unwind protect every elt
+  SET_STRING_ELT(data_, length_, value);
   ++length_;
 }
 

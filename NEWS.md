@@ -1,5 +1,11 @@
 # cpp11 (development version)
 
+* Repeated assignment to a `cpp11::writable::strings` vector through either
+  `x[i] = elt` or `x.push_back(elt)` is now more performant, at the tradeoff
+  of slightly less safety (as long as `elt` is actually a `CHARSXP` and `i` is
+  within bounds, there is no chance of failure, which are the same kind of
+  invariants placed on the other vector types) (#378).
+
 * Read only `r_vector`s now have a move constructor and move assignment
   operator (#365).
 
