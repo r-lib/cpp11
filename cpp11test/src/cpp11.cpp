@@ -310,6 +310,20 @@ extern "C" SEXP _cpp11test_cpp11_safe_(SEXP x_sxp) {
     return cpp11::as_sexp(cpp11_safe_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x_sxp)));
   END_CPP11
 }
+// strings.cpp
+cpp11::writable::strings string_proxy_assignment_();
+extern "C" SEXP _cpp11test_string_proxy_assignment_() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(string_proxy_assignment_());
+  END_CPP11
+}
+// strings.cpp
+cpp11::writable::strings string_push_back_();
+extern "C" SEXP _cpp11test_string_push_back_() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(string_push_back_());
+  END_CPP11
+}
 // sum.cpp
 double sum_dbl_for_(cpp11::doubles x);
 extern "C" SEXP _cpp11test_sum_dbl_for_(SEXP x) {
@@ -504,6 +518,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_rcpp_sum_int_for_",        (DL_FUNC) &_cpp11test_rcpp_sum_int_for_,        1},
     {"_cpp11test_remove_altrep",            (DL_FUNC) &_cpp11test_remove_altrep,            1},
     {"_cpp11test_row_sums",                 (DL_FUNC) &_cpp11test_row_sums,                 1},
+    {"_cpp11test_string_proxy_assignment_", (DL_FUNC) &_cpp11test_string_proxy_assignment_, 0},
+    {"_cpp11test_string_push_back_",        (DL_FUNC) &_cpp11test_string_push_back_,        0},
     {"_cpp11test_sum_dbl_accumulate2_",     (DL_FUNC) &_cpp11test_sum_dbl_accumulate2_,     1},
     {"_cpp11test_sum_dbl_accumulate_",      (DL_FUNC) &_cpp11test_sum_dbl_accumulate_,      1},
     {"_cpp11test_sum_dbl_for2_",            (DL_FUNC) &_cpp11test_sum_dbl_for2_,            1},

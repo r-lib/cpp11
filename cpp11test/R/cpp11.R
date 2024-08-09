@@ -160,6 +160,14 @@ cpp11_safe_ <- function(x_sxp) {
   .Call(`_cpp11test_cpp11_safe_`, x_sxp)
 }
 
+string_proxy_assignment_ <- function() {
+  .Call(`_cpp11test_string_proxy_assignment_`)
+}
+
+string_push_back_ <- function() {
+  .Call(`_cpp11test_string_push_back_`)
+}
+
 sum_dbl_for_ <- function(x) {
   .Call(`_cpp11test_sum_dbl_for_`, x)
 }
