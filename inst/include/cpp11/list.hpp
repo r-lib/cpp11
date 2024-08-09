@@ -56,11 +56,6 @@ inline bool r_vector<SEXP>::const_iterator::use_buf(bool is_altrep) {
   return false;
 }
 
-template <>
-inline SEXP r_vector<SEXP>::const_iterator::operator*() const {
-  return VECTOR_ELT(data_->data(), pos_);
-}
-
 typedef r_vector<SEXP> list;
 
 namespace writable {

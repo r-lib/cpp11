@@ -697,10 +697,12 @@ inline typename r_vector<T>::const_iterator r_vector<T>::find(
 
 template <typename T>
 inline T r_vector<T>::const_iterator::operator*() const {
-  if (data_->is_altrep()) {
+  if (use_buf(data_->is_altrep())) {
+    // Use pre-loaded buffer for compatible ALTREP types
     return static_cast<T>(buf_[pos_ - block_start_]);
   } else {
-    return static_cast<T>(data_->data_p_[pos_]);
+    // Otherwise pass through to normal retrieval method
+    return data_->operator[](pos_);
   }
 }
 

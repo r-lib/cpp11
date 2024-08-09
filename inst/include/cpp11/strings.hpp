@@ -45,11 +45,6 @@ inline bool r_vector<r_string>::const_iterator::use_buf(bool is_altrep) {
   return false;
 }
 
-template <>
-inline r_string r_vector<r_string>::const_iterator::operator*() const {
-  return STRING_ELT(data_->data(), pos_);
-}
-
 typedef r_vector<r_string> strings;
 
 namespace writable {
