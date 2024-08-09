@@ -15,6 +15,13 @@
 namespace cpp11 {
 
 template <>
+inline typename r_vector<SEXP>::underlying_type r_vector<SEXP>::get_elt(SEXP x,
+                                                                        R_xlen_t i) {
+  // NOPROTECT: likely too costly to unwind protect every elt
+  return VECTOR_ELT(x, i);
+}
+
+template <>
 inline SEXP r_vector<SEXP>::valid_type(SEXP data) {
   if (data == nullptr) {
     throw type_error(VECSXP, NILSXP);
@@ -23,11 +30,6 @@ inline SEXP r_vector<SEXP>::valid_type(SEXP data) {
     throw type_error(VECSXP, TYPEOF(data));
   }
   return data;
-}
-
-template <>
-inline SEXP r_vector<SEXP>::operator[](const R_xlen_t pos) const {
-  return VECTOR_ELT(data_, pos);
 }
 
 template <>
@@ -78,11 +80,6 @@ template <>
 inline void r_vector<SEXP>::set_elt(SEXP x, R_xlen_t i,
                                     typename r_vector::underlying_type value) {
   SET_VECTOR_ELT(x, i, value);
-}
-
-template <>
-inline r_vector<SEXP>::proxy::operator SEXP() const {
-  return VECTOR_ELT(data_, index_);
 }
 
 template <>

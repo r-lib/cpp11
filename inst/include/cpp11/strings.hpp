@@ -17,6 +17,13 @@
 namespace cpp11 {
 
 template <>
+inline typename r_vector<r_string>::underlying_type r_vector<r_string>::get_elt(
+    SEXP x, R_xlen_t i) {
+  // NOPROTECT: likely too costly to unwind protect every elt
+  return STRING_ELT(x, i);
+}
+
+template <>
 inline SEXP r_vector<r_string>::valid_type(SEXP data) {
   if (data == nullptr) {
     throw type_error(STRSXP, NILSXP);
@@ -25,12 +32,6 @@ inline SEXP r_vector<r_string>::valid_type(SEXP data) {
     throw type_error(STRSXP, TYPEOF(data));
   }
   return data;
-}
-
-template <>
-inline r_string r_vector<r_string>::operator[](const R_xlen_t pos) const {
-  // NOPROTECT: likely too costly to unwind protect every elt
-  return STRING_ELT(data_, pos);
 }
 
 template <>
@@ -68,12 +69,6 @@ template <>
 inline void r_vector<r_string>::set_elt(SEXP x, R_xlen_t i,
                                         typename r_vector::underlying_type value) {
   SET_STRING_ELT(x, i, value);
-}
-
-template <>
-inline r_vector<r_string>::proxy::operator r_string() const {
-  // NOPROTECT: likely too costly to unwind protect every elt
-  return STRING_ELT(data_, index_);
 }
 
 inline bool operator==(const r_vector<r_string>::proxy& lhs, r_string rhs) {

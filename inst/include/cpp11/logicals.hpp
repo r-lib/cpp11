@@ -17,6 +17,13 @@
 namespace cpp11 {
 
 template <>
+inline typename r_vector<r_bool>::underlying_type r_vector<r_bool>::get_elt(SEXP x,
+                                                                            R_xlen_t i) {
+  // NOPROTECT: likely too costly to unwind protect every elt
+  return LOGICAL_ELT(x, i);
+}
+
+template <>
 inline SEXP r_vector<r_bool>::valid_type(SEXP data) {
   if (data == nullptr) {
     throw type_error(LGLSXP, NILSXP);
@@ -25,11 +32,6 @@ inline SEXP r_vector<r_bool>::valid_type(SEXP data) {
     throw type_error(LGLSXP, TYPEOF(data));
   }
   return data;
-}
-
-template <>
-inline r_bool r_vector<r_bool>::operator[](const R_xlen_t pos) const {
-  return is_altrep_ ? LOGICAL_ELT(data_, pos) : data_p_[pos];
 }
 
 template <>
@@ -78,15 +80,6 @@ inline typename r_vector<r_bool>::proxy& r_vector<r_bool>::proxy::operator=(
     *p_ = rhs;
   }
   return *this;
-}
-
-template <>
-inline r_vector<r_bool>::proxy::operator r_bool() const {
-  if (p_ == nullptr) {
-    return LOGICAL_ELT(data_, index_);
-  } else {
-    return *p_;
-  }
 }
 
 inline bool operator==(const r_vector<r_bool>::proxy& lhs, r_bool rhs) {

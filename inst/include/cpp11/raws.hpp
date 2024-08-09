@@ -25,6 +25,13 @@ struct get_underlying_type<uint8_t> {
 }  // namespace traits
 
 template <>
+inline typename r_vector<uint8_t>::underlying_type r_vector<uint8_t>::get_elt(
+    SEXP x, R_xlen_t i) {
+  // NOPROTECT: likely too costly to unwind protect every elt
+  return RAW_ELT(x, i);
+}
+
+template <>
 inline SEXP r_vector<uint8_t>::valid_type(SEXP data) {
   if (data == nullptr) {
     throw type_error(RAWSXP, NILSXP);
@@ -33,12 +40,6 @@ inline SEXP r_vector<uint8_t>::valid_type(SEXP data) {
     throw type_error(RAWSXP, TYPEOF(data));
   }
   return data;
-}
-
-template <>
-inline uint8_t r_vector<uint8_t>::operator[](const R_xlen_t pos) const {
-  // NOPROTECT: likely too costly to unwind protect every elt
-  return is_altrep_ ? RAW_ELT(data_, pos) : data_p_[pos];
 }
 
 template <>
@@ -80,16 +81,6 @@ inline void r_vector<uint8_t>::set_elt(SEXP x, R_xlen_t i,
 #else
   RAW(x)[i] = value;
 #endif
-}
-
-template <>
-inline r_vector<uint8_t>::proxy::operator uint8_t() const {
-  if (p_ == nullptr) {
-    // NOPROTECT: likely too costly to unwind protect every elt
-    return RAW(data_)[index_];
-  } else {
-    return *p_;
-  }
 }
 
 template <>

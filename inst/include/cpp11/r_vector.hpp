@@ -72,7 +72,6 @@ class r_vector {
 #ifdef LONG_VECTOR_SUPPORT
   T operator[](const int pos) const;
 #endif
-  /// Implemented by specialization
   T operator[](const R_xlen_t pos) const;
   T operator[](const size_type pos) const;
   T operator[](const r_string& name) const;
@@ -143,6 +142,8 @@ class r_vector {
   };
 
  private:
+  /// Implemented in specialization
+  static underlying_type get_elt(SEXP x, R_xlen_t i);
   /// Implemented in specialization
   static underlying_type* get_p(bool is_altrep, SEXP data);
   /// Implemented in specialization
@@ -262,7 +263,6 @@ class r_vector : public cpp11::r_vector<T> {
    public:
     proxy(SEXP data, const R_xlen_t index, underlying_type* const p, bool is_altrep);
 
-    /// Implemented in specialization
     proxy& operator=(const T& rhs);
     proxy& operator+=(const T& rhs);
     proxy& operator-=(const T& rhs);
@@ -274,7 +274,6 @@ class r_vector : public cpp11::r_vector<T> {
     void operator++();
     void operator--();
 
-    /// Implemented in specialization
     operator T() const;
   };
 
@@ -444,6 +443,13 @@ inline T r_vector<T>::operator[](const int pos) const {
   return operator[](static_cast<R_xlen_t>(pos));
 }
 #endif
+
+template <typename T>
+inline T r_vector<T>::operator[](const R_xlen_t pos) const {
+  // Handles ALTREP, VECSXP, and STRSXP cases through `get_elt()`
+  const underlying_type elt = (data_p_ != nullptr) ? data_p_[pos] : get_elt(data_, pos);
+  return static_cast<T>(elt);
+}
 
 template <typename T>
 inline T r_vector<T>::operator[](const size_type pos) const {
@@ -1080,6 +1086,13 @@ inline void r_vector<T>::proxy::operator++() {
 template <typename T>
 inline void r_vector<T>::proxy::operator--() {
   operator=(static_cast<T>(*this) - 1);
+}
+
+template <typename T>
+inline r_vector<T>::proxy::operator T() const {
+  // Handles ALTREP, VECSXP, and STRSXP cases through `get_elt()`
+  const underlying_type elt = (p_ != nullptr) ? *p_ : r_vector::get_elt(data_, index_);
+  return static_cast<T>(elt);
 }
 
 template <typename T>

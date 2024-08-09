@@ -17,6 +17,13 @@
 namespace cpp11 {
 
 template <>
+inline typename r_vector<double>::underlying_type r_vector<double>::get_elt(SEXP x,
+                                                                            R_xlen_t i) {
+  // NOPROTECT: likely too costly to unwind protect every elt
+  return REAL_ELT(x, i);
+}
+
+template <>
 inline SEXP r_vector<double>::valid_type(SEXP data) {
   if (data == nullptr) {
     throw type_error(REALSXP, NILSXP);
@@ -25,12 +32,6 @@ inline SEXP r_vector<double>::valid_type(SEXP data) {
     throw type_error(REALSXP, TYPEOF(data));
   }
   return data;
-}
-
-template <>
-inline double r_vector<double>::operator[](const R_xlen_t pos) const {
-  // NOPROTECT: likely too costly to unwind protect every elt
-  return is_altrep_ ? REAL_ELT(data_, pos) : data_p_[pos];
 }
 
 template <>
@@ -68,16 +69,6 @@ template <>
 inline void r_vector<double>::set_elt(SEXP x, R_xlen_t i,
                                       typename r_vector::underlying_type value) {
   SET_REAL_ELT(x, i, value);
-}
-
-template <>
-inline r_vector<double>::proxy::operator double() const {
-  if (p_ == nullptr) {
-    // NOPROTECT: likely too costly to unwind protect every elt
-    return REAL_ELT(data_, index_);
-  } else {
-    return *p_;
-  }
 }
 
 template <>
