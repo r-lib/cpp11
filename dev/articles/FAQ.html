@@ -357,10 +357,10 @@ this.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fl">2L</span>, <span class="fl">3L</span>, <span class="fl">4L</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Internal.html" class="external-link">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; @5575deb0dd98 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span></span>
+<span><span class="co">#&gt; @556221880d58 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span></span>
 <span><span class="fu">add_one</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Internal.html" class="external-link">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; @5575deb0dd98 13 INTSXP g0c2 [REF(5)] (len=4, tl=0) 2,3,4,5</span></span>
+<span><span class="co">#&gt; @556221880d58 13 INTSXP g0c2 [REF(5)] (len=4, tl=0) 2,3,4,5</span></span>
 <span><span class="va">x</span></span>
 <span><span class="co">#&gt; [1] 2 3 4 5</span></span></code></pre></div>
 </div>
@@ -605,8 +605,8 @@ native R API:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">#&gt;   expression                 min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> test_extract_cpp11(x)  39.51ms  42.16ms      23.2        0B     40.6</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> test_extract_r_api(x)   2.16ms   2.17ms     459.         0B      0</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> test_extract_cpp11(x)  39.89ms   43.6ms      22.6        0B     39.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> test_extract_r_api(x)   2.16ms   2.17ms     451.         0B      0</span></span></code></pre></div>
 <p>We plan to improve on this in the future, but for now this is one of
 the only places where we feel it is reasonable to call
 <code>unwind_protect()</code> manually.</p>
