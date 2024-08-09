@@ -73,17 +73,6 @@ inline void r_vector<int>::set_elt(
 }
 
 template <>
-inline typename r_vector<int>::proxy& r_vector<int>::proxy::operator=(const int& rhs) {
-  if (is_altrep_) {
-    // NOPROTECT: likely too costly to unwind protect every set elt
-    SET_INTEGER_ELT(data_, index_, rhs);
-  } else {
-    *p_ = rhs;
-  }
-  return *this;
-}
-
-template <>
 inline r_vector<int>::proxy::operator int() const {
   if (p_ == nullptr) {
     // NOPROTECT: likely too costly to unwind protect every elt

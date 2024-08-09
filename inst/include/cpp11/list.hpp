@@ -82,12 +82,6 @@ inline void r_vector<SEXP>::set_elt(
 }
 
 template <>
-inline typename r_vector<SEXP>::proxy& r_vector<SEXP>::proxy::operator=(const SEXP& rhs) {
-  SET_VECTOR_ELT(data_, index_, rhs);
-  return *this;
-}
-
-template <>
 inline r_vector<SEXP>::proxy::operator SEXP() const {
   return VECTOR_ELT(data_, index_);
 }
