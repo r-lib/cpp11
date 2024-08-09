@@ -44,9 +44,8 @@ inline typename r_vector<double>::underlying_type* r_vector<double>::get_p(bool 
 }
 
 template <>
-inline void r_vector<double>::get_region(
-    SEXP x, R_xlen_t i, R_xlen_t n,
-    typename traits::get_underlying_type<double>::type* buf) {
+inline void r_vector<double>::get_region(SEXP x, R_xlen_t i, R_xlen_t n,
+                                         typename r_vector::underlying_type* buf) {
   // NOPROTECT: likely too costly to unwind protect here
   REAL_GET_REGION(x, i, n, buf);
 };
@@ -66,8 +65,8 @@ inline SEXPTYPE r_vector<double>::get_sexptype() {
 }
 
 template <>
-inline void r_vector<double>::set_elt(
-    SEXP x, R_xlen_t i, typename traits::get_underlying_type<double>::type value) {
+inline void r_vector<double>::set_elt(SEXP x, R_xlen_t i,
+                                      typename r_vector::underlying_type value) {
   SET_REAL_ELT(x, i, value);
 }
 

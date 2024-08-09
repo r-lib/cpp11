@@ -45,9 +45,8 @@ inline typename r_vector<int>::underlying_type* r_vector<int>::get_p(bool is_alt
 }
 
 template <>
-inline void r_vector<int>::get_region(
-    SEXP x, R_xlen_t i, R_xlen_t n,
-    typename traits::get_underlying_type<int>::type* buf) {
+inline void r_vector<int>::get_region(SEXP x, R_xlen_t i, R_xlen_t n,
+                                      typename r_vector::underlying_type* buf) {
   // NOPROTECT: likely too costly to unwind protect here
   INTEGER_GET_REGION(x, i, n, buf);
 };
@@ -67,8 +66,8 @@ inline SEXPTYPE r_vector<int>::get_sexptype() {
 }
 
 template <>
-inline void r_vector<int>::set_elt(
-    SEXP x, R_xlen_t i, typename traits::get_underlying_type<int>::type value) {
+inline void r_vector<int>::set_elt(SEXP x, R_xlen_t i,
+                                   typename r_vector::underlying_type value) {
   SET_INTEGER_ELT(x, i, value);
 }
 

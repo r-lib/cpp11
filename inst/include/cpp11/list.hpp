@@ -50,9 +50,8 @@ inline typename r_vector<SEXP>::underlying_type* r_vector<SEXP>::get_p(bool, SEX
 }
 
 template <>
-inline void r_vector<SEXP>::get_region(
-    SEXP x, R_xlen_t i, R_xlen_t n,
-    typename traits::get_underlying_type<SEXP>::type* buf) {
+inline void r_vector<SEXP>::get_region(SEXP x, R_xlen_t i, R_xlen_t n,
+                                       typename r_vector::underlying_type* buf) {
   cpp11::stop("Unreachable!");
 };
 
@@ -76,8 +75,8 @@ inline SEXPTYPE r_vector<SEXP>::get_sexptype() {
 }
 
 template <>
-inline void r_vector<SEXP>::set_elt(
-    SEXP x, R_xlen_t i, typename traits::get_underlying_type<SEXP>::type value) {
+inline void r_vector<SEXP>::set_elt(SEXP x, R_xlen_t i,
+                                    typename r_vector::underlying_type value) {
   SET_VECTOR_ELT(x, i, value);
 }
 

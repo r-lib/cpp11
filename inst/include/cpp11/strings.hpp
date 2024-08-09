@@ -40,9 +40,8 @@ inline typename r_vector<r_string>::underlying_type* r_vector<r_string>::get_p(b
 }
 
 template <>
-inline void r_vector<r_string>::get_region(
-    SEXP x, R_xlen_t i, R_xlen_t n,
-    typename traits::get_underlying_type<r_string>::type* buf) {
+inline void r_vector<r_string>::get_region(SEXP x, R_xlen_t i, R_xlen_t n,
+                                           typename r_vector::underlying_type* buf) {
   cpp11::stop("Unreachable!");
 };
 
@@ -66,8 +65,8 @@ inline SEXPTYPE r_vector<r_string>::get_sexptype() {
 }
 
 template <>
-inline void r_vector<r_string>::set_elt(
-    SEXP x, R_xlen_t i, typename traits::get_underlying_type<r_string>::type value) {
+inline void r_vector<r_string>::set_elt(SEXP x, R_xlen_t i,
+                                        typename r_vector::underlying_type value) {
   SET_STRING_ELT(x, i, value);
 }
 

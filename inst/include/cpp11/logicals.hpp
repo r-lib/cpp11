@@ -43,9 +43,8 @@ inline typename r_vector<r_bool>::underlying_type* r_vector<r_bool>::get_p(bool 
 }
 
 template <>
-inline void r_vector<r_bool>::get_region(
-    SEXP x, R_xlen_t i, R_xlen_t n,
-    typename traits::get_underlying_type<r_bool>::type* buf) {
+inline void r_vector<r_bool>::get_region(SEXP x, R_xlen_t i, R_xlen_t n,
+                                         typename r_vector::underlying_type* buf) {
   // NOPROTECT: likely too costly to unwind protect here
   LOGICAL_GET_REGION(x, i, n, buf);
 };
@@ -65,8 +64,8 @@ inline SEXPTYPE r_vector<r_bool>::get_sexptype() {
 }
 
 template <>
-inline void r_vector<r_bool>::set_elt(
-    SEXP x, R_xlen_t i, typename traits::get_underlying_type<r_bool>::type value) {
+inline void r_vector<r_bool>::set_elt(SEXP x, R_xlen_t i,
+                                      typename r_vector::underlying_type value) {
   SET_LOGICAL_ELT(x, i, value);
 }
 

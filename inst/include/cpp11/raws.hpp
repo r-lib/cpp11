@@ -52,9 +52,8 @@ inline typename r_vector<uint8_t>::underlying_type* r_vector<uint8_t>::get_p(
 }
 
 template <>
-inline void r_vector<uint8_t>::get_region(
-    SEXP x, R_xlen_t i, R_xlen_t n,
-    typename traits::get_underlying_type<uint8_t>::type* buf) {
+inline void r_vector<uint8_t>::get_region(SEXP x, R_xlen_t i, R_xlen_t n,
+                                          typename r_vector::underlying_type* buf) {
   // NOPROTECT: likely too costly to unwind protect here
   RAW_GET_REGION(x, i, n, buf);
 };
@@ -74,8 +73,8 @@ inline SEXPTYPE r_vector<uint8_t>::get_sexptype() {
 }
 
 template <>
-inline void r_vector<uint8_t>::set_elt(
-    SEXP x, R_xlen_t i, typename traits::get_underlying_type<uint8_t>::type value) {
+inline void r_vector<uint8_t>::set_elt(SEXP x, R_xlen_t i,
+                                       typename r_vector::underlying_type value) {
 #if R_VERSION >= R_Version(4, 2, 0)
   SET_RAW_ELT(x, i, value);
 #else
