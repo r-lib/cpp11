@@ -61,17 +61,6 @@ inline void r_vector<r_bool>::set_elt(SEXP x, R_xlen_t i,
   SET_LOGICAL_ELT(x, i, value);
 }
 
-template <>
-inline typename r_vector<r_bool>::proxy& r_vector<r_bool>::proxy::operator=(
-    const r_bool& rhs) {
-  if (is_altrep_) {
-    SET_LOGICAL_ELT(data_, index_, rhs);
-  } else {
-    *p_ = rhs;
-  }
-  return *this;
-}
-
 inline bool operator==(const r_vector<r_bool>::proxy& lhs, r_bool rhs) {
   return static_cast<r_bool>(lhs).operator==(rhs);
 }
