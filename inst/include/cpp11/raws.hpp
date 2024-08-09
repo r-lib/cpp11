@@ -84,18 +84,6 @@ inline void r_vector<uint8_t>::set_elt(
 }
 
 template <>
-inline typename r_vector<uint8_t>::proxy& r_vector<uint8_t>::proxy::operator=(
-    const uint8_t& rhs) {
-  if (is_altrep_) {
-    // NOPROTECT: likely too costly to unwind protect every set elt
-    RAW(data_)[index_] = rhs;
-  } else {
-    *p_ = rhs;
-  }
-  return *this;
-}
-
-template <>
 inline r_vector<uint8_t>::proxy::operator uint8_t() const {
   if (p_ == nullptr) {
     // NOPROTECT: likely too costly to unwind protect every elt

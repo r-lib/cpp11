@@ -1022,6 +1022,21 @@ r_vector<T>::proxy::proxy(SEXP data, const R_xlen_t index,
     : data_(data), index_(index), p_(p), is_altrep_(is_altrep) {}
 
 template <typename T>
+inline typename r_vector<T>::proxy& r_vector<T>::proxy::operator=(const T& rhs) {
+  underlying_type elt = static_cast<underlying_type>(rhs);
+
+  if (p_ != nullptr) {
+    *p_ = elt;
+  } else {
+    // Handles ALTREP, VECSXP, and STRSXP cases.
+    // NOPROTECT: Likely too costly to unwind protect every set elt.
+    r_vector<T>::set_elt(data_, index_, elt);
+  }
+
+  return *this;
+}
+
+template <typename T>
 inline typename r_vector<T>::proxy& r_vector<T>::proxy::operator+=(const T& rhs) {
   operator=(static_cast<T>(*this) + rhs);
   return *this;

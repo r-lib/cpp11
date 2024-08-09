@@ -72,14 +72,6 @@ inline void r_vector<r_string>::set_elt(
 }
 
 template <>
-inline typename r_vector<r_string>::proxy& r_vector<r_string>::proxy::operator=(
-    const r_string& rhs) {
-  // NOPROTECT: likely too costly to unwind protect every elt
-  SET_STRING_ELT(data_, index_, rhs);
-  return *this;
-}
-
-template <>
 inline r_vector<r_string>::proxy::operator r_string() const {
   // NOPROTECT: likely too costly to unwind protect every elt
   return STRING_ELT(data_, index_);

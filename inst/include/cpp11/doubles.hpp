@@ -72,18 +72,6 @@ inline void r_vector<double>::set_elt(
 }
 
 template <>
-inline typename r_vector<double>::proxy& r_vector<double>::proxy::operator=(
-    const double& rhs) {
-  if (is_altrep_) {
-    // NOPROTECT: likely too costly to unwind protect every set elt
-    SET_REAL_ELT(data_, index_, rhs);
-  } else {
-    *p_ = rhs;
-  }
-  return *this;
-}
-
-template <>
 inline r_vector<double>::proxy::operator double() const {
   if (p_ == nullptr) {
     // NOPROTECT: likely too costly to unwind protect every elt
