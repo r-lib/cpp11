@@ -168,6 +168,13 @@ context("integers-C++") {
     UNPROTECT(1);
   }
 
+  test_that("writable::integers(initializer_list<int>)") {
+    cpp11::writable::integers x({1, 2, 3});
+    expect_true(x[0] == 1);
+    expect_true(x[1] == 2);
+    expect_true(x[2] == 3);
+  }
+
 #if defined(__APPLE__) && defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
   test_that("writable::integers(ALTREP_SEXP)") {
     // ALTREP compact-seq

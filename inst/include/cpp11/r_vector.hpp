@@ -189,7 +189,6 @@ class r_vector : public cpp11::r_vector<T> {
   r_vector(const r_vector& rhs);
   r_vector(r_vector&& rhs);
   r_vector(const cpp11::r_vector<T>& rhs);
-  /// Implemented in specialization
   r_vector(std::initializer_list<T> il);
   /// Implemented in specialization
   r_vector(std::initializer_list<named_arg> il);
@@ -308,6 +307,8 @@ class r_vector : public cpp11::r_vector<T> {
  private:
   /// Implemented in specialization
   static SEXPTYPE get_sexptype();
+  /// Implemented in specialization
+  static void set_elt(SEXP x, R_xlen_t i, underlying_type value);
 
   using cpp11::r_vector<T>::get_p;
 };
@@ -716,6 +717,24 @@ inline r_vector<T>::r_vector(r_vector&& rhs) {
 template <typename T>
 inline r_vector<T>::r_vector(const cpp11::r_vector<T>& rhs)
     : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs.data_)), capacity_(rhs.length_) {}
+
+template <typename T>
+inline r_vector<T>::r_vector(std::initializer_list<T> il)
+    : cpp11::r_vector<T>(safe[Rf_allocVector](get_sexptype(), il.size())),
+      capacity_(il.size()) {
+  auto it = il.begin();
+
+  if (data_p_ != nullptr) {
+    for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
+      data_p_[i] = static_cast<underlying_type>(*it);
+    }
+  } else {
+    // Handles both the ALTREP and VECSXP cases
+    for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
+      set_elt(data_, i, static_cast<underlying_type>(*it));
+    }
+  }
+}
 
 template <typename T>
 inline r_vector<T>::r_vector(const R_xlen_t size) : r_vector() {

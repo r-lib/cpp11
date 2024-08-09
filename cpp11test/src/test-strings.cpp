@@ -133,6 +133,34 @@ context("strings-C++") {
     UNPROTECT(1);
   }
 
+  test_that("writable::strings(initializer_list<r_string>)") {
+    cpp11::r_string abc = cpp11::r_string("abc");
+    cpp11::r_string na = cpp11::r_string(NA_STRING);
+
+    cpp11::writable::strings x({abc, na, abc});
+    expect_true(x[0] == abc);
+    expect_true(x[1] == na);
+    expect_true(x[2] == abc);
+
+    // This works due to implicit conversion of `SEXP` to `r_string`
+    SEXP a = PROTECT(Rf_mkCharCE("a", CE_UTF8));
+    SEXP b = PROTECT(Rf_mkCharCE("b", CE_UTF8));
+    cpp11::writable::strings y({a, b});
+    expect_true(y[0] == cpp11::r_string("a"));
+    expect_true(y[1] == cpp11::r_string("b"));
+
+    // This works due to implicit conversion of `const char*` to `r_string`
+    cpp11::writable::strings z({"neat", "stuff"});
+    expect_true(z[0] == cpp11::r_string("neat"));
+    expect_true(z[1] == cpp11::r_string("stuff"));
+
+    cpp11::writable::strings w({std::string("neat"), std::string("stuff")});
+    expect_true(w[0] == cpp11::r_string("neat"));
+    expect_true(w[1] == cpp11::r_string("stuff"));
+
+    UNPROTECT(2);
+  }
+
   test_that("std::initializer_list<const char*>") {
     cpp11::writable::strings x{"foo"};
     expect_true(x.size() == 1);

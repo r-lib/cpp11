@@ -69,6 +69,12 @@ inline SEXPTYPE r_vector<SEXP>::get_sexptype() {
 }
 
 template <>
+inline void r_vector<SEXP>::set_elt(
+    SEXP x, R_xlen_t i, typename traits::get_underlying_type<SEXP>::type value) {
+  SET_VECTOR_ELT(x, i, value);
+}
+
+template <>
 inline typename r_vector<SEXP>::proxy& r_vector<SEXP>::proxy::operator=(const SEXP& rhs) {
   SET_VECTOR_ELT(data_, index_, rhs);
   return *this;
@@ -77,16 +83,6 @@ inline typename r_vector<SEXP>::proxy& r_vector<SEXP>::proxy::operator=(const SE
 template <>
 inline r_vector<SEXP>::proxy::operator SEXP() const {
   return VECTOR_ELT(data_, index_);
-}
-
-template <>
-inline r_vector<SEXP>::r_vector(std::initializer_list<SEXP> il)
-    : cpp11::r_vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())),
-      capacity_(il.size()) {
-  auto it = il.begin();
-  for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
-    SET_VECTOR_ELT(data_, i, *it);
-  }
 }
 
 template <>
