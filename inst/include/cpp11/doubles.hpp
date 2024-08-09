@@ -72,16 +72,6 @@ inline void r_vector<double>::set_elt(SEXP x, R_xlen_t i,
 }
 
 template <>
-inline r_vector<double>::proxy::operator double() const {
-  if (p_ == nullptr) {
-    // NOPROTECT: likely too costly to unwind protect every elt
-    return REAL_ELT(data_, index_);
-  } else {
-    return *p_;
-  }
-}
-
-template <>
 inline r_vector<double>::r_vector(std::initializer_list<named_arg> il)
     : cpp11::r_vector<double>(safe[Rf_allocVector](REALSXP, il.size())),
       capacity_(il.size()) {

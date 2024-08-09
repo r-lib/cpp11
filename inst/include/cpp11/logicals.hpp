@@ -82,15 +82,6 @@ inline typename r_vector<r_bool>::proxy& r_vector<r_bool>::proxy::operator=(
   return *this;
 }
 
-template <>
-inline r_vector<r_bool>::proxy::operator r_bool() const {
-  if (p_ == nullptr) {
-    return LOGICAL_ELT(data_, index_);
-  } else {
-    return *p_;
-  }
-}
-
 inline bool operator==(const r_vector<r_bool>::proxy& lhs, r_bool rhs) {
   return static_cast<r_bool>(lhs).operator==(rhs);
 }

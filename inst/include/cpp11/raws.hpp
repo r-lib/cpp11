@@ -84,16 +84,6 @@ inline void r_vector<uint8_t>::set_elt(SEXP x, R_xlen_t i,
 }
 
 template <>
-inline r_vector<uint8_t>::proxy::operator uint8_t() const {
-  if (p_ == nullptr) {
-    // NOPROTECT: likely too costly to unwind protect every elt
-    return RAW(data_)[index_];
-  } else {
-    return *p_;
-  }
-}
-
-template <>
 inline r_vector<uint8_t>::r_vector(std::initializer_list<named_arg> il)
     : cpp11::r_vector<uint8_t>(safe[Rf_allocVector](RAWSXP, il.size())),
       capacity_(il.size()) {

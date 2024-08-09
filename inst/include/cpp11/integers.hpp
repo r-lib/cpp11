@@ -73,16 +73,6 @@ inline void r_vector<int>::set_elt(SEXP x, R_xlen_t i,
 }
 
 template <>
-inline r_vector<int>::proxy::operator int() const {
-  if (p_ == nullptr) {
-    // NOPROTECT: likely too costly to unwind protect every elt
-    return INTEGER_ELT(data_, index_);
-  } else {
-    return *p_;
-  }
-}
-
-template <>
 inline r_vector<int>::r_vector(std::initializer_list<named_arg> il)
     : cpp11::r_vector<int>(safe[Rf_allocVector](INTSXP, il.size())),
       capacity_(il.size()) {

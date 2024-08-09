@@ -83,11 +83,6 @@ inline void r_vector<SEXP>::set_elt(SEXP x, R_xlen_t i,
 }
 
 template <>
-inline r_vector<SEXP>::proxy::operator SEXP() const {
-  return VECTOR_ELT(data_, index_);
-}
-
-template <>
 inline r_vector<SEXP>::r_vector(std::initializer_list<named_arg> il)
     : cpp11::r_vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())),
       capacity_(il.size()) {

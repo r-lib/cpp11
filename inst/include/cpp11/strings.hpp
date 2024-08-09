@@ -71,12 +71,6 @@ inline void r_vector<r_string>::set_elt(SEXP x, R_xlen_t i,
   SET_STRING_ELT(x, i, value);
 }
 
-template <>
-inline r_vector<r_string>::proxy::operator r_string() const {
-  // NOPROTECT: likely too costly to unwind protect every elt
-  return STRING_ELT(data_, index_);
-}
-
 inline bool operator==(const r_vector<r_string>::proxy& lhs, r_string rhs) {
   return static_cast<r_string>(lhs).operator==(static_cast<std::string>(rhs).c_str());
 }
