@@ -127,6 +127,27 @@ context("logicals-C++") {
 
     UNPROTECT(1);
   }
+
+  test_that("writable::logicals(initializer_list<r_bool>)") {
+    cpp11::writable::logicals x(
+        {cpp11::r_bool(true), cpp11::r_bool(false), cpp11::r_bool(NA_INTEGER)});
+    expect_true(x[0] == cpp11::r_bool(true));
+    expect_true(x[1] == cpp11::r_bool(false));
+    expect_true(x[2] == cpp11::r_bool(NA_INTEGER));
+
+    // This works due to implicit conversion of `bool` to `r_bool`
+    cpp11::writable::logicals y({true, false, false});
+    expect_true(y[0] == cpp11::r_bool(true));
+    expect_true(y[1] == cpp11::r_bool(false));
+    expect_true(y[2] == cpp11::r_bool(false));
+
+    // This works due to implicit conversion of `Rboolean` to `r_bool`
+    cpp11::writable::logicals z({TRUE, FALSE, FALSE});
+    expect_true(z[0] == cpp11::r_bool(true));
+    expect_true(z[1] == cpp11::r_bool(false));
+    expect_true(z[2] == cpp11::r_bool(false));
+  }
+
   test_that("is_na(r_bool)") {
     cpp11::r_bool x = TRUE;
     expect_true(!cpp11::is_na(x));

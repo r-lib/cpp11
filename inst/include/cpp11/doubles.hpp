@@ -60,6 +60,12 @@ inline SEXPTYPE r_vector<double>::get_sexptype() {
 }
 
 template <>
+inline void r_vector<double>::set_elt(
+    SEXP x, R_xlen_t i, typename traits::get_underlying_type<double>::type value) {
+  SET_REAL_ELT(x, i, value);
+}
+
+template <>
 inline typename r_vector<double>::proxy& r_vector<double>::proxy::operator=(
     const double& rhs) {
   if (is_altrep_) {
@@ -80,10 +86,6 @@ inline r_vector<double>::proxy::operator double() const {
     return *p_;
   }
 }
-
-template <>
-inline r_vector<double>::r_vector(std::initializer_list<double> il)
-    : cpp11::r_vector<double>(as_sexp(il)), capacity_(il.size()) {}
 
 template <>
 inline r_vector<double>::r_vector(std::initializer_list<named_arg> il)

@@ -59,6 +59,12 @@ inline SEXPTYPE r_vector<r_string>::get_sexptype() {
 }
 
 template <>
+inline void r_vector<r_string>::set_elt(
+    SEXP x, R_xlen_t i, typename traits::get_underlying_type<r_string>::type value) {
+  SET_STRING_ELT(x, i, value);
+}
+
+template <>
 inline typename r_vector<r_string>::proxy& r_vector<r_string>::proxy::operator=(
     const r_string& rhs) {
   unwind_protect([&] { SET_STRING_ELT(data_, index_, rhs); });
@@ -113,9 +119,26 @@ inline r_vector<r_string>::r_vector(SEXP&& data)
   }
 }
 
+// Requires specialization to handle `NA_STRING` and UTF-8 translation
 template <>
 inline r_vector<r_string>::r_vector(std::initializer_list<r_string> il)
-    : cpp11::r_vector<r_string>(as_sexp(il)), capacity_(il.size()) {}
+    : cpp11::r_vector<r_string>(safe[Rf_allocVector](STRSXP, il.size())),
+      capacity_(il.size()) {
+  unwind_protect([&] {
+    auto it = il.begin();
+
+    for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
+      // i.e. to `SEXP`
+      underlying_type elt = static_cast<underlying_type>(*it);
+
+      if (elt == NA_STRING) {
+        set_elt(data_, i, elt);
+      } else {
+        set_elt(data_, i, Rf_mkCharCE(Rf_translateCharUTF8(elt), CE_UTF8));
+      }
+    }
+  });
+}
 
 template <>
 inline r_vector<r_string>::r_vector(std::initializer_list<named_arg> il)

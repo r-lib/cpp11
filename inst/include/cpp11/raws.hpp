@@ -5,6 +5,7 @@
 #include <cstdint>           // for uint8_t
 #include <initializer_list>  // for initializer_list
 
+#include "Rversion.h"
 #include "cpp11/R.hpp"                // for RAW, SEXP, SEXPREC, Rf_allocVector
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/named_arg.hpp"        // for named_arg
@@ -68,6 +69,16 @@ inline SEXPTYPE r_vector<uint8_t>::get_sexptype() {
 }
 
 template <>
+inline void r_vector<uint8_t>::set_elt(
+    SEXP x, R_xlen_t i, typename traits::get_underlying_type<uint8_t>::type value) {
+#if R_VERSION >= R_Version(4, 2, 0)
+  SET_RAW_ELT(x, i, value);
+#else
+  RAW(x)[i] = value;
+#endif
+}
+
+template <>
 inline typename r_vector<uint8_t>::proxy& r_vector<uint8_t>::proxy::operator=(
     const uint8_t& rhs) {
   if (is_altrep_) {
@@ -86,16 +97,6 @@ inline r_vector<uint8_t>::proxy::operator uint8_t() const {
     return RAW(data_)[index_];
   } else {
     return *p_;
-  }
-}
-
-template <>
-inline r_vector<uint8_t>::r_vector(std::initializer_list<uint8_t> il)
-    : cpp11::r_vector<uint8_t>(safe[Rf_allocVector](RAWSXP, il.size())),
-      capacity_(il.size()) {
-  auto it = il.begin();
-  for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
-    data_p_[i] = *it;
   }
 }
 

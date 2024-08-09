@@ -59,6 +59,12 @@ inline SEXPTYPE r_vector<r_bool>::get_sexptype() {
 }
 
 template <>
+inline void r_vector<r_bool>::set_elt(
+    SEXP x, R_xlen_t i, typename traits::get_underlying_type<r_bool>::type value) {
+  SET_LOGICAL_ELT(x, i, value);
+}
+
+template <>
 inline typename r_vector<r_bool>::proxy& r_vector<r_bool>::proxy::operator=(
     const r_bool& rhs) {
   if (is_altrep_) {
@@ -80,15 +86,6 @@ inline r_vector<r_bool>::proxy::operator r_bool() const {
 
 inline bool operator==(const r_vector<r_bool>::proxy& lhs, r_bool rhs) {
   return static_cast<r_bool>(lhs).operator==(rhs);
-}
-
-template <>
-inline r_vector<r_bool>::r_vector(std::initializer_list<r_bool> il)
-    : cpp11::r_vector<r_bool>(Rf_allocVector(LGLSXP, il.size())), capacity_(il.size()) {
-  auto it = il.begin();
-  for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
-    SET_LOGICAL_ELT(data_, i, *it);
-  }
 }
 
 template <>

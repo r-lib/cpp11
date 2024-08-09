@@ -128,6 +128,13 @@ context("raws-C++") {
     UNPROTECT(1);
   }
 
+  test_that("writable::raws(initializer_list<uint_8>)") {
+    cpp11::writable::raws x({1, 2, 255});
+    expect_true(x[0] == 1);
+    expect_true(x[1] == 2);
+    expect_true(x[2] == 255);
+  }
+
   // test_that("writable::raws(ALTREP_SEXP)") {
   // SEXP x = PROTECT(R_compact_uint8_trange(1, 5));
   //// Need to find (or create) an altrep class that implements duplicate.

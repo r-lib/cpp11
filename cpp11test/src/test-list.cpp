@@ -163,4 +163,17 @@ context("list-C++") {
     expect_true(Rf_xlength(y) == 0);
     expect_true(y != R_NilValue);
   }
+
+  test_that("writable::list(initializer_list<SEXP>)") {
+    SEXP x1 = PROTECT(Rf_allocVector(INTSXP, 1));
+    SEXP x2 = PROTECT(Rf_allocVector(REALSXP, 2));
+    SEXP x3 = PROTECT(Rf_allocVector(STRSXP, 3));
+
+    cpp11::writable::list x({x1, x2, x3});
+    expect_true(x[0] == x1);
+    expect_true(x[1] == x2);
+    expect_true(x[2] == x3);
+
+    UNPROTECT(3);
+  }
 }

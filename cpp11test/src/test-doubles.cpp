@@ -175,6 +175,14 @@ context("doubles-C++") {
 
     UNPROTECT(1);
   }
+
+  test_that("writable::doubles(initializer_list<double>)") {
+    cpp11::writable::doubles x({1, 2.5, 3});
+    expect_true(x[0] == 1.0);
+    expect_true(x[1] == 2.5);
+    expect_true(x[2] == 3.0);
+  }
+
   test_that("writable::doubles(SEXP, bool)") {
     SEXP x = PROTECT(Rf_ScalarReal(5.));
     cpp11::writable::doubles y(x, false);

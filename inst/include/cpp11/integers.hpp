@@ -61,6 +61,12 @@ inline SEXPTYPE r_vector<int>::get_sexptype() {
 }
 
 template <>
+inline void r_vector<int>::set_elt(
+    SEXP x, R_xlen_t i, typename traits::get_underlying_type<int>::type value) {
+  SET_INTEGER_ELT(x, i, value);
+}
+
+template <>
 inline typename r_vector<int>::proxy& r_vector<int>::proxy::operator=(const int& rhs) {
   if (is_altrep_) {
     // NOPROTECT: likely too costly to unwind protect every set elt
@@ -80,10 +86,6 @@ inline r_vector<int>::proxy::operator int() const {
     return *p_;
   }
 }
-
-template <>
-inline r_vector<int>::r_vector(std::initializer_list<int> il)
-    : cpp11::r_vector<int>(as_sexp(il)), capacity_(il.size()) {}
 
 template <>
 inline r_vector<int>::r_vector(std::initializer_list<named_arg> il)
