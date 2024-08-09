@@ -17,21 +17,15 @@
 namespace cpp11 {
 
 template <>
+inline SEXPTYPE r_vector<double>::get_sexptype() {
+  return REALSXP;
+}
+
+template <>
 inline typename r_vector<double>::underlying_type r_vector<double>::get_elt(SEXP x,
                                                                             R_xlen_t i) {
   // NOPROTECT: likely too costly to unwind protect every elt
   return REAL_ELT(x, i);
-}
-
-template <>
-inline SEXP r_vector<double>::valid_type(SEXP data) {
-  if (data == nullptr) {
-    throw type_error(REALSXP, NILSXP);
-  }
-  if (TYPEOF(data) != REALSXP) {
-    throw type_error(REALSXP, TYPEOF(data));
-  }
-  return data;
 }
 
 template <>
@@ -59,11 +53,6 @@ inline bool r_vector<double>::const_iterator::use_buf(bool is_altrep) {
 typedef r_vector<double> doubles;
 
 namespace writable {
-
-template <>
-inline SEXPTYPE r_vector<double>::get_sexptype() {
-  return REALSXP;
-}
 
 template <>
 inline void r_vector<double>::set_elt(SEXP x, R_xlen_t i,

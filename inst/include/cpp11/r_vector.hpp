@@ -149,7 +149,8 @@ class r_vector {
   /// Implemented in specialization
   static void get_region(SEXP x, R_xlen_t i, R_xlen_t n, underlying_type* buf);
   /// Implemented in specialization
-  static SEXP valid_type(SEXP data);
+  static SEXPTYPE get_sexptype();
+  static SEXP valid_type(SEXP x);
 
   friend class writable::r_vector<T>;
 };
@@ -309,11 +310,10 @@ class r_vector : public cpp11::r_vector<T> {
 
  private:
   /// Implemented in specialization
-  static SEXPTYPE get_sexptype();
-  /// Implemented in specialization
   static void set_elt(SEXP x, R_xlen_t i, underlying_type value);
 
   using cpp11::r_vector<T>::get_p;
+  using cpp11::r_vector<T>::get_sexptype;
 };
 }  // namespace writable
 
@@ -557,6 +557,35 @@ inline r_vector<r_string> r_vector<T>::names() const {
   } else {
     return r_vector<r_string>(nms);
   }
+}
+
+class type_error : public std::exception {
+ public:
+  type_error(int expected, int actual) : expected_(expected), actual_(actual) {}
+  virtual const char* what() const noexcept override {
+    snprintf(str_, 64, "Invalid input type, expected '%s' actual '%s'",
+             Rf_type2char(expected_), Rf_type2char(actual_));
+    return str_;
+  }
+
+ private:
+  int expected_;
+  int actual_;
+  mutable char str_[64];
+};
+
+template <typename T>
+inline SEXP r_vector<T>::valid_type(SEXP x) {
+  const SEXPTYPE type = get_sexptype();
+
+  if (x == nullptr) {
+    throw type_error(type, NILSXP);
+  }
+  if (TYPEOF(x) != type) {
+    throw type_error(type, TYPEOF(x));
+  }
+
+  return x;
 }
 
 template <typename T>
@@ -1199,21 +1228,5 @@ template <typename T>
 bool operator!=(const r_vector<T>& lhs, const r_vector<T>& rhs) {
   return !(lhs == rhs);
 }
-
-// Special helper class used by specializations to throw consistent exceptions
-class type_error : public std::exception {
- public:
-  type_error(int expected, int actual) : expected_(expected), actual_(actual) {}
-  virtual const char* what() const noexcept override {
-    snprintf(str_, 64, "Invalid input type, expected '%s' actual '%s'",
-             Rf_type2char(expected_), Rf_type2char(actual_));
-    return str_;
-  }
-
- private:
-  int expected_;
-  int actual_;
-  mutable char str_[64];
-};
 
 }  // namespace cpp11

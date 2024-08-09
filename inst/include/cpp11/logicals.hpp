@@ -17,21 +17,15 @@
 namespace cpp11 {
 
 template <>
+inline SEXPTYPE r_vector<r_bool>::get_sexptype() {
+  return LGLSXP;
+}
+
+template <>
 inline typename r_vector<r_bool>::underlying_type r_vector<r_bool>::get_elt(SEXP x,
                                                                             R_xlen_t i) {
   // NOPROTECT: likely too costly to unwind protect every elt
   return LOGICAL_ELT(x, i);
-}
-
-template <>
-inline SEXP r_vector<r_bool>::valid_type(SEXP data) {
-  if (data == nullptr) {
-    throw type_error(LGLSXP, NILSXP);
-  }
-  if (TYPEOF(data) != LGLSXP) {
-    throw type_error(LGLSXP, TYPEOF(data));
-  }
-  return data;
 }
 
 template <>
@@ -59,11 +53,6 @@ inline bool r_vector<r_bool>::const_iterator::use_buf(bool is_altrep) {
 typedef r_vector<r_bool> logicals;
 
 namespace writable {
-
-template <>
-inline SEXPTYPE r_vector<r_bool>::get_sexptype() {
-  return LGLSXP;
-}
 
 template <>
 inline void r_vector<r_bool>::set_elt(SEXP x, R_xlen_t i,

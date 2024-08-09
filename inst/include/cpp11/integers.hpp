@@ -18,21 +18,15 @@
 namespace cpp11 {
 
 template <>
+inline SEXPTYPE r_vector<int>::get_sexptype() {
+  return INTSXP;
+}
+
+template <>
 inline typename r_vector<int>::underlying_type r_vector<int>::get_elt(SEXP x,
                                                                       R_xlen_t i) {
   // NOPROTECT: likely too costly to unwind protect every elt
   return INTEGER_ELT(x, i);
-}
-
-template <>
-inline SEXP r_vector<int>::valid_type(SEXP data) {
-  if (data == nullptr) {
-    throw type_error(INTSXP, NILSXP);
-  }
-  if (TYPEOF(data) != INTSXP) {
-    throw type_error(INTSXP, TYPEOF(data));
-  }
-  return data;
 }
 
 template <>
@@ -60,11 +54,6 @@ inline bool r_vector<int>::const_iterator::use_buf(bool is_altrep) {
 typedef r_vector<int> integers;
 
 namespace writable {
-
-template <>
-inline SEXPTYPE r_vector<int>::get_sexptype() {
-  return INTSXP;
-}
 
 template <>
 inline void r_vector<int>::set_elt(SEXP x, R_xlen_t i,
