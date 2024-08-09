@@ -43,10 +43,16 @@ inline typename r_vector<r_bool>::underlying_type* r_vector<r_bool>::get_p(bool 
 }
 
 template <>
-inline void r_vector<r_bool>::const_iterator::fill_buf(R_xlen_t pos) {
-  length_ = std::min(64_xl, data_->size() - pos);
-  LOGICAL_GET_REGION(data_->data_, pos, length_, buf_.data());
-  block_start_ = pos;
+inline void r_vector<r_bool>::get_region(
+    SEXP x, R_xlen_t i, R_xlen_t n,
+    typename traits::get_underlying_type<r_bool>::type* buf) {
+  // NOPROTECT: likely too costly to unwind protect here
+  LOGICAL_GET_REGION(x, i, n, buf);
+};
+
+template <>
+inline bool r_vector<r_bool>::const_iterator::use_buf(bool is_altrep) {
+  return is_altrep;
 }
 
 typedef r_vector<r_bool> logicals;
