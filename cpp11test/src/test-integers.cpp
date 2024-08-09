@@ -207,6 +207,20 @@ context("integers-C++") {
   }
 #endif
 
+  test_that("operator[] with names") {
+    using namespace cpp11::literals;
+    cpp11::writable::integers x({"a"_nm = 1, "b"_nm = 2});
+    cpp11::integers y(x);
+
+    expect_true(x["a"] == 1);
+    expect_true(x["b"] == 2);
+    expect_error(x["c"] == 2);
+
+    expect_true(y["a"] == 1);
+    expect_true(y["b"] == 2);
+    expect_error(y["c"] == 2);
+  }
+
   test_that("is_na(integer)") {
     int x = 0;
     expect_true(!cpp11::is_na(x));

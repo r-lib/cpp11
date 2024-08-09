@@ -27,22 +27,14 @@ inline typename r_vector<SEXP>::underlying_type r_vector<SEXP>::get_elt(SEXP x,
 }
 
 template <>
-inline SEXP r_vector<SEXP>::operator[](const r_string& name) const {
-  SEXP names = this->names();
-  R_xlen_t size = Rf_xlength(names);
-
-  for (R_xlen_t pos = 0; pos < size; ++pos) {
-    auto cur = Rf_translateCharUTF8(STRING_ELT(names, pos));
-    if (name == cur) {
-      return operator[](pos);
-    }
-  }
-  return R_NilValue;
-}
-
-template <>
 inline typename r_vector<SEXP>::underlying_type* r_vector<SEXP>::get_p(bool, SEXP) {
   return nullptr;
+}
+
+/// Specialization for lists, where `x["oob"]` returns `R_NilValue`, like at the R level
+template <>
+inline SEXP r_vector<SEXP>::get_oob() {
+  return R_NilValue;
 }
 
 template <>
