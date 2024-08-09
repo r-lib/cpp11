@@ -225,7 +225,6 @@ class r_vector : public cpp11::r_vector<T> {
   proxy at(const size_type pos) const;
   proxy at(const r_string& name) const;
 
-  /// Implemented in specialization
   void push_back(T value);
   /// Implemented in `strings.hpp`
   void push_back(const named_arg& value);
@@ -943,6 +942,21 @@ inline typename r_vector<T>::proxy r_vector<T>::at(const r_string& name) const {
 }
 
 template <typename T>
+inline void r_vector<T>::push_back(T value) {
+  while (length_ >= capacity_) {
+    reserve(capacity_ == 0 ? 1 : capacity_ *= 2);
+  }
+
+  if (data_p_ != nullptr) {
+    data_p_[length_] = static_cast<underlying_type>(value);
+  } else {
+    set_elt(data_, length_, static_cast<underlying_type>(value));
+  }
+
+  ++length_;
+}
+
+template <typename T>
 inline void r_vector<T>::pop_back() {
   --length_;
 }
@@ -1063,9 +1077,8 @@ inline typename r_vector<T>::proxy& r_vector<T>::proxy::operator=(const T& rhs) 
   if (p_ != nullptr) {
     *p_ = elt;
   } else {
-    // Handles ALTREP, VECSXP, and STRSXP cases.
-    // NOPROTECT: Likely too costly to unwind protect every set elt.
-    r_vector<T>::set_elt(data_, index_, elt);
+    // Handles ALTREP, VECSXP, and STRSXP cases
+    set_elt(data_, index_, elt);
   }
 
   return *this;

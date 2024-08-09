@@ -57,6 +57,7 @@ namespace writable {
 template <>
 inline void r_vector<r_string>::set_elt(SEXP x, R_xlen_t i,
                                         typename r_vector::underlying_type value) {
+  // NOPROTECT: Likely too costly to unwind protect every set elt
   SET_STRING_ELT(x, i, value);
 }
 
@@ -145,16 +146,6 @@ inline r_vector<r_string>::r_vector(std::initializer_list<named_arg> il)
     UNPROTECT(n_protected);
     throw e;
   }
-}
-
-template <>
-inline void r_vector<r_string>::push_back(r_string value) {
-  while (length_ >= capacity_) {
-    reserve(capacity_ == 0 ? 1 : capacity_ *= 2);
-  }
-  // NOPROTECT: likely too costly to unwind protect every elt
-  SET_STRING_ELT(data_, length_, value);
-  ++length_;
 }
 
 typedef r_vector<r_string> strings;

@@ -57,6 +57,7 @@ namespace writable {
 template <>
 inline void r_vector<r_bool>::set_elt(SEXP x, R_xlen_t i,
                                       typename r_vector::underlying_type value) {
+  // NOPROTECT: Likely too costly to unwind protect every set elt
   SET_LOGICAL_ELT(x, i, value);
 }
 
@@ -97,19 +98,6 @@ inline r_vector<r_bool>::r_vector(std::initializer_list<named_arg> il)
     UNPROTECT(n_protected);
     throw e;
   }
-}
-
-template <>
-inline void r_vector<r_bool>::push_back(r_bool value) {
-  while (length_ >= capacity_) {
-    reserve(capacity_ == 0 ? 1 : capacity_ *= 2);
-  }
-  if (is_altrep_) {
-    SET_LOGICAL_ELT(data_, length_, value);
-  } else {
-    data_p_[length_] = value;
-  }
-  ++length_;
 }
 
 typedef r_vector<r_bool> logicals;

@@ -65,6 +65,7 @@ namespace writable {
 template <>
 inline void r_vector<uint8_t>::set_elt(SEXP x, R_xlen_t i,
                                        typename r_vector::underlying_type value) {
+  // NOPROTECT: Likely too costly to unwind protect every set elt
 #if R_VERSION >= R_Version(4, 2, 0)
   SET_RAW_ELT(x, i, value);
 #else
@@ -95,20 +96,6 @@ inline r_vector<uint8_t>::r_vector(std::initializer_list<named_arg> il)
     UNPROTECT(n_protected);
     throw e;
   }
-}
-
-template <>
-inline void r_vector<uint8_t>::push_back(uint8_t value) {
-  while (length_ >= capacity_) {
-    reserve(capacity_ == 0 ? 1 : capacity_ *= 2);
-  }
-  if (is_altrep_) {
-    // NOPROTECT: likely too costly to unwind protect every elt
-    RAW(data_)[length_] = value;
-  } else {
-    data_p_[length_] = value;
-  }
-  ++length_;
 }
 
 typedef r_vector<uint8_t> raws;
