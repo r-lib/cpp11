@@ -17,6 +17,13 @@
 namespace cpp11 {
 
 template <>
+inline typename r_vector<r_bool>::underlying_type r_vector<r_bool>::get_elt(SEXP x,
+                                                                            R_xlen_t i) {
+  // NOPROTECT: likely too costly to unwind protect every elt
+  return LOGICAL_ELT(x, i);
+}
+
+template <>
 inline SEXP r_vector<r_bool>::valid_type(SEXP data) {
   if (data == nullptr) {
     throw type_error(LGLSXP, NILSXP);

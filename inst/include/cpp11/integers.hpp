@@ -18,6 +18,13 @@
 namespace cpp11 {
 
 template <>
+inline typename r_vector<int>::underlying_type r_vector<int>::get_elt(SEXP x,
+                                                                      R_xlen_t i) {
+  // NOPROTECT: likely too costly to unwind protect every elt
+  return INTEGER_ELT(x, i);
+}
+
+template <>
 inline SEXP r_vector<int>::valid_type(SEXP data) {
   if (data == nullptr) {
     throw type_error(INTSXP, NILSXP);

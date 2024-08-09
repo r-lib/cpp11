@@ -144,6 +144,8 @@ class r_vector {
 
  private:
   /// Implemented in specialization
+  static underlying_type get_elt(SEXP x, R_xlen_t i);
+  /// Implemented in specialization
   static underlying_type* get_p(bool is_altrep, SEXP data);
   /// Implemented in specialization
   static void get_region(SEXP x, R_xlen_t i, R_xlen_t n, underlying_type* buf);
