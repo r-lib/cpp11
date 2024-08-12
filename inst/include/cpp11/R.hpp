@@ -27,6 +27,18 @@
 #include <type_traits>
 #include "cpp11/altrep.hpp"
 
+#if defined(R_VERSION) && R_VERSION >= R_Version(4, 4, 0)
+// Use R's new macro
+#define CPP11_PRIdXLEN_T R_PRIdXLEN_T
+#else
+// Recreate what new R does
+#ifdef LONG_VECTOR_SUPPORT
+#define CPP11_PRIdXLEN_T "td"
+#else
+#define CPP11_PRIdXLEN_T "d"
+#endif
+#endif
+
 namespace cpp11 {
 namespace literals {
 

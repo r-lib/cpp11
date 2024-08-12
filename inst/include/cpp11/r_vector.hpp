@@ -596,13 +596,11 @@ inline SEXP r_vector<T>::valid_length(SEXP x, R_xlen_t n) {
     return x;
   }
 
-  // TODO: Use the right printf specifier for `R_xlen_t`
-  int n_int = static_cast<int>(n);
-  int x_n_int = static_cast<int>(x_n);
-
-  char message[64];
-  snprintf(message, 64, "Invalid input length, expected '%i' actual '%i'.", n_int,
-           x_n_int);
+  char message[128];
+  snprintf(message, 128,
+           "Invalid input length, expected '%" CPP11_PRIdXLEN_T
+           "' actual '%" CPP11_PRIdXLEN_T "'.",
+           n, x_n);
 
   throw std::length_error(message);
 }
