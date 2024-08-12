@@ -168,6 +168,48 @@ context("integers-C++") {
     UNPROTECT(1);
   }
 
+  test_that("writable::integers(initializer_list<named_arg>)") {
+    using namespace cpp11::literals;
+
+    SEXP x1 = PROTECT(Rf_allocVector(INTSXP, 1));
+    SEXP x2 = PROTECT(Rf_allocVector(INTSXP, 1));
+    SEXP x3 = PROTECT(Rf_allocVector(INTSXP, 1));
+
+    SET_INTEGER_ELT(x1, 0, 0);
+    SET_INTEGER_ELT(x2, 0, 5);
+    SET_INTEGER_ELT(x3, 0, NA_INTEGER);
+
+    // From scalar integer vectors
+    cpp11::writable::integers x({"one"_nm = x1, "two"_nm = x2, "three"_nm = x3});
+    expect_true(x.named());
+    expect_true(x["one"] == 0);
+    expect_true(x["two"] == 5);
+    expect_true(x["three"] == NA_INTEGER);
+
+    // From ints
+    cpp11::writable::integers y({"one"_nm = 0, "two"_nm = 5, "three"_nm = NA_INTEGER});
+    expect_true(y.named());
+    expect_true(y["one"] == 0);
+    expect_true(y["two"] == 5);
+    expect_true(y["three"] == NA_INTEGER);
+
+    UNPROTECT(3);
+  }
+
+  test_that("writable::integers(initializer_list<named_arg>) type check") {
+    using namespace cpp11::literals;
+    expect_error_as(cpp11::writable::integers({"one"_nm = true}), cpp11::type_error);
+    expect_error_as(cpp11::writable::integers({"one"_nm = R_NilValue}),
+                    cpp11::type_error);
+  }
+
+  test_that("writable::integers(initializer_list<named_arg>) length check") {
+    using namespace cpp11::literals;
+    SEXP x = PROTECT(Rf_allocVector(INTSXP, 2));
+    expect_error_as(cpp11::writable::integers({"x"_nm = x}), std::length_error);
+    UNPROTECT(1);
+  }
+
   test_that("writable::integers(initializer_list<int>)") {
     cpp11::writable::integers x({1, 2, 3});
     expect_true(x[0] == 1);

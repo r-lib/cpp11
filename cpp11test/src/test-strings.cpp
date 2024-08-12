@@ -133,6 +133,52 @@ context("strings-C++") {
     UNPROTECT(1);
   }
 
+  test_that("writable::strings(initializer_list<named_arg>)") {
+    using namespace cpp11::literals;
+
+    SEXP x1 = PROTECT(Rf_allocVector(STRSXP, 1));
+    SEXP x2 = PROTECT(Rf_allocVector(STRSXP, 1));
+    SEXP x3 = PROTECT(Rf_allocVector(STRSXP, 1));
+
+    SEXP one = PROTECT(Rf_mkCharCE("one", CE_UTF8));
+    SEXP two = PROTECT(Rf_mkCharCE("two", CE_UTF8));
+    SEXP three = PROTECT(Rf_mkCharCE("three", CE_UTF8));
+
+    SET_STRING_ELT(x1, 0, one);
+    SET_STRING_ELT(x2, 0, two);
+    SET_STRING_ELT(x3, 0, three);
+
+    // From scalar string vectors
+    cpp11::writable::strings x({"one"_nm = x1, "two"_nm = x2, "three"_nm = x3});
+    expect_true(x.named());
+    expect_true(x["one"] == cpp11::r_string("one"));
+    expect_true(x["two"] == cpp11::r_string("two"));
+    expect_true(x["three"] == cpp11::r_string("three"));
+
+    // From strings
+    cpp11::writable::strings y(
+        {"one"_nm = "one", "two"_nm = "two", "three"_nm = "three"});
+    expect_true(y.named());
+    expect_true(y["one"] == cpp11::r_string("one"));
+    expect_true(y["two"] == cpp11::r_string("two"));
+    expect_true(y["three"] == cpp11::r_string("three"));
+
+    UNPROTECT(6);
+  }
+
+  test_that("writable::strings(initializer_list<named_arg>) type check") {
+    using namespace cpp11::literals;
+    expect_error_as(cpp11::writable::strings({"one"_nm = true}), cpp11::type_error);
+    expect_error_as(cpp11::writable::strings({"one"_nm = R_NilValue}), cpp11::type_error);
+  }
+
+  test_that("writable::strings(initializer_list<named_arg>) length check") {
+    using namespace cpp11::literals;
+    SEXP x = PROTECT(Rf_allocVector(STRSXP, 2));
+    expect_error_as(cpp11::writable::strings({"x"_nm = x}), std::length_error);
+    UNPROTECT(1);
+  }
+
   test_that("writable::strings(initializer_list<r_string>)") {
     cpp11::r_string abc = cpp11::r_string("abc");
     cpp11::r_string na = cpp11::r_string(NA_STRING);

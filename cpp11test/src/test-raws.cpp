@@ -128,6 +128,43 @@ context("raws-C++") {
     UNPROTECT(1);
   }
 
+  test_that("writable::raws(initializer_list<named_arg>)") {
+    using namespace cpp11::literals;
+
+    SEXP x1 = PROTECT(Rf_allocVector(RAWSXP, 1));
+    SEXP x2 = PROTECT(Rf_allocVector(RAWSXP, 1));
+    SEXP x3 = PROTECT(Rf_allocVector(RAWSXP, 1));
+
+    SET_RAW_ELT(x1, 0, 1);
+    SET_RAW_ELT(x2, 0, 2);
+    SET_RAW_ELT(x3, 0, 255);
+
+    // From scalar raw vectors
+    cpp11::writable::raws x({"one"_nm = x1, "two"_nm = x2, "three"_nm = x3});
+    expect_true(x.named());
+    expect_true(x["one"] == 1);
+    expect_true(x["two"] == 2);
+    expect_true(x["three"] == 255);
+
+    UNPROTECT(3);
+  }
+
+  test_that("writable::raws(initializer_list<named_arg>) type check") {
+    using namespace cpp11::literals;
+    expect_error_as(cpp11::writable::raws({"one"_nm = true}), cpp11::type_error);
+    expect_error_as(cpp11::writable::raws({"one"_nm = R_NilValue}), cpp11::type_error);
+
+    // `as_sexp()` turns this into an `INTSXP`, which is not compatible
+    expect_error_as(cpp11::writable::raws({"one"_nm = 1}), cpp11::type_error);
+  }
+
+  test_that("writable::raws(initializer_list<named_arg>) length check") {
+    using namespace cpp11::literals;
+    SEXP x = PROTECT(Rf_allocVector(RAWSXP, 2));
+    expect_error_as(cpp11::writable::raws({"x"_nm = x}), std::length_error);
+    UNPROTECT(1);
+  }
+
   test_that("writable::raws(initializer_list<uint_8>)") {
     cpp11::writable::raws x({1, 2, 255});
     expect_true(x[0] == 1);

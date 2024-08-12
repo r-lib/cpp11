@@ -176,6 +176,47 @@ context("doubles-C++") {
     UNPROTECT(1);
   }
 
+  test_that("writable::doubles(initializer_list<named_arg>)") {
+    using namespace cpp11::literals;
+
+    SEXP x1 = PROTECT(Rf_allocVector(REALSXP, 1));
+    SEXP x2 = PROTECT(Rf_allocVector(REALSXP, 1));
+    SEXP x3 = PROTECT(Rf_allocVector(REALSXP, 1));
+
+    SET_REAL_ELT(x1, 0, 0.0);
+    SET_REAL_ELT(x2, 0, 5.5);
+    SET_REAL_ELT(x3, 0, NA_REAL);
+
+    // From scalar double vectors
+    cpp11::writable::doubles x({"one"_nm = x1, "two"_nm = x2, "three"_nm = x3});
+    expect_true(x.named());
+    expect_true(x["one"] == 0.0);
+    expect_true(x["two"] == 5.5);
+    expect_true(R_IsNA(x["three"]));
+
+    // From doubles
+    cpp11::writable::doubles y({"one"_nm = 0.0, "two"_nm = 5.5, "three"_nm = NA_REAL});
+    expect_true(y.named());
+    expect_true(y["one"] == 0.0);
+    expect_true(y["two"] == 5.5);
+    expect_true(R_IsNA(y["three"]));
+
+    UNPROTECT(3);
+  }
+
+  test_that("writable::doubles(initializer_list<named_arg>) type check") {
+    using namespace cpp11::literals;
+    expect_error_as(cpp11::writable::doubles({"one"_nm = true}), cpp11::type_error);
+    expect_error_as(cpp11::writable::doubles({"one"_nm = R_NilValue}), cpp11::type_error);
+  }
+
+  test_that("writable::doubles(initializer_list<named_arg>) length check") {
+    using namespace cpp11::literals;
+    SEXP x = PROTECT(Rf_allocVector(REALSXP, 2));
+    expect_error_as(cpp11::writable::doubles({"x"_nm = x}), std::length_error);
+    UNPROTECT(1);
+  }
+
   test_that("writable::doubles(initializer_list<double>)") {
     cpp11::writable::doubles x({1, 2.5, 3});
     expect_true(x[0] == 1.0);

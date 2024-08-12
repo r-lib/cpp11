@@ -4,13 +4,12 @@
 #include <array>             // for array
 #include <initializer_list>  // for initializer_list
 
-#include "R_ext/Arith.h"        // for ISNA
-#include "cpp11/R.hpp"          // for SEXP, SEXPREC, Rf_allocVector, REAL
-#include "cpp11/as.hpp"         // for as_sexp
-#include "cpp11/named_arg.hpp"  // for named_arg
-#include "cpp11/protect.hpp"    // for safe
-#include "cpp11/r_vector.hpp"   // for vector, vector<>::proxy, vector<>::...
-#include "cpp11/sexp.hpp"       // for sexp
+#include "R_ext/Arith.h"       // for ISNA
+#include "cpp11/R.hpp"         // for SEXP, SEXPREC, Rf_allocVector, REAL
+#include "cpp11/as.hpp"        // for as_sexp
+#include "cpp11/protect.hpp"   // for safe
+#include "cpp11/r_vector.hpp"  // for vector, vector<>::proxy, vector<>::...
+#include "cpp11/sexp.hpp"      // for sexp
 
 // Specializations for doubles
 
@@ -59,30 +58,6 @@ inline void r_vector<double>::set_elt(SEXP x, R_xlen_t i,
                                       typename r_vector::underlying_type value) {
   // NOPROTECT: Likely too costly to unwind protect every set elt
   SET_REAL_ELT(x, i, value);
-}
-
-template <>
-inline r_vector<double>::r_vector(std::initializer_list<named_arg> il)
-    : cpp11::r_vector<double>(safe[Rf_allocVector](REALSXP, il.size())),
-      capacity_(il.size()) {
-  int n_protected = 0;
-
-  try {
-    unwind_protect([&] {
-      Rf_setAttrib(data_, R_NamesSymbol, Rf_allocVector(STRSXP, capacity_));
-      SEXP names = PROTECT(Rf_getAttrib(data_, R_NamesSymbol));
-      ++n_protected;
-      auto it = il.begin();
-      for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
-        data_p_[i] = REAL_ELT(it->value(), 0);
-        SET_STRING_ELT(names, i, Rf_mkCharCE(it->name(), CE_UTF8));
-      }
-      UNPROTECT(n_protected);
-    });
-  } catch (const unwind_exception& e) {
-    UNPROTECT(n_protected);
-    throw e;
-  }
 }
 
 typedef r_vector<double> doubles;

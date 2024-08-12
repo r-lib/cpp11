@@ -49,7 +49,6 @@ context("list-C++") {
     expect_true(fifth[2] == 'c');
   }
 
-  using namespace cpp11::literals;
   test_that("unnamed_list.push_back(unnamed_arg)") {
     cpp11::writable::list x(1);
     x.push_back(cpp11::writable::integers(2));
@@ -58,6 +57,8 @@ context("list-C++") {
   }
 
   test_that("unnamed_list.push_back(named_arg)") {
+    using namespace cpp11::literals;
+
     cpp11::writable::list x(1);
     x.push_back("bar"_nm = 2);
 
@@ -69,6 +70,8 @@ context("list-C++") {
   }
 
   test_that("named_list.push_back(unnamed_arg)") {
+    using namespace cpp11::literals;
+
     cpp11::writable::list x({"foo"_nm = 1});
     x.push_back(cpp11::writable::integers(2));
 
@@ -80,6 +83,8 @@ context("list-C++") {
   }
 
   test_that("named_list.push_back(named_arg)") {
+    using namespace cpp11::literals;
+
     cpp11::writable::list x({"foo"_nm = 1});
     x.push_back({"bar"_nm = 2});
 
@@ -98,6 +103,8 @@ context("list-C++") {
   }
 
   test_that("empty_list.push_back(named_arg)") {
+    using namespace cpp11::literals;
+
     cpp11::writable::list x;
     x.push_back({"bar"_nm = 2});
 
@@ -126,6 +133,8 @@ context("list-C++") {
   }
 
   test_that("list.named() works") {
+    using namespace cpp11::literals;
+
     cpp11::writable::list x({"bar"_nm = 2});
     expect_true(x.named());
 
@@ -144,6 +153,8 @@ context("list-C++") {
   }
 
   test_that("names of named lists are also resized") {
+    using namespace cpp11::literals;
+
     cpp11::writable::list x;
     x.push_back({"n1"_nm = 1});
     x.push_back({"n2"_nm = 2});
@@ -162,6 +173,30 @@ context("list-C++") {
 
     expect_true(Rf_xlength(y) == 0);
     expect_true(y != R_NilValue);
+  }
+
+  test_that("writable::list(initializer_list<named_arg>)") {
+    using namespace cpp11::literals;
+
+    SEXP x1 = PROTECT(Rf_allocVector(INTSXP, 1));
+    SEXP x2 = PROTECT(Rf_allocVector(REALSXP, 2));
+    SEXP x3 = PROTECT(Rf_allocVector(STRSXP, 3));
+
+    // Note that `x1`, `x2`, and `x3` are list elements, not lists of length 1!
+    cpp11::writable::list x({"one"_nm = x1, "two"_nm = x2, "three"_nm = x3});
+    expect_true(x.named());
+    expect_true(x["one"] == x1);
+    expect_true(x["two"] == x2);
+    expect_true(x["three"] == x3);
+
+    // This also works, with varying types
+    cpp11::writable::list y({"one"_nm = 1, "two"_nm = true, "three"_nm = 2.5});
+    expect_true(y.named());
+    expect_true(TYPEOF(y["one"]) == INTSXP);
+    expect_true(TYPEOF(y["two"]) == LGLSXP);
+    expect_true(TYPEOF(y["three"]) == REALSXP);
+
+    UNPROTECT(3);
   }
 
   test_that("writable::list(initializer_list<SEXP>)") {
