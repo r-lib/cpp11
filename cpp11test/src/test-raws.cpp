@@ -1,5 +1,7 @@
 #include "cpp11/raws.hpp"
 
+#include "Rversion.h"
+
 #include <testthat.h>
 
 context("raws-C++") {
@@ -135,9 +137,15 @@ context("raws-C++") {
     SEXP x2 = PROTECT(Rf_allocVector(RAWSXP, 1));
     SEXP x3 = PROTECT(Rf_allocVector(RAWSXP, 1));
 
+#if R_VERSION >= R_Version(4, 2, 0)
     SET_RAW_ELT(x1, 0, 1);
     SET_RAW_ELT(x2, 0, 2);
     SET_RAW_ELT(x3, 0, 255);
+#else
+    RAW(x1)[0] = 1;
+    RAW(x2)[0] = 2;
+    RAW(x3)[0] = 255;
+#endif
 
     // From scalar raw vectors
     cpp11::writable::raws x({"one"_nm = x1, "two"_nm = x2, "three"_nm = x3});
