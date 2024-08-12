@@ -128,6 +128,48 @@ context("logicals-C++") {
     UNPROTECT(1);
   }
 
+  test_that("writable::logicals(initializer_list<named_arg>)") {
+    using namespace cpp11::literals;
+
+    SEXP x1 = PROTECT(Rf_allocVector(LGLSXP, 1));
+    SEXP x2 = PROTECT(Rf_allocVector(LGLSXP, 1));
+    SEXP x3 = PROTECT(Rf_allocVector(LGLSXP, 1));
+
+    SET_LOGICAL_ELT(x1, 0, 0);
+    SET_LOGICAL_ELT(x2, 0, 1);
+    SET_LOGICAL_ELT(x3, 0, NA_LOGICAL);
+
+    // From scalar logical vectors
+    cpp11::writable::logicals x({"one"_nm = x1, "two"_nm = x2, "three"_nm = x3});
+    expect_true(x.named());
+    expect_true(x["one"] == cpp11::r_bool(false));
+    expect_true(x["two"] == cpp11::r_bool(true));
+    expect_true(x["three"] == cpp11::r_bool(NA_LOGICAL));
+
+    // From booleans
+    cpp11::writable::logicals y({"one"_nm = true, "two"_nm = false, "three"_nm = true});
+    expect_true(y.named());
+    expect_true(y["one"] == cpp11::r_bool(true));
+    expect_true(y["two"] == cpp11::r_bool(false));
+    expect_true(y["three"] == cpp11::r_bool(true));
+
+    UNPROTECT(3);
+  }
+
+  test_that("writable::logicals(initializer_list<named_arg>) type check") {
+    using namespace cpp11::literals;
+    expect_error_as(cpp11::writable::logicals({"one"_nm = 1}), cpp11::type_error);
+    expect_error_as(cpp11::writable::logicals({"one"_nm = R_NilValue}),
+                    cpp11::type_error);
+  }
+
+  test_that("writable::logicals(initializer_list<named_arg>) length check") {
+    using namespace cpp11::literals;
+    SEXP x = PROTECT(Rf_allocVector(LGLSXP, 2));
+    expect_error_as(cpp11::writable::logicals({"x"_nm = x}), std::length_error);
+    UNPROTECT(1);
+  }
+
   test_that("writable::logicals(initializer_list<r_bool>)") {
     cpp11::writable::logicals x(
         {cpp11::r_bool(true), cpp11::r_bool(false), cpp11::r_bool(NA_INTEGER)});

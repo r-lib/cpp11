@@ -15,6 +15,7 @@
 
 #include "cpp11/R.hpp"                // for R_xlen_t, SEXP, SEXPREC, Rf_xle...
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
+#include "cpp11/named_arg.hpp"        // for named_arg
 #include "cpp11/protect.hpp"          // for store
 #include "cpp11/r_string.hpp"         // for r_string
 #include "cpp11/sexp.hpp"             // for sexp
@@ -22,9 +23,6 @@
 namespace cpp11 {
 
 using namespace cpp11::literals;
-
-// Forward Declarations
-class named_arg;
 
 namespace writable {
 template <typename T>
@@ -153,6 +151,7 @@ class r_vector {
   /// Implemented in specialization (throws by default, specialization in list type)
   static T get_oob();
   static SEXP valid_type(SEXP x);
+  static SEXP valid_length(SEXP x, R_xlen_t n);
 
   friend class writable::r_vector<T>;
 };
@@ -197,7 +196,6 @@ class r_vector : public cpp11::r_vector<T> {
   r_vector(r_vector&& rhs);
   r_vector(const cpp11::r_vector<T>& rhs);
   r_vector(std::initializer_list<T> il);
-  /// Implemented in specialization
   r_vector(std::initializer_list<named_arg> il);
 
   explicit r_vector(const R_xlen_t size);
@@ -313,8 +311,11 @@ class r_vector : public cpp11::r_vector<T> {
   /// Implemented in specialization
   static void set_elt(SEXP x, R_xlen_t i, underlying_type value);
 
+  using cpp11::r_vector<T>::get_elt;
   using cpp11::r_vector<T>::get_p;
   using cpp11::r_vector<T>::get_sexptype;
+  using cpp11::r_vector<T>::valid_type;
+  using cpp11::r_vector<T>::valid_length;
 };
 }  // namespace writable
 
@@ -567,7 +568,7 @@ inline T r_vector<T>::get_oob() {
 
 class type_error : public std::exception {
  public:
-  type_error(int expected, int actual) : expected_(expected), actual_(actual) {}
+  type_error(SEXPTYPE expected, SEXPTYPE actual) : expected_(expected), actual_(actual) {}
   virtual const char* what() const noexcept override {
     snprintf(str_, 64, "Invalid input type, expected '%s' actual '%s'",
              Rf_type2char(expected_), Rf_type2char(actual_));
@@ -575,8 +576,8 @@ class type_error : public std::exception {
   }
 
  private:
-  int expected_;
-  int actual_;
+  SEXPTYPE expected_;
+  SEXPTYPE actual_;
   mutable char str_[64];
 };
 
@@ -587,11 +588,28 @@ inline SEXP r_vector<T>::valid_type(SEXP x) {
   if (x == nullptr) {
     throw type_error(type, NILSXP);
   }
-  if (TYPEOF(x) != type) {
-    throw type_error(type, TYPEOF(x));
+  if (detail::r_typeof(x) != type) {
+    throw type_error(type, detail::r_typeof(x));
   }
 
   return x;
+}
+
+template <typename T>
+inline SEXP r_vector<T>::valid_length(SEXP x, R_xlen_t n) {
+  R_xlen_t x_n = Rf_xlength(x);
+
+  if (x_n == n) {
+    return x;
+  }
+
+  char message[128];
+  snprintf(message, 128,
+           "Invalid input length, expected '%" CPP11_PRIdXLEN_T
+           "' actual '%" CPP11_PRIdXLEN_T "'.",
+           n, x_n);
+
+  throw std::length_error(message);
 }
 
 template <typename T>
@@ -789,6 +807,49 @@ inline r_vector<T>::r_vector(std::initializer_list<T> il)
       set_elt(data_, i, static_cast<underlying_type>(*it));
     }
   }
+}
+
+template <typename T>
+inline r_vector<T>::r_vector(std::initializer_list<named_arg> il)
+    : cpp11::r_vector<T>(safe[Rf_allocVector](get_sexptype(), il.size())),
+      capacity_(il.size()) {
+  auto it = il.begin();
+
+  // SAFETY: Loop through once outside the `unwind_protect()` to perform the
+  // validation that might `throw`.
+  for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
+    SEXP value = it->value();
+    valid_type(value);
+    valid_length(value, 1);
+  }
+
+  unwind_protect([&] {
+    SEXP names = Rf_allocVector(STRSXP, capacity_);
+    Rf_setAttrib(data_, R_NamesSymbol, names);
+
+    auto it = il.begin();
+
+    for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
+      SEXP value = it->value();
+
+      // SAFETY: We've validated type and length ahead of this.
+      const underlying_type elt = get_elt(value, 0);
+
+      // TODO: The equivalent ctor from `initializer_list<r_string>` has a specialization
+      // for `<r_string>` to translate `elt` to UTF-8 before assigning. Should we have
+      // that here too? `named_arg` doesn't do any checking here.
+      if (data_p_ != nullptr) {
+        data_p_[i] = elt;
+      } else {
+        // Handles STRSXP case. VECSXP case has its own specialization.
+        // We don't expect any ALTREP cases since we just freshly allocated `data_`.
+        set_elt(data_, i, elt);
+      }
+
+      SEXP name = Rf_mkCharCE(it->name(), CE_UTF8);
+      SET_STRING_ELT(names, i, name);
+    }
+  });
 }
 
 template <typename T>

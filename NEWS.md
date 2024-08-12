@@ -1,5 +1,10 @@
 # cpp11 (development version)
 
+* Constructors for writable vectors from `initializer_list<named_arg>` now
+  check that `named_arg` contains a length 1 object of the correct type, and
+  throws either a `cpp11::type_error` or `std::length_error` if that is not the
+  case (#382).
+
 * Repeated assignment to a `cpp11::writable::strings` vector through either
   `x[i] = elt` or `x.push_back(elt)` is now more performant, at the tradeoff
   of slightly less safety (as long as `elt` is actually a `CHARSXP` and `i` is

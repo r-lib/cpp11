@@ -8,7 +8,6 @@
 #include "cpp11/R.hpp"                // for SEXP, SEXPREC, Rf_allocVector
 #include "cpp11/as.hpp"               // for as_sexp
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
-#include "cpp11/named_arg.hpp"        // for named_arg
 #include "cpp11/protect.hpp"          // for safe
 #include "cpp11/r_vector.hpp"         // for r_vector, r_vector<>::proxy
 #include "cpp11/sexp.hpp"             // for sexp
@@ -62,30 +61,6 @@ inline void r_vector<int>::set_elt(SEXP x, R_xlen_t i,
   SET_INTEGER_ELT(x, i, value);
 }
 
-template <>
-inline r_vector<int>::r_vector(std::initializer_list<named_arg> il)
-    : cpp11::r_vector<int>(safe[Rf_allocVector](INTSXP, il.size())),
-      capacity_(il.size()) {
-  int n_protected = 0;
-
-  try {
-    unwind_protect([&] {
-      Rf_setAttrib(data_, R_NamesSymbol, Rf_allocVector(STRSXP, capacity_));
-      SEXP names = PROTECT(Rf_getAttrib(data_, R_NamesSymbol));
-      ++n_protected;
-      auto it = il.begin();
-      for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
-        data_p_[i] = INTEGER_ELT(it->value(), 0);
-        SET_STRING_ELT(names, i, Rf_mkCharCE(it->name(), CE_UTF8));
-      }
-      UNPROTECT(n_protected);
-    });
-  } catch (const unwind_exception& e) {
-    UNPROTECT(n_protected);
-    throw e;
-  }
-}
-
 typedef r_vector<int> integers;
 
 }  // namespace writable
@@ -100,9 +75,9 @@ inline int na() {
 typedef r_vector<double> doubles;
 
 inline integers as_integers(SEXP x) {
-  if (TYPEOF(x) == INTSXP) {
+  if (detail::r_typeof(x) == INTSXP) {
     return integers(x);
-  } else if (TYPEOF(x) == REALSXP) {
+  } else if (detail::r_typeof(x) == REALSXP) {
     doubles xn(x);
     writable::integers ret(xn.size());
     std::transform(xn.begin(), xn.end(), ret.begin(), [](double value) {
@@ -117,7 +92,7 @@ inline integers as_integers(SEXP x) {
     return ret;
   }
 
-  throw type_error(INTSXP, TYPEOF(x));
+  throw type_error(INTSXP, detail::r_typeof(x));
 }
 
 }  // namespace cpp11

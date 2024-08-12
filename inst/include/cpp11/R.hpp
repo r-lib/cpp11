@@ -11,6 +11,7 @@
 #define R_NO_REMAP
 #define STRICT_R_HEADERS
 #include "Rinternals.h"
+#include "Rversion.h"
 
 // clang-format off
 #ifdef __clang__
@@ -27,6 +28,18 @@
 #include <type_traits>
 #include "cpp11/altrep.hpp"
 
+#if defined(R_VERSION) && R_VERSION >= R_Version(4, 4, 0)
+// Use R's new macro
+#define CPP11_PRIdXLEN_T R_PRIdXLEN_T
+#else
+// Recreate what new R does
+#ifdef LONG_VECTOR_SUPPORT
+#define CPP11_PRIdXLEN_T "td"
+#else
+#define CPP11_PRIdXLEN_T "d"
+#endif
+#endif
+
 namespace cpp11 {
 namespace literals {
 
@@ -40,6 +53,14 @@ struct get_underlying_type {
   using type = T;
 };
 }  // namespace traits
+
+namespace detail {
+
+// Annoyingly, `TYPEOF()` returns an `int` rather than a `SEXPTYPE`,
+// which can throw warnings with `-Wsign-compare` on Windows.
+inline SEXPTYPE r_typeof(SEXP x) { return static_cast<SEXPTYPE>(TYPEOF(x)); }
+
+}  // namespace detail
 
 template <typename T>
 inline T na();

@@ -1,4 +1,5 @@
 #include "Rversion.h"
+#include "cpp11/R.hpp"
 #include "cpp11/doubles.hpp"
 #include "cpp11/function.hpp"
 #include "cpp11/integers.hpp"
@@ -8,12 +9,12 @@
 
 context("integers-C++") {
   test_that("as_integers(doubles)") {
-    // TYPEOF(x) == INTSXP
+    // r_typeof(x) == INTSXP
     cpp11::writable::doubles y;
     y.push_back(10.00);
     cpp11::writable::integers i(cpp11::as_integers(y));
     expect_true(i[0] == 10);
-    expect_true(TYPEOF(i) == INTSXP);
+    expect_true(cpp11::detail::r_typeof(i) == INTSXP);
 
     cpp11::writable::doubles x;
     x.push_back(10.01);
@@ -35,7 +36,7 @@ context("integers-C++") {
     expect_true(t[1] == 1000);
     expect_true(t[2] == 100000);
     expect_true(t[3] == 100000);
-    expect_true(TYPEOF(t) == INTSXP);
+    expect_true(cpp11::detail::r_typeof(t) == INTSXP);
 
     cpp11::writable::doubles na{NA_REAL, 42.};
     cpp11::integers na2(cpp11::as_integers(na));
@@ -165,6 +166,48 @@ context("integers-C++") {
     expect_true(y[0] == -1);
     expect_true(z[0] == -2);
 
+    UNPROTECT(1);
+  }
+
+  test_that("writable::integers(initializer_list<named_arg>)") {
+    using namespace cpp11::literals;
+
+    SEXP x1 = PROTECT(Rf_allocVector(INTSXP, 1));
+    SEXP x2 = PROTECT(Rf_allocVector(INTSXP, 1));
+    SEXP x3 = PROTECT(Rf_allocVector(INTSXP, 1));
+
+    SET_INTEGER_ELT(x1, 0, 0);
+    SET_INTEGER_ELT(x2, 0, 5);
+    SET_INTEGER_ELT(x3, 0, NA_INTEGER);
+
+    // From scalar integer vectors
+    cpp11::writable::integers x({"one"_nm = x1, "two"_nm = x2, "three"_nm = x3});
+    expect_true(x.named());
+    expect_true(x["one"] == 0);
+    expect_true(x["two"] == 5);
+    expect_true(x["three"] == NA_INTEGER);
+
+    // From ints
+    cpp11::writable::integers y({"one"_nm = 0, "two"_nm = 5, "three"_nm = NA_INTEGER});
+    expect_true(y.named());
+    expect_true(y["one"] == 0);
+    expect_true(y["two"] == 5);
+    expect_true(y["three"] == NA_INTEGER);
+
+    UNPROTECT(3);
+  }
+
+  test_that("writable::integers(initializer_list<named_arg>) type check") {
+    using namespace cpp11::literals;
+    expect_error_as(cpp11::writable::integers({"one"_nm = true}), cpp11::type_error);
+    expect_error_as(cpp11::writable::integers({"one"_nm = R_NilValue}),
+                    cpp11::type_error);
+  }
+
+  test_that("writable::integers(initializer_list<named_arg>) length check") {
+    using namespace cpp11::literals;
+    SEXP x = PROTECT(Rf_allocVector(INTSXP, 2));
+    expect_error_as(cpp11::writable::integers({"x"_nm = x}), std::length_error);
     UNPROTECT(1);
   }
 
