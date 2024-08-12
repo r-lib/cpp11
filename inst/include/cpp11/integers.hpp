@@ -75,9 +75,9 @@ inline int na() {
 typedef r_vector<double> doubles;
 
 inline integers as_integers(SEXP x) {
-  if (TYPEOF(x) == INTSXP) {
+  if (detail::r_typeof(x) == INTSXP) {
     return integers(x);
-  } else if (TYPEOF(x) == REALSXP) {
+  } else if (detail::r_typeof(x) == REALSXP) {
     doubles xn(x);
     writable::integers ret(xn.size());
     std::transform(xn.begin(), xn.end(), ret.begin(), [](double value) {
@@ -92,7 +92,7 @@ inline integers as_integers(SEXP x) {
     return ret;
   }
 
-  throw type_error(INTSXP, TYPEOF(x));
+  throw type_error(INTSXP, detail::r_typeof(x));
 }
 
 }  // namespace cpp11

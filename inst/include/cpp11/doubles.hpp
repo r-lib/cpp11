@@ -67,11 +67,11 @@ typedef r_vector<double> doubles;
 typedef r_vector<int> integers;
 
 inline doubles as_doubles(SEXP x) {
-  if (TYPEOF(x) == REALSXP) {
+  if (detail::r_typeof(x) == REALSXP) {
     return doubles(x);
   }
 
-  else if (TYPEOF(x) == INTSXP) {
+  else if (detail::r_typeof(x) == INTSXP) {
     integers xn(x);
     size_t len = xn.size();
     writable::doubles ret(len);
@@ -81,7 +81,7 @@ inline doubles as_doubles(SEXP x) {
     return ret;
   }
 
-  throw type_error(REALSXP, TYPEOF(x));
+  throw type_error(REALSXP, detail::r_typeof(x));
 }
 
 template <>

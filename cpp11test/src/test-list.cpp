@@ -1,3 +1,4 @@
+#include "cpp11/R.hpp"
 #include "cpp11/doubles.hpp"
 #include "cpp11/integers.hpp"
 #include "cpp11/list.hpp"
@@ -192,9 +193,9 @@ context("list-C++") {
     // This also works, with varying types
     cpp11::writable::list y({"one"_nm = 1, "two"_nm = true, "three"_nm = 2.5});
     expect_true(y.named());
-    expect_true(TYPEOF(y["one"]) == INTSXP);
-    expect_true(TYPEOF(y["two"]) == LGLSXP);
-    expect_true(TYPEOF(y["three"]) == REALSXP);
+    expect_true(cpp11::detail::r_typeof(y["one"]) == INTSXP);
+    expect_true(cpp11::detail::r_typeof(y["two"]) == LGLSXP);
+    expect_true(cpp11::detail::r_typeof(y["three"]) == REALSXP);
 
     UNPROTECT(3);
   }

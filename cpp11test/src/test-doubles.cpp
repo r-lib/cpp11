@@ -1,4 +1,5 @@
 #include <cstring>
+#include "cpp11/R.hpp"
 #include "cpp11/doubles.hpp"
 #include "cpp11/function.hpp"
 #include "cpp11/integers.hpp"
@@ -440,7 +441,7 @@ context("doubles-C++") {
     expect_true(i[1] == 13616);
     expect_true(i[2] == 124);
     expect_true(i[3] == 899);
-    expect_true(TYPEOF(i) == REALSXP);
+    expect_true(cpp11::detail::r_typeof(i) == REALSXP);
 
     cpp11::writable::strings e;
     e.push_back("a");

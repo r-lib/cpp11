@@ -3,7 +3,7 @@
 #include <initializer_list>  // for initializer_list
 #include <string>            // for string, basic_string
 
-#include "cpp11/R.hpp"                // for SEXP, TYPEOF, SEXPREC, SET_STRI...
+#include "cpp11/R.hpp"                // for SEXP, SEXPREC, SET_STRI...
 #include "cpp11/as.hpp"               // for as_sexp
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/named_arg.hpp"        // for named_arg
@@ -61,31 +61,31 @@ inline bool operator==(const r_vector<r_string>::proxy& lhs, r_string rhs) {
 }
 
 inline SEXP alloc_or_copy(const SEXP data) {
-  switch (TYPEOF(data)) {
+  switch (detail::r_typeof(data)) {
     case CHARSXP:
       return cpp11::r_vector<r_string>(safe[Rf_allocVector](STRSXP, 1));
     case STRSXP:
       return safe[Rf_shallow_duplicate](data);
     default:
-      throw type_error(STRSXP, TYPEOF(data));
+      throw type_error(STRSXP, detail::r_typeof(data));
   }
 }
 
 inline SEXP alloc_if_charsxp(const SEXP data) {
-  switch (TYPEOF(data)) {
+  switch (detail::r_typeof(data)) {
     case CHARSXP:
       return cpp11::r_vector<r_string>(safe[Rf_allocVector](STRSXP, 1));
     case STRSXP:
       return data;
     default:
-      throw type_error(STRSXP, TYPEOF(data));
+      throw type_error(STRSXP, detail::r_typeof(data));
   }
 }
 
 template <>
 inline r_vector<r_string>::r_vector(const SEXP& data)
     : cpp11::r_vector<r_string>(alloc_or_copy(data)), capacity_(length_) {
-  if (TYPEOF(data) == CHARSXP) {
+  if (detail::r_typeof(data) == CHARSXP) {
     SET_STRING_ELT(data_, 0, data);
   }
 }
@@ -93,7 +93,7 @@ inline r_vector<r_string>::r_vector(const SEXP& data)
 template <>
 inline r_vector<r_string>::r_vector(SEXP&& data)
     : cpp11::r_vector<r_string>(alloc_if_charsxp(data)), capacity_(length_) {
-  if (TYPEOF(data) == CHARSXP) {
+  if (detail::r_typeof(data) == CHARSXP) {
     SET_STRING_ELT(data_, 0, data);
   }
 }

@@ -561,7 +561,7 @@ inline r_vector<r_string> r_vector<T>::names() const {
 
 class type_error : public std::exception {
  public:
-  type_error(int expected, int actual) : expected_(expected), actual_(actual) {}
+  type_error(SEXPTYPE expected, SEXPTYPE actual) : expected_(expected), actual_(actual) {}
   virtual const char* what() const noexcept override {
     snprintf(str_, 64, "Invalid input type, expected '%s' actual '%s'",
              Rf_type2char(expected_), Rf_type2char(actual_));
@@ -569,8 +569,8 @@ class type_error : public std::exception {
   }
 
  private:
-  int expected_;
-  int actual_;
+  SEXPTYPE expected_;
+  SEXPTYPE actual_;
   mutable char str_[64];
 };
 
@@ -581,8 +581,8 @@ inline SEXP r_vector<T>::valid_type(SEXP x) {
   if (x == nullptr) {
     throw type_error(type, NILSXP);
   }
-  if (TYPEOF(x) != type) {
-    throw type_error(type, TYPEOF(x));
+  if (detail::r_typeof(x) != type) {
+    throw type_error(type, detail::r_typeof(x));
   }
 
   return x;

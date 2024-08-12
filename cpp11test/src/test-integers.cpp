@@ -1,4 +1,5 @@
 #include "Rversion.h"
+#include "cpp11/R.hpp"
 #include "cpp11/doubles.hpp"
 #include "cpp11/function.hpp"
 #include "cpp11/integers.hpp"
@@ -8,12 +9,12 @@
 
 context("integers-C++") {
   test_that("as_integers(doubles)") {
-    // TYPEOF(x) == INTSXP
+    // r_typeof(x) == INTSXP
     cpp11::writable::doubles y;
     y.push_back(10.00);
     cpp11::writable::integers i(cpp11::as_integers(y));
     expect_true(i[0] == 10);
-    expect_true(TYPEOF(i) == INTSXP);
+    expect_true(cpp11::detail::r_typeof(i) == INTSXP);
 
     cpp11::writable::doubles x;
     x.push_back(10.01);
@@ -35,7 +36,7 @@ context("integers-C++") {
     expect_true(t[1] == 1000);
     expect_true(t[2] == 100000);
     expect_true(t[3] == 100000);
-    expect_true(TYPEOF(t) == INTSXP);
+    expect_true(cpp11::detail::r_typeof(t) == INTSXP);
 
     cpp11::writable::doubles na{NA_REAL, 42.};
     cpp11::integers na2(cpp11::as_integers(na));

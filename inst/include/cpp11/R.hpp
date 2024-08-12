@@ -54,6 +54,14 @@ struct get_underlying_type {
 };
 }  // namespace traits
 
+namespace detail {
+
+// Annoyingly, `TYPEOF()` returns an `int` rather than a `SEXPTYPE`,
+// which can throw warnings with `-Wsign-compare` on Windows.
+inline SEXPTYPE r_typeof(SEXP x) { return static_cast<SEXPTYPE>(TYPEOF(x)); }
+
+}  // namespace detail
+
 template <typename T>
 inline T na();
 
