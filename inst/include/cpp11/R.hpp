@@ -11,6 +11,7 @@
 #define R_NO_REMAP
 #define STRICT_R_HEADERS
 #include "Rinternals.h"
+#include "Rversion.h"
 
 // clang-format off
 #ifdef __clang__
