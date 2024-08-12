@@ -156,6 +156,28 @@ context("list-C++") {
     expect_true(x.size() == nms.size());
   }
 
+  test_that("list::operator[] by name") {
+    SEXP x = PROTECT(Rf_allocVector(VECSXP, 1));
+
+    SEXP elt = Rf_allocVector(INTSXP, 1);
+    SET_VECTOR_ELT(x, 0, elt);
+    SET_INTEGER_ELT(elt, 0, 1);
+
+    SEXP names = Rf_allocVector(STRSXP, 1);
+    Rf_setAttrib(x, R_NamesSymbol, names);
+    SET_STRING_ELT(names, 0, Rf_mkCharCE("name", CE_UTF8));
+
+    cpp11::list lst(x);
+
+    expect_true(lst.named());
+    expect_true(lst["name"] == elt);
+
+    // Lists are the only class where OOB accesses by name return `NULL`
+    expect_true(lst["oob"] == R_NilValue);
+
+    UNPROTECT(1);
+  }
+
   test_that("We don't return NULL for default constructed vectors") {
     cpp11::writable::list x;
     SEXP y(x);

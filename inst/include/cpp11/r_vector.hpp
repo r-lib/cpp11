@@ -150,6 +150,8 @@ class r_vector {
   static void get_region(SEXP x, R_xlen_t i, R_xlen_t n, underlying_type* buf);
   /// Implemented in specialization
   static SEXPTYPE get_sexptype();
+  /// Implemented in specialization (throws by default, specialization in list type)
+  static T get_oob();
   static SEXP valid_type(SEXP x);
 
   friend class writable::r_vector<T>;
@@ -467,7 +469,7 @@ inline T r_vector<T>::operator[](const r_string& name) const {
     }
   }
 
-  throw std::out_of_range("r_vector");
+  return get_oob();
 }
 
 #ifdef LONG_VECTOR_SUPPORT
@@ -556,6 +558,11 @@ inline r_vector<r_string> r_vector<T>::names() const {
   } else {
     return r_vector<r_string>(nms);
   }
+}
+
+template <typename T>
+inline T r_vector<T>::get_oob() {
+  throw std::out_of_range("r_vector");
 }
 
 class type_error : public std::exception {
