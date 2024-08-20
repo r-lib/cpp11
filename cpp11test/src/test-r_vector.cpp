@@ -325,4 +325,47 @@ context("r_vector-C++") {
     expect_true(x.data() != R_NilValue);
     expect_true(x.size() == 3);
   }
+
+  test_that(
+      "writable vector truncation resizes names and retains attributes (but not dim or "
+      "dim names)") {
+    cpp11::writable::integers x(2);
+    x[0] = 1;
+    x[1] = 2;
+
+    // Doubles the capacity from 2 to 4, meaning the underlying SEXP has length 4 now.
+    x.push_back(3);
+    expect_true(Rf_xlength(x.data()) == 4);
+
+    // Set some names
+    SEXP names = PROTECT(Rf_allocVector(STRSXP, 3));
+    SET_STRING_ELT(names, 0, Rf_mkCharCE("x", CE_UTF8));
+    SET_STRING_ELT(names, 1, Rf_mkCharCE("y", CE_UTF8));
+    SET_STRING_ELT(names, 2, Rf_mkCharCE("z", CE_UTF8));
+    x.names() = names;
+
+    // Length of names SEXP is actually 4 now, extended by `setAttrib()` to match
+    // the internal capacity
+    expect_true(Rf_xlength(Rf_getAttrib(x.data(), R_NamesSymbol)) == 4);
+
+    // Set an attribute
+    SEXP bar = PROTECT(Rf_ScalarInteger(1));
+    x.attr("foo") = bar;
+
+    // Extract out the underlying SEXP using the operator:
+    // - This truncates to size 3
+    // - This truncates and keeps names
+    // - This copies over attributes like `"foo"`
+    // - This updates the internal SEXP in `x` to the one in `x_sexp` (gross but users
+    //   probably expect this at this point)
+    SEXP x_sexp = x;
+
+    expect_true(Rf_xlength(x_sexp) == 3);
+    expect_true(Rf_xlength(Rf_getAttrib(x_sexp, R_NamesSymbol)) == 3);
+    expect_true(Rf_getAttrib(x_sexp, Rf_install("foo")) == bar);
+
+    expect_true(x.data() == x_sexp);
+
+    UNPROTECT(2);
+  }
 }

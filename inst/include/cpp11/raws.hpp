@@ -36,6 +36,12 @@ inline typename r_vector<uint8_t>::underlying_type r_vector<uint8_t>::get_elt(
 }
 
 template <>
+inline typename r_vector<uint8_t>::underlying_type const* r_vector<uint8_t>::get_const_p(
+    bool is_altrep, SEXP data) {
+  return RAW_OR_NULL(data);
+}
+
+template <>
 inline typename r_vector<uint8_t>::underlying_type* r_vector<uint8_t>::get_p(
     bool is_altrep, SEXP data) {
   if (is_altrep) {

@@ -38,6 +38,12 @@ inline typename r_vector<double>::underlying_type* r_vector<double>::get_p(bool 
 }
 
 template <>
+inline typename r_vector<double>::underlying_type const* r_vector<double>::get_const_p(
+    bool is_altrep, SEXP data) {
+  return REAL_OR_NULL(data);
+}
+
+template <>
 inline void r_vector<double>::get_region(SEXP x, R_xlen_t i, R_xlen_t n,
                                          typename r_vector::underlying_type* buf) {
   // NOPROTECT: likely too costly to unwind protect here

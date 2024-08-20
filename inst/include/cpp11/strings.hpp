@@ -35,6 +35,17 @@ inline typename r_vector<r_string>::underlying_type* r_vector<r_string>::get_p(b
 }
 
 template <>
+inline typename r_vector<r_string>::underlying_type const*
+r_vector<r_string>::get_const_p(bool is_altrep, SEXP data) {
+  // No `STRING_PTR_OR_NULL()`
+  if (is_altrep) {
+    return nullptr;
+  } else {
+    return STRING_PTR_RO(data);
+  }
+}
+
+template <>
 inline void r_vector<r_string>::get_region(SEXP x, R_xlen_t i, R_xlen_t n,
                                            typename r_vector::underlying_type* buf) {
   cpp11::stop("Unreachable!");

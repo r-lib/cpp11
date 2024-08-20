@@ -5,6 +5,7 @@
 #include <algorithm>         // for max
 #include <array>             // for array
 #include <cstdio>            // for snprintf
+#include <cstring>           // for memcpy
 #include <exception>         // for exception
 #include <initializer_list>  // for initializer_list
 #include <iterator>          // for forward_iterator_tag, random_ac...
@@ -144,6 +145,8 @@ class r_vector {
   static underlying_type get_elt(SEXP x, R_xlen_t i);
   /// Implemented in specialization
   static underlying_type* get_p(bool is_altrep, SEXP data);
+  /// Implemented in specialization
+  static underlying_type const* get_const_p(bool is_altrep, SEXP data);
   /// Implemented in specialization
   static void get_region(SEXP x, R_xlen_t i, R_xlen_t n, underlying_type* buf);
   /// Implemented in specialization
@@ -311,8 +314,13 @@ class r_vector : public cpp11::r_vector<T> {
   /// Implemented in specialization
   static void set_elt(SEXP x, R_xlen_t i, underlying_type value);
 
+  static SEXP reserve_data(SEXP x, bool is_altrep, R_xlen_t size);
+  static SEXP resize_data(SEXP x, bool is_altrep, R_xlen_t size);
+  static SEXP resize_names(SEXP x, R_xlen_t size);
+
   using cpp11::r_vector<T>::get_elt;
   using cpp11::r_vector<T>::get_p;
+  using cpp11::r_vector<T>::get_const_p;
   using cpp11::r_vector<T>::get_sexptype;
   using cpp11::r_vector<T>::valid_type;
   using cpp11::r_vector<T>::valid_length;
@@ -759,8 +767,25 @@ inline r_vector<T>::r_vector(SEXP&& data, bool is_altrep)
     : cpp11::r_vector<T>(data, is_altrep), capacity_(length_) {}
 
 template <typename T>
-inline r_vector<T>::r_vector(const r_vector& rhs)
-    : cpp11::r_vector<T>(safe[Rf_shallow_duplicate](rhs)), capacity_(rhs.capacity_) {}
+inline r_vector<T>::r_vector(const r_vector& rhs) {
+  // We don't want to just pass through to the read-only constructor because we'd
+  // have to convert to `SEXP` first, which could truncate, and then we'd still have
+  // to shallow duplicate after that to ensure we have a duplicate, which can result in
+  // too many copies (#369).
+  //
+  // Instead we take control of setting all fields to try and only duplicate 1 time.
+  // We try and reclaim unused capacity during the duplication by only reserving up to
+  // the `rhs.length_`. This is nice because if the user returns this object, the
+  // truncation has already been done and they don't have to pay for another allocation.
+  // Importantly, `reserve_data()` always duplicates even if there wasn't extra capacity,
+  // which ensures we have our own copy.
+  data_ = reserve_data(rhs.data_, rhs.is_altrep_, rhs.length_);
+  protect_ = detail::store::insert(data_);
+  is_altrep_ = ALTREP(data_);
+  data_p_ = get_p(is_altrep_, data_);
+  length_ = rhs.length_;
+  capacity_ = rhs.length_;
+}
 
 template <typename T>
 inline r_vector<T>::r_vector(r_vector&& rhs) {
@@ -1048,7 +1073,7 @@ inline void r_vector<T>::reserve(R_xlen_t new_capacity) {
   SEXP old_protect = protect_;
 
   data_ = (data_ == R_NilValue) ? safe[Rf_allocVector](get_sexptype(), new_capacity)
-                                : safe[Rf_xlengthgets](data_, new_capacity);
+                                : reserve_data(data_, is_altrep_, new_capacity);
   protect_ = detail::store::insert(data_);
   is_altrep_ = ALTREP(data_);
   data_p_ = get_p(is_altrep_, data_);
@@ -1247,6 +1272,83 @@ inline typename r_vector<T>::iterator r_vector<T>::iterator::operator+(R_xlen_t 
   auto it = *this;
   it += rhs;
   return it;
+}
+
+// Compared to `Rf_xlengthgets()`:
+// - This always allocates, even if it is the same size, which is important when we use
+//   it in a constructor and need to ensure that it duplicates on the way in.
+// - This copies over attributes with `Rf_copyMostAttrib()`, which is important when we
+//   use it in constructors and when we truncate right before returning from the `SEXP`
+//   operator.
+// - This is more friendly to ALTREP `x`.
+template <typename T>
+inline SEXP r_vector<T>::reserve_data(SEXP x, bool is_altrep, R_xlen_t size) {
+  // Resize core data
+  SEXP out = PROTECT(resize_data(x, is_altrep, size));
+
+  // Resize names, if required
+  SEXP names = Rf_getAttrib(x, R_NamesSymbol);
+  if (names != R_NilValue) {
+    names = resize_names(names, size);
+    Rf_setAttrib(out, R_NamesSymbol, names);
+  }
+
+  // Copy over "most" attributes, and set OBJECT bit and S4 bit as needed.
+  // Does not copy over names, dim, or dim names.
+  // Names are handled already. Dim and dim names should not be applicable,
+  // as this is a vector.
+  // Does not look like it would ever error in our use cases, so no `safe[]`.
+  Rf_copyMostAttrib(x, out);
+
+  UNPROTECT(1);
+  return out;
+}
+
+template <typename T>
+inline SEXP r_vector<T>::resize_data(SEXP x, bool is_altrep, R_xlen_t size) {
+  underlying_type const* v_x = get_const_p(is_altrep, x);
+
+  SEXP out = PROTECT(safe[Rf_allocVector](get_sexptype(), size));
+  underlying_type* v_out = get_p(ALTREP(out), out);
+
+  const R_xlen_t x_size = Rf_xlength(x);
+  const R_xlen_t copy_size = (x_size > size) ? size : x_size;
+
+  // Copy over data from `x` up to `copy_size` (we could be truncating so don't blindly
+  // copy everything from `x`)
+  if (v_x != nullptr && v_out != nullptr) {
+    std::memcpy(v_out, v_x, copy_size * sizeof(underlying_type));
+  } else {
+    // Handles ALTREP `x` with no const pointer, VECSXP, STRSXP
+    for (R_xlen_t i = 0; i < copy_size; ++i) {
+      set_elt(out, i, get_elt(x, i));
+    }
+  }
+
+  UNPROTECT(1);
+  return out;
+}
+
+template <typename T>
+inline SEXP r_vector<T>::resize_names(SEXP x, R_xlen_t size) {
+  const SEXP* v_x = STRING_PTR_RO(x);
+
+  SEXP out = PROTECT(safe[Rf_allocVector](STRSXP, size));
+
+  const R_xlen_t x_size = Rf_xlength(x);
+  const R_xlen_t copy_size = (x_size > size) ? size : x_size;
+
+  for (R_xlen_t i = 0; i < copy_size; ++i) {
+    SET_STRING_ELT(out, i, v_x[i]);
+  }
+
+  // Ensure remaining names are initialized to `""`
+  for (R_xlen_t i = copy_size; i < size; ++i) {
+    SET_STRING_ELT(out, i, R_BlankString);
+  }
+
+  UNPROTECT(1);
+  return out;
 }
 
 }  // namespace writable
