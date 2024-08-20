@@ -503,6 +503,11 @@ inline T r_vector<T>::at(const size_type pos) const {
 }
 
 template <typename T>
+inline T r_vector<T>::at(const r_string& name) const {
+  return operator[](name);
+}
+
+template <typename T>
 inline bool r_vector<T>::contains(const r_string& name) const {
   SEXP names = this->names();
   R_xlen_t size = Rf_xlength(names);
