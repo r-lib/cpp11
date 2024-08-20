@@ -153,14 +153,15 @@ cpp11::environment create_environment() {
 #### 9. How do I assign and retrieve values in an environment? What happens if I try to get a value that doesn't exist?
 
 Use `[]` to retrieve or assign values from an environment by name.
-If a value does not exist it will return `R_UnboundValue`.
+If a value does not exist, it will error.
+To check for existence ahead of time, use the `exists()` method.
 
 ```{cpp11}
 #include <cpp11.hpp>
 
 [[cpp11::register]]
 bool foo_exists(cpp11::environment x) {
-  return x["foo"] != R_UnboundValue;
+  return x.exists("foo");
 }
 
 [[cpp11::register]]
