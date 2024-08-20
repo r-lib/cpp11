@@ -1,5 +1,8 @@
 # cpp11 (development version)
 
+* Added the missing implementation for `x.at("name")` for read only vectors
+  (#370).
+
 * Constructors for writable vectors from `initializer_list<named_arg>` now
   check that `named_arg` contains a length 1 object of the correct type, and
   throws either a `cpp11::type_error` or `std::length_error` if that is not the
