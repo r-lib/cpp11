@@ -19,26 +19,22 @@ class sexp {
  public:
   sexp() = default;
 
-  sexp(SEXP data) : data_(data), preserve_token_(detail::store::insert(data_)) {
-    // REprintf("created %p %p\n", reinterpret_cast<void*>(data_),
-    //          reinterpret_cast<void*>(preserve_token_));
-  }
+  sexp(SEXP data) : data_(data), preserve_token_(detail::store::insert(data_)) {}
 
+  // We maintain our own new `preserve_token_`
   sexp(const sexp& rhs) {
     data_ = rhs.data_;
     preserve_token_ = detail::store::insert(data_);
-    // REprintf("copied %p new protect %p\n", reinterpret_cast<void*>(rhs.data_),
-    //          reinterpret_cast<void*>(preserve_token_));
   }
 
+  // We take ownership over the `rhs.preserve_token_`.
+  // Importantly we clear it in the `rhs` so it can't release the object upon destruction.
   sexp(sexp&& rhs) {
     data_ = rhs.data_;
     preserve_token_ = rhs.preserve_token_;
 
     rhs.data_ = R_NilValue;
     rhs.preserve_token_ = R_NilValue;
-
-    // REprintf("moved %p\n", reinterpret_cast<void*>(rhs.data_));
   }
 
   sexp& operator=(const sexp& rhs) {
@@ -46,15 +42,9 @@ class sexp {
 
     data_ = rhs.data_;
     preserve_token_ = detail::store::insert(data_);
-    // REprintf("assigned %p\n", reinterpret_cast<void*>(rhs.data_));
+
     return *this;
   }
-
-  // void swap(sexp& rhs) {
-  // sexp tmp(rhs);
-  // rhs = *this;
-  //*this = tmp;
-  //}
 
   ~sexp() { detail::store::release(preserve_token_); }
 
