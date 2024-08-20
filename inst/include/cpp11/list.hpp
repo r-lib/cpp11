@@ -30,6 +30,18 @@ inline typename r_vector<SEXP>::underlying_type* r_vector<SEXP>::get_p(bool, SEX
   return nullptr;
 }
 
+template <>
+inline typename r_vector<SEXP>::underlying_type const* r_vector<SEXP>::get_const_p(
+    bool is_altrep, SEXP data) {
+  // No `VECTOR_PTR_OR_NULL()`
+  if (is_altrep) {
+    return nullptr;
+  } else {
+    // TODO: Use `VECTOR_PTR_RO()` conditionally once R 4.5.0 is officially released
+    return static_cast<SEXP const*>(DATAPTR_RO(data));
+  }
+}
+
 /// Specialization for lists, where `x["oob"]` returns `R_NilValue`, like at the R level
 template <>
 inline SEXP r_vector<SEXP>::get_oob() {
