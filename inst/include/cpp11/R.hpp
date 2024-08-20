@@ -64,7 +64,7 @@ inline SEXPTYPE r_typeof(SEXP x) { return static_cast<SEXPTYPE>(TYPEOF(x)); }
 /// A backwards compatible version of `R_getVar(inherits = false)`.
 /// Kept as pure C, treated as an R API function, i.e. the caller wraps in `safe[]` as
 /// required.
-inline SEXP r_get_var_in_frame(SEXP env, SEXP sym) {
+inline SEXP r_env_get(SEXP env, SEXP sym) {
 #if defined(R_VERSION) && R_VERSION >= R_Version(4, 5, 0)
   const Rboolean inherits = FALSE;
   return R_getVar(sym, env, inherits);
