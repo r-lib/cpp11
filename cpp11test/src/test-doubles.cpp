@@ -495,13 +495,21 @@ context("doubles-C++") {
     cpp11::writable::doubles x({"a"_nm = 1., "b"_nm = 2.});
     cpp11::doubles y(x);
 
-    expect_true(x["a"] == 1);
-    expect_true(x["b"] == 2);
-    expect_error(x["c"] == 2);
+    expect_true(x["a"] == 1.);
+    expect_true(x["b"] == 2.);
+    expect_error(x["c"]);
 
-    expect_true(y["a"] == 1);
-    expect_true(y["b"] == 2);
-    expect_error(y["c"] == 2);
+    expect_true(x.at("a") == 1.);
+    expect_true(x.at("b") == 2.);
+    expect_error(x.at("c"));
+
+    expect_true(y["a"] == 1.);
+    expect_true(y["b"] == 2.);
+    expect_error(y["c"]);
+
+    expect_true(y.at("a") == 1.);
+    expect_true(y.at("b") == 2.);
+    expect_error(y.at("c"));
   }
 
   test_that("doubles::find") {

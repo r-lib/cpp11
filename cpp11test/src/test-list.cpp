@@ -168,7 +168,7 @@ context("list-C++") {
     expect_true(x.size() == nms.size());
   }
 
-  test_that("list::operator[] by name") {
+  test_that("list::operator[] and at by name") {
     SEXP x = PROTECT(Rf_allocVector(VECSXP, 1));
 
     SEXP elt = Rf_allocVector(INTSXP, 1);
@@ -183,9 +183,11 @@ context("list-C++") {
 
     expect_true(lst.named());
     expect_true(lst["name"] == elt);
+    expect_true(lst.at("name") == elt);
 
     // Lists are the only class where OOB accesses by name return `NULL`
     expect_true(lst["oob"] == R_NilValue);
+    expect_true(lst.at("oob") == R_NilValue);
 
     UNPROTECT(1);
   }
