@@ -61,9 +61,10 @@ namespace detail {
 // which can throw warnings with `-Wsign-compare` on Windows.
 inline SEXPTYPE r_typeof(SEXP x) { return static_cast<SEXPTYPE>(TYPEOF(x)); }
 
-/// A backwards compatible version of `R_getVar(inherits = false)`.
-/// Kept as pure C, treated as an R API function, i.e. the caller wraps in `safe[]` as
-/// required.
+/// Get an object from an environment
+///
+/// SAFETY: Keep as a pure C function. Call like an R API function, i.e. wrap in `safe[]`
+/// as required.
 inline SEXP r_env_get(SEXP env, SEXP sym) {
 #if defined(R_VERSION) && R_VERSION >= R_Version(4, 5, 0)
   const Rboolean inherits = FALSE;
@@ -92,6 +93,18 @@ inline SEXP r_env_get(SEXP env, SEXP sym) {
   }
 
   return out;
+#endif
+}
+
+/// Check if an object exists in an environment
+///
+/// SAFETY: Keep as a pure C function. Call like an R API function, i.e. wrap in `safe[]`
+/// as required.
+inline bool r_env_has(SEXP env, SEXP sym) {
+#if R_VERSION >= R_Version(4, 2, 0)
+  return R_existsVarInFrame(env, sym);
+#else
+  return Rf_findVarInFrame3(env, sym, FALSE) != R_UnboundValue;
 #endif
 }
 
