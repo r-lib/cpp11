@@ -3,7 +3,7 @@
 #include <string>  // for string, basic_string
 
 #include "Rversion.h"         // for R_VERSION, R_Version
-#include "cpp11/R.hpp"        // for SEXP, SEXPREC, Rf_install, Rf_findVarIn...
+#include "cpp11/R.hpp"        // for SEXP, SEXPREC, Rf_install, r_get_var_in_frame...
 #include "cpp11/as.hpp"       // for as_sexp
 #include "cpp11/protect.hpp"  // for protect, protect::function, safe, unwin...
 #include "cpp11/sexp.hpp"     // for sexp
@@ -38,7 +38,7 @@ class environment {
       safe[Rf_defineVar](name_, as_sexp(value), parent_);
       return *this;
     }
-    operator SEXP() const { return safe[Rf_findVarInFrame3](parent_, name_, TRUE); };
+    operator SEXP() const { return safe[detail::r_get_var_in_frame](parent_, name_); };
     operator sexp() const { return SEXP(); };
   };
 

@@ -1,5 +1,17 @@
 # cpp11 (development version)
 
+* The `environment` class no longer uses the non-API function
+  `Rf_findVarInFrame3()` (#367).
+
+  * The `exists()` method now uses the new `R_existsVarInFrame()` function.
+
+  * The `SEXP` conversion operator now uses the new `R_getVar()` function. Note
+    that this is stricter than `Rf_findVarInFrame3()` in 3 ways. The object
+    must exist in the environment (i.e. `R_UnboundValue` is no longer returned),
+    the object cannot be `R_MissingArg`, and if the object was a promise, that
+    promise is now evaluated. We have backported this new strictness to older
+    versions of R as well.
+
 * Fixed an issue with the `writable::matrix` copy constructor where the
   underlying SEXP should have been copied but was not. It is now consistent with
   the behavior of the equivalent `writable::r_vector` copy constructor.

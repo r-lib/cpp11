@@ -10,6 +10,7 @@
 
 #define R_NO_REMAP
 #define STRICT_R_HEADERS
+#include "R_ext/Boolean.h"
 #include "Rinternals.h"
 #include "Rversion.h"
 
@@ -59,6 +60,40 @@ namespace detail {
 // Annoyingly, `TYPEOF()` returns an `int` rather than a `SEXPTYPE`,
 // which can throw warnings with `-Wsign-compare` on Windows.
 inline SEXPTYPE r_typeof(SEXP x) { return static_cast<SEXPTYPE>(TYPEOF(x)); }
+
+/// A backwards compatible version of `R_getVar(inherits = false)`.
+/// Kept as pure C, treated as an R API function, i.e. the caller wraps in `safe[]` as
+/// required.
+inline SEXP r_get_var_in_frame(SEXP env, SEXP sym) {
+#if defined(R_VERSION) && R_VERSION >= R_Version(4, 5, 0)
+  const Rboolean inherits = FALSE;
+  return R_getVar(sym, env, inherits);
+#else
+  SEXP out = Rf_findVarInFrame3(env, sym, TRUE);
+
+  // Replicate the 3 checks from `R_getVar()` (along with exact error message):
+  // - Object must be found in the `env`
+  // - `R_MissingArg` can't leak from an `env` anymore
+  // - Promises can't leak from an `env` anymore
+
+  if (out == R_MissingArg) {
+    Rf_errorcall(R_NilValue, "argument \"%s\" is missing, with no default",
+                 CHAR(PRINTNAME(sym)));
+  }
+
+  if (out == R_UnboundValue) {
+    Rf_errorcall(R_NilValue, "object '%s' not found", CHAR(PRINTNAME(sym)));
+  }
+
+  if (r_typeof(out) == PROMSXP) {
+    PROTECT(out);
+    out = Rf_eval(out, env);
+    UNPROTECT(1);
+  }
+
+  return out;
+#endif
+}
 
 }  // namespace detail
 
