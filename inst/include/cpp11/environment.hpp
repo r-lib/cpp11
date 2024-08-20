@@ -12,6 +12,10 @@
 #define HAS_REMOVE_VAR_FROM_FRAME
 #endif
 
+#if R_VERSION >= R_Version(4, 2, 0)
+#define HAS_EXISTS_VAR_IN_FRAME
+#endif
+
 #ifndef HAS_REMOVE_VAR_FROM_FRAME
 #include "cpp11/function.hpp"
 #endif
@@ -46,9 +50,13 @@ class environment {
   proxy operator[](const std::string& name) const { return operator[](name.c_str()); }
 
   bool exists(SEXP name) const {
-    SEXP res = safe[Rf_findVarInFrame3](env_, name, FALSE);
-    return res != R_UnboundValue;
+#ifdef HAS_EXISTS_VAR_IN_FRAME
+    return safe[R_existsVarInFrame](env_, name);
+#else
+    return safe[Rf_findVarInFrame3](env_, name, FALSE) != R_UnboundValue;
+#endif
   }
+
   bool exists(const char* name) const { return exists(safe[Rf_install](name)); }
 
   bool exists(const std::string& name) const { return exists(name.c_str()); }
