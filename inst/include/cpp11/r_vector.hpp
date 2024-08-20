@@ -1293,7 +1293,7 @@ inline SEXP r_vector<T>::reserve_data(SEXP x, bool is_altrep, R_xlen_t size) {
     Rf_setAttrib(out, R_NamesSymbol, names);
   }
 
-  // Copy over "most" attributes.
+  // Copy over "most" attributes, and set OBJECT bit and S4 bit as needed.
   // Does not copy over names, dim, or dim names.
   // Names are handled already. Dim and dim names should not be applicable,
   // as this is a vector.
