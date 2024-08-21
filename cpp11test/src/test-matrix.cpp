@@ -103,7 +103,7 @@ context("matrix-C++") {
     expect_true(xc(10, 13) == 121);
   }
 
-  test_that("copy constructor works") {
+  test_that("copy constructor works for read only matrices") {
     auto getExportedValue = cpp11::package("base")["getExportedValue"];
     cpp11::doubles_matrix<cpp11::by_row> x(getExportedValue("datasets", "volcano"));
 
@@ -118,5 +118,44 @@ context("matrix-C++") {
     expect_true(x.ncol() == yc.ncol());
     expect_true(yc.nslices() == yc.ncol());
     expect_true(SEXP(x) == SEXP(yc));
+  }
+
+  test_that("copy constructor works for writable matrices") {
+    cpp11::writable::doubles_matrix<cpp11::by_row> x(5, 2);
+
+    auto x_dim = x.attr("dim");
+    expect_true(INTEGER_ELT(x_dim, 0) == 5);
+    expect_true(INTEGER_ELT(x_dim, 1) == 2);
+
+    cpp11::writable::doubles_matrix<cpp11::by_row> yr(x);
+    expect_true(x.nrow() == yr.nrow());
+    expect_true(x.ncol() == yr.ncol());
+    expect_true(yr.nslices() == yr.nrow());
+    // Note that a copy should be made when copying writable!
+    expect_true(SEXP(x) != SEXP(yr));
+
+    // TODO: Fix this
+    // // `dim` attribute is retained on copy
+    // auto yr_dim = yr.attr("dim");
+    // expect_true(INTEGER_ELT(yr_dim, 0) == 5);
+    // expect_true(INTEGER_ELT(yr_dim, 1) == 2);
+
+    cpp11::writable::doubles_matrix<cpp11::by_column> yc(x);
+    expect_true(x.nrow() == yc.nrow());
+    expect_true(x.ncol() == yc.ncol());
+    expect_true(yc.nslices() == yc.ncol());
+    // Note that a copy should be made when copying writable!
+    expect_true(SEXP(x) != SEXP(yc));
+
+    // TODO: Fix this
+    // // `dim` attribute is retained on copy
+    // auto yc_dim = yc.attr("dim");
+    // expect_true(INTEGER_ELT(yc_dim, 0) == 5);
+    // expect_true(INTEGER_ELT(yc_dim, 1) == 2);
+  }
+
+  test_that("copy constructor is not enabled across vector types") {
+    cpp11::writable::doubles_matrix<cpp11::by_row> x(5, 2);
+    expect_error(cpp11::writable::integers_matrix<cpp11::by_column>(x));
   }
 }

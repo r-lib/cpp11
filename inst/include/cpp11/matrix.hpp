@@ -165,7 +165,8 @@ class matrix : public matrix_slices<S> {
   matrix(SEXP data) : matrix_slices<S>(data), vector_(data) {}
 
   template <typename V2, typename T2, typename S2>
-  matrix(const cpp11::matrix<V2, T2, S2>& rhs) : matrix_slices<S>(rhs), vector_(rhs) {}
+  matrix(const cpp11::matrix<V2, T2, S2>& rhs)
+      : matrix_slices<S>(rhs.nrow(), rhs.ncol()), vector_(rhs.vector()) {}
 
   matrix(int nrow, int ncol)
       : matrix_slices<S>(nrow, ncol), vector_(R_xlen_t(nrow * ncol)) {
@@ -178,6 +179,8 @@ class matrix : public matrix_slices<S> {
   using matrix_slices<S>::slice_size;
   using matrix_slices<S>::slice_stride;
   using matrix_slices<S>::slice_offset;
+
+  V vector() const { return vector_; }
 
   SEXP data() const { return vector_.data(); }
 
