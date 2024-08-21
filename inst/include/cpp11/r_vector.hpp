@@ -787,7 +787,7 @@ inline r_vector<T>::r_vector(const r_vector& rhs) {
   data_ = safe[Rf_shallow_duplicate](rhs.data_);
   protect_ = detail::store::insert(data_);
   is_altrep_ = ALTREP(data_);
-  data_p_ = get_p(is_altrep_, data_);
+  data_p_ = (data_ == R_NilValue) ? nullptr : get_p(is_altrep_, data_);
   length_ = rhs.length_;
   capacity_ = rhs.capacity_;
 }
@@ -925,7 +925,7 @@ inline r_vector<T>& r_vector<T>::operator=(const r_vector& rhs) {
   data_ = safe[Rf_shallow_duplicate](rhs.data_);
   protect_ = detail::store::insert(data_);
   is_altrep_ = ALTREP(data_);
-  data_p_ = get_p(is_altrep_, data_);
+  data_p_ = (data_ == R_NilValue) ? nullptr : get_p(is_altrep_, data_);
   length_ = rhs.length_;
   capacity_ = rhs.capacity_;
 
