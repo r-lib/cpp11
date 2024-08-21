@@ -775,21 +775,21 @@ template <typename T>
 inline r_vector<T>::r_vector(const r_vector& rhs) {
   // We don't want to just pass through to the read-only constructor because we'd
   // have to convert to `SEXP` first, which could truncate, and then we'd still have
-  // to shallow duplicate after that to ensure we have a duplicate, which can result in
-  // too many copies (#369).
+  // to shallow duplicate after that to really ensure we have a duplicate, which can
+  // result in too many copies (#369).
   //
   // Instead we take control of setting all fields to try and only duplicate 1 time.
-  // We try and reclaim unused capacity during the duplication by only reserving up to
-  // the `rhs.length_`. This is nice because if the user returns this object, the
-  // truncation has already been done and they don't have to pay for another allocation.
-  // Importantly, `reserve_data()` always duplicates even if there wasn't extra capacity,
-  // which ensures we have our own copy.
-  data_ = reserve_data(rhs.data_, rhs.is_altrep_, rhs.length_);
+  // If there is extra capacity in the `rhs`, that is also copied over. Resist the urge
+  // to try and trim the extra capacity during the duplication. We really do want to do a
+  // shallow duplicate to ensure that ALL attributes are copied over, including `dim` and
+  // `dimnames`, which would be lost if we instead used `reserve_data()` to do a combined
+  // duplicate + possible truncate. This is important for the `matrix` class.
+  data_ = safe[Rf_shallow_duplicate](rhs.data_);
   protect_ = detail::store::insert(data_);
   is_altrep_ = ALTREP(data_);
   data_p_ = get_p(is_altrep_, data_);
   length_ = rhs.length_;
-  capacity_ = rhs.length_;
+  capacity_ = rhs.capacity_;
 }
 
 template <typename T>
@@ -1279,13 +1279,14 @@ inline typename r_vector<T>::iterator r_vector<T>::iterator::operator+(R_xlen_t 
   return it;
 }
 
-// Compared to `Rf_xlengthgets()`:
-// - This always allocates, even if it is the same size, which is important when we use
-//   it in a constructor and need to ensure that it duplicates on the way in.
-// - This copies over attributes with `Rf_copyMostAttrib()`, which is important when we
-//   use it in constructors and when we truncate right before returning from the `SEXP`
-//   operator.
-// - This is more friendly to ALTREP `x`.
+/// Compared to `Rf_xlengthgets()`:
+/// - This copies over attributes with `Rf_copyMostAttrib()`, which is important when we
+///   truncate right before returning from the `SEXP` operator.
+/// - This always allocates, even if it is the same size.
+/// - This is more friendly to ALTREP `x`.
+///
+/// SAFETY: For use only by `reserve()`! This won't retain the `dim` or `dimnames`
+/// attributes (which doesn't make much sense anyways).
 template <typename T>
 inline SEXP r_vector<T>::reserve_data(SEXP x, bool is_altrep, R_xlen_t size) {
   // Resize core data

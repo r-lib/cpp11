@@ -134,11 +134,10 @@ context("matrix-C++") {
     // Note that a copy should be made when copying writable!
     expect_true(SEXP(x) != SEXP(yr));
 
-    // TODO: Fix this
-    // // `dim` attribute is retained on copy
-    // auto yr_dim = yr.attr("dim");
-    // expect_true(INTEGER_ELT(yr_dim, 0) == 5);
-    // expect_true(INTEGER_ELT(yr_dim, 1) == 2);
+    // `dim` attribute is retained on copy
+    auto yr_dim = yr.attr("dim");
+    expect_true(INTEGER_ELT(yr_dim, 0) == 5);
+    expect_true(INTEGER_ELT(yr_dim, 1) == 2);
 
     cpp11::writable::doubles_matrix<cpp11::by_column> yc(x);
     expect_true(x.nrow() == yc.nrow());
@@ -147,11 +146,10 @@ context("matrix-C++") {
     // Note that a copy should be made when copying writable!
     expect_true(SEXP(x) != SEXP(yc));
 
-    // TODO: Fix this
-    // // `dim` attribute is retained on copy
-    // auto yc_dim = yc.attr("dim");
-    // expect_true(INTEGER_ELT(yc_dim, 0) == 5);
-    // expect_true(INTEGER_ELT(yc_dim, 1) == 2);
+    // `dim` attribute is retained on copy
+    auto yc_dim = yc.attr("dim");
+    expect_true(INTEGER_ELT(yc_dim, 0) == 5);
+    expect_true(INTEGER_ELT(yc_dim, 1) == 2);
   }
 
   test_that("copy constructor is not enabled across vector types") {

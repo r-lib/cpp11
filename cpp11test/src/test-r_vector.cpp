@@ -281,10 +281,12 @@ context("r_vector-C++") {
 
     // Doubles the capacity from 2 to 4
     x.push_back(3);
+    expect_true(Rf_xlength(x.data()) == 4);
 
     // Calls writable copy constructor.
     // Should duplicate without truncations and retain same capacity.
     cpp11::writable::integers y(x);
+    expect_true(Rf_xlength(y.data()) == 4);
 
     // In the past, we truncated (i.e. to size 3) but retained the same capacity of 4,
     // so this could try to push without first resizing.
