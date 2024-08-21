@@ -274,6 +274,20 @@ context("r_vector-C++") {
     expect_true(after - before == 1);
   }
 
+  test_that("writable vector copy assignment works with default constructed vectors") {
+    // Default constructed - the `data_` is `R_NilValue`!
+    cpp11::writable::integers x;
+
+    cpp11::writable::integers y(1);
+
+    // Checks that this guards against calling `INTEGER()` on `R_NilValue`.
+    y = x;
+
+    SEXP z(y);
+    expect_true(cpp11::detail::r_typeof(z) == INTSXP);
+    expect_true(Rf_xlength(z) == 0);
+  }
+
   test_that("writable vector copy constructor correctly tracks the `capacity_`") {
     cpp11::writable::integers x(2);
     x[0] = 1;
@@ -296,6 +310,18 @@ context("r_vector-C++") {
     expect_true(y[1] == 2);
     expect_true(y[2] == 3);
     expect_true(y[3] == 4);
+  }
+
+  test_that("writable vector copy constructor works with default constructed vectors") {
+    // Default constructed - the `data_` is `R_NilValue`!
+    cpp11::writable::integers x;
+
+    // Checks that this guards against calling `INTEGER()` on `R_NilValue`.
+    cpp11::writable::integers y(x);
+
+    SEXP z(y);
+    expect_true(cpp11::detail::r_typeof(z) == INTSXP);
+    expect_true(Rf_xlength(z) == 0);
   }
 
   test_that(
