@@ -1294,7 +1294,9 @@ inline SEXP r_vector<T>::reserve_data(SEXP x, bool is_altrep, R_xlen_t size) {
   // Resize names, if required
   SEXP names = Rf_getAttrib(x, R_NamesSymbol);
   if (names != R_NilValue) {
-    names = resize_names(names, size);
+    if (Rf_xlength(names) != size) {
+      names = resize_names(names, size);
+    }
     Rf_setAttrib(out, R_NamesSymbol, names);
   }
 
