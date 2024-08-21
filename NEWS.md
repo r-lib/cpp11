@@ -1,5 +1,9 @@
 # cpp11 (development version)
 
+* Fixed an issue with the `writable::matrix` copy constructor where the
+  underlying SEXP should have been copied but was not. It is now consistent with
+  the behavior of the equivalent `writable::r_vector` copy constructor.
+
 * Added the missing implementation for `x.at("name")` for read only vectors
   (#370).
 
