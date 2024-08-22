@@ -1,5 +1,9 @@
 # cpp11 (development version)
 
+* New `writable::data_frame` constructor that also takes the number of rows as
+  input. This accounts for the edge case where the input list has 0 columns but
+  you'd still like to specify a known number of rows (#272).
+
 * `cpp11::writable::r_vector<T>::iterator` no longer implicitly deletes its
   copy assignment operator (#360).
 
