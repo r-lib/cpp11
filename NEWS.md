@@ -1,5 +1,10 @@
 # cpp11 (development version)
 
+* `cpp11::writable::r_vector<T>::iterator` no longer implicitly deletes its
+  copy assignment operator (#360).
+
+* `std::max_element()` can now be used with writable vectors (#334).
+
 * The `environment` class no longer uses the non-API function
   `Rf_findVarInFrame3()` (#367).
 
