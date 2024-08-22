@@ -43,6 +43,28 @@ context("data_frame-C++") {
     expect_true(df.nrow() == 10);
   }
 
+  test_that("writable::data_frame::nrow works with 0x0 dfs") {
+    SEXP x = PROTECT(Rf_allocVector(VECSXP, 0));
+
+    cpp11::writable::data_frame df(x);
+    expect_true(df.nrow() == 0);
+
+    UNPROTECT(1);
+  }
+
+  test_that("writable::data_frame::nrow works with 10x0 dfs (#272)") {
+    SEXP x = PROTECT(Rf_allocVector(VECSXP, 0));
+
+    bool is_altrep = false;
+    int nrow = 10;
+
+    // Manually specify `nrow` using special constructor
+    cpp11::writable::data_frame df(x, is_altrep, nrow);
+    expect_true(df.nrow() == 10);
+
+    UNPROTECT(1);
+  }
+
   test_that("writable::data_frame works") {
     using namespace cpp11::literals;
     cpp11::writable::data_frame df({"x"_nm = {1, 2, 3}, "y"_nm = {"a", "b", "c"}});
