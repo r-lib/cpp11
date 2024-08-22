@@ -4,6 +4,8 @@
 
 #include <testthat.h>
 
+#include <algorithm>  // for max_element
+
 context("r_vector-C++") {
   test_that("read only vector capabilities") {
     using cpp11::integers;
