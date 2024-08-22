@@ -102,6 +102,12 @@ class r_vector {
   const_iterator find(const r_string& name) const;
 
   class const_iterator {
+    // Iterator references:
+    // https://cplusplus.com/reference/iterator/
+    // https://stackoverflow.com/questions/8054273/how-to-implement-an-stl-style-iterator-and-avoid-common-pitfalls
+    // It seems like our iterator doesn't fully implement everything for
+    // `random_access_iterator_tag` (like an `[]` operator, for example). If we discover
+    // issues with it, we probably need to add more methods.
    private:
     const r_vector* data_;
     R_xlen_t pos_;
