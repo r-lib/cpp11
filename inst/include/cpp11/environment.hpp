@@ -3,7 +3,7 @@
 #include <string>  // for string, basic_string
 
 #include "Rversion.h"         // for R_VERSION, R_Version
-#include "cpp11/R.hpp"        // for SEXP, SEXPREC, Rf_install, Rf_findVarIn...
+#include "cpp11/R.hpp"        // for SEXP, SEXPREC, Rf_install, r_env_get...
 #include "cpp11/as.hpp"       // for as_sexp
 #include "cpp11/protect.hpp"  // for protect, protect::function, safe, unwin...
 #include "cpp11/sexp.hpp"     // for sexp
@@ -34,7 +34,7 @@ class environment {
       safe[Rf_defineVar](name_, as_sexp(value), parent_);
       return *this;
     }
-    operator SEXP() const { return safe[Rf_findVarInFrame3](parent_, name_, TRUE); };
+    operator SEXP() const { return safe[detail::r_env_get](parent_, name_); };
     operator sexp() const { return SEXP(); };
   };
 
@@ -45,12 +45,8 @@ class environment {
   proxy operator[](const char* name) const { return operator[](safe[Rf_install](name)); }
   proxy operator[](const std::string& name) const { return operator[](name.c_str()); }
 
-  bool exists(SEXP name) const {
-    SEXP res = safe[Rf_findVarInFrame3](env_, name, FALSE);
-    return res != R_UnboundValue;
-  }
+  bool exists(SEXP name) const { return safe[detail::r_env_has](env_, name); }
   bool exists(const char* name) const { return exists(safe[Rf_install](name)); }
-
   bool exists(const std::string& name) const { return exists(name.c_str()); }
 
   void remove(SEXP name) {
