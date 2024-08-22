@@ -233,13 +233,13 @@ object and then calling it to generate the new environment.</p>
 happens if I try to get a value that doesn’t exist?<a class="anchor" aria-label="anchor" href="#how-do-i-assign-and-retrieve-values-in-an-environment-what-happens-if-i-try-to-get-a-value-that-doesnt-exist"></a>
 </h4>
 <p>Use <code>[]</code> to retrieve or assign values from an environment
-by name. If a value does not exist it will return
-<code>R_UnboundValue</code>.</p>
+by name. If a value does not exist, it will error. To check for
+existence ahead of time, use the <code><a href="https://rdrr.io/r/base/exists.html" class="external-link">exists()</a></code> method.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpp11.hpp&gt;</span></span>
 <span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
 <span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="dt">bool</span> foo_exists<span class="op">(</span>cpp11<span class="op">::</span>environment x<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  <span class="cf">return</span> x<span class="op">[</span><span class="st">"foo"</span><span class="op">]</span> <span class="op">!=</span> R_UnboundValue<span class="op">;</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  <span class="cf">return</span> x<span class="op">.</span>exists<span class="op">(</span><span class="st">"foo"</span><span class="op">);</span></span>
 <span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a></span>
 <span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span></span>
@@ -357,10 +357,10 @@ this.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fl">2L</span>, <span class="fl">3L</span>, <span class="fl">4L</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Internal.html" class="external-link">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; @559466e5e7d8 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span></span>
+<span><span class="co">#&gt; @557453571c28 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span></span>
 <span><span class="fu">add_one</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Internal.html" class="external-link">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; @559466e5e7d8 13 INTSXP g0c2 [REF(5)] (len=4, tl=0) 2,3,4,5</span></span>
+<span><span class="co">#&gt; @557453571c28 13 INTSXP g0c2 [REF(5)] (len=4, tl=0) 2,3,4,5</span></span>
 <span><span class="va">x</span></span>
 <span><span class="co">#&gt; [1] 2 3 4 5</span></span></code></pre></div>
 </div>
@@ -605,7 +605,7 @@ native R API:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">#&gt;   expression                 min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> test_extract_cpp11(x)  38.68ms  41.93ms      23.3        0B     40.7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> test_extract_cpp11(x)   38.8ms  41.95ms      23.4        0B     40.9</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> test_extract_r_api(x)   2.16ms   2.17ms     459.         0B      0</span></span></code></pre></div>
 <p>We plan to improve on this in the future, but for now this is one of
 the only places where we feel it is reasonable to call
