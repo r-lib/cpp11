@@ -56,7 +56,7 @@ context("data_frame-C++") {
     SEXP x = PROTECT(Rf_allocVector(VECSXP, 0));
 
     bool is_altrep = false;
-    int nrow = 10;
+    R_xlen_t nrow = 10;
 
     // Manually specify `nrow` using special constructor
     cpp11::writable::data_frame df(x, is_altrep, nrow);
