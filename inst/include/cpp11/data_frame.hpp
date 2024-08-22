@@ -77,8 +77,7 @@ class data_frame : public cpp11::data_frame {
   }
 
  public:
-  data_frame(const SEXP data)
-      : cpp11::data_frame(set_data_frame_attributes(data, calc_nrow(data))) {}
+  data_frame(const SEXP data) : cpp11::data_frame(set_data_frame_attributes(data)) {}
   data_frame(const SEXP data, bool is_altrep)
       : cpp11::data_frame(set_data_frame_attributes(data), is_altrep) {}
   data_frame(const SEXP data, bool is_altrep, int nrow)
