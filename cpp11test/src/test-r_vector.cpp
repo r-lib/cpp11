@@ -49,11 +49,10 @@ context("r_vector-C++") {
     expect_true(std::is_trivially_destructible<integers::iterator>::value);
     expect_true(std::is_copy_constructible<integers::iterator>::value);
     expect_true(std::is_move_constructible<integers::iterator>::value);
-    // FIXME: These should be `true`!
-    // expect_true(std::is_copy_assignable<integers::iterator>::value);
-    // expect_true(std::is_trivially_copy_assignable<integers::iterator>::value);
-    // expect_true(std::is_move_assignable<integers::iterator>::value);
-    // expect_true(std::is_trivially_move_assignable<integers::iterator>::value);
+    expect_true(std::is_copy_assignable<integers::iterator>::value);
+    expect_true(std::is_trivially_copy_assignable<integers::iterator>::value);
+    expect_true(std::is_move_assignable<integers::iterator>::value);
+    expect_true(std::is_trivially_move_assignable<integers::iterator>::value);
   }
 
   test_that("writable proxy capabilities") {
@@ -461,5 +460,27 @@ context("r_vector-C++") {
     expect_true(x.data() == x_sexp);
 
     UNPROTECT(2);
+  }
+
+  test_that("std::max_element works on read only vectors") {
+    SEXP foo_sexp = PROTECT(Rf_allocVector(INTSXP, 5));
+    SET_INTEGER_ELT(foo_sexp, 0, 1);
+    SET_INTEGER_ELT(foo_sexp, 1, 2);
+    SET_INTEGER_ELT(foo_sexp, 2, 5);
+    SET_INTEGER_ELT(foo_sexp, 3, 4);
+    SET_INTEGER_ELT(foo_sexp, 4, 3);
+    cpp11::integers foo(foo_sexp);
+
+    auto element = std::max_element(foo.begin(), foo.end());
+
+    expect_true(*element == 5);
+
+    UNPROTECT(1);
+  }
+
+  test_that("std::max_element works on writable vectors (#334)") {
+    cpp11::writable::integers foo = {1, 2, 5, 4, 3};
+    auto element = std::max_element(foo.begin(), foo.end());
+    expect_true(*element == 5);
   }
 }

@@ -282,8 +282,7 @@ class r_vector : public cpp11::r_vector<T> {
 
   class iterator : public cpp11::r_vector<T>::const_iterator {
    private:
-    const r_vector& data_;
-
+    using cpp11::r_vector<T>::const_iterator::data_;
     using cpp11::r_vector<T>::const_iterator::block_start_;
     using cpp11::r_vector<T>::const_iterator::pos_;
     using cpp11::r_vector<T>::const_iterator::buf_;
@@ -298,7 +297,7 @@ class r_vector : public cpp11::r_vector<T> {
     using reference = proxy&;
     using iterator_category = std::forward_iterator_tag;
 
-    iterator(const r_vector& data, R_xlen_t pos);
+    iterator(const r_vector* data, R_xlen_t pos);
 
     iterator& operator++();
 
@@ -1120,12 +1119,12 @@ inline void r_vector<T>::clear() {
 
 template <typename T>
 inline typename r_vector<T>::iterator r_vector<T>::begin() const {
-  return iterator(*this, 0);
+  return iterator(this, 0);
 }
 
 template <typename T>
 inline typename r_vector<T>::iterator r_vector<T>::end() const {
-  return iterator(*this, length_);
+  return iterator(this, length_);
 }
 
 template <typename T>
@@ -1238,13 +1237,13 @@ inline r_vector<T>::proxy::operator T() const {
 }
 
 template <typename T>
-r_vector<T>::iterator::iterator(const r_vector& data, R_xlen_t pos)
-    : r_vector::const_iterator(&data, pos), data_(data) {}
+r_vector<T>::iterator::iterator(const r_vector* data, R_xlen_t pos)
+    : r_vector::const_iterator(data, pos) {}
 
 template <typename T>
 inline typename r_vector<T>::iterator& r_vector<T>::iterator::operator++() {
   ++pos_;
-  if (use_buf(data_.is_altrep()) && pos_ >= block_start_ + length_) {
+  if (use_buf(data_->is_altrep()) && pos_ >= block_start_ + length_) {
     fill_buf(pos_);
   }
   return *this;
@@ -1252,21 +1251,21 @@ inline typename r_vector<T>::iterator& r_vector<T>::iterator::operator++() {
 
 template <typename T>
 inline typename r_vector<T>::proxy r_vector<T>::iterator::operator*() const {
-  if (use_buf(data_.is_altrep())) {
+  if (use_buf(data_->is_altrep())) {
     return proxy(
-        data_.data(), pos_,
+        data_->data(), pos_,
         const_cast<typename r_vector::underlying_type*>(&buf_[pos_ - block_start_]),
         true);
   } else {
-    return proxy(data_.data(), pos_,
-                 data_.data_p_ != nullptr ? &data_.data_p_[pos_] : nullptr, false);
+    return proxy(data_->data(), pos_,
+                 data_->data_p_ != nullptr ? &data_->data_p_[pos_] : nullptr, false);
   }
 }
 
 template <typename T>
 inline typename r_vector<T>::iterator& r_vector<T>::iterator::operator+=(R_xlen_t rhs) {
   pos_ += rhs;
-  if (use_buf(data_.is_altrep()) && pos_ >= block_start_ + length_) {
+  if (use_buf(data_->is_altrep()) && pos_ >= block_start_ + length_) {
     fill_buf(pos_);
   }
   return *this;
