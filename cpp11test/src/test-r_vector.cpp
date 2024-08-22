@@ -4,6 +4,84 @@
 
 #include <testthat.h>
 
+#include <algorithm>  // for max_element
+
+#ifdef _WIN32
+#include "Rversion.h"
+#define CPP11_HAS_IS_UTILITIES R_VERSION >= R_Version(4, 0, 0)
+#else
+#define CPP11_HAS_IS_UTILITIES 1
+#endif
+
+#if CPP11_HAS_IS_UTILITIES
+context("r_vector-capabilities-C++") {
+  test_that("read only vector capabilities") {
+    using cpp11::integers;
+
+    expect_true(std::is_destructible<integers>::value);
+    expect_true(std::is_default_constructible<integers>::value);
+    expect_true(std::is_nothrow_default_constructible<integers>::value);
+    expect_true(std::is_copy_constructible<integers>::value);
+    expect_true(std::is_move_constructible<integers>::value);
+    expect_true(std::is_copy_assignable<integers>::value);
+    expect_true(std::is_move_assignable<integers>::value);
+  }
+
+  test_that("writable vector capabilities") {
+    using cpp11::writable::integers;
+
+    expect_true(std::is_destructible<integers>::value);
+    expect_true(std::is_default_constructible<integers>::value);
+    expect_true(std::is_nothrow_default_constructible<integers>::value);
+    expect_true(std::is_copy_constructible<integers>::value);
+    expect_true(std::is_move_constructible<integers>::value);
+    expect_true(std::is_copy_assignable<integers>::value);
+    expect_true(std::is_move_assignable<integers>::value);
+  }
+
+  test_that("read only const_iterator capabilities") {
+    using cpp11::integers;
+
+    expect_true(std::is_destructible<integers::const_iterator>::value);
+    expect_true(std::is_trivially_destructible<integers::const_iterator>::value);
+    expect_true(std::is_copy_constructible<integers::const_iterator>::value);
+    expect_true(std::is_move_constructible<integers::const_iterator>::value);
+    expect_true(std::is_copy_assignable<integers::const_iterator>::value);
+    expect_true(std::is_trivially_copy_assignable<integers::const_iterator>::value);
+    expect_true(std::is_move_assignable<integers::const_iterator>::value);
+    expect_true(std::is_trivially_move_assignable<integers::const_iterator>::value);
+  }
+
+  test_that("writable iterator capabilities") {
+    using cpp11::writable::integers;
+
+    expect_true(std::is_destructible<integers::iterator>::value);
+    expect_true(std::is_trivially_destructible<integers::iterator>::value);
+    expect_true(std::is_copy_constructible<integers::iterator>::value);
+    expect_true(std::is_move_constructible<integers::iterator>::value);
+    expect_true(std::is_copy_assignable<integers::iterator>::value);
+    expect_true(std::is_trivially_copy_assignable<integers::iterator>::value);
+    expect_true(std::is_move_assignable<integers::iterator>::value);
+    expect_true(std::is_trivially_move_assignable<integers::iterator>::value);
+  }
+
+  test_that("writable proxy capabilities") {
+    using cpp11::writable::integers;
+
+    expect_true(std::is_destructible<integers::proxy>::value);
+    expect_true(std::is_trivially_destructible<integers::proxy>::value);
+    expect_true(std::is_copy_constructible<integers::proxy>::value);
+    expect_true(std::is_move_constructible<integers::proxy>::value);
+
+    // Should these be true? Does it affect anything in practice?
+    expect_false(std::is_copy_assignable<integers::proxy>::value);
+    expect_false(std::is_trivially_copy_assignable<integers::proxy>::value);
+    expect_false(std::is_move_assignable<integers::proxy>::value);
+    expect_false(std::is_trivially_move_assignable<integers::proxy>::value);
+  }
+}
+#endif
+
 context("r_vector-C++") {
   test_that("writable vector temporary isn't leaked (integer) (#338)") {
     R_xlen_t before = cpp11::detail::store::count();
@@ -395,5 +473,27 @@ context("r_vector-C++") {
     expect_true(x.data() == x_sexp);
 
     UNPROTECT(2);
+  }
+
+  test_that("std::max_element works on read only vectors") {
+    SEXP foo_sexp = PROTECT(Rf_allocVector(INTSXP, 5));
+    SET_INTEGER_ELT(foo_sexp, 0, 1);
+    SET_INTEGER_ELT(foo_sexp, 1, 2);
+    SET_INTEGER_ELT(foo_sexp, 2, 5);
+    SET_INTEGER_ELT(foo_sexp, 3, 4);
+    SET_INTEGER_ELT(foo_sexp, 4, 3);
+    cpp11::integers foo(foo_sexp);
+
+    auto element = std::max_element(foo.begin(), foo.end());
+
+    expect_true(*element == 5);
+
+    UNPROTECT(1);
+  }
+
+  test_that("std::max_element works on writable vectors (#334)") {
+    cpp11::writable::integers foo = {1, 2, 5, 4, 3};
+    auto element = std::max_element(foo.begin(), foo.end());
+    expect_true(*element == 5);
   }
 }
