@@ -1,5 +1,9 @@
 # cpp11 (development version)
 
+* Removed implicit conversion operators from `sexp` to `double`, `bool`, and
+  `size_t`. Please use `cpp11::as_cpp()` for this instead, which is much safer
+  (#390).
+
 * `cpp11::writable::r_vector<T>::iterator` no longer implicitly deletes its
   copy assignment operator (#360).
 
