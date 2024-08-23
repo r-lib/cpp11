@@ -1,5 +1,11 @@
 # cpp11 (development version)
 
+* Implicit conversion from `sexp` to `bool`, `size_t`, and `double` has been
+  marked as deprecated and will be removed in the next version of cpp11. The 3
+  packages that were using this have been notified and sent PRs. The recommended
+  approach is to instead use `cpp11::as_cpp<T>`, which performs type and length
+  checking, making it much safer to use.
+
 * New `writable::data_frame` constructor that also takes the number of rows as
   input. This accounts for the edge case where the input list has 0 columns but
   you'd still like to specify a known number of rows (#272).

@@ -65,10 +65,14 @@ class sexp {
   }
 
   operator SEXP() const { return data_; }
-  operator double() const { return REAL_ELT(data_, 0); }
-  operator size_t() const { return REAL_ELT(data_, 0); }
-  operator bool() const { return LOGICAL_ELT(data_, 0); }
   SEXP data() const { return data_; }
+
+  /// DEPRECATED: Do not use this, it will be removed soon.
+  operator double() const { return REAL_ELT(data_, 0); }
+  /// DEPRECATED: Do not use this, it will be removed soon.
+  operator size_t() const { return REAL_ELT(data_, 0); }
+  /// DEPRECATED: Do not use this, it will be removed soon.
+  operator bool() const { return LOGICAL_ELT(data_, 0); }
 };
 
 }  // namespace cpp11
