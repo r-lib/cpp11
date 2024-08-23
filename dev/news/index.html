@@ -43,7 +43,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="cpp11-development-version">cpp11 (development version)<a class="anchor" aria-label="anchor" href="#cpp11-development-version"></a></h2>
-<ul><li><p>New <code>writable::data_frame</code> constructor that also takes the number of rows as input. This accounts for the edge case where the input list has 0 columns but you’d still like to specify a known number of rows (<a href="https://github.com/r-lib/cpp11/issues/272" class="external-link">#272</a>).</p></li>
+<ul><li><p>Implicit conversion from <code>sexp</code> to <code>bool</code>, <code>size_t</code>, and <code>double</code> has been marked as deprecated and will be removed in the next version of cpp11. The 3 packages that were using this have been notified and sent PRs. The recommended approach is to instead use <code>cpp11::as_cpp&lt;T&gt;</code>, which performs type and length checking, making it much safer to use.</p></li>
+<li><p>New <code>writable::data_frame</code> constructor that also takes the number of rows as input. This accounts for the edge case where the input list has 0 columns but you’d still like to specify a known number of rows (<a href="https://github.com/r-lib/cpp11/issues/272" class="external-link">#272</a>).</p></li>
 <li><p><code>cpp11::writable::r_vector&lt;T&gt;::iterator</code> no longer implicitly deletes its copy assignment operator (<a href="https://github.com/r-lib/cpp11/issues/360" class="external-link">#360</a>).</p></li>
 <li><p><code>std::max_element()</code> can now be used with writable vectors (<a href="https://github.com/r-lib/cpp11/issues/334" class="external-link">#334</a>).</p></li>
 <li>
