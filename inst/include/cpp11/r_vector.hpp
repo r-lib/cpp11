@@ -272,6 +272,8 @@ class r_vector : public cpp11::r_vector<T> {
    public:
     proxy(SEXP data, const R_xlen_t index, underlying_type* const p, bool is_altrep);
 
+    proxy& operator=(const proxy& rhs);
+
     proxy& operator=(const T& rhs);
     proxy& operator+=(const T& rhs);
     proxy& operator-=(const T& rhs);
@@ -284,6 +286,10 @@ class r_vector : public cpp11::r_vector<T> {
     void operator--();
 
     operator T() const;
+
+   private:
+    underlying_type get() const;
+    void set(underlying_type x);
   };
 
   class iterator : public cpp11::r_vector<T>::const_iterator {
@@ -1176,16 +1182,16 @@ r_vector<T>::proxy::proxy(SEXP data, const R_xlen_t index,
     : data_(data), index_(index), p_(p), is_altrep_(is_altrep) {}
 
 template <typename T>
+inline typename r_vector<T>::proxy& r_vector<T>::proxy::operator=(const proxy& rhs) {
+  const underlying_type elt = rhs.get();
+  set(elt);
+  return *this;
+}
+
+template <typename T>
 inline typename r_vector<T>::proxy& r_vector<T>::proxy::operator=(const T& rhs) {
-  underlying_type elt = static_cast<underlying_type>(rhs);
-
-  if (p_ != nullptr) {
-    *p_ = elt;
-  } else {
-    // Handles ALTREP, VECSXP, and STRSXP cases
-    set_elt(data_, index_, elt);
-  }
-
+  const underlying_type elt = static_cast<underlying_type>(rhs);
+  set(elt);
   return *this;
 }
 
@@ -1237,9 +1243,28 @@ inline void r_vector<T>::proxy::operator--() {
 
 template <typename T>
 inline r_vector<T>::proxy::operator T() const {
-  // Handles ALTREP, VECSXP, and STRSXP cases through `get_elt()`
-  const underlying_type elt = (p_ != nullptr) ? *p_ : r_vector::get_elt(data_, index_);
+  const underlying_type elt = get();
   return static_cast<T>(elt);
+}
+
+template <typename T>
+inline typename r_vector<T>::underlying_type r_vector<T>::proxy::get() const {
+  if (p_ != nullptr) {
+    return *p_;
+  } else {
+    // Handles ALTREP, VECSXP, and STRSXP cases
+    return r_vector::get_elt(data_, index_);
+  }
+}
+
+template <typename T>
+inline void r_vector<T>::proxy::set(typename r_vector<T>::underlying_type x) {
+  if (p_ != nullptr) {
+    *p_ = x;
+  } else {
+    // Handles ALTREP, VECSXP, and STRSXP cases
+    set_elt(data_, index_, x);
+  }
 }
 
 template <typename T>
