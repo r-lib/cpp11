@@ -1,5 +1,9 @@
 # cpp11 (development version)
 
+* `cpp11::writable::r_vector<T>::proxy` now implements copy assignment.
+  Practically this means that `x[i] = y[i]` now works when both `x` and `y`
+  are writable vectors (#300, #339).
+
 * Implicit conversion from `sexp` to `bool`, `size_t`, and `double` has been
   marked as deprecated and will be removed in the next version of cpp11. The 3
   packages that were using this have been notified and sent PRs. The recommended

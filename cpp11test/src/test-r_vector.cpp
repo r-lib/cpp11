@@ -1,6 +1,7 @@
 #include "cpp11/integers.hpp"
 #include "cpp11/list.hpp"
 #include "cpp11/protect.hpp"
+#include "cpp11/strings.hpp"
 
 #include <testthat.h>
 
@@ -72,12 +73,8 @@ context("r_vector-capabilities-C++") {
     expect_true(std::is_trivially_destructible<integers::proxy>::value);
     expect_true(std::is_copy_constructible<integers::proxy>::value);
     expect_true(std::is_move_constructible<integers::proxy>::value);
-
-    // Should these be true? Does it affect anything in practice?
-    expect_false(std::is_copy_assignable<integers::proxy>::value);
-    expect_false(std::is_trivially_copy_assignable<integers::proxy>::value);
-    expect_false(std::is_move_assignable<integers::proxy>::value);
-    expect_false(std::is_trivially_move_assignable<integers::proxy>::value);
+    expect_true(std::is_copy_assignable<integers::proxy>::value);
+    expect_true(std::is_move_assignable<integers::proxy>::value);
   }
 }
 #endif
@@ -471,6 +468,66 @@ context("r_vector-C++") {
     expect_true(Rf_getAttrib(x_sexp, Rf_install("foo")) == bar);
 
     expect_true(x.data() == x_sexp);
+
+    UNPROTECT(2);
+  }
+
+  test_that("`proxy` is copy assignable (integers) (#300, #339)") {
+    cpp11::writable::integers foo = {1, 2, 3, 4, 5};
+    cpp11::writable::integers bar = {6, 7, 8, 9, 10};
+
+    // Using rvalue temporaries (i.e. move assignable, but using copy assignment operator)
+    for (R_xlen_t i = 0; i < foo.size(); ++i) {
+      bar[i] = foo[i];
+    }
+
+    // Using lvalues (i.e. copy assignable)
+    cpp11::writable::integers::proxy x = foo[0];
+    bar[4] = x;
+
+    expect_true(bar[0] == 1);
+    expect_true(bar[1] == 2);
+    expect_true(bar[2] == 3);
+    expect_true(bar[3] == 4);
+    expect_true(bar[4] == 1);
+  }
+
+  test_that("`proxy` is copy assignable (list) (#300, #339)") {
+    SEXP a = PROTECT(Rf_allocVector(INTSXP, 1));
+    SEXP b = PROTECT(Rf_allocVector(REALSXP, 2));
+
+    cpp11::writable::list x({a, b});
+    cpp11::writable::list y(2);
+
+    // Using rvalue temporaries (i.e. move assignable, but using copy assignment operator)
+    y[0] = x[0];
+
+    // Using lvalues (i.e. copy assignable)
+    cpp11::writable::list::proxy elt = x[1];
+    y[1] = elt;
+
+    expect_true(y[0] == a);
+    expect_true(y[1] == b);
+
+    UNPROTECT(2);
+  }
+
+  test_that("`proxy` is copy assignable (strings) (#300, #339)") {
+    SEXP a = PROTECT(Rf_mkCharCE("a", CE_UTF8));
+    SEXP b = PROTECT(Rf_mkCharCE("b", CE_UTF8));
+
+    cpp11::writable::strings x({a, b});
+    cpp11::writable::strings y(2);
+
+    // Using rvalue temporaries (i.e. move assignable, but using copy assignment operator)
+    y[0] = x[0];
+
+    // Using lvalues (i.e. copy assignable)
+    cpp11::writable::strings::proxy elt = x[1];
+    y[1] = elt;
+
+    expect_true(y[0] == a);
+    expect_true(y[1] == b);
 
     UNPROTECT(2);
   }
