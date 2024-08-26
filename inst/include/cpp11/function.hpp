@@ -74,33 +74,61 @@ class package {
   SEXP data_;
 };
 
+namespace detail {
+
+// Special internal way to call `base::message()`
+//
+// - Pure C, so call with `safe[]`
+// - Holds a `static SEXP` for the `base::message` function protected with
+// `R_PreserveObject()`
+//
+// We don't use a `static cpp11::function` because that will infinitely retain a cell in
+// our preserve list, which can throw off our counts in the preserve list tests.
+inline void r_message(const char* x) {
+  static SEXP fn = NULL;
+
+  if (fn == NULL) {
+    fn = Rf_findFun(Rf_install("message"), R_BaseEnv);
+    R_PreserveObject(fn);
+  }
+
+  SEXP x_char = PROTECT(Rf_mkCharCE(x, CE_UTF8));
+  SEXP x_string = PROTECT(Rf_ScalarString(x_char));
+
+  SEXP call = PROTECT(Rf_lang2(fn, x_string));
+
+  Rf_eval(call, R_GlobalEnv);
+
+  UNPROTECT(3);
+}
+
+}  // namespace detail
+
 inline void message(const char* fmt_arg) {
-  static auto R_message = cpp11::package("base")["message"];
 #ifdef CPP11_USE_FMT
   std::string msg = fmt::format(fmt_arg);
-  R_message(msg.c_str());
+  safe[detail::r_message](msg.c_str());
 #else
   char buff[1024];
   int msg;
   msg = std::snprintf(buff, 1024, "%s", fmt_arg);
   if (msg >= 0 && msg < 1024) {
-    R_message(buff);
+    safe[detail::r_message](buff);
   }
 #endif
 }
 
 template <typename... Args>
 void message(const char* fmt_arg, Args... args) {
-  static auto R_message = cpp11::package("base")["message"];
 #ifdef CPP11_USE_FMT
   std::string msg = fmt::format(fmt_arg, args...);
-  R_message(msg.c_str());
+  safe[detail::r_message](msg.c_str());
 #else
   char buff[1024];
   int msg;
   msg = std::snprintf(buff, 1024, fmt_arg, args...);
   if (msg >= 0 && msg < 1024) {
-    R_message(buff);
+    safe[detail::r_message](buff);
   }
 #endif
 }
