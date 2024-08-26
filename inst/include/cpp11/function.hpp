@@ -34,24 +34,23 @@ class function {
   SEXP data_;
 
   template <typename... Args>
-  SEXP construct_call(SEXP val, const named_arg& arg, Args&&... args) const {
+  void construct_call(SEXP val, const named_arg& arg, Args&&... args) const {
     SETCAR(val, arg.value());
     SET_TAG(val, safe[Rf_install](arg.name()));
     val = CDR(val);
-    return construct_call(val, std::forward<Args>(args)...);
+    construct_call(val, std::forward<Args>(args)...);
   }
 
   // Construct the call recursively, each iteration adds an Arg to the pairlist.
-  // We need
   template <typename T, typename... Args>
-  SEXP construct_call(SEXP val, const T& arg, Args&&... args) const {
+  void construct_call(SEXP val, const T& arg, Args&&... args) const {
     SETCAR(val, as_sexp(arg));
     val = CDR(val);
-    return construct_call(val, std::forward<Args>(args)...);
+    construct_call(val, std::forward<Args>(args)...);
   }
 
   // Base case, just return
-  SEXP construct_call(SEXP val) const { return val; }
+  void construct_call(SEXP val) const {}
 };
 
 class package {
