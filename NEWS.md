@@ -94,6 +94,9 @@
 
 ## Breaking changes
 
+* R >=3.6.0 is now required. This is in line with (and even goes beyond) the
+  tidyverse standard of supporting the previous 5 minor releases of R.
+
 * Implicit conversion from `sexp` to `bool`, `size_t`, and `double` has been
   marked as deprecated and will be removed in the next version of cpp11. The 3
   packages that were using this have been notified and sent PRs. The recommended
