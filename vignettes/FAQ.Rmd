@@ -39,6 +39,7 @@ You will need to use `cpp11::as_sexp()` if you want to convert arbitrary C++ obj
 
 ```{cpp11}
 #include <cpp11.hpp>
+#include <vector>
 
 [[cpp11::register]]
 cpp11::writable::list foo_push() {
@@ -80,6 +81,7 @@ Note that if you know the size of the list ahead of time (which you often do!), 
 
 ```{cpp11}
 #include <cpp11.hpp>
+#include <vector>
 
 [[cpp11::register]]
 cpp11::writable::list foo_push_sized() {
