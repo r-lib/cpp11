@@ -5,7 +5,7 @@
 * Version: NA
 * GitHub: NA
 * Source code: https://github.com/cran/BiocParallel
-* Number of recursive dependencies: 129
+* Number of recursive dependencies: 116
 
 Run `revdepcheck::cloud_details(, "BiocParallel")` for more info
 
@@ -40,7 +40,7 @@ Run `revdepcheck::cloud_details(, "BiocParallel")` for more info
 * Version: NA
 * GitHub: NA
 * Source code: https://github.com/cran/CytoML
-* Number of recursive dependencies: 107
+* Number of recursive dependencies: 108
 
 Run `revdepcheck::cloud_details(, "CytoML")` for more info
 
@@ -75,7 +75,7 @@ Run `revdepcheck::cloud_details(, "CytoML")` for more info
 * Version: NA
 * GitHub: NA
 * Source code: https://github.com/cran/flowCore
-* Number of recursive dependencies: 117
+* Number of recursive dependencies: 119
 
 Run `revdepcheck::cloud_details(, "flowCore")` for more info
 
@@ -110,9 +110,44 @@ Run `revdepcheck::cloud_details(, "flowCore")` for more info
 * Version: NA
 * GitHub: NA
 * Source code: https://github.com/cran/flowWorkspace
-* Number of recursive dependencies: 107
+* Number of recursive dependencies: 108
 
 Run `revdepcheck::cloud_details(, "flowWorkspace")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+
+
+
+
+
+
+```
+### CRAN
+
+```
+
+
+
+
+
+
+```
+# mnmer
+
+<details>
+
+* Version: NA
+* GitHub: NA
+* Source code: https://github.com/cran/mnmer
+* Number of recursive dependencies: 131
+
+Run `revdepcheck::cloud_details(, "mnmer")` for more info
 
 </details>
 
@@ -145,7 +180,7 @@ Run `revdepcheck::cloud_details(, "flowWorkspace")` for more info
 * Version: NA
 * GitHub: NA
 * Source code: https://github.com/cran/NanoMethViz
-* Number of recursive dependencies: 184
+* Number of recursive dependencies: 194
 
 Run `revdepcheck::cloud_details(, "NanoMethViz")` for more info
 
@@ -180,7 +215,7 @@ Run `revdepcheck::cloud_details(, "NanoMethViz")` for more info
 * Version: NA
 * GitHub: NA
 * Source code: https://github.com/cran/ncdfFlow
-* Number of recursive dependencies: 111
+* Number of recursive dependencies: 113
 
 Run `revdepcheck::cloud_details(, "ncdfFlow")` for more info
 
@@ -218,6 +253,76 @@ Run `revdepcheck::cloud_details(, "ncdfFlow")` for more info
 * Number of recursive dependencies: 135
 
 Run `revdepcheck::cloud_details(, "openCyto")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+
+
+
+
+
+
+```
+### CRAN
+
+```
+
+
+
+
+
+
+```
+# pkgstats
+
+<details>
+
+* Version: NA
+* GitHub: NA
+* Source code: https://github.com/cran/pkgstats
+* Number of recursive dependencies: 78
+
+Run `revdepcheck::cloud_details(, "pkgstats")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+
+
+
+
+
+
+```
+### CRAN
+
+```
+
+
+
+
+
+
+```
+# rankUncertainty
+
+<details>
+
+* Version: NA
+* GitHub: NA
+* Source code: https://github.com/cran/rankUncertainty
+* Number of recursive dependencies: 48
+
+Run `revdepcheck::cloud_details(, "rankUncertainty")` for more info
 
 </details>
 
