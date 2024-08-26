@@ -1,10 +1,10 @@
 # cpp11
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/r-lib/cpp11/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/cpp11/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://app.codecov.io/gh/r-lib/cpp11/branch/main/graph/badge.svg?token=EEWYoCYxQ2)](https://app.codecov.io/gh/r-lib/cpp11)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![R-CMD-check](https://github.com/r-lib/cpp11/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/cpp11/actions/workflows/R-CMD-check.yaml)
 [![CRAN status](https://www.r-pkg.org/badges/version/cpp11)](https://CRAN.R-project.org/package=cpp11)
+[![Codecov test coverage](https://codecov.io/gh/r-lib/cpp11/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r-lib/cpp11?branch=main)
 <!-- badges: end -->
 
 cpp11 helps you to interact with R objects using C++ code.
@@ -18,7 +18,7 @@ To add cpp11 to an existing package, put your C++ files in the `src/` directory 
 LinkingTo: cpp11
 ```
 
-Then decorate C++ functions you want to expose to R with `[[cpp11::register]]`. 
+Then decorate C++ functions you want to expose to R with `[[cpp11::register]]`.
 *Note that this is a [C++11 attribute](https://en.cppreference.com/w/cpp/language/attributes), not a comment like is used in Rcpp.*
 
 cpp11 is a header only library with no hard dependencies and does not use a shared library, so it is straightforward and reliable to use in packages without fear of compile-time and run-time mismatches.
