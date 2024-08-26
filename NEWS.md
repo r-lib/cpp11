@@ -1,29 +1,23 @@
 # cpp11 (development version)
 
-* `cpp11::package` now errors if given a package name that hasn't been loaded
-  yet. Previously it would cause R to hang indefinitely (#317).
+## R non-API related changes
 
-* `cpp11::function` now protects its underlying function, for maximum safety
-  (#294).
+* Removed usage of the following R non-API functions:
 
-* `cpp11::writable::r_vector<T>::proxy` now implements copy assignment.
-  Practically this means that `x[i] = y[i]` now works when both `x` and `y`
-  are writable vectors (#300, #339).
+  * `SETLENGTH()`
 
-* Implicit conversion from `sexp` to `bool`, `size_t`, and `double` has been
-  marked as deprecated and will be removed in the next version of cpp11. The 3
-  packages that were using this have been notified and sent PRs. The recommended
-  approach is to instead use `cpp11::as_cpp<T>`, which performs type and length
-  checking, making it much safer to use.
+  * `SET_TRUELENGTH()`
 
-* New `writable::data_frame` constructor that also takes the number of rows as
-  input. This accounts for the edge case where the input list has 0 columns but
-  you'd still like to specify a known number of rows (#272).
+  * `SET_GROWABLE_BIT()`
 
-* `cpp11::writable::r_vector<T>::iterator` no longer implicitly deletes its
-  copy assignment operator (#360).
-
-* `std::max_element()` can now be used with writable vectors (#334).
+  These functions were used as part of the efficient growable vectors that
+  cpp11 offered, i.e. what happens under the hood when you use `push_back()`.
+  The removal of these non-API functions means that cpp11 writable vectors that
+  have been pushed to with `push_back()` will likely force 1 extra allocation
+  when the conversion from `cpp11::writable::r_vector<T>` to `SEXP` occurs
+  (typically when you return a result back to R). This does not affect the
+  performance of `push_back()` itself, and in general these growable vectors
+  are still quite efficient (#362).
 
 * The `environment` class no longer uses the non-API function
   `Rf_findVarInFrame3()` (#367).
@@ -37,17 +31,22 @@
     promise is now evaluated. We have backported this new strictness to older
     versions of R as well.
 
-* Fixed an issue with the `writable::matrix` copy constructor where the
-  underlying SEXP should have been copied but was not. It is now consistent with
-  the behavior of the equivalent `writable::r_vector` copy constructor.
+## New features
 
-* Added the missing implementation for `x.at("name")` for read only vectors
-  (#370).
+* `cpp11::writable::r_vector<T>::proxy` now implements copy assignment.
+  Practically this means that `x[i] = y[i]` now works when both `x` and `y`
+  are writable vectors (#300, #339).
 
-* Constructors for writable vectors from `initializer_list<named_arg>` now
-  check that `named_arg` contains a length 1 object of the correct type, and
-  throws either a `cpp11::type_error` or `std::length_error` if that is not the
-  case (#382).
+* New `writable::data_frame` constructor that also takes the number of rows as
+  input. This accounts for the edge case where the input list has 0 columns but
+  you'd still like to specify a known number of rows (#272).
+
+* `std::max_element()` can now be used with writable vectors (#334).
+
+* Read only `r_vector`s now have a move constructor and move assignment
+  operator (#365).
+
+## Improvements and fixes
 
 * Repeated assignment to a `cpp11::writable::strings` vector through either
   `x[i] = elt` or `x.push_back(elt)` is now more performant, at the tradeoff
@@ -55,27 +54,31 @@
   within bounds, there is no chance of failure, which are the same kind of
   invariants placed on the other vector types) (#378).
 
-* Read only `r_vector`s now have a move constructor and move assignment
-  operator (#365).
+* Constructors for writable vectors from `initializer_list<named_arg>` now
+  check that `named_arg` contains a length 1 object of the correct type, and
+  throws either a `cpp11::type_error` or `std::length_error` if that is not the
+  case (#382).
 
-* Fixed an issue where writable vectors were being protected twice (#365).
+* `cpp11::package` now errors if given a package name that hasn't been loaded
+  yet. Previously it would cause R to hang indefinitely (#317).
 
-* Removed usage of the following non-API functions:
-  * `SETLENGTH()`
-  * `SET_TRUELENGTH()`
-  * `SET_GROWABLE_BIT()`
+* `cpp11::function` now protects its underlying function, for maximum safety
+  (#294).
 
-  These functions were used as part of the efficient growable vectors that
-  cpp11 offered, i.e. what happens under the hood when you use `push_back()`.
-  The removal of these non-API functions means that cpp11 writable vectors that
-  have been pushed to with `push_back()` will likely force 1 extra allocation
-  when the conversion from `cpp11::writable::r_vector<T>` to `SEXP` occurs
-  (typically when you return a result back to R). This does not affect the
-  performance of `push_back()` itself, and in general these growable vectors
-  are still quite efficient (#362).
+* `cpp11::writable::r_vector<T>::iterator` no longer implicitly deletes its
+  copy assignment operator (#360).
+
+* Added the missing implementation for `x.at("name")` for read only vectors
+  (#370).
+
+* Fixed an issue with the `writable::matrix` copy constructor where the
+  underlying SEXP should have been copied but was not. It is now consistent with
+  the behavior of the equivalent `writable::r_vector` copy constructor.
 
 * Fixed a memory leak with the `cpp11::writable::r_vector` move assignment
   operator (#338).
+
+* Fixed an issue where writable vectors were being protected twice (#365).
 
 * The approach for the protection list managed by cpp11 has been tweaked
   slightly. In 0.4.6, we changed to an approach that creates one protection list
@@ -89,9 +92,17 @@
   this. This also means you should no longer see "unused variable" warnings
   about `preserved` (#249).
 
+## Breaking changes
+
+* Implicit conversion from `sexp` to `bool`, `size_t`, and `double` has been
+  marked as deprecated and will be removed in the next version of cpp11. The 3
+  packages that were using this have been notified and sent PRs. The recommended
+  approach is to instead use `cpp11::as_cpp<T>`, which performs type and length
+  checking, making it much safer to use.
+
 * Dropped support for gcc 4.8, mainly an issue for extremely old CentOS 7
   systems which used that as their default compiler. As of June 2024, CentOS 7
-  is past its Vendor end of support date and therefore also out of scope for
+  is past its vendor end of support date and therefore also out of scope for
   Posit at this time (#359).
 
 # cpp11 0.4.7
