@@ -43,38 +43,50 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="cpp11-development-version">cpp11 (development version)<a class="anchor" aria-label="anchor" href="#cpp11-development-version"></a></h2>
-<ul><li><p><code>cpp11::package</code> now errors if given a package name that hasn’t been loaded yet. Previously it would cause R to hang indefinitely (<a href="https://github.com/r-lib/cpp11/issues/317" class="external-link">#317</a>).</p></li>
-<li><p><code>cpp11::function</code> now protects its underlying function, for maximum safety (<a href="https://github.com/r-lib/cpp11/issues/294" class="external-link">#294</a>).</p></li>
-<li><p><code>cpp11::writable::r_vector&lt;T&gt;::proxy</code> now implements copy assignment. Practically this means that <code>x[i] = y[i]</code> now works when both <code>x</code> and <code>y</code> are writable vectors (<a href="https://github.com/r-lib/cpp11/issues/300" class="external-link">#300</a>, <a href="https://github.com/r-lib/cpp11/issues/339" class="external-link">#339</a>).</p></li>
-<li><p>Implicit conversion from <code>sexp</code> to <code>bool</code>, <code>size_t</code>, and <code>double</code> has been marked as deprecated and will be removed in the next version of cpp11. The 3 packages that were using this have been notified and sent PRs. The recommended approach is to instead use <code>cpp11::as_cpp&lt;T&gt;</code>, which performs type and length checking, making it much safer to use.</p></li>
-<li><p>New <code>writable::data_frame</code> constructor that also takes the number of rows as input. This accounts for the edge case where the input list has 0 columns but you’d still like to specify a known number of rows (<a href="https://github.com/r-lib/cpp11/issues/272" class="external-link">#272</a>).</p></li>
-<li><p><code>cpp11::writable::r_vector&lt;T&gt;::iterator</code> no longer implicitly deletes its copy assignment operator (<a href="https://github.com/r-lib/cpp11/issues/360" class="external-link">#360</a>).</p></li>
-<li><p><code>std::max_element()</code> can now be used with writable vectors (<a href="https://github.com/r-lib/cpp11/issues/334" class="external-link">#334</a>).</p></li>
+<div class="section level3">
+<h3 id="r-non-api-related-changes-development-version">R non-API related changes<a class="anchor" aria-label="anchor" href="#r-non-api-related-changes-development-version"></a></h3>
+<ul><li>
+<p>Removed usage of the following R non-API functions:</p>
+<ul><li><p><code>SETLENGTH()</code></p></li>
+<li><p><code>SET_TRUELENGTH()</code></p></li>
+<li><p><code>SET_GROWABLE_BIT()</code></p></li>
+</ul><p>These functions were used as part of the efficient growable vectors that cpp11 offered, i.e. what happens under the hood when you use <code>push_back()</code>. The removal of these non-API functions means that cpp11 writable vectors that have been pushed to with <code>push_back()</code> will likely force 1 extra allocation when the conversion from <code>cpp11::writable::r_vector&lt;T&gt;</code> to <code>SEXP</code> occurs (typically when you return a result back to R). This does not affect the performance of <code>push_back()</code> itself, and in general these growable vectors are still quite efficient (<a href="https://github.com/r-lib/cpp11/issues/362" class="external-link">#362</a>).</p>
+</li>
 <li>
 <p>The <code>environment</code> class no longer uses the non-API function <code>Rf_findVarInFrame3()</code> (<a href="https://github.com/r-lib/cpp11/issues/367" class="external-link">#367</a>).</p>
 <ul><li><p>The <code><a href="https://rdrr.io/r/base/exists.html" class="external-link">exists()</a></code> method now uses the new <code>R_existsVarInFrame()</code> function.</p></li>
 <li><p>The <code>SEXP</code> conversion operator now uses the new <code>R_getVar()</code> function. Note that this is stricter than <code>Rf_findVarInFrame3()</code> in 3 ways. The object must exist in the environment (i.e. <code>R_UnboundValue</code> is no longer returned), the object cannot be <code>R_MissingArg</code>, and if the object was a promise, that promise is now evaluated. We have backported this new strictness to older versions of R as well.</p></li>
 </ul></li>
-<li><p>Fixed an issue with the <code>writable::matrix</code> copy constructor where the underlying SEXP should have been copied but was not. It is now consistent with the behavior of the equivalent <code>writable::r_vector</code> copy constructor.</p></li>
-<li><p>Added the missing implementation for <code>x.at("name")</code> for read only vectors (<a href="https://github.com/r-lib/cpp11/issues/370" class="external-link">#370</a>).</p></li>
-<li><p>Constructors for writable vectors from <code>initializer_list&lt;named_arg&gt;</code> now check that <code>named_arg</code> contains a length 1 object of the correct type, and throws either a <code>cpp11::type_error</code> or <code>std::length_error</code> if that is not the case (<a href="https://github.com/r-lib/cpp11/issues/382" class="external-link">#382</a>).</p></li>
-<li><p>Repeated assignment to a <code>cpp11::writable::strings</code> vector through either <code>x[i] = elt</code> or <code>x.push_back(elt)</code> is now more performant, at the tradeoff of slightly less safety (as long as <code>elt</code> is actually a <code>CHARSXP</code> and <code>i</code> is within bounds, there is no chance of failure, which are the same kind of invariants placed on the other vector types) (<a href="https://github.com/r-lib/cpp11/issues/378" class="external-link">#378</a>).</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li><p><code>cpp11::writable::r_vector&lt;T&gt;::proxy</code> now implements copy assignment. Practically this means that <code>x[i] = y[i]</code> now works when both <code>x</code> and <code>y</code> are writable vectors (<a href="https://github.com/r-lib/cpp11/issues/300" class="external-link">#300</a>, <a href="https://github.com/r-lib/cpp11/issues/339" class="external-link">#339</a>).</p></li>
+<li><p>New <code>writable::data_frame</code> constructor that also takes the number of rows as input. This accounts for the edge case where the input list has 0 columns but you’d still like to specify a known number of rows (<a href="https://github.com/r-lib/cpp11/issues/272" class="external-link">#272</a>).</p></li>
+<li><p><code>std::max_element()</code> can now be used with writable vectors (<a href="https://github.com/r-lib/cpp11/issues/334" class="external-link">#334</a>).</p></li>
 <li><p>Read only <code>r_vector</code>s now have a move constructor and move assignment operator (<a href="https://github.com/r-lib/cpp11/issues/365" class="external-link">#365</a>).</p></li>
-<li><p>Fixed an issue where writable vectors were being protected twice (<a href="https://github.com/r-lib/cpp11/issues/365" class="external-link">#365</a>).</p></li>
-<li>
-<p>Removed usage of the following non-API functions:</p>
-<ul><li><code>SETLENGTH()</code></li>
-<li><code>SET_TRUELENGTH()</code></li>
-<li><code>SET_GROWABLE_BIT()</code></li>
-</ul><p>These functions were used as part of the efficient growable vectors that cpp11 offered, i.e. what happens under the hood when you use <code>push_back()</code>. The removal of these non-API functions means that cpp11 writable vectors that have been pushed to with <code>push_back()</code> will likely force 1 extra allocation when the conversion from <code>cpp11::writable::r_vector&lt;T&gt;</code> to <code>SEXP</code> occurs (typically when you return a result back to R). This does not affect the performance of <code>push_back()</code> itself, and in general these growable vectors are still quite efficient (<a href="https://github.com/r-lib/cpp11/issues/362" class="external-link">#362</a>).</p>
-</li>
+</ul></div>
+<div class="section level3">
+<h3 id="improvements-and-fixes-development-version">Improvements and fixes<a class="anchor" aria-label="anchor" href="#improvements-and-fixes-development-version"></a></h3>
+<ul><li><p>Repeated assignment to a <code>cpp11::writable::strings</code> vector through either <code>x[i] = elt</code> or <code>x.push_back(elt)</code> is now more performant, at the tradeoff of slightly less safety (as long as <code>elt</code> is actually a <code>CHARSXP</code> and <code>i</code> is within bounds, there is no chance of failure, which are the same kind of invariants placed on the other vector types) (<a href="https://github.com/r-lib/cpp11/issues/378" class="external-link">#378</a>).</p></li>
+<li><p>Constructors for writable vectors from <code>initializer_list&lt;named_arg&gt;</code> now check that <code>named_arg</code> contains a length 1 object of the correct type, and throws either a <code>cpp11::type_error</code> or <code>std::length_error</code> if that is not the case (<a href="https://github.com/r-lib/cpp11/issues/382" class="external-link">#382</a>).</p></li>
+<li><p><code>cpp11::package</code> now errors if given a package name that hasn’t been loaded yet. Previously it would cause R to hang indefinitely (<a href="https://github.com/r-lib/cpp11/issues/317" class="external-link">#317</a>).</p></li>
+<li><p><code>cpp11::function</code> now protects its underlying function, for maximum safety (<a href="https://github.com/r-lib/cpp11/issues/294" class="external-link">#294</a>).</p></li>
+<li><p><code>cpp11::writable::r_vector&lt;T&gt;::iterator</code> no longer implicitly deletes its copy assignment operator (<a href="https://github.com/r-lib/cpp11/issues/360" class="external-link">#360</a>).</p></li>
+<li><p>Added the missing implementation for <code>x.at("name")</code> for read only vectors (<a href="https://github.com/r-lib/cpp11/issues/370" class="external-link">#370</a>).</p></li>
+<li><p>Fixed an issue with the <code>writable::matrix</code> copy constructor where the underlying SEXP should have been copied but was not. It is now consistent with the behavior of the equivalent <code>writable::r_vector</code> copy constructor.</p></li>
 <li><p>Fixed a memory leak with the <code>cpp11::writable::r_vector</code> move assignment operator (<a href="https://github.com/r-lib/cpp11/issues/338" class="external-link">#338</a>).</p></li>
+<li><p>Fixed an issue where writable vectors were being protected twice (<a href="https://github.com/r-lib/cpp11/issues/365" class="external-link">#365</a>).</p></li>
 <li>
 <p>The approach for the protection list managed by cpp11 has been tweaked slightly. In 0.4.6, we changed to an approach that creates one protection list per compilation unit, but we now believe we’ve found an approach that is guaranteed by the C++ standard to create one protection list per package, which makes slightly more sense and still has all the benefits of the reduced maintanence burden mentioned in the 0.4.6 news bullet (<a href="https://github.com/r-lib/cpp11/issues/364" class="external-link">#364</a>).</p>
 <p>A side effect of this new approach is that the <code>preserved</code> object exposed through <code>protect.hpp</code> no longer exists. We don’t believe that anyone was using this. This also means you should no longer see “unused variable” warnings about <code>preserved</code> (<a href="https://github.com/r-lib/cpp11/issues/249" class="external-link">#249</a>).</p>
 </li>
-<li><p>Dropped support for gcc 4.8, mainly an issue for extremely old CentOS 7 systems which used that as their default compiler. As of June 2024, CentOS 7 is past its Vendor end of support date and therefore also out of scope for Posit at this time (<a href="https://github.com/r-lib/cpp11/issues/359" class="external-link">#359</a>).</p></li>
 </ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li><p>Implicit conversion from <code>sexp</code> to <code>bool</code>, <code>size_t</code>, and <code>double</code> has been marked as deprecated and will be removed in the next version of cpp11. The 3 packages that were using this have been notified and sent PRs. The recommended approach is to instead use <code>cpp11::as_cpp&lt;T&gt;</code>, which performs type and length checking, making it much safer to use.</p></li>
+<li><p>Dropped support for gcc 4.8, mainly an issue for extremely old CentOS 7 systems which used that as their default compiler. As of June 2024, CentOS 7 is past its vendor end of support date and therefore also out of scope for Posit at this time (<a href="https://github.com/r-lib/cpp11/issues/359" class="external-link">#359</a>).</p></li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.7" id="cpp11-047">cpp11 0.4.7<a class="anchor" aria-label="anchor" href="#cpp11-047"></a></h2><p class="text-muted">CRAN release: 2023-12-02</p>
 <ul><li>Internal changes requested by CRAN to fix invalid format string tokens (<a href="https://github.com/paleolimbot" class="external-link">@paleolimbot</a>, <a href="https://github.com/r-lib/cpp11/issues/345" class="external-link">#345</a>).</li>
