@@ -32,20 +32,65 @@ If you have a question that you think would fit well here please [open an issue]
 | cpp11::raws     | uint8_t         |
 | cpp11::list     | SEXP            |
 
-#### 2. How do I add elements to a named list?
+#### 2. How do I add elements to a list?
 
-Use the `push_back()` method with the named literal syntax.
-The named literal syntax is defined in the `cpp11::literals` namespace.
+Use the `push_back()` method.
+You will need to use `cpp11::as_sexp()` if you want to convert arbitrary C++ objects to `SEXP` before inserting them into the list.
 
 ```{cpp11}
 #include <cpp11.hpp>
 
 [[cpp11::register]]
-cpp11::list foo_push() {
+cpp11::writable::list foo_push() {
+  cpp11::writable::list x;
+
+  // An object that is already a `SEXP`
+  x.push_back(R_NilValue);
+
+  // A single integer
+  x.push_back(cpp11::as_sexp(1));
+
+  // A C++ vector of ints
+  std::vector<int> elt{1, 2, 3};
+  x.push_back(cpp11::as_sexp(elt));
+
+  return x;
+}
+```
+
+To create named lists, use the `push_back()` method with the named literal syntax.
+The named literal syntax is defined in the `cpp11::literals` namespace.
+In this case, creating the named literal automatically calls `as_sexp()` for you.
+
+```{cpp11}
+#include <cpp11.hpp>
+
+[[cpp11::register]]
+cpp11::writable::list foo_push_named() {
   using namespace cpp11::literals;
 
   cpp11::writable::list x;
   x.push_back({"foo"_nm = 1});
+
+  return x;
+}
+```
+
+Note that if you know the size of the list ahead of time (which you often do!), then it is more efficient to state that up front.
+
+```{cpp11}
+#include <cpp11.hpp>
+
+[[cpp11::register]]
+cpp11::writable::list foo_push_sized() {
+  std::vector<int> elt{1, 2, 3};
+
+  R_xlen_t size = 3;
+
+  cpp11::writable::list x(size);
+  x[0] = R_NilValue;
+  x[1] = cpp11::as_sexp(1);
+  x[2] = cpp11::as_sexp(elt);
 
   return x;
 }
