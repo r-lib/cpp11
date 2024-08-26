@@ -51,8 +51,8 @@ describe("get_call_entries", {
 
   it("returns an empty string for packages with .Call entries and NAMESPACE files", {
     # tools::package_native_routine_registration_skeleton is not available before R 3.4
-    # R added `(void)` to the signature after R 4.2.1
-    skip_if(getRversion() < "4.2.1")
+    # R added `(void)` to the signature after R 4.3.0
+    skip_if(getRversion() < "4.3.0")
 
     pkg <- local_package()
     path <- pkg_path(pkg)
