@@ -1,5 +1,8 @@
 # cpp11 (development version)
 
+* `cpp11::function` now protects its underlying function, for maximum safety
+  (#294).
+
 * `cpp11::writable::r_vector<T>::proxy` now implements copy assignment.
   Practically this means that `x[i] = y[i]` now works when both `x` and `y`
   are writable vectors (#300, #339).
