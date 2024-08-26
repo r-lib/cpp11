@@ -31,7 +31,7 @@ class function {
   }
 
  private:
-  SEXP data_;
+  sexp data_;
 
   template <typename... Args>
   void construct_call(SEXP val, const named_arg& arg, Args&&... args) const {
@@ -71,6 +71,7 @@ class package {
     return safe[Rf_findVarInFrame](R_NamespaceRegistry, name_sexp);
   }
 
+  // Either base env or in namespace registry, so no protection needed
   SEXP data_;
 };
 
