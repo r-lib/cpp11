@@ -68,7 +68,7 @@ class package {
       return R_BaseEnv;
     }
     sexp name_sexp = safe[Rf_install](name);
-    return safe[Rf_findVarInFrame](R_NamespaceRegistry, name_sexp);
+    return safe[detail::r_env_get](R_NamespaceRegistry, name_sexp);
   }
 
   // Either base env or in namespace registry, so no protection needed

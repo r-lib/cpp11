@@ -1,5 +1,8 @@
 # cpp11 (development version)
 
+* `cpp11::package` now errors if given a package name that hasn't been loaded
+  yet. Previously it would cause R to hang indefinitely (#317).
+
 * `cpp11::function` now protects its underlying function, for maximum safety
   (#294).
 
