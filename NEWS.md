@@ -1,4 +1,4 @@
-# cpp11 (development version)
+# cpp11 0.5.0
 
 ## R non-API related changes
 
