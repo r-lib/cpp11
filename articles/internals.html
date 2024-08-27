@@ -5,81 +5,56 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="cpp11">
 <title>cpp11 internals • cpp11</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.7/font.css" rel="stylesheet">
-<link href="../deps/Source_Code_Pro-0.4.7/font.css" rel="stylesheet">
-<!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="cpp11 internals">
-<meta property="og:description" content="cpp11">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]--><script defer data-domain="cpp11.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.9/font.css" rel="stylesheet">
+<link href="../deps/Source_Code_Pro-0.4.9/font.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="cpp11 internals">
+<script defer data-domain="cpp11.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
 <body>
     <a href="#container" class="visually-hidden-focusable">Skip to content</a>
-    
 
-    <nav class="navbar fixed-top navbar-default navbar-expand-lg bg-none"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-none" data-bs-theme="default" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">cpp11</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../index.html">Home</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../articles/cpp11.html">Get started</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../articles/motivations.html">Motivations</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../articles/converting.html">Converting</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../articles/FAQ.html">FAQ</a>
-</li>
-<li class="active nav-item">
-  <a class="nav-link" href="../articles/internals.html">Internals</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/cpp11.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/motivations.html">Motivations</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/converting.html">Converting</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/FAQ.html">FAQ</a></li>
+<li class="active nav-item"><a class="nav-link" href="../articles/internals.html">Internals</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-news">News</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-news">
-    <a class="dropdown-item" href="../news/index.html">Change log</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-news">
+<li><a class="dropdown-item" href="../news/index.html">Change log</a></li>
+  </ul>
 </li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/r-lib/cpp11/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/r-lib/cpp11/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article" id="container">
 
@@ -88,10 +63,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>cpp11 internals</h1>
+
+      <h1>cpp11 internals</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/cpp11/blob/HEAD/vignettes/internals.Rmd" class="external-link"><code>vignettes/internals.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/cpp11/blob/main/vignettes/internals.Rmd" class="external-link"><code>vignettes/internals.Rmd</code></a></small>
       <div class="d-none name"><code>internals.Rmd</code></div>
     </div>
 
@@ -149,7 +125,7 @@ command line with
 lives in <a href="https://github.com/r-lib/cpp11/tree/main/inst/include" class="external-link">inst/include</a>.
 R code used to register functions and for
 <code><a href="../reference/cpp_source.html">cpp11::cpp_source()</a></code> is in <a href="https://github.com/r-lib/cpp11/tree/main/R" class="external-link">R/</a>. Tests for
-<em>only</em> the code in <code>R/</code> is in <a href="https://github.com/r-lib/cpp11/tree/main/tests/testthat" class="external-link">tests/testthat/</a>
+<em>only</em> the code in <code>R/</code> is in <a href="https://github.com/r-lib/cpp11/tree/main/tests/testthat" class="external-link">tests/testthat/</a>.
 The rest of the code is in a separate <a href="https://github.com/r-lib/cpp11/tree/main/cpp11test" class="external-link">cpp11test/</a>
 package included in the source tree. Inside <a href="https://github.com/r-lib/cpp11/tree/main/cpp11test/src" class="external-link">cpp11test/src</a>
 the files that start with <code>test-</code> are C++ tests using the <a href="https://testthat.r-lib.org/reference/use_catch.html" class="external-link">Catch</a>
@@ -176,11 +152,11 @@ support in testthat. In addition there are some regular R tests in <a href="http
 <h2 id="vector-classes">Vector classes<a class="anchor" aria-label="anchor" href="#vector-classes"></a>
 </h2>
 <p>All of the basic r_vector classes are class templates, the base
-template is defined in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/r_vector.hpp" class="external-link">cpp11/r_vector.hpp</a>
+template is defined in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/r_vector.hpp" class="external-link">cpp11/r_vector.hpp</a>.
 The template parameter is the type of <strong>value</strong> the
 particular R vector stores, e.g. <code>double</code> for
 <code>cpp11::doubles</code>. This differs from Rcpp, whose first
-template parameter is the R vector type, e.g. <code>REALSXP</code>.</p>
+template parameter is the R vector type, e.g. <code>REALSXP</code>.</p>
 <p>The file first has the class declarations, then function definitions
 further down in the file. Specializations for the various types are in
 separate files, e.g. <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/doubles.hpp" class="external-link">cpp11/doubles.hpp</a>,
@@ -226,21 +202,22 @@ to the previous node, and the <code>CDR</code> part to point to the next
 node. The <code>TAG</code> is used to point to the object being
 protected. The head and tail of the list have <code>R_NilValue</code> as
 their <code>CAR</code> and <code>CDR</code> pointers respectively.</p>
-<p>Calling <code>preserved.insert()</code> with a regular R object will
-add a new node to the list and return a protect token corresponding to
-the node added. Calling <code>preserved.release()</code> on this
-returned token will release the protection by unlinking the node from
-the linked list.</p>
+<p>Calling <code>cpp11::detail::store::insert()</code> with a regular R
+object will add a new node to the list and return a protect token
+corresponding to the node added. Calling
+<code>cpp11::detail::store::release()</code> on this returned token will
+release the protection by unlinking the node from the linked list. These
+two functions are considered internal to cpp11, so do not use them in
+your packages.</p>
 <p>This scheme scales in O(1) time to release or insert an object vs
 O(N) or worse time with <code>R_PreserveObject()</code> /
 <code>R_ReleaseObject()</code>.</p>
-<p>Each compilation unit has its own unique protection list, which
-avoids the need to manage a “global” protection list shared across
-compilation units within the same package and across packages. A
-previous version of cpp11 used a global protection list, but this caused
-<a href="https://github.com/r-lib/cpp11/issues/330" class="external-link">multiple
+<p>Each package has its own unique protection list, which avoids the
+need to manage a “global” protection list shared across packages. A
+previous version of cpp11 used a global protection list stored in an R
+global option, but this caused <a href="https://github.com/r-lib/cpp11/issues/330" class="external-link">multiple
 issues</a>.</p>
-<p>These functions are defined in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/protect.hpp" class="external-link">protect.hpp</a></p>
+<p>These functions are defined in <a href="https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/protect.hpp" class="external-link">protect.hpp</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="unwind-protect">Unwind Protect<a class="anchor" aria-label="anchor" href="#unwind-protect"></a>
@@ -287,7 +264,7 @@ protected objects when there were R API errors.</li>
 </ol>
 </div>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -296,13 +273,11 @@ protected objects when there were R API errors.</li>
    </div>
   <footer><div class="container">
   <div class="pkgdown-footer-left">
-  <p></p>
-<p>Developed by <a href="https://github.com/DavisVaughan" class="external-link">Davis Vaughan</a>, <a href="http://jimhester.com" class="external-link">Jim Hester</a>, <a href="https://github.com/romainfrancois" class="external-link">Romain François</a>, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" style="margin-bottom: 3px;"></a>.</p>
+  <p>Developed by <a href="https://github.com/DavisVaughan" class="external-link">Davis Vaughan</a>, <a href="http://jimhester.com" class="external-link">Jim Hester</a>, <a href="https://github.com/romainfrancois" class="external-link">Romain François</a>, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
   </div></footer>
