@@ -1,6 +1,6 @@
 Package: cpp11
 Title: A C++11 Interface for R's C Interface
-Version: 0.5.0
+Version: 0.5.0.9000
 Authors@R:
     c(
       person("Davis", "Vaughan", email = "davis@posit.co", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-4777-038X")),
