@@ -49,7 +49,7 @@ template <>
 inline void r_vector<r_string>::get_region(SEXP x, R_xlen_t i, R_xlen_t n,
                                            typename r_vector::underlying_type* buf) {
   cpp11::stop("Unreachable!");
-};
+}
 
 template <>
 inline bool r_vector<r_string>::const_iterator::use_buf(bool is_altrep) {

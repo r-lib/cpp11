@@ -420,7 +420,7 @@ inline r_vector<T>& r_vector<T>::operator=(const r_vector& rhs) {
   length_ = rhs.length_;
 
   return *this;
-};
+}
 
 // Same reasoning as `r_vector(r_vector&& x)` constructor
 template <typename T>
@@ -446,7 +446,7 @@ inline r_vector<T>& r_vector<T>::operator=(r_vector&& rhs) {
   rhs.length_ = 0;
 
   return *this;
-};
+}
 
 template <typename T>
 inline r_vector<T>::operator SEXP() const {
