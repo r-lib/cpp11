@@ -163,12 +163,15 @@ generate_cpp_name <- function(name, loaded_dlls = c("cpp11", names(getLoadedDLLs
   sprintf("%s.%s", new_name, ext)
 }
 
-
-
-generate_include_paths <- function(packages) {
+generate_include_paths <- function(packages, custom_path = NULL) {
   out <- character(length(packages))
   for (i in seq_along(packages)) {
-    path <- system.file(package = packages[[i]], "include")
+    if (!is.null(custom_path)) {
+      path <- custom_path
+    } else {
+      path <- system.file(package = packages[[i]], "include")
+    }
+
     if (is_windows()) {
       path <- utils::shortPathName(path)
     }

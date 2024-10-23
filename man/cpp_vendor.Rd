@@ -4,10 +4,18 @@
 \alias{cpp_vendor}
 \title{Vendor the cpp11 dependency}
 \usage{
-cpp_vendor(path = ".")
+cpp_vendor(
+  path = ".",
+  headers = system.file("include", "cpp11", package = "cpp11")
+)
 }
 \arguments{
 \item{path}{The path to the package root directory}
+
+\item{headers}{The path to the cpp11 headers to vendor. By default this is
+the path where R installed the cpp11 package. You can change this to
+use a different version of cpp11, such as as the development version
+from GitHub.}
 }
 \value{
 The file path to the vendored code (invisibly).

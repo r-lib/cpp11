@@ -1,5 +1,11 @@
 # cpp11 (development version)
 
+# cpp11 0.5.1
+
+* Uses testthat 3e style tests (#402).
+* Removes the mockery dependence.
+* The vendoring function accepts a custom path (i.e., to use the GitHub version of the package)
+
 # cpp11 0.5.0
 
 ## R non-API related changes
