@@ -1,5 +1,10 @@
 # cpp11 (development version)
 
+# cpp11 0.5.1
+
+* Conditionally uses `R_NO_REMAP` and `STRICT_R_HEADERS` to avoid the 
+  warning `macro redefined [-Wmacro-redefined]` on clang19 (#403).
+
 # cpp11 0.5.0
 
 ## R non-API related changes

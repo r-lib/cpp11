@@ -29,6 +29,7 @@ Authors:
 Other contributors:
 \itemize{
   \item Benjamin Kietzman [contributor]
+  \item Mauricio Vargas Sepulveda (\href{https://orcid.org/0000-0003-1017-7574}{ORCID}) [contributor]
   \item Posit Software, PBC [copyright holder, funder]
 }
 
