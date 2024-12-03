@@ -49,11 +49,9 @@ context("as_cpp-C++") {
     auto x5 = cpp11::as_cpp<unsigned long>(r);
     expect_true(x5 == 42UL);
 
-#ifdef HAS_UNWIND_PROTECT
     /* throws a runtime exception if the value is not a integerish one */
     REAL(r)[0] = 42.5;
     expect_error(cpp11::as_cpp<int>(r));
-#endif
 
     UNPROTECT(1);
   }

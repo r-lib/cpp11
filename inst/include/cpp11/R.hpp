@@ -27,7 +27,6 @@
 // clang-format on
 
 #include <type_traits>
-#include "cpp11/altrep.hpp"
 
 #if defined(R_VERSION) && R_VERSION >= R_Version(4, 4, 0)
 // Use R's new macro

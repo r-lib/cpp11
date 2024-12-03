@@ -2,7 +2,6 @@
 #include "cpp11/protect.hpp"
 #include "testthat.h"
 
-#ifdef HAS_UNWIND_PROTECT
 context("unwind_protect-C++") {
   test_that("unwind_protect works if there is no error") {
     SEXP out = PROTECT(cpp11::unwind_protect([&] {
@@ -49,5 +48,3 @@ context("unwind_protect-C++") {
     expect_error_as(cpp11::safe[Rf_allocVector](REALSXP, -1), cpp11::unwind_exception);
   }
 }
-
-#endif

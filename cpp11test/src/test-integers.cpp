@@ -1,4 +1,3 @@
-#include "Rversion.h"
 #include "cpp11/R.hpp"
 #include "cpp11/doubles.hpp"
 #include "cpp11/function.hpp"
@@ -218,7 +217,7 @@ context("integers-C++") {
     expect_true(x[2] == 3);
   }
 
-#if defined(__APPLE__) && defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
+#if defined(__APPLE__)
   test_that("writable::integers(ALTREP_SEXP)") {
     // ALTREP compact-seq
     auto seq = cpp11::package("base")["seq"];

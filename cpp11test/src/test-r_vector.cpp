@@ -7,14 +7,6 @@
 
 #include <algorithm>  // for max_element
 
-#ifdef _WIN32
-#include "Rversion.h"
-#define CPP11_HAS_IS_UTILITIES R_VERSION >= R_Version(4, 0, 0)
-#else
-#define CPP11_HAS_IS_UTILITIES 1
-#endif
-
-#if CPP11_HAS_IS_UTILITIES
 context("r_vector-capabilities-C++") {
   test_that("read only vector capabilities") {
     using cpp11::integers;
@@ -77,7 +69,6 @@ context("r_vector-capabilities-C++") {
     expect_true(std::is_move_assignable<integers::proxy>::value);
   }
 }
-#endif
 
 context("r_vector-C++") {
   test_that("writable vector temporary isn't leaked (integer) (#338)") {

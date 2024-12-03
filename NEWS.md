@@ -1,5 +1,16 @@
 # cpp11 (development version)
 
+* Because cpp11 now requires R >=4.0.0 and `R_UnwindProtect()` is always
+  available, `HAS_UNWIND_PROTECT` is no longer useful. Please avoid using it,
+  as we'd like to remove it in the future (#411).
+
+* Because cpp11 now requires R >=4.0.0 and ALTREP is always available, the
+  `cpp11/altrep.hpp` file is no longer useful. Please avoid using `#include "cpp11/altrep.hpp"` and `HAS_ALTREP` as we'd like to remove them in the
+  future (#411).
+
+* cpp11 now requires R >=4.0.0, in line with the
+  [tidyverse version policy](https://www.tidyverse.org/blog/2019/04/r-version-support/) (#411).
+
 # cpp11 0.5.0
 
 ## R non-API related changes
