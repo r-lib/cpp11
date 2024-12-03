@@ -14,6 +14,12 @@
 #include "R_ext/Print.h"    // for REprintf
 #include "R_ext/Utils.h"    // for R_CheckUserInterrupt
 
+// We would like to remove this, since all supported versions of R now support proper
+// unwind protect, but some groups rely on it existing, like arrow and systemfonts
+// https://github.com/r-lib/systemfonts/blob/02b567086379edaca1a9b3620ad6776e6bb876a7/src/utils.h#L11
+// https://github.com/apache/arrow/blob/50f2d6e04e8323119d4dd31506827ee398d6b8e4/r/src/safe-call-into-r-impl.cpp#L49
+#define HAS_UNWIND_PROTECT
+
 #ifdef CPP11_USE_FMT
 #define FMT_HEADER_ONLY
 #include "fmt/core.h"
