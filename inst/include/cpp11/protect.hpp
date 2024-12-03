@@ -13,11 +13,6 @@
 #include "R_ext/Error.h"    // for Rf_error, Rf_warning
 #include "R_ext/Print.h"    // for REprintf
 #include "R_ext/Utils.h"    // for R_CheckUserInterrupt
-#include "Rversion.h"       // for R_VERSION, R_Version
-
-#if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
-#define HAS_UNWIND_PROTECT
-#endif
 
 #ifdef CPP11_USE_FMT
 #define FMT_HEADER_ONLY
@@ -30,8 +25,6 @@ class unwind_exception : public std::exception {
   SEXP token;
   unwind_exception(SEXP token_) : token(token_) {}
 };
-
-#ifdef HAS_UNWIND_PROTECT
 
 /// Unwind Protection from C longjmp's, like those used in R error handling
 ///
@@ -94,15 +87,6 @@ unwind_protect(Fun&& code) {
   });
   return out;
 }
-
-#else
-// Don't do anything if we don't have unwind protect. This will leak C++ resources,
-// including those held by cpp11 objects, but the other alternatives are also not great.
-template <typename Fun>
-decltype(std::declval<Fun&&>()()) unwind_protect(Fun&& code) {
-  return std::forward<Fun>(code)();
-}
-#endif
 
 namespace detail {
 
