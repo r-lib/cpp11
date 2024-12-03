@@ -233,7 +233,7 @@ context("doubles-C++") {
     UNPROTECT(1);
   }
 
-#if defined(__APPLE__) && defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
+#if defined(__APPLE__)
   test_that("writable::doubles(ALTREP_SEXP)") {
     // ALTREP compact-seq
     auto seq = cpp11::package("base")["seq"];
