@@ -1,5 +1,9 @@
 # cpp11 (development version)
 
+* `R_NO_REMAP` and `STRICT_R_HEADERS` are now conditionally defined only if they
+  have not already been defined elsewhere. This is motivated by the fact that
+  `R_NO_REMAP` is becoming the default for C++ code in R 4.5.0 (#410).
+
 * Because cpp11 now requires R >=4.0.0 and `R_UnwindProtect()` is always
   available, `HAS_UNWIND_PROTECT` is no longer useful. Please avoid using it,
   as we'd like to remove it in the future (#411).
