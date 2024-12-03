@@ -1323,7 +1323,8 @@ inline SEXP r_vector<T>::reserve_data(SEXP x, bool is_altrep, R_xlen_t size) {
   SEXP out = PROTECT(resize_data(x, is_altrep, size));
 
   // Resize names, if required
-  SEXP names = Rf_getAttrib(x, R_NamesSymbol);
+  // Protection seems needed to make rchk happy
+  SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
   if (names != R_NilValue) {
     if (Rf_xlength(names) != size) {
       names = resize_names(names, size);
@@ -1338,7 +1339,7 @@ inline SEXP r_vector<T>::reserve_data(SEXP x, bool is_altrep, R_xlen_t size) {
   // Does not look like it would ever error in our use cases, so no `safe[]`.
   Rf_copyMostAttrib(x, out);
 
-  UNPROTECT(1);
+  UNPROTECT(2);
   return out;
 }
 
