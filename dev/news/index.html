@@ -43,7 +43,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="cpp11-development-version">cpp11 (development version)<a class="anchor" aria-label="anchor" href="#cpp11-development-version"></a></h2>
-<ul><li><p>Because cpp11 now requires R &gt;=4.0.0 and <code>R_UnwindProtect()</code> is always available, <code>HAS_UNWIND_PROTECT</code> is no longer useful. Please avoid using it, as we’d like to remove it in the future (<a href="https://github.com/r-lib/cpp11/issues/411" class="external-link">#411</a>).</p></li>
+<ul><li><p><code>R_NO_REMAP</code> and <code>STRICT_R_HEADERS</code> are now conditionally defined only if they have not already been defined elsewhere. This is motivated by the fact that <code>R_NO_REMAP</code> is becoming the default for C++ code in R 4.5.0 (<a href="https://github.com/r-lib/cpp11/issues/410" class="external-link">#410</a>).</p></li>
+<li><p>Because cpp11 now requires R &gt;=4.0.0 and <code>R_UnwindProtect()</code> is always available, <code>HAS_UNWIND_PROTECT</code> is no longer useful. Please avoid using it, as we’d like to remove it in the future (<a href="https://github.com/r-lib/cpp11/issues/411" class="external-link">#411</a>).</p></li>
 <li><p>Because cpp11 now requires R &gt;=4.0.0 and ALTREP is always available, the <code>cpp11/altrep.hpp</code> file is no longer useful. Please avoid using <code>#include "cpp11/altrep.hpp"</code> and <code>HAS_ALTREP</code> as we’d like to remove them in the future (<a href="https://github.com/r-lib/cpp11/issues/411" class="external-link">#411</a>).</p></li>
 <li><p>cpp11 now requires R &gt;=4.0.0, in line with the <a href="https://www.tidyverse.org/blog/2019/04/r-version-support/" class="external-link">tidyverse version policy</a> (<a href="https://github.com/r-lib/cpp11/issues/411" class="external-link">#411</a>).</p></li>
 </ul></div>
