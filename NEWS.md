@@ -1,5 +1,8 @@
 # cpp11 (development version)
 
+* cpp11 now requires R >=4.0.0, in line with the
+  [tidyverse version policy](https://www.tidyverse.org/blog/2019/04/r-version-support/) (#411).
+
 # cpp11 0.5.0
 
 ## R non-API related changes
