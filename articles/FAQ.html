@@ -10,8 +10,8 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.9/font.css" rel="stylesheet">
 <link href="../deps/Source_Code_Pro-0.4.9/font.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="FAQ">
 <script defer data-domain="cpp11.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cpp11</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,7 +67,7 @@
       <h1>FAQ</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/cpp11/blob/v0.5.0/vignettes/FAQ.Rmd" class="external-link"><code>vignettes/FAQ.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/cpp11/blob/main/vignettes/FAQ.Rmd" class="external-link"><code>vignettes/FAQ.Rmd</code></a></small>
       <div class="d-none name"><code>FAQ.Rmd</code></div>
     </div>
 
@@ -397,10 +397,10 @@ this.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fl">2L</span>, <span class="fl">3L</span>, <span class="fl">4L</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Internal.html" class="external-link">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; @55cc33e58b88 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span></span>
+<span><span class="co">#&gt; @55ed7328b908 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4</span></span>
 <span><span class="fu">add_one</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Internal.html" class="external-link">.Internal</a></span><span class="op">(</span><span class="fu">inspect</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; @55cc33e58b88 13 INTSXP g0c2 [REF(5)] (len=4, tl=0) 2,3,4,5</span></span>
+<span><span class="co">#&gt; @55ed7328b908 13 INTSXP g0c2 [REF(5)] (len=4, tl=0) 2,3,4,5</span></span>
 <span><span class="va">x</span></span>
 <span><span class="co">#&gt; [1] 2 3 4 5</span></span></code></pre></div>
 </div>
@@ -644,8 +644,8 @@ native R API:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">#&gt;   expression                 min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> test_extract_cpp11(x)  41.21ms  44.72ms      21.9        0B     39.8</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> test_extract_r_api(x)   2.16ms   2.18ms     457.         0B      0</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> test_extract_cpp11(x)  38.77ms   41.3ms      23.4        0B     42.8</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> test_extract_r_api(x)   1.85ms   1.86ms     534.         0B      0</span></span></code></pre></div>
 <p>We plan to improve on this in the future, but for now this is one of
 the only places where we feel it is reasonable to call
 <code>unwind_protect()</code> manually.</p>

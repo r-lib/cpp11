@@ -10,8 +10,8 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.9/font.css" rel="stylesheet">
 <link href="../deps/Source_Code_Pro-0.4.9/font.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Get started with cpp11">
 <script defer data-domain="cpp11.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cpp11</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,7 +67,7 @@
       <h1>Get started with cpp11</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/cpp11/blob/v0.5.0/vignettes/cpp11.Rmd" class="external-link"><code>vignettes/cpp11.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/cpp11/blob/main/vignettes/cpp11.Rmd" class="external-link"><code>vignettes/cpp11.Rmd</code></a></small>
       <div class="d-none name"><code>cpp11.Rmd</code></div>
     </div>
 
@@ -168,7 +168,7 @@ R:</p>
 <span><span class="va">add</span></span>
 <span><span class="co">#&gt; function (x, y, z) </span></span>
 <span><span class="co">#&gt; {</span></span>
-<span><span class="co">#&gt;     .Call("_code_1ab85a9e9246_add", x, y, z, PACKAGE = "code_1ab85a9e9246")</span></span>
+<span><span class="co">#&gt;     .Call("_code_1979123df485_add", x, y, z, PACKAGE = "code_1979123df485")</span></span>
 <span><span class="co">#&gt; }</span></span>
 <span><span class="fu">add</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 6</span></span></code></pre></div>
@@ -327,9 +327,9 @@ while <code>sum_r()</code> is several orders of magnitude slower.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> sum(x)       2.06µs   2.13µs   <span style="text-decoration: underline;">450</span>849.        0B        0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sum_cpp(x)   2.06µs    2.2µs   <span style="text-decoration: underline;">392</span>022.        0B        0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> sum_r(x)    20.26µs   21.1µs    <span style="text-decoration: underline;">46</span>695.    31.7KB        0</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> sum(x)       2.04µs   2.08µs   <span style="text-decoration: underline;">457</span>059.        0B        0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sum_cpp(x)   2.05µs   2.17µs   <span style="text-decoration: underline;">412</span>017.        0B        0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> sum_r(x)    20.37µs  20.76µs    <span style="text-decoration: underline;">47</span>733.    31.7KB        0</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="vector-input-vector-output">Vector input, vector output<a class="anchor" aria-label="anchor" href="#vector-input-vector-output"></a>
@@ -377,8 +377,8 @@ going to be fast.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">#&gt;   expression             min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> pdist_r(0.5, y)     5.03ms   5.11ms      195.    7.63MB     99.5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> pdist_cpp(0.5, y)   3.94ms   3.98ms      250.    7.63MB    127.</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> pdist_r(0.5, y)     4.92ms   5.51ms      185.    7.63MB     92.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> pdist_cpp(0.5, y)   3.87ms   4.21ms      239.    7.63MB    123.</span></span></code></pre></div>
 <p>On my computer, it takes around 5 ms with a 1 million element
 <code>y</code> vector. The C++ function is about 2.5 times faster, ~2
 ms, but assuming it took you 10 minutes to write the C++ function, you’d
@@ -1152,8 +1152,8 @@ running the loops in C++:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">#&gt;   expression   min median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> r           24.3   25.2       1        32.3     11.8</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> cpp          1      1        25.1       1        1</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> r           23.3   24.2       1        32.3     12.8</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> cpp          1      1        24.1       1        1</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="r-vectorisation-versus-c-vectorisation">R vectorisation versus C++ vectorisation<a class="anchor" aria-label="anchor" href="#r-vectorisation-versus-c-vectorisation"></a>
@@ -1252,9 +1252,9 @@ Finally, we can benchmark our three approaches:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> vacc1        1.51ms   1.54ms      639.    7.86KB     37.2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> vacc2        42.6µs  45.26µs    <span style="text-decoration: underline;">21</span>239.  146.67KB     39.2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> vacc3        11.9µs   12.2µs    <span style="text-decoration: underline;">79</span>876.   14.02KB     16.0</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> vacc1        1.45ms   1.49ms      662.    7.86KB    39.2 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> vacc2       42.69µs  45.16µs    <span style="text-decoration: underline;">21</span>280.  146.67KB    40.3 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> vacc3       11.86µs  12.08µs    <span style="text-decoration: underline;">81</span>918.   14.02KB     8.19</span></span></code></pre></div>
 <p>Not surprisingly, our original approach with loops is very slow.
 Vectorising in R gives a huge speedup, and we can eke out even more
 performance (about ten times) with the C++ loop. I was a little
