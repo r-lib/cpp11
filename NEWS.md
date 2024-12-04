@@ -1,10 +1,7 @@
 # cpp11 (development version)
 
-* Fixed a small protection issue flagged by rchk (#408).
-
-* `R_NO_REMAP` and `STRICT_R_HEADERS` are now conditionally defined only if they
-  have not already been defined elsewhere. This is motivated by the fact that
-  `R_NO_REMAP` is becoming the default for C++ code in R 4.5.0 (#410).
+* cpp11 now requires R >=4.0.0, in line with the
+  [tidyverse version policy](https://www.tidyverse.org/blog/2019/04/r-version-support/) (#411).
 
 * Because cpp11 now requires R >=4.0.0, a number of previously optional tools
   are now always available, allowing us to remove some dead code. In
@@ -19,8 +16,11 @@
   We would like to remove the dead code regarding these tools in the future, so
   we ask that you please remove usage of them from your own packages (#411).
 
-* cpp11 now requires R >=4.0.0, in line with the
-  [tidyverse version policy](https://www.tidyverse.org/blog/2019/04/r-version-support/) (#411).
+* `R_NO_REMAP` and `STRICT_R_HEADERS` are now conditionally defined only if they
+  have not already been defined elsewhere. This is motivated by the fact that
+  `R_NO_REMAP` is becoming the default for C++ code in R 4.5.0 (#410).
+
+* Fixed a small protection issue flagged by rchk (#408).
 
 # cpp11 0.5.0
 
