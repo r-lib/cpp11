@@ -6,13 +6,18 @@
   have not already been defined elsewhere. This is motivated by the fact that
   `R_NO_REMAP` is becoming the default for C++ code in R 4.5.0 (#410).
 
-* Because cpp11 now requires R >=4.0.0 and `R_UnwindProtect()` is always
-  available, `HAS_UNWIND_PROTECT` is no longer useful. Please avoid using it,
-  as we'd like to remove it in the future (#411).
+* Because cpp11 now requires R >=4.0.0, a number of previously optional tools
+  are now always available, allowing us to remove some dead code. In
+  particular:
+  
+  * `R_UnwindProtect()` is always available, so the defines `HAS_UNWIND_PROTECT`
+    and `CPP11_UNWIND` are no longer useful.
 
-* Because cpp11 now requires R >=4.0.0 and ALTREP is always available, the
-  `cpp11/altrep.hpp` file is no longer useful. Please avoid using `#include "cpp11/altrep.hpp"` and `HAS_ALTREP` as we'd like to remove them in the
-  future (#411).
+  * ALTREP is always available, so the file `cpp11/altrep.hpp` and the define
+    `HAS_ALTREP` are no longer useful.
+
+  We would like to remove the dead code regarding these tools in the future, so
+  we ask that you please remove usage of them from your own packages (#411).
 
 * cpp11 now requires R >=4.0.0, in line with the
   [tidyverse version policy](https://www.tidyverse.org/blog/2019/04/r-version-support/) (#411).
