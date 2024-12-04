@@ -43,15 +43,15 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="cpp11-development-version">cpp11 (development version)<a class="anchor" aria-label="anchor" href="#cpp11-development-version"></a></h2>
-<ul><li><p>Fixed a small protection issue flagged by rchk (<a href="https://github.com/r-lib/cpp11/issues/408" class="external-link">#408</a>).</p></li>
-<li><p><code>R_NO_REMAP</code> and <code>STRICT_R_HEADERS</code> are now conditionally defined only if they have not already been defined elsewhere. This is motivated by the fact that <code>R_NO_REMAP</code> is becoming the default for C++ code in R 4.5.0 (<a href="https://github.com/r-lib/cpp11/issues/410" class="external-link">#410</a>).</p></li>
+<ul><li><p>cpp11 now requires R &gt;=4.0.0, in line with the <a href="https://www.tidyverse.org/blog/2019/04/r-version-support/" class="external-link">tidyverse version policy</a> (<a href="https://github.com/r-lib/cpp11/issues/411" class="external-link">#411</a>).</p></li>
 <li>
 <p>Because cpp11 now requires R &gt;=4.0.0, a number of previously optional tools are now always available, allowing us to remove some dead code. In particular:</p>
 <ul><li><p><code>R_UnwindProtect()</code> is always available, so the defines <code>HAS_UNWIND_PROTECT</code> and <code>CPP11_UNWIND</code> are no longer useful.</p></li>
 <li><p>ALTREP is always available, so the file <code>cpp11/altrep.hpp</code> and the define <code>HAS_ALTREP</code> are no longer useful.</p></li>
 </ul><p>We would like to remove the dead code regarding these tools in the future, so we ask that you please remove usage of them from your own packages (<a href="https://github.com/r-lib/cpp11/issues/411" class="external-link">#411</a>).</p>
 </li>
-<li><p>cpp11 now requires R &gt;=4.0.0, in line with the <a href="https://www.tidyverse.org/blog/2019/04/r-version-support/" class="external-link">tidyverse version policy</a> (<a href="https://github.com/r-lib/cpp11/issues/411" class="external-link">#411</a>).</p></li>
+<li><p><code>R_NO_REMAP</code> and <code>STRICT_R_HEADERS</code> are now conditionally defined only if they have not already been defined elsewhere. This is motivated by the fact that <code>R_NO_REMAP</code> is becoming the default for C++ code in R 4.5.0 (<a href="https://github.com/r-lib/cpp11/issues/410" class="external-link">#410</a>).</p></li>
+<li><p>Fixed a small protection issue flagged by rchk (<a href="https://github.com/r-lib/cpp11/issues/408" class="external-link">#408</a>).</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.5.0" id="cpp11-050">cpp11 0.5.0<a class="anchor" aria-label="anchor" href="#cpp11-050"></a></h2><p class="text-muted">CRAN release: 2024-08-27</p>
