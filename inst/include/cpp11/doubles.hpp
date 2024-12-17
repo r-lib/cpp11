@@ -87,6 +87,15 @@ inline doubles as_doubles(SEXP x) {
     return ret;
   }
 
+  else if (detail::r_typeof(x) == LGLSXP) {
+    size_t len = Rf_xlength(x);
+    writable::doubles ret(len);
+    for (size_t i = 0; i < len; ++i) {
+      ret[i] = LOGICAL(x)[i] == NA_LOGICAL ? NA_REAL : static_cast<double>(LOGICAL(x)[i]);
+    }
+    return ret;
+  }
+
   throw type_error(REALSXP, detail::r_typeof(x));
 }
 
