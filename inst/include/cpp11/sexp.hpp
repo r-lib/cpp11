@@ -3,6 +3,7 @@
 #include <stddef.h>  // for size_t
 
 #include <string>  // for string, basic_string
+#include <complex>  // for complex
 
 #include "cpp11/R.hpp"                // for SEXP, SEXPREC, REAL_ELT, R_NilV...
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
@@ -74,5 +75,15 @@ class sexp {
   /// DEPRECATED: Do not use this, it will be removed soon.
   operator bool() const { return LOGICAL_ELT(data_, 0); }
 };
+
+// Specialization for converting std::complex<double> to SEXP
+template <>
+inline SEXP as_sexp(const std::complex<double>& from) {
+  SEXP result = PROTECT(Rf_allocVector(CPLXSXP, 1));
+  COMPLEX(result)[0].r = from.real();
+  COMPLEX(result)[0].i = from.imag();
+  UNPROTECT(1);
+  return result;
+}
 
 }  // namespace cpp11

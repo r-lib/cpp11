@@ -196,6 +196,30 @@ sum_dbl_accumulate2_ <- function(x_sxp) {
   .Call(`_cpp11test_sum_dbl_accumulate2_`, x_sxp)
 }
 
+sum_cplx_for_ <- function(x) {
+  .Call(`_cpp11test_sum_cplx_for_`, x)
+}
+
+sum_cplx_for_2_ <- function(x) {
+  .Call(`_cpp11test_sum_cplx_for_2_`, x)
+}
+
+sum_cplx_for_3_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for_3_`, x_sxp)
+}
+
+sum_cplx_for_4_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for_4_`, x_sxp)
+}
+
+sum_cplx_for_5_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for_5_`, x_sxp)
+}
+
+sum_cplx_for_6_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for_6_`, x_sxp)
+}
+
 sum_int_for_ <- function(x) {
   .Call(`_cpp11test_sum_int_for_`, x)
 }
