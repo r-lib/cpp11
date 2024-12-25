@@ -344,9 +344,13 @@ inline SEXP as_sexp(const std::complex<double>& x) {
   return result;
 }
 
-// Specialization for converting SEXP to std::complex<double>
+// Declaration for converting SEXP to std::complex<double>
 template <>
-inline std::complex<double> as_cpp(SEXP x) {
+std::complex<double> as_cpp(SEXP x);
+
+// Specialization for as_cpp with std::complex<double>
+template <>
+inline std::complex<double> as_cpp<std::complex<double>>(SEXP x) {
   if (TYPEOF(x) != CPLXSXP || Rf_length(x) != 1) {
     throw std::invalid_argument("Expected a single complex number.");
   }
