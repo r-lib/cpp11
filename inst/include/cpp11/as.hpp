@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>             // for modf
+#include <complex>           // for std::complex
 #include <initializer_list>  // for initializer_list
 #include <memory>            // for std::shared_ptr, std::weak_ptr, std::unique_ptr
 #include <stdexcept>
@@ -331,6 +332,26 @@ inline SEXP as_sexp(std::initializer_list<const char*> from) {
 template <typename T, typename = disable_if_r_string<T>>
 enable_if_convertible_to_sexp<T, SEXP> as_sexp(const T& from) {
   return from;
+}
+
+// Specialization for converting std::complex<double> to SEXP
+template <>
+inline SEXP as_sexp(const std::complex<double>& x) {
+  SEXP result = PROTECT(Rf_allocVector(CPLXSXP, 1));
+  COMPLEX(result)[0].r = x.real();
+  COMPLEX(result)[0].i = x.imag();
+  UNPROTECT(1);
+  return result;
+}
+
+// Specialization for converting SEXP to std::complex<double>
+template <>
+inline std::complex<double> as_cpp(SEXP x) {
+  if (TYPEOF(x) != CPLXSXP || Rf_length(x) != 1) {
+    throw std::invalid_argument("Expected a single complex number.");
+  }
+  Rcomplex c = COMPLEX(x)[0];
+  return {c.r, c.i};
 }
 
 }  // namespace cpp11
