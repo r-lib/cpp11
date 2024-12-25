@@ -2,6 +2,7 @@
 
 #include <algorithm>         // for min
 #include <array>             // for array
+#include <complex>           // for std::complex
 #include <initializer_list>  // for initializer_list
 
 #include "cpp11/R.hpp"                // for SEXP, SEXPREC, Rf_allocVector
@@ -122,6 +123,19 @@ class r_vector<r_complex>::proxy {
     return *this;
   }
 
+  proxy& operator=(const std::complex<double>& value) {
+    if (is_altrep_ && buf_ != nullptr) {
+      buf_->r = value.real();
+      buf_->i = value.imag();
+    } else {
+      Rcomplex r;
+      r.r = value.real();
+      r.i = value.imag();
+      SET_COMPLEX_ELT(data_, index_, r);
+    }
+    return *this;
+  }
+
   proxy& operator+=(const r_complex& value) {
     *this = static_cast<r_complex>(*this) + value;
     return *this;
@@ -178,5 +192,28 @@ class r_vector<r_complex>::proxy {
 };
 
 }  // namespace writable
+
+// New complex_vector class for handling complex numbers in SEXP
+class complex_vector {
+ public:
+  explicit complex_vector(SEXP x)
+      : data_(reinterpret_cast<Rcomplex*>(DATAPTR(x))), size_(Rf_length(x)) {}
+
+  std::complex<double> operator[](R_xlen_t i) const { return {data_[i].r, data_[i].i}; }
+
+  size_t size() const { return size_; }
+
+ private:
+  Rcomplex* data_;
+  size_t size_;
+};
+
+// Template specialization for adding cpp11::r_complex to std::complex<double>
+template <typename T>
+inline std::complex<T>& operator+=(std::complex<T>& lhs, const cpp11::r_complex& rhs) {
+  lhs.real(lhs.real() + rhs.real());
+  lhs.imag(lhs.imag() + rhs.imag());
+  return lhs;
+}
 
 }  // namespace cpp11
