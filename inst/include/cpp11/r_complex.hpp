@@ -43,12 +43,10 @@ inline void writable::r_vector<r_complex>::push_back(r_complex value) {
     this->reserve(this->capacity_ == 0 ? 1 : this->capacity_ * 2);
   }
 
-  Rcomplex r_value = static_cast<Rcomplex>(value);
-
   if (this->data_p_ != nullptr) {
-    this->data_p_[this->length_] = r_value;
+    this->data_p_[this->length_] = static_cast<Rcomplex>(value);
   } else {
-    this->set_elt(this->data_, this->length_, r_value);
+    set_elt(this->data_, this->length_, value);
   }
 
   ++this->length_;

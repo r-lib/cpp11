@@ -61,9 +61,9 @@ typedef r_vector<r_complex> complexes;
 namespace writable {
 
 template <>
-inline void r_vector<r_complex>::set_elt(
-    SEXP x, R_xlen_t i, typename r_vector<r_complex>::underlying_type value) {
-  SET_COMPLEX_ELT(x, i, static_cast<Rcomplex>(value));
+inline void r_vector<r_complex>::set_elt(SEXP x, R_xlen_t i,
+                                         r_vector::underlying_type value) {
+  COMPLEX(x)[i] = static_cast<Rcomplex>(value);
 }
 
 typedef r_vector<r_complex> complexes;
@@ -98,8 +98,11 @@ class r_vector<r_complex>::proxy {
   proxy(SEXP data, R_xlen_t index)
       : data_(data), index_(index), buf_(nullptr), is_altrep_(false) {}
 
-  proxy(SEXP data, R_xlen_t index, Rcomplex* buf, bool is_altrep)
-      : data_(data), index_(index), buf_(buf), is_altrep_(is_altrep) {}
+  proxy(SEXP data, R_xlen_t index, r_complex* buf, bool is_altrep)
+      : data_(data),
+        index_(index),
+        buf_(reinterpret_cast<Rcomplex*>(buf)),
+        is_altrep_(is_altrep) {}
 
   operator r_complex() const {
     if (is_altrep_ && buf_ != nullptr) {

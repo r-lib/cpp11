@@ -237,6 +237,8 @@ class r_vector : public cpp11::r_vector<T> {
   void push_back(T value);
   /// Implemented in `strings.hpp`
   void push_back(const named_arg& value);
+  // Implemented in `complexes.hpp`
+  void push_back(const std::complex<double>& value);
   void pop_back();
 
   void resize(R_xlen_t count);
