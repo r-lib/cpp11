@@ -1,5 +1,5 @@
-#include "cpp11/doubles.hpp"
 #include "cpp11/complexes.hpp"
+#include "cpp11/doubles.hpp"
 
 [[cpp11::register]] cpp11::writable::doubles grow_(R_xlen_t n) {
   cpp11::writable::doubles x;

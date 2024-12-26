@@ -1,18 +1,15 @@
 #pragma once
 
-#include <algorithm>         // for min
-#include <array>             // for array
+#include <algorithm>         // for std::transform
 #include <complex>           // for std::complex
-#include <initializer_list>  // for initializer_list
+#include <initializer_list>  // for std::initializer_list
 
-#include "cpp11/R.hpp"                // for SEXP, SEXPREC, Rf_allocVector
-#include "cpp11/as.hpp"               // for as_sexp
-#include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
-#include "cpp11/named_arg.hpp"        // for named_arg
-#include "cpp11/protect.hpp"          // for preserved
-#include "cpp11/r_complex.hpp"        // for r_complex
-#include "cpp11/r_vector.hpp"         // for r_vector, r_vector<>::proxy
-#include "cpp11/sexp.hpp"             // for sexp
+#include "cpp11/R.hpp"  // for SEXP, SEXPREC, Rf_allocVector, COMPLEX, COMPLEX_ELT, SET_COMPLEX_ELT
+#include "cpp11/as.hpp"         // for as_sexp
+#include "cpp11/protect.hpp"    // for safe
+#include "cpp11/r_complex.hpp"  // for r_complex
+#include "cpp11/r_vector.hpp"   // for r_vector, r_vector<>::proxy
+#include "cpp11/sexp.hpp"       // for sexp
 
 namespace cpp11 {
 
@@ -26,7 +23,7 @@ inline SEXPTYPE r_vector<r_complex>::get_sexptype() {
 template <>
 inline typename r_vector<r_complex>::underlying_type r_vector<r_complex>::get_elt(
     SEXP x, R_xlen_t i) {
-  return r_complex(COMPLEX_ELT(x, i));
+  return COMPLEX_ELT(x, i);
 }
 
 template <>
@@ -35,20 +32,20 @@ inline typename r_vector<r_complex>::underlying_type* r_vector<r_complex>::get_p
   if (is_altrep) {
     return nullptr;
   } else {
-    return reinterpret_cast<r_complex*>(COMPLEX(data));
+    return COMPLEX(data);
   }
 }
 
 template <>
 inline typename r_vector<r_complex>::underlying_type const*
 r_vector<r_complex>::get_const_p(bool is_altrep, SEXP data) {
-  return reinterpret_cast<const r_complex*>(COMPLEX_OR_NULL(data));
+  return COMPLEX_OR_NULL(data);
 }
 
 template <>
 inline void r_vector<r_complex>::get_region(SEXP x, R_xlen_t i, R_xlen_t n,
                                             typename r_vector::underlying_type* buf) {
-  COMPLEX_GET_REGION(x, i, n, reinterpret_cast<Rcomplex*>(buf));
+  COMPLEX_GET_REGION(x, i, n, buf);
 }
 
 template <>
@@ -61,9 +58,9 @@ typedef r_vector<r_complex> complexes;
 namespace writable {
 
 template <>
-inline void r_vector<r_complex>::set_elt(SEXP x, R_xlen_t i,
-                                         r_vector::underlying_type value) {
-  COMPLEX(x)[i] = static_cast<Rcomplex>(value);
+inline void r_vector<r_complex>::set_elt(
+    SEXP x, R_xlen_t i, typename cpp11::r_vector<r_complex>::underlying_type value) {
+  COMPLEX(x)[i] = value;
 }
 
 typedef r_vector<r_complex> complexes;
@@ -98,11 +95,8 @@ class r_vector<r_complex>::proxy {
   proxy(SEXP data, R_xlen_t index)
       : data_(data), index_(index), buf_(nullptr), is_altrep_(false) {}
 
-  proxy(SEXP data, R_xlen_t index, r_complex* buf, bool is_altrep)
-      : data_(data),
-        index_(index),
-        buf_(reinterpret_cast<Rcomplex*>(buf)),
-        is_altrep_(is_altrep) {}
+  proxy(SEXP data, R_xlen_t index, Rcomplex* buf, bool is_altrep)
+      : data_(data), index_(index), buf_(buf), is_altrep_(is_altrep) {}
 
   operator r_complex() const {
     if (is_altrep_ && buf_ != nullptr) {
@@ -217,6 +211,22 @@ inline std::complex<T>& operator+=(std::complex<T>& lhs, const cpp11::r_complex&
   lhs.real(lhs.real() + rhs.real());
   lhs.imag(lhs.imag() + rhs.imag());
   return lhs;
+}
+
+// Add constructor for initializer_list
+template <>
+inline r_vector<r_complex>::r_vector(std::initializer_list<r_complex> il) {
+  R_xlen_t size = il.size();
+  SEXP data = PROTECT(Rf_allocVector(CPLXSXP, size));
+  auto it = il.begin();
+  for (R_xlen_t i = 0; i < size; ++i, ++it) {
+    Rcomplex r;
+    r.r = it->real();
+    r.i = it->imag();
+    COMPLEX(data)[i] = r;
+  }
+  UNPROTECT(1);
+  data_ = data;
 }
 
 }  // namespace cpp11
