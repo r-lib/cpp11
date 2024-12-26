@@ -26,7 +26,7 @@ inline SEXPTYPE r_vector<r_complex>::get_sexptype() {
 template <>
 inline typename r_vector<r_complex>::underlying_type r_vector<r_complex>::get_elt(
     SEXP x, R_xlen_t i) {
-  return COMPLEX_ELT(x, i);
+  return r_complex(COMPLEX_ELT(x, i));
 }
 
 template <>
@@ -35,20 +35,20 @@ inline typename r_vector<r_complex>::underlying_type* r_vector<r_complex>::get_p
   if (is_altrep) {
     return nullptr;
   } else {
-    return COMPLEX(data);
+    return reinterpret_cast<r_complex*>(COMPLEX(data));
   }
 }
 
 template <>
 inline typename r_vector<r_complex>::underlying_type const*
 r_vector<r_complex>::get_const_p(bool is_altrep, SEXP data) {
-  return COMPLEX_OR_NULL(data);
+  return reinterpret_cast<const r_complex*>(COMPLEX_OR_NULL(data));
 }
 
 template <>
 inline void r_vector<r_complex>::get_region(SEXP x, R_xlen_t i, R_xlen_t n,
                                             typename r_vector::underlying_type* buf) {
-  COMPLEX_GET_REGION(x, i, n, buf);
+  COMPLEX_GET_REGION(x, i, n, reinterpret_cast<Rcomplex*>(buf));
 }
 
 template <>
@@ -63,7 +63,7 @@ namespace writable {
 template <>
 inline void r_vector<r_complex>::set_elt(
     SEXP x, R_xlen_t i, typename r_vector<r_complex>::underlying_type value) {
-  SET_COMPLEX_ELT(x, i, value);
+  SET_COMPLEX_ELT(x, i, static_cast<Rcomplex>(value));
 }
 
 typedef r_vector<r_complex> complexes;
