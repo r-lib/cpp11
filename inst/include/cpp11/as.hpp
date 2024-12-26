@@ -334,23 +334,8 @@ enable_if_convertible_to_sexp<T, SEXP> as_sexp(const T& from) {
   return from;
 }
 
-// Specialization for converting std::complex<double> to SEXP
-template <>
-inline SEXP as_sexp(const std::complex<double>& x) {
-  SEXP result = PROTECT(Rf_allocVector(CPLXSXP, 1));
-  COMPLEX(result)[0].r = x.real();
-  COMPLEX(result)[0].i = x.imag();
-  UNPROTECT(1);
-  return result;
-}
-
-// Declaration for converting SEXP to std::complex<double>
-template <>
-std::complex<double> as_cpp(SEXP x);
-
-// Specialization for as_cpp with std::complex<double>
-template <>
-inline std::complex<double> as_cpp<std::complex<double>>(SEXP x) {
+// Definition for converting SEXP to std::complex<double>
+inline std::complex<double> as_cpp(SEXP x) {
   if (TYPEOF(x) != CPLXSXP || Rf_length(x) != 1) {
     throw std::invalid_argument("Expected a single complex number.");
   }
@@ -358,4 +343,12 @@ inline std::complex<double> as_cpp<std::complex<double>>(SEXP x) {
   return {c.r, c.i};
 }
 
+// Specialization for converting std::complex<double> to SEXP
+inline SEXP as_sexp(const std::complex<double>& x) {
+  SEXP result = PROTECT(Rf_allocVector(CPLXSXP, 1));
+  COMPLEX(result)[0].r = x.real();
+  COMPLEX(result)[0].i = x.imag();
+  UNPROTECT(1);
+  return result;
+}
 }  // namespace cpp11

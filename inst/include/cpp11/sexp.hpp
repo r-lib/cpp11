@@ -76,14 +76,4 @@ class sexp {
   operator bool() const { return LOGICAL_ELT(data_, 0); }
 };
 
-// Specialization for converting std::complex<double> to SEXP
-template <>
-inline SEXP as_sexp(const std::complex<double>& from) {
-  SEXP result = PROTECT(Rf_allocVector(CPLXSXP, 1));
-  COMPLEX(result)[0].r = from.real();
-  COMPLEX(result)[0].i = from.imag();
-  UNPROTECT(1);
-  return result;
-}
-
 }  // namespace cpp11

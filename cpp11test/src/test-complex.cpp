@@ -484,7 +484,7 @@ context("complexes-C++") {
     // expect_error(--x0);
   }
 
-  test_that("writable::complexes convert to complexes with correct size (#128)") {
+  test_that("writable::complexes convert to complexes with correct size") {
     cpp11::r_complex one{1, 1};
     cpp11::r_complex two{2, 2};
     cpp11::r_complex three{3, 3};

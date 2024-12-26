@@ -60,14 +60,15 @@
   return std::accumulate(x.cbegin(), x.cend(), 0.);
 }
 
-// Functions for complex data type
+// Pacha: Functions for complex data type
 
 [[cpp11::register]] cpp11::r_complex sum_cplx_for_(cpp11::complexes x) {
   std::complex<double> sum = {0.0, 0.0};
   R_xlen_t n = x.size();
   for (R_xlen_t i = 0; i < n; ++i) {
-    sum.real(sum.real() + x[i].real());
-    sum.imag(sum.imag() + x[i].imag());
+    // sum.real(sum.real() + x[i].real());
+    // sum.imag(sum.imag() + x[i].imag());
+    sum += x[i];
   }
 
   return cpp11::r_complex(sum.real(), sum.imag());
@@ -77,12 +78,15 @@
   std::complex<double> sum = {0.0, 0.0};
   R_xlen_t n = x.size();
   for (R_xlen_t i = 0; i < n; ++i) {
-    sum.real(sum.real() + x[i].real());
-    sum.imag(sum.imag() + x[i].imag());
+    // sum.real(sum.real() + x[i].real());
+    // sum.imag(sum.imag() + x[i].imag());
+    sum += x[i];
   }
 
   cpp11::writable::complexes result(1);
-  result[0] = cpp11::r_complex(sum.real(), sum.imag());
+  // result[0] = cpp11::r_complex(sum.real(), sum.imag());
+  result[0] = sum;
+
   return result;
 }
 
@@ -91,8 +95,9 @@
   const cpp11::complexes x(x_sxp, false);
   R_xlen_t n = x.size();
   for (R_xlen_t i = 0; i < n; ++i) {
-    sum.real(sum.real() + x[i].real());
-    sum.imag(sum.imag() + x[i].imag());
+    // sum.real(sum.real() + x[i].real());
+    // sum.imag(sum.imag() + x[i].imag());
+    sum += x[i];
   }
 
   return sum;
@@ -103,8 +108,9 @@
   const cpp11::complexes x(x_sxp, false);
   R_xlen_t n = x.size();
   for (R_xlen_t i = 0; i < n; ++i) {
-    sum.real(sum.real() + x[i].real());
-    sum.imag(sum.imag() + x[i].imag());
+    // sum.real(sum.real() + x[i].real());
+    // sum.imag(sum.imag() + x[i].imag());
+    sum += x[i];
   }
 
   return sum;
@@ -115,8 +121,9 @@
   const cpp11::complexes x(x_sxp, false);
   R_xlen_t n = x.size();
   for (R_xlen_t i = 0; i < n; ++i) {
-    sum.real(sum.real() + x[i].real());
-    sum.imag(sum.imag() + x[i].imag());
+    // sum.real(sum.real() + x[i].real());
+    // sum.imag(sum.imag() + x[i].imag());
+    sum += x[i];
   }
 
   return cpp11::as_sexp(sum);
@@ -127,9 +134,36 @@
   const cpp11::complexes x(x_sxp, false);
   R_xlen_t n = x.size();
   for (R_xlen_t i = 0; i < n; ++i) {
-    sum.real(sum.real() + x[i].real());
-    sum.imag(sum.imag() + x[i].imag());
+    // sum.real(sum.real() + x[i].real());
+    // sum.imag(sum.imag() + x[i].imag());
+    sum += x[i];
   }
 
   return cpp11::as_sexp(sum);
+}
+
+[[cpp11::register]] std::complex<double> sum_cplx_foreach_(cpp11::complexes x) {
+  std::complex<double> sum = {0.0, 0.0};
+  for (const auto&& val : x) {
+    // sum.real(sum.real() + val.real());
+    // sum.imag(sum.imag() + val.imag());
+    sum += val;
+  }
+
+  return sum;
+}
+
+[[cpp11::register]] std::complex<double> sum_cplx_accumulate_(cpp11::complexes x) {
+  return std::accumulate(x.cbegin(), x.cend(), std::complex<double>(0.0, 0.0));
+}
+
+[[cpp11::register]] std::complex<double> sum_cplx_for2_(SEXP x_sxp) {
+  std::complex<double> sum = {0.0, 0.0};
+  const cpp11::complexes x(x_sxp);
+  R_xlen_t n = x.size();
+  for (R_xlen_t i = 0; i < n; ++i) {
+    sum += x[i];
+  }
+
+  return sum;
 }

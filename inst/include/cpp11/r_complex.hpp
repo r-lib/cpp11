@@ -140,4 +140,15 @@ struct get_underlying_type<r_complex> {
 };
 }  // namespace traits
 
+// Define operator+ for std::complex<double> and r_complex
+inline std::complex<double> operator+(const std::complex<double>& lhs,
+                                      const r_complex& rhs) {
+  return std::complex<double>(lhs.real() + rhs.real(), lhs.imag() + rhs.imag());
+}
+
+inline std::complex<double> operator+(const r_complex& lhs,
+                                      const std::complex<double>& rhs) {
+  return std::complex<double>(lhs.real() + rhs.real(), lhs.imag() + rhs.imag());
+}
+
 }  // namespace cpp11

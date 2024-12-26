@@ -84,6 +84,10 @@ grow_ <- function(n) {
   .Call(`_cpp11test_grow_`, n)
 }
 
+grow_cplx_ <- function(n) {
+  .Call(`_cpp11test_grow_cplx_`, n)
+}
+
 cpp11_insert_ <- function(num_sxp) {
   .Call(`_cpp11test_cpp11_insert_`, num_sxp)
 }
@@ -218,6 +222,18 @@ sum_cplx_for_5_ <- function(x_sxp) {
 
 sum_cplx_for_6_ <- function(x_sxp) {
   .Call(`_cpp11test_sum_cplx_for_6_`, x_sxp)
+}
+
+sum_cplx_foreach_ <- function(x) {
+  .Call(`_cpp11test_sum_cplx_foreach_`, x)
+}
+
+sum_cplx_accumulate_ <- function(x) {
+  .Call(`_cpp11test_sum_cplx_accumulate_`, x)
+}
+
+sum_cplx_for2_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for2_`, x_sxp)
 }
 
 sum_int_for_ <- function(x) {
