@@ -12,6 +12,7 @@ Authors@R:
 Description: Provides a test suite and benchmarking code for the 'cpp11' package.
 License: MIT + file LICENSE
 Encoding: UTF-8
+Imports: Rcpp
 LinkingTo: Rcpp, cpp11, testthat
 Suggests:
     covr,
