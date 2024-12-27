@@ -4,11 +4,12 @@
 #include <iterator>
 #include <string>  // for string
 
-#include "cpp11/R.hpp"         // for SEXP, SEXPREC, R_xlen_t, INT...
-#include "cpp11/r_bool.hpp"    // for r_bool
-#include "cpp11/r_string.hpp"  // for r_string
-#include "cpp11/r_vector.hpp"  // for r_vector
-#include "cpp11/sexp.hpp"      // for sexp
+#include "cpp11/R.hpp"                // for SEXP, SEXPREC, R_xlen_t, INT...
+#include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
+#include "cpp11/r_bool.hpp"           // for r_bool
+#include "cpp11/r_string.hpp"         // for r_string
+#include "cpp11/r_vector.hpp"         // for r_vector
+#include "cpp11/sexp.hpp"             // for sexp
 
 namespace cpp11 {
 
@@ -189,11 +190,11 @@ class matrix : public matrix_slices<S> {
 
   operator SEXP() const { return SEXP(vector_); }
 
-  SEXP attr(const char* name) { return vector_.attr(name); }
+  attribute_proxy<V> attr(const char* name) { return vector_.attr(name); }
 
-  SEXP attr(const std::string& name) { return vector_.attr(name); }
+  attribute_proxy<V> attr(const std::string& name) { return vector_.attr(name); }
 
-  SEXP attr(SEXP name) { return vector_.attr(name); }
+  attribute_proxy<V> attr(SEXP name) { return vector_.attr(name); }
 
   void attr(const char* name, SEXP value) { vector_.attr(name) = value; }
 
