@@ -3,9 +3,9 @@
 #include "cpp11/doubles.hpp"
 #include "cpp11/function.hpp"
 #include "cpp11/integers.hpp"
+#include "cpp11/logicals.hpp"
 #include "cpp11/sexp.hpp"
 #include "cpp11/strings.hpp"
-#include "cpp11/logicals.hpp"
 
 #include <testthat.h>
 
@@ -457,7 +457,7 @@ context("doubles-C++") {
 
   test_that("as_doubles(logicals)") {
     cpp11::writable::logicals y;
-    
+
     for (int i = 0; i < 4; i++) {
       y.push_back(i % 2 == 0);
     }
