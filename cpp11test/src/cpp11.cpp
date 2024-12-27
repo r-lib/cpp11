@@ -215,6 +215,20 @@ extern "C" SEXP _cpp11test_col_sums(SEXP x) {
     return cpp11::as_sexp(col_sums(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<cpp11::by_column>>>(x)));
   END_CPP11
 }
+// matrix.cpp
+cpp11::doubles_matrix<> log_mat_mat(cpp11::doubles_matrix<> x);
+extern "C" SEXP _cpp11test_log_mat_mat(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(log_mat_mat(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(x)));
+  END_CPP11
+}
+// matrix.cpp
+SEXP log_mat_sexp(cpp11::doubles_matrix<> x);
+extern "C" SEXP _cpp11test_log_mat_sexp(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(log_mat_sexp(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(x)));
+  END_CPP11
+}
 // protect.cpp
 void protect_one_(SEXP x, int n);
 extern "C" SEXP _cpp11test_protect_one_(SEXP x, SEXP n) {
@@ -488,6 +502,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_gibbs_rcpp",               (DL_FUNC) &_cpp11test_gibbs_rcpp,               2},
     {"_cpp11test_gibbs_rcpp2",              (DL_FUNC) &_cpp11test_gibbs_rcpp2,              2},
     {"_cpp11test_grow_",                    (DL_FUNC) &_cpp11test_grow_,                    1},
+    {"_cpp11test_log_mat_mat",              (DL_FUNC) &_cpp11test_log_mat_mat,              1},
+    {"_cpp11test_log_mat_sexp",             (DL_FUNC) &_cpp11test_log_mat_sexp,             1},
     {"_cpp11test_my_message",               (DL_FUNC) &_cpp11test_my_message,               2},
     {"_cpp11test_my_message_n1",            (DL_FUNC) &_cpp11test_my_message_n1,            1},
     {"_cpp11test_my_message_n1fmt",         (DL_FUNC) &_cpp11test_my_message_n1fmt,         1},

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <initializer_list>  // for initializer_list
 #include <iterator>
 #include <string>  // for string
 
@@ -188,13 +189,47 @@ class matrix : public matrix_slices<S> {
 
   operator SEXP() const { return SEXP(vector_); }
 
-  // operator sexp() { return sexp(vector_); }
+  auto attr(const char* name) { return vector_.attr(name); }
 
-  sexp attr(const char* name) const { return SEXP(vector_.attr(name)); }
+  auto attr(const std::string& name) { return vector_.attr(name); }
 
-  sexp attr(const std::string& name) const { return SEXP(vector_.attr(name)); }
+  auto attr(SEXP name) { return vector_.attr(name); }
 
-  sexp attr(SEXP name) const { return SEXP(vector_.attr(name)); }
+  void attr(const char* name, SEXP value) { vector_.attr(name) = value; }
+
+  void attr(const std::string& name, SEXP value) { vector_.attr(name) = value; }
+
+  void attr(SEXP name, SEXP value) { vector_.attr(name) = value; }
+
+  void attr(const char* name, std::initializer_list<SEXP> value) {
+    SEXP attr = PROTECT(Rf_allocVector(VECSXP, value.size()));
+    int i = 0;
+    for (SEXP v : value) {
+      SET_VECTOR_ELT(attr, i++, v);
+    }
+    vector_.attr(name) = attr;
+    UNPROTECT(1);
+  }
+
+  void attr(const std::string& name, std::initializer_list<SEXP> value) {
+    SEXP attr = PROTECT(Rf_allocVector(VECSXP, value.size()));
+    int i = 0;
+    for (SEXP v : value) {
+      SET_VECTOR_ELT(attr, i++, v);
+    }
+    vector_.attr(name) = attr;
+    UNPROTECT(1);
+  }
+
+  void attr(SEXP name, std::initializer_list<SEXP> value) {
+    SEXP attr = PROTECT(Rf_allocVector(VECSXP, value.size()));
+    int i = 0;
+    for (SEXP v : value) {
+      SET_VECTOR_ELT(attr, i++, v);
+    }
+    vector_.attr(name) = attr;
+    UNPROTECT(1);
+  }
 
   r_vector<r_string> names() const { return r_vector<r_string>(vector_.names()); }
 

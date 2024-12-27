@@ -112,6 +112,14 @@ col_sums <- function(x) {
   .Call(`_cpp11test_col_sums`, x)
 }
 
+log_mat_mat <- function(x) {
+  .Call(`_cpp11test_log_mat_mat`, x)
+}
+
+log_mat_sexp <- function(x) {
+  .Call(`_cpp11test_log_mat_sexp`, x)
+}
+
 protect_one_ <- function(x, n) {
   invisible(.Call(`_cpp11test_protect_one_`, x, n))
 }

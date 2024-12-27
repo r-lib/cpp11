@@ -104,3 +104,42 @@ using namespace Rcpp;
 
   return sums;
 }
+
+[[cpp11::register]] cpp11::doubles_matrix<> log_mat_mat(cpp11::doubles_matrix<> x) {
+  cpp11::writable::doubles_matrix<> out(x.nrow(), x.ncol());
+
+  for (int i = 0; i < x.nrow(); i++) {
+    for (int j = 0; j < x.ncol(); j++) {
+      out(i, j) = log(x(i, j));
+    }
+  }
+
+  // SEXP dimnames = x.attr("dimnames");
+  // if (dimnames != R_NilValue) {
+  //   Rf_setAttrib(out.data(), R_DimNamesSymbol, dimnames);
+  //   std::cout << "dimnames set successfully" << std::endl;
+  // }
+
+  out.attr("dimnames") = x.attr("dimnames");
+
+  return out;
+}
+
+[[cpp11::register]] SEXP log_mat_sexp(cpp11::doubles_matrix<> x) {
+  cpp11::writable::doubles_matrix<> out(x.nrow(), x.ncol());
+
+  for (int i = 0; i < x.nrow(); i++) {
+    for (int j = 0; j < x.ncol(); j++) {
+      out(i, j) = log(x(i, j));
+    }
+  }
+
+  // SEXP dimnames = x.attr("dimnames");
+  // if (dimnames != R_NilValue) {
+  //   Rf_setAttrib(out.data(), R_DimNamesSymbol, dimnames);
+  // }
+
+  out.attr("dimnames") = x.attr("dimnames");
+
+  return out;
+}
