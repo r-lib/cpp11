@@ -8,8 +8,14 @@
 #endif
 #endif
 
+#ifndef R_NO_REMAP
 #define R_NO_REMAP
+#endif
+
+#ifndef STRICT_R_HEADERS
 #define STRICT_R_HEADERS
+#endif
+
 #include "R_ext/Boolean.h"
 #include "Rinternals.h"
 #include "Rversion.h"
@@ -27,7 +33,6 @@
 // clang-format on
 
 #include <type_traits>
-#include "cpp11/altrep.hpp"
 
 #if defined(R_VERSION) && R_VERSION >= R_Version(4, 4, 0)
 // Use R's new macro

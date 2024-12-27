@@ -2,8 +2,6 @@
 #include "cpp11/protect.hpp"
 #include "testthat.h"
 
-#ifdef HAS_UNWIND_PROTECT
-
 /*
  * See https://github.com/r-lib/cpp11/pull/327 for full details.
  *
@@ -77,5 +75,3 @@ context("unwind_protect-nested-C++") {
     destructed = false;
   }
 }
-
-#endif

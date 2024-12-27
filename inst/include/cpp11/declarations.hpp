@@ -30,13 +30,10 @@ T& unmove(T&& t) {
 }
 }  // namespace cpp11
 
-#ifdef HAS_UNWIND_PROTECT
+// We would like to remove this, since all supported versions of R now support proper
+// unwind protect, but some groups rely on it existing, like textshaping:
+// https://github.com/r-lib/cpp11/issues/414
 #define CPP11_UNWIND R_ContinueUnwind(err);
-#else
-#define CPP11_UNWIND \
-  do {               \
-  } while (false);
-#endif
 
 #define CPP11_ERROR_BUFSIZE 8192
 
@@ -58,6 +55,6 @@ T& unmove(T&& t) {
   if (buf[0] != '\0') {                                         \
     Rf_errorcall(R_NilValue, "%s", buf);                        \
   } else if (err != R_NilValue) {                               \
-    CPP11_UNWIND                                                \
+    R_ContinueUnwind(err);                                      \
   }                                                             \
   return R_NilValue;

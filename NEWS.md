@@ -1,10 +1,34 @@
 # cpp11 (development version)
 
-# cpp11 0.5.1
+# cpp11 0.5.1.9000
 
 * Uses testthat 3e style tests (#402).
 * Removes the mockery dependence.
 * The vendoring function accepts a custom path (i.e., to use the GitHub version of the package)
+* 
+# cpp11 0.5.1
+
+* cpp11 now requires R >=4.0.0, in line with the
+  [tidyverse version policy](https://www.tidyverse.org/blog/2019/04/r-version-support/) (#411).
+
+* Because cpp11 now requires R >=4.0.0, a number of previously optional tools
+  are now always available, allowing us to remove some dead code. In
+  particular:
+  
+  * `R_UnwindProtect()` is always available, so the defines `HAS_UNWIND_PROTECT`
+    and `CPP11_UNWIND` are no longer useful.
+
+  * ALTREP is always available, so the file `cpp11/altrep.hpp` and the define
+    `HAS_ALTREP` are no longer useful.
+
+  We would like to remove the dead code regarding these tools in the future, so
+  we ask that you please remove usage of them from your own packages (#411).
+
+* `R_NO_REMAP` and `STRICT_R_HEADERS` are now conditionally defined only if they
+  have not already been defined elsewhere. This is motivated by the fact that
+  `R_NO_REMAP` is becoming the default for C++ code in R 4.5.0 (#410).
+
+* Fixed a small protection issue flagged by rchk (#408).
 
 # cpp11 0.5.0
 
