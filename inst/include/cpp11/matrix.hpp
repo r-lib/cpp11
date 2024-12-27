@@ -189,11 +189,11 @@ class matrix : public matrix_slices<S> {
 
   operator SEXP() const { return SEXP(vector_); }
 
-  attribute_proxy<V> attr(const char* name) { return vector_.attr(name); }
+  SEXP attr(const char* name) { return vector_.attr(name); }
 
-  attribute_proxy<V> attr(const std::string& name) { return vector_.attr(name); }
+  SEXP attr(const std::string& name) { return vector_.attr(name); }
 
-  attribute_proxy<V> attr(SEXP name) { return vector_.attr(name); }
+  SEXP attr(SEXP name) { return vector_.attr(name); }
 
   void attr(const char* name, SEXP value) { vector_.attr(name) = value; }
 
