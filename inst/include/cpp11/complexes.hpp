@@ -11,6 +11,12 @@
 #include "cpp11/r_vector.hpp"   // for r_vector, r_vector<>::proxy
 #include "cpp11/sexp.hpp"       // for sexp
 
+// Define SET_COMPLEX_ELT if not defined
+// for compatibility with older R versions, such as ubuntu 20.04 oldrel-4
+#ifndef SET_COMPLEX_ELT
+#define SET_COMPLEX_ELT(x, i, v) (COMPLEX(x)[i] = v)
+#endif
+
 namespace cpp11 {
 
 // Specializations for complex numbers
