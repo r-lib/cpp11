@@ -357,17 +357,29 @@ context("complexes-C++") {
   }
 
   test_that("comparison operator works") {
-    cpp11::r_complex one{1, 1};
-    cpp11::r_complex two{2, 2};
-    cpp11::r_complex three{3, 3};
-
     using namespace cpp11;
-    cpp11::complexes base({one, two});
-    cpp11::complexes same_values({one, two});
-    cpp11::complexes diff_length({one});
-    cpp11::complexes diff_values({one, three});
 
-    expect_true(base == base);
+    // SEXP base = PROTECT(Rf_allocVector(CPLXSXP, 2));
+    // SEXP same_values = PROTECT(Rf_allocVector(CPLXSXP, 2));
+    // SEXP diff_length = PROTECT(Rf_allocVector(CPLXSXP, 1));
+    // SEXP diff_values = PROTECT(Rf_allocVector(CPLXSXP, 2));
+
+    cpp11::complexes base(Rf_allocVector(CPLXSXP, 2));
+    cpp11::complexes same_values(Rf_allocVector(CPLXSXP, 2));
+    cpp11::complexes diff_length(Rf_allocVector(CPLXSXP, 1));
+    cpp11::complexes diff_values(Rf_allocVector(CPLXSXP, 2));
+
+    COMPLEX(base)[0] = Rcomplex{1, 1};
+    COMPLEX(base)[1] = Rcomplex{2, 2};
+
+    COMPLEX(same_values)[0] = Rcomplex{1, 1};
+    COMPLEX(same_values)[1] = Rcomplex{2, 2};
+
+    COMPLEX(diff_length)[0] = Rcomplex{1, 1};
+
+    COMPLEX(diff_values)[0] = Rcomplex{1, 1};
+    COMPLEX(diff_values)[1] = Rcomplex{3, 3};
+
     expect_true(base == base);
     expect_true(base == same_values);
     expect_true(!(base == diff_length));
@@ -377,6 +389,8 @@ context("complexes-C++") {
     expect_true(!(base != same_values));
     expect_true(base != diff_length);
     expect_true(base != diff_values);
+
+    UNPROTECT(4);
   }
 
   test_that("proxy comparison works symmetrically") {

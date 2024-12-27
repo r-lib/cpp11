@@ -229,4 +229,19 @@ inline r_vector<r_complex>::r_vector(std::initializer_list<r_complex> il) {
   data_ = data;
 }
 
+// Comparison operators for r_vector<r_complex>
+template <>
+inline bool operator==(const r_vector<r_complex>& lhs, const r_vector<r_complex>& rhs) {
+  if (lhs.size() != rhs.size()) return false;
+  for (R_xlen_t i = 0; i < lhs.size(); ++i) {
+    if (!(lhs[i] == rhs[i])) return false;
+  }
+  return true;
+}
+
+template <>
+inline bool operator!=(const r_vector<r_complex>& lhs, const r_vector<r_complex>& rhs) {
+  return !(lhs == rhs);
+}
+
 }  // namespace cpp11

@@ -1,23 +1,26 @@
 #pragma once
 
-#include <complex>             // for complex
-#include <ostream>
-#include <type_traits>         // for is_convertible, enable_if
+#include <complex>  // for std::complex
 
-#include "R_ext/Arith.h"       // for NA_REAL
-#include "R_ext/Complex.h"     // for Rcomplex
-#include "cpp11/R.hpp"         // for SEXP, SEXPREC, ...
-#include "cpp11/as.hpp"        // for as_sexp
-#include "cpp11/protect.hpp"   // for unwind_protect, preserved
-#include "cpp11/r_vector.hpp"  // for r_vector
-#include "cpp11/sexp.hpp"      // for sexp
+#include "cpp11/R.hpp"        // for SEXP, SEXPREC, Rf_mkCharCE, Rf_translateCharUTF8
+#include "cpp11/as.hpp"       // for as_sexp
+#include "cpp11/protect.hpp"  // for unwind_protect, protect, protect::function
+#include "cpp11/sexp.hpp"     // for sexp
 
 namespace cpp11 {
 
 class r_complex {
  public:
-  r_complex() = default;
-  r_complex(SEXP data) : data_(data) {}
+  r_complex() : data_(safe[Rf_allocVector](CPLXSXP, 1)) {
+    COMPLEX(data_)[0].r = 0;
+    COMPLEX(data_)[0].i = 0;
+  }
+  r_complex(SEXP data) : data_(data) {
+    if (data_ == R_NilValue) {
+      data_ = PROTECT(Rf_allocVector(CPLXSXP, 0));
+      UNPROTECT(1);
+    }
+  }
   r_complex(double real, double imag) : data_(safe[Rf_allocVector](CPLXSXP, 1)) {
     COMPLEX(data_)[0].r = real;
     COMPLEX(data_)[0].i = imag;
@@ -28,20 +31,38 @@ class r_complex {
   operator SEXP() const { return data_; }
   operator sexp() const { return data_; }
   operator std::complex<double>() const {
+    if (data_ == R_NilValue || Rf_length(data_) == 0) {
+      return {NA_REAL, NA_REAL};
+    }
     return {COMPLEX(data_)[0].r, COMPLEX(data_)[0].i};
   }
   operator Rcomplex() const {
     Rcomplex r;
-    r.r = real();
-    r.i = imag();
+    if (data_ == R_NilValue || Rf_length(data_) == 0) {
+      r.r = NA_REAL;
+      r.i = NA_REAL;
+    } else {
+      r.r = real();
+      r.i = imag();
+    }
     return r;
   }
 
-  double real() const { return COMPLEX(data_)[0].r; }
-  double imag() const { return COMPLEX(data_)[0].i; }
+  double real() const {
+    if (data_ == R_NilValue || Rf_length(data_) == 0) {
+      return NA_REAL;
+    }
+    return COMPLEX(data_)[0].r;
+  }
+  double imag() const {
+    if (data_ == R_NilValue || Rf_length(data_) == 0) {
+      return NA_REAL;
+    }
+    return COMPLEX(data_)[0].i;
+  }
 
   bool operator==(const r_complex& rhs) const {
-    return real() == rhs.real() && imag() == rhs.imag();
+    return (is_na() && rhs.is_na()) || (real() == rhs.real() && imag() == rhs.imag());
   }
 
   bool operator!=(const r_complex& rhs) const { return !(*this == rhs); }
@@ -89,6 +110,8 @@ class r_complex {
     lhs /= rhs;
     return lhs;
   }
+
+  bool is_na() const { return R_IsNA(real()) || R_IsNA(imag()); }
 
  private:
   sexp data_ = R_NilValue;
