@@ -24,15 +24,18 @@ test_that("col_sums gives same result as colSums", {
   expect_equal(col_sums(y), colSums(y))
 })
 
-test_that("log_mat_mat returns a matrix with colnames and rownames", {
+test_that("doubles_matrix<> can return a matrix with colnames and rownames", {
   x <- matrix(c(1, 2, 3, 4), nrow = 2, ncol = 2)
   colnames(x) <- letters[1:2]
   rownames(x) <- letters[3:4]
 
-  y <- log_mat_mat(x)
-  z <- log_mat_sexp(x)
-  r <- log(x)
-  
-  expect_equal(y, r)
-  expect_equal(z, r)
+  y <- mat_mat_copy_dimnames(x)
+  z <- mat_sexp_copy_dimnames(x)
+
+  expect_equal(x, y)
+  expect_equal(x, z)
+
+  r <- mat_mat_create_dimnames()
+  expect_equal(rownames(r), c("a", "b"))
+  expect_equal(colnames(r), c("c", "d"))
 })

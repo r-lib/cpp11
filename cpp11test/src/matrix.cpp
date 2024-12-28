@@ -1,6 +1,8 @@
 #include "cpp11/matrix.hpp"
 #include "Rmath.h"
 #include "cpp11/doubles.hpp"
+#include "cpp11/list.hpp"
+#include "cpp11/strings.hpp"
 using namespace cpp11;
 
 [[cpp11::register]] SEXP gibbs_cpp(int N, int thin) {
@@ -105,19 +107,13 @@ using namespace Rcpp;
   return sums;
 }
 
-[[cpp11::register]] cpp11::doubles_matrix<> log_mat_mat(cpp11::doubles_matrix<> x) {
-  cpp11::writable::doubles_matrix<> out(x.nrow(), x.ncol());
-
-  for (int i = 0; i < x.nrow(); i++) {
-    for (int j = 0; j < x.ncol(); j++) {
-      out(i, j) = log(x(i, j));
-    }
-  }
+[[cpp11::register]] cpp11::doubles_matrix<> mat_mat_copy_dimnames(
+    cpp11::doubles_matrix<> x) {
+  cpp11::writable::doubles_matrix<> out = x;
 
   // SEXP dimnames = x.attr("dimnames");
   // if (dimnames != R_NilValue) {
   //   Rf_setAttrib(out.data(), R_DimNamesSymbol, dimnames);
-  //   std::cout << "dimnames set successfully" << std::endl;
   // }
 
   out.attr("dimnames") = x.attr("dimnames");
@@ -125,14 +121,8 @@ using namespace Rcpp;
   return out;
 }
 
-[[cpp11::register]] SEXP log_mat_sexp(cpp11::doubles_matrix<> x) {
-  cpp11::writable::doubles_matrix<> out(x.nrow(), x.ncol());
-
-  for (int i = 0; i < x.nrow(); i++) {
-    for (int j = 0; j < x.ncol(); j++) {
-      out(i, j) = log(x(i, j));
-    }
-  }
+[[cpp11::register]] SEXP mat_sexp_copy_dimnames(cpp11::doubles_matrix<> x) {
+  cpp11::writable::doubles_matrix<> out = x;
 
   // SEXP dimnames = x.attr("dimnames");
   // if (dimnames != R_NilValue) {
@@ -140,6 +130,23 @@ using namespace Rcpp;
   // }
 
   out.attr("dimnames") = x.attr("dimnames");
+
+  return out;
+}
+
+[[cpp11::register]] cpp11::doubles_matrix<> mat_mat_create_dimnames() {
+  cpp11::writable::doubles_matrix<> out(2, 2);
+
+  out(0, 0) = 1;
+  out(0, 1) = 2;
+  out(1, 0) = 3;
+  out(1, 1) = 4;
+
+  cpp11::writable::list dimnames(2);
+  dimnames[0] = cpp11::strings({"a", "b"});
+  dimnames[1] = cpp11::strings({"c", "d"});
+
+  out.attr("dimnames") = dimnames;
 
   return out;
 }
