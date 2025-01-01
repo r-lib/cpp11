@@ -235,7 +235,9 @@ class r_vector : public cpp11::r_vector<T> {
   proxy at(const r_string& name) const;
 
   void push_back(T value);
-  /// Implemented in `strings.hpp`
+  template <typename U = T,
+            typename std::enable_if<std::is_same<U, r_string>::value>::type* = nullptr>
+  void push_back(const std::string& value);  // Pacha: r_string only (#406)
   void push_back(const named_arg& value);
   void pop_back();
 
