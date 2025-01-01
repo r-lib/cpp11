@@ -67,23 +67,15 @@ inline void r_vector<r_string>::set_elt(
   SET_STRING_ELT(x, i, value);
 }
 
-// Pacha: Optimized subscript assignment for std::string
-template <>
-inline typename r_vector<r_string>::proxy r_vector<r_string>::operator[](
-    R_xlen_t i) const {
-  return typename r_vector<r_string>::proxy(data_, i, nullptr, false);
-}
-
-// Pacha: Optimized push_back for std::string
+// Pacha: Optimized push_back for std::string (borrows from @traversc' push_back_fast)
 template <>
 template <typename U, typename std::enable_if<std::is_same<U, r_string>::value>::type*>
 inline void r_vector<r_string>::push_back(const std::string& value) {
   while (this->length_ >= this->capacity_) {
     this->reserve(this->capacity_ == 0 ? 1 : this->capacity_ * 2);
   }
-
-  SEXP char_sexp = Rf_mkCharLenCE(value.c_str(), value.size(), CE_UTF8);
-  SET_STRING_ELT(this->data_, this->length_, char_sexp);
+  set_elt(this->data_, this->length_,
+          Rf_mkCharLenCE(value.c_str(), value.size(), CE_UTF8));
   ++this->length_;
 }
 
