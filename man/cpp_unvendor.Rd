@@ -25,7 +25,7 @@ dir.create(dir)
 cpp_vendor(dir)
 
 # unvendor the cpp11 headers from the directory
-unvendor_cpp11(dir)
+cpp_unvendor(dir)
 
 list.files(file.path(dir, "inst", "include", "cpp11"))
 
