@@ -61,10 +61,30 @@ typedef r_vector<r_string> strings;
 namespace writable {
 
 template <>
-inline void r_vector<r_string>::set_elt(SEXP x, R_xlen_t i,
-                                        typename r_vector::underlying_type value) {
+inline void r_vector<r_string>::set_elt(
+    SEXP x, R_xlen_t i, typename r_vector<r_string>::underlying_type value) {
   // NOPROTECT: Likely too costly to unwind protect every set elt
   SET_STRING_ELT(x, i, value);
+}
+
+// Pacha: Optimized subscript assignment for std::string
+template <>
+inline typename r_vector<r_string>::proxy r_vector<r_string>::operator[](
+    R_xlen_t i) const {
+  return typename r_vector<r_string>::proxy(data_, i, nullptr, false);
+}
+
+// Pacha: Optimized push_back for std::string
+template <>
+template <typename U, typename std::enable_if<std::is_same<U, r_string>::value>::type*>
+inline void r_vector<r_string>::push_back(const std::string& value) {
+  while (this->length_ >= this->capacity_) {
+    this->reserve(this->capacity_ == 0 ? 1 : this->capacity_ * 2);
+  }
+
+  SEXP char_sexp = Rf_mkCharLenCE(value.c_str(), value.size(), CE_UTF8);
+  SET_STRING_ELT(this->data_, this->length_, char_sexp);
+  ++this->length_;
 }
 
 inline bool operator==(const r_vector<r_string>::proxy& lhs, r_string rhs) {
@@ -95,17 +115,17 @@ inline SEXP alloc_if_charsxp(const SEXP data) {
 
 template <>
 inline r_vector<r_string>::r_vector(const SEXP& data)
-    : cpp11::r_vector<r_string>(alloc_or_copy(data)), capacity_(length_) {
+    : cpp11::r_vector<r_string>(alloc_or_copy(data)), capacity_(this->length_) {
   if (detail::r_typeof(data) == CHARSXP) {
-    SET_STRING_ELT(data_, 0, data);
+    SET_STRING_ELT(this->data_, 0, data);
   }
 }
 
 template <>
 inline r_vector<r_string>::r_vector(SEXP&& data)
-    : cpp11::r_vector<r_string>(alloc_if_charsxp(data)), capacity_(length_) {
+    : cpp11::r_vector<r_string>(alloc_if_charsxp(data)), capacity_(this->length_) {
   if (detail::r_typeof(data) == CHARSXP) {
-    SET_STRING_ELT(data_, 0, data);
+    SET_STRING_ELT(this->data_, 0, data);
   }
 }
 
@@ -117,14 +137,15 @@ inline r_vector<r_string>::r_vector(std::initializer_list<r_string> il)
   unwind_protect([&] {
     auto it = il.begin();
 
-    for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
+    for (R_xlen_t i = 0; i < this->capacity_; ++i, ++it) {
       // i.e. to `SEXP`
-      underlying_type elt = static_cast<underlying_type>(*it);
+      typename r_vector<r_string>::underlying_type elt =
+          static_cast<typename r_vector<r_string>::underlying_type>(*it);
 
       if (elt == NA_STRING) {
-        set_elt(data_, i, elt);
+        set_elt(this->data_, i, elt);
       } else {
-        set_elt(data_, i, Rf_mkCharCE(Rf_translateCharUTF8(elt), CE_UTF8));
+        set_elt(this->data_, i, Rf_mkCharCE(Rf_translateCharUTF8(elt), CE_UTF8));
       }
     }
   });
@@ -135,12 +156,12 @@ typedef r_vector<r_string> strings;
 template <typename T>
 inline void r_vector<T>::push_back(const named_arg& value) {
   push_back(value.value());
-  if (Rf_xlength(names()) == 0) {
-    cpp11::writable::strings new_nms(size());
-    names() = new_nms;
+  if (Rf_xlength(this->names()) == 0) {
+    cpp11::writable::strings new_nms(this->size());
+    this->names() = new_nms;
   }
-  cpp11::writable::strings nms(names());
-  nms[size() - 1] = value.name();
+  cpp11::writable::strings nms(this->names());
+  nms[this->size() - 1] = value.name();
 }
 
 }  // namespace writable
