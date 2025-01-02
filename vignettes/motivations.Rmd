@@ -332,7 +332,52 @@ Doing this universally avoids many locale specific issues when dealing with Unic
 
 Concretely cpp11 always uses `Rf_translateCharUTF8()` when obtaining `const char*` from `CHRSXP` objects and uses `Rf_mkCharCE(, CE_UTF8)` when creating new `CHRSXP` objects from `const char*` inputs.
 
-<!--TODO: unicode examples?-->
+Converting R Unicode Strings to C++ Strings:
+
+```cpp
+#include <cpp11.hpp>
+#include <string>
+
+[[cpp11::register]]
+std::string convert_to_utf8(cpp11::strings input) {
+  std::string result;
+  for (auto str : input) {
+    result += cpp11::r_string(Rf_translateCharUTF8(str));
+  }
+  return result;
+}
+```
+
+```r
+# hello + how are you? in Japanese and Spanish
+input <- c("\xe3\x81\x93\xe3\x82\x93\xe3\x81\xab\xe3\x81\xa1\xe3\x81\xaf",
+  "\xc2\xbfC\xc3\xb3mo est\xc3\xa1s\x3f")
+
+convert_to_utf8(input)
+
+[1] "こんにちは¿Cómo estás?"
+```
+
+Returning Unicode Strings from C++ to R:
+
+```cpp
+#include <cpp11.hpp>
+#include <string>
+
+[[cpp11::register]]
+cpp11::writable::strings return_utf8_string() {
+  cpp11::writable::strings result;
+  std::string utf8_str = "こんにちは"; // Hello in Japanese
+  result.push_back(Rf_mkCharCE(utf8_str.c_str(), CE_UTF8));
+  return result;
+}
+```
+
+```r
+return_utf8_string()
+
+[1] "こんにちは"
+```
 
 ## C++11 features {#c11-features}
 
