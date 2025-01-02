@@ -181,6 +181,13 @@ extern "C" SEXP _cpp11test_ordered_map_to_list_(SEXP x) {
   END_CPP11
 }
 // map.cpp
+SEXP ordered_map_to_list_2_(cpp11::doubles x);
+extern "C" SEXP _cpp11test_ordered_map_to_list_2_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(ordered_map_to_list_2_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
+  END_CPP11
+}
+// map.cpp
 SEXP unordered_map_to_list_(cpp11::doubles x);
 extern "C" SEXP _cpp11test_unordered_map_to_list_(SEXP x) {
   BEGIN_CPP11
@@ -515,6 +522,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_my_warning_n1fmt",         (DL_FUNC) &_cpp11test_my_warning_n1fmt,         1},
     {"_cpp11test_my_warning_n2fmt",         (DL_FUNC) &_cpp11test_my_warning_n2fmt,         2},
     {"_cpp11test_ordered_map_to_list_",     (DL_FUNC) &_cpp11test_ordered_map_to_list_,     1},
+    {"_cpp11test_ordered_map_to_list_2_",   (DL_FUNC) &_cpp11test_ordered_map_to_list_2_,   1},
     {"_cpp11test_protect_many_",            (DL_FUNC) &_cpp11test_protect_many_,            1},
     {"_cpp11test_protect_many_cpp11_",      (DL_FUNC) &_cpp11test_protect_many_cpp11_,      1},
     {"_cpp11test_protect_many_preserve_",   (DL_FUNC) &_cpp11test_protect_many_preserve_,   1},

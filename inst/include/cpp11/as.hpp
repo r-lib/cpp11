@@ -336,33 +336,18 @@ enable_if_convertible_to_sexp<T, SEXP> as_sexp(const T& from) {
   return from;
 }
 
-// Pacha: Specialization for std::map
-// NOTE: I did not use templates to avoid clashes with doubles/function/etc.
-inline SEXP as_sexp(const std::map<std::string, SEXP>& map) {
-  R_xlen_t size = map.size();
-  SEXP result = PROTECT(Rf_allocVector(VECSXP, size));
-  SEXP names = PROTECT(Rf_allocVector(STRSXP, size));
-
-  auto it = map.begin();
-  for (R_xlen_t i = 0; i < size; ++i, ++it) {
-    SET_VECTOR_ELT(result, i, it->second);
-    SET_STRING_ELT(names, i, Rf_mkCharCE(it->first.c_str(), CE_UTF8));
-  }
-
-  Rf_setAttrib(result, R_NamesSymbol, names);
-  UNPROTECT(2);
-  return result;
-}
-
-// Specialization for std::map<double, int>
-inline SEXP as_sexp(const std::map<double, int>& map) {
+// Templated specialization for std::map
+template <typename Key, typename Value,
+          typename = enable_if_t<std::is_arithmetic<Key>::value &&
+                                 std::is_arithmetic<Value>::value>>
+inline SEXP as_sexp(const std::map<Key, Value>& map) {
   R_xlen_t size = map.size();
   SEXP result = PROTECT(Rf_allocVector(VECSXP, size));
   SEXP names = PROTECT(Rf_allocVector(REALSXP, size));
 
   auto it = map.begin();
   for (R_xlen_t i = 0; i < size; ++i, ++it) {
-    SET_VECTOR_ELT(result, i, Rf_ScalarInteger(it->second));
+    SET_VECTOR_ELT(result, i, as_sexp(it->second));
     REAL(names)[i] = it->first;
   }
 
@@ -371,32 +356,18 @@ inline SEXP as_sexp(const std::map<double, int>& map) {
   return result;
 }
 
-// Pacha: Specialization for std::unordered_map
-inline SEXP as_sexp(const std::unordered_map<std::string, SEXP>& map) {
-  R_xlen_t size = map.size();
-  SEXP result = PROTECT(Rf_allocVector(VECSXP, size));
-  SEXP names = PROTECT(Rf_allocVector(STRSXP, size));
-
-  auto it = map.begin();
-  for (R_xlen_t i = 0; i < size; ++i, ++it) {
-    SET_VECTOR_ELT(result, i, it->second);
-    SET_STRING_ELT(names, i, Rf_mkCharCE(it->first.c_str(), CE_UTF8));
-  }
-
-  Rf_setAttrib(result, R_NamesSymbol, names);
-  UNPROTECT(2);
-  return result;
-}
-
-// Specialization for std::unordered_map<double, int>
-inline SEXP as_sexp(const std::unordered_map<double, int>& map) {
+// Templated specialization for std::unordered_map
+template <typename Key, typename Value,
+          typename = enable_if_t<std::is_arithmetic<Key>::value &&
+                                 std::is_arithmetic<Value>::value>>
+inline SEXP as_sexp(const std::unordered_map<Key, Value>& map) {
   R_xlen_t size = map.size();
   SEXP result = PROTECT(Rf_allocVector(VECSXP, size));
   SEXP names = PROTECT(Rf_allocVector(REALSXP, size));
 
   auto it = map.begin();
   for (R_xlen_t i = 0; i < size; ++i, ++it) {
-    SET_VECTOR_ELT(result, i, Rf_ScalarInteger(it->second));
+    SET_VECTOR_ELT(result, i, as_sexp(it->second));
     REAL(names)[i] = it->first;
   }
 

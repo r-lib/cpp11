@@ -6,6 +6,9 @@ test_that("ordered and unordered C++ maps are converted to R lists", {
   om <- ordered_map_to_list_(x)
   expect_type(om, "list")
 
+  om2 <- ordered_map_to_list_2_(x)
+  expect_equal(om, om2)
+
   om_doubles <- as.double(names(om))
   expect_equal(om_doubles, sort(om_doubles))
 
