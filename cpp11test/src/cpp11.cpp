@@ -303,6 +303,34 @@ extern "C" SEXP _cpp11test_rcpp_release_(SEXP n) {
     return R_NilValue;
   END_CPP11
 }
+// roxygen1.cpp
+double roxcpp1_(double x);
+extern "C" SEXP _cpp11test_roxcpp1_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(roxcpp1_(cpp11::as_cpp<cpp11::decay_t<double>>(x)));
+  END_CPP11
+}
+// roxygen1.cpp
+double roxcpp2_(double x);
+extern "C" SEXP _cpp11test_roxcpp2_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(roxcpp2_(cpp11::as_cpp<cpp11::decay_t<double>>(x)));
+  END_CPP11
+}
+// roxygen2.cpp
+double roxcpp3_(double x);
+extern "C" SEXP _cpp11test_roxcpp3_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(roxcpp3_(cpp11::as_cpp<cpp11::decay_t<double>>(x)));
+  END_CPP11
+}
+// roxygen2.cpp
+double roxcpp4_(double x);
+extern "C" SEXP _cpp11test_roxcpp4_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(roxcpp4_(cpp11::as_cpp<cpp11::decay_t<double>>(x)));
+  END_CPP11
+}
 // safe.cpp
 SEXP cpp11_safe_(SEXP x_sxp);
 extern "C" SEXP _cpp11test_cpp11_safe_(SEXP x_sxp) {
@@ -518,6 +546,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_rcpp_sum_int_for_",        (DL_FUNC) &_cpp11test_rcpp_sum_int_for_,        1},
     {"_cpp11test_remove_altrep",            (DL_FUNC) &_cpp11test_remove_altrep,            1},
     {"_cpp11test_row_sums",                 (DL_FUNC) &_cpp11test_row_sums,                 1},
+    {"_cpp11test_roxcpp1_",                 (DL_FUNC) &_cpp11test_roxcpp1_,                 1},
+    {"_cpp11test_roxcpp2_",                 (DL_FUNC) &_cpp11test_roxcpp2_,                 1},
+    {"_cpp11test_roxcpp3_",                 (DL_FUNC) &_cpp11test_roxcpp3_,                 1},
+    {"_cpp11test_roxcpp4_",                 (DL_FUNC) &_cpp11test_roxcpp4_,                 1},
     {"_cpp11test_string_proxy_assignment_", (DL_FUNC) &_cpp11test_string_proxy_assignment_, 0},
     {"_cpp11test_string_push_back_",        (DL_FUNC) &_cpp11test_string_push_back_,        0},
     {"_cpp11test_sum_dbl_accumulate2_",     (DL_FUNC) &_cpp11test_sum_dbl_accumulate2_,     1},

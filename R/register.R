@@ -77,7 +77,6 @@ cpp_register <- function(path = ".", quiet = !is_interactive(), extension = c(".
     cli::cli_alert_success("generated file {.file {basename(r_path)}}")
   }
 
-
   call_entries <- get_call_entries(path, funs$name, package)
 
   cpp_function_registration <- glue::glue_data(funs, '    {{
@@ -85,9 +84,9 @@ cpp_register <- function(path = ".", quiet = !is_interactive(), extension = c(".
     n_args = viapply(funs$args, nrow)
   )
 
-  cpp_function_registration <- glue::glue_collapse(cpp_function_registration, sep  = "\n")
+  cpp_function_registration <- glue::glue_collapse(cpp_function_registration, sep = "\n")
 
-  extra_includes <-  character()
+  extra_includes <- character()
   if (pkg_links_to_rcpp(path)) {
     extra_includes <- c(extra_includes, "#include <cpp11/R.hpp>", "#include <Rcpp.h>", "using namespace Rcpp;")
   }
@@ -215,13 +214,13 @@ generate_init_functions <- function(funs) {
 }
 
 generate_r_functions <- function(funs, package = "cpp11", use_package = FALSE) {
-  funs <- funs[c("name", "return_type", "args")]
+  funs <- funs[c("name", "return_type", "args", "file", "line", "decoration")]
 
   if (use_package) {
     package_call <- glue::glue(', PACKAGE = "{package}"')
     package_names <- glue::glue_data(funs, '"_{package}_{name}"')
   } else {
-    package_names <- glue::glue_data(funs, '`_{package}_{name}`')
+    package_names <- glue::glue_data(funs, "`_{package}_{name}`")
     package_call <- ""
   }
 
@@ -235,13 +234,28 @@ generate_r_functions <- function(funs, package = "cpp11", use_package = FALSE) {
     glue::glue_data(funs, '.Call({package_names}{params}{package_call})')
   )
 
-  out <- glue::glue_data(funs, '
-    {name} <- function({list_params}) {{
-      {calls}
-    }}
-    ')
+  roxygen_comments <- lapply(funs$file, extract_roxygen_comments)
+
+  out <- mapply(function(name, list_params, calls, roxygen_comment) {
+    glue::glue("{if (nzchar(roxygen_comment)) paste0(roxygen_comment, '\n') else ''}{name} <- function({list_params}) {{\n\t{calls}\n}}")
+  }, funs$name, funs$list_params, funs$calls, roxygen_comments, SIMPLIFY = TRUE)
+  out <- glue::trim(out)
   out <- glue::glue_collapse(out, sep = "\n\n")
   unclass(out)
+}
+
+extract_roxygen_comments <- function(file) {
+  lines <- readLines(file)
+  roxygen_start <- grep("^/\\* roxygen start", lines)
+  roxygen_end <- grep("roxygen end \\*/$", lines)
+
+  if (length(roxygen_start) == 0 || length(roxygen_end) == 0) {
+    return("")
+  }
+
+  roxygen_lines <- lines[(roxygen_start + 1):(roxygen_end - 1)]
+  roxygen_lines <- sub("^@", "#' @", roxygen_lines)
+  paste(roxygen_lines, collapse = "\n")
 }
 
 wrap_call <- function(name, return_type, args) {
