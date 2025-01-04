@@ -220,7 +220,7 @@ generate_r_functions <- function(funs, package = "cpp11", use_package = FALSE) {
     package_call <- glue::glue(', PACKAGE = "{package}"')
     package_names <- glue::glue_data(funs, '"_{package}_{name}"')
   } else {
-    package_names <- glue::glue_data(funs, "`_{package}_{name}`")
+    package_names <- glue::glue_data(funs, '`_{package}_{name}`')
     package_call <- ""
   }
 
@@ -229,8 +229,8 @@ generate_r_functions <- function(funs, package = "cpp11", use_package = FALSE) {
   funs$params <- vcapply(funs$list_params, function(x) if (nzchar(x)) paste0(", ", x) else x)
   is_void <- funs$return_type == "void"
   funs$calls <- ifelse(is_void,
-    glue::glue_data(funs, "invisible(.Call({package_names}{params}{package_call}))"),
-    glue::glue_data(funs, ".Call({package_names}{params}{package_call})")
+    glue::glue_data(funs, 'invisible(.Call({package_names}{params}{package_call}))'),
+    glue::glue_data(funs, '.Call({package_names}{params}{package_call})')
   )
 
   # Parse and associate Roxygen comments
@@ -252,7 +252,7 @@ generate_r_functions <- function(funs, package = "cpp11", use_package = FALSE) {
     if (nzchar(roxygen_comment)) {
       glue::glue("{roxygen_comment}\n{name} <- function({list_params}) {{\n\t{calls}\n}}")
     } else {
-      glue::glue("{name} <- function({list_params}) {{\n\t{calls}\n}}")
+      glue::glue("{name} <- function({list_params}) {{\n  {calls}\n}}")
     }
   }, funs$name, funs$list_params, funs$calls, funs$roxygen_comment, SIMPLIFY = FALSE)
 
