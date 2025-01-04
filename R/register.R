@@ -233,22 +233,28 @@ generate_r_functions <- function(funs, package = "cpp11", use_package = FALSE) {
     glue::glue_data(funs, ".Call({package_names}{params}{package_call})")
   )
 
-  roxygen_comments <- lapply(funs$file, extract_roxygen_comments)
-
-  out <- mapply(function(name, list_params, calls, file, line) {
+  # Parse and associate Roxygen comments
+  funs$roxygen_comment <- mapply(function(file, line) {
     comments <- extract_roxygen_comments(file)
-    roxygen_comment <- ""
+    matched_comment <- ""
     for (comment in comments) {
-      if (comment$line < line) {
-        roxygen_comment <- comment$text
+      # Check if the comment directly precedes the function without gaps
+      if (line == comment$line + 1) {
+        matched_comment <- comment$text
+        break
       }
     }
+    matched_comment
+  }, funs$file, funs$line, SIMPLIFY = TRUE)
+
+  # Generate R functions with or without Roxygen comments
+  out <- mapply(function(name, list_params, calls, roxygen_comment) {
     if (nzchar(roxygen_comment)) {
       glue::glue("{roxygen_comment}\n{name} <- function({list_params}) {{\n\t{calls}\n}}")
     } else {
       glue::glue("{name} <- function({list_params}) {{\n\t{calls}\n}}")
     }
-  }, funs$name, funs$list_params, funs$calls, funs$file, funs$line, SIMPLIFY = FALSE)
+  }, funs$name, funs$list_params, funs$calls, funs$roxygen_comment, SIMPLIFY = FALSE)
 
   out <- as.character(out)
   out <- glue::trim(out)
@@ -268,7 +274,7 @@ extract_roxygen_comments <- function(file) {
   roxygen_comments <- mapply(function(start, end) {
     roxygen_lines <- lines[(start + 1):(end - 1)]
     roxygen_lines <- sub("^@", "#' @", roxygen_lines)
-    list(line = start, text = paste(roxygen_lines, collapse = "\n"))
+    list(line = end, text = paste(roxygen_lines, collapse = "\n"))
   }, roxygen_start, roxygen_end, SIMPLIFY = FALSE)
 
   roxygen_comments

@@ -156,40 +156,57 @@ rcpp_release_ <- function(n) {
 	invisible(.Call(`_cpp11test_rcpp_release_`, n))
 }
 
-#' @title Roxygenise C++ function
-#' @param x numeric value
-#' @description Dummy function to test roxygen2. It adds 1.0 to a double.
-#' @export
-#' @examples roxcpp_(1.0)
-roxcpp1_ <- function(x) {
-	.Call(`_cpp11test_roxcpp1_`, x)
+notroxcpp1_ <- function(x) {
+	.Call(`_cpp11test_notroxcpp1_`, x)
 }
 
-#' @title Roxygenise C++ function
+#' @title Roxygenise C++ function II
 #' @param x numeric value
-#' @description Dummy function to test roxygen2. It adds 1.0 to a double.
+#' @description Dummy function to test roxygen2. It adds 2.0 to a double.
 #' @export
-#' @examples roxcpp_(1.0)
+#' @examples roxcpp2_(1.0)
 roxcpp2_ <- function(x) {
 	.Call(`_cpp11test_roxcpp2_`, x)
 }
 
-#' @title Roxygenise C++ function
+#' @title Roxygenise C++ function III
 #' @param x numeric value
-#' @description Dummy function to test roxygen2. It adds 1.0 to a double.
+#' @description Dummy function to test roxygen2. It adds 3.0 to a double.
 #' @export
-#' @examples roxcpp_(1.0)
+#' @examples roxcpp3_(1.0)
 roxcpp3_ <- function(x) {
 	.Call(`_cpp11test_roxcpp3_`, x)
 }
 
-#' @title Roxygenise C++ function
+#' @title Roxygenise C++ function IV
 #' @param x numeric value
-#' @description Dummy function to test roxygen2. It adds 1.0 to a double.
+#' @description Dummy function to test roxygen2. It adds 4.0 to a double.
 #' @export
-#' @examples roxcpp_(1.0)
+#' @examples roxcpp4_(1.0)
 roxcpp4_ <- function(x) {
 	.Call(`_cpp11test_roxcpp4_`, x)
+}
+
+#' @title Roxygenise C++ function V
+#' @param x numeric value
+#' @description Dummy function to test roxygen2. It adds 5.0 to a double.
+#' @export
+#' @examples roxcpp5_(1.0)
+roxcpp5_ <- function(x) {
+	.Call(`_cpp11test_roxcpp5_`, x)
+}
+
+notroxcpp6_ <- function(x) {
+	.Call(`_cpp11test_notroxcpp6_`, x)
+}
+
+#' @title Roxygenise C++ function VII
+#' @param x numeric value
+#' @description Dummy function to test roxygen2. It adds 7.0 to a double.
+#' @export
+#' @examples roxcpp7_(1.0)
+roxcpp7_ <- function(x) {
+	.Call(`_cpp11test_roxcpp7_`, x)
 }
 
 cpp11_safe_ <- function(x_sxp) {
