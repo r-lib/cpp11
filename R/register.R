@@ -220,7 +220,7 @@ generate_r_functions <- function(funs, package = "cpp11", use_package = FALSE) {
     package_call <- glue::glue(', PACKAGE = "{package}"')
     package_names <- glue::glue_data(funs, '"_{package}_{name}"')
   } else {
-    package_names <- glue::glue_data(funs, '`_{package}_{name}`')
+    package_names <- glue::glue_data(funs, "`_{package}_{name}`")
     package_call <- ""
   }
 
@@ -229,22 +229,26 @@ generate_r_functions <- function(funs, package = "cpp11", use_package = FALSE) {
   funs$params <- vcapply(funs$list_params, function(x) if (nzchar(x)) paste0(", ", x) else x)
   is_void <- funs$return_type == "void"
   funs$calls <- ifelse(is_void,
-    glue::glue_data(funs, 'invisible(.Call({package_names}{params}{package_call}))'),
-    glue::glue_data(funs, '.Call({package_names}{params}{package_call})')
+    glue::glue_data(funs, "invisible(.Call({package_names}{params}{package_call}))"),
+    glue::glue_data(funs, ".Call({package_names}{params}{package_call})")
   )
 
   # Parse and associate Roxygen comments
   funs$roxygen_comment <- mapply(function(file, line) {
-    comments <- extract_roxygen_comments(file)
-    matched_comment <- ""
-    for (comment in comments) {
-      # Check if the comment directly precedes the function without gaps
-      if (line == comment$line + 1) {
-        matched_comment <- comment$text
-        break
+    if (file.exists(file)) {
+      comments <- extract_roxygen_comments(file)
+      matched_comment <- ""
+      for (comment in comments) {
+        # Check if the comment directly precedes the function without gaps
+        if (line == comment$line + 1) {
+          matched_comment <- comment$text
+          break
+        }
       }
+      matched_comment
+    } else {
+      ""
     }
-    matched_comment
   }, funs$file, funs$line, SIMPLIFY = TRUE)
 
   # Generate R functions with or without Roxygen comments
@@ -254,9 +258,8 @@ generate_r_functions <- function(funs, package = "cpp11", use_package = FALSE) {
     } else {
       glue::glue("{name} <- function({list_params}) {{\n  {calls}\n}}")
     }
-  }, funs$name, funs$list_params, funs$calls, funs$roxygen_comment, SIMPLIFY = FALSE)
+  }, funs$name, funs$list_params, funs$calls, funs$roxygen_comment, SIMPLIFY = TRUE)
 
-  out <- as.character(out)
   out <- glue::trim(out)
   out <- glue::glue_collapse(out, sep = "\n\n")
   unclass(out)
