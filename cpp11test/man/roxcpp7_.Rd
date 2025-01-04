@@ -13,5 +13,10 @@ roxcpp7_(x)
 Dummy function to test roxygen2. It adds 7.0 to a double.
 }
 \examples{
-roxcpp7_(1.0)
+my_fun <- function(x) {
+  roxcpp7_(x)
+}
+}
+\seealso{
+\code{\link{roxcpp1_}}
 }

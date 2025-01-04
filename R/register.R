@@ -273,7 +273,7 @@ extract_roxygen_comments <- function(file) {
 
   roxygen_comments <- mapply(function(start, end) {
     roxygen_lines <- lines[(start + 1):(end - 1)]
-    roxygen_lines <- sub("^@", "#' @", roxygen_lines)
+    roxygen_lines <- sub("^", "#' ", roxygen_lines)
     list(line = end, text = paste(roxygen_lines, collapse = "\n"))
   }, roxygen_start, roxygen_end, SIMPLIFY = FALSE)
 

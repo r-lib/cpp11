@@ -204,7 +204,11 @@ notroxcpp6_ <- function(x) {
 #' @param x numeric value
 #' @description Dummy function to test roxygen2. It adds 7.0 to a double.
 #' @export
-#' @examples roxcpp7_(1.0)
+#' @examples
+#' my_fun <- function(x) {
+#'   roxcpp7_(x)
+#' }
+#' @seealso \code{\link{roxcpp1_}}
 roxcpp7_ <- function(x) {
 	.Call(`_cpp11test_roxcpp7_`, x)
 }
