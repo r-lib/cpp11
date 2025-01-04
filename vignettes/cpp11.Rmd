@@ -354,7 +354,7 @@ This is easy to do in RMarkdown by using `{cpp11}` instead of `{r}` at the begin
 It is possible to use `roxygen2` to document your C++ functions. Here is an
 example of how to do this:
 
-```{cpp11}
+```{cpp11, eval = FALSE}
 /* roxygen start
 @title Mean of a numeric vector
 @param x A numeric vector
@@ -362,7 +362,8 @@ example of how to do this:
 @examples mean_cpp(1:10)
 @export
 roxygen end */
-[[cpp11::register]] double mean_roxygenised_cpp(doubles x) {
+[[cpp11::register]]
+double mean_roxygenised_cpp(doubles x) {
   int n = x.size();
   double total = 0;
   for(double value : x) {
