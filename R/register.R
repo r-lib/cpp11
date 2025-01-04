@@ -224,21 +224,33 @@ generate_r_functions <- function(funs, package = "cpp11", use_package = FALSE) {
     package_call <- ""
   }
 
-  funs$package <- package
   funs$package_call <- package_call
   funs$list_params <- vcapply(funs$args, glue_collapse_data, "{name}")
   funs$params <- vcapply(funs$list_params, function(x) if (nzchar(x)) paste0(", ", x) else x)
   is_void <- funs$return_type == "void"
   funs$calls <- ifelse(is_void,
-    glue::glue_data(funs, 'invisible(.Call({package_names}{params}{package_call}))'),
-    glue::glue_data(funs, '.Call({package_names}{params}{package_call})')
+    glue::glue_data(funs, "invisible(.Call({package_names}{params}{package_call}))"),
+    glue::glue_data(funs, ".Call({package_names}{params}{package_call})")
   )
 
   roxygen_comments <- lapply(funs$file, extract_roxygen_comments)
 
-  out <- mapply(function(name, list_params, calls, roxygen_comment) {
-    glue::glue("{if (nzchar(roxygen_comment)) paste0(roxygen_comment, '\n') else ''}{name} <- function({list_params}) {{\n\t{calls}\n}}")
-  }, funs$name, funs$list_params, funs$calls, roxygen_comments, SIMPLIFY = TRUE)
+  out <- mapply(function(name, list_params, calls, file, line) {
+    comments <- extract_roxygen_comments(file)
+    roxygen_comment <- ""
+    for (comment in comments) {
+      if (comment$line < line) {
+        roxygen_comment <- comment$text
+      }
+    }
+    if (nzchar(roxygen_comment)) {
+      glue::glue("{roxygen_comment}\n{name} <- function({list_params}) {{\n\t{calls}\n}}")
+    } else {
+      glue::glue("{name} <- function({list_params}) {{\n\t{calls}\n}}")
+    }
+  }, funs$name, funs$list_params, funs$calls, funs$file, funs$line, SIMPLIFY = FALSE)
+
+  out <- as.character(out)
   out <- glue::trim(out)
   out <- glue::glue_collapse(out, sep = "\n\n")
   unclass(out)
@@ -250,12 +262,16 @@ extract_roxygen_comments <- function(file) {
   roxygen_end <- grep("roxygen end \\*/$", lines)
 
   if (length(roxygen_start) == 0 || length(roxygen_end) == 0) {
-    return("")
+    return(list())
   }
 
-  roxygen_lines <- lines[(roxygen_start + 1):(roxygen_end - 1)]
-  roxygen_lines <- sub("^@", "#' @", roxygen_lines)
-  paste(roxygen_lines, collapse = "\n")
+  roxygen_comments <- mapply(function(start, end) {
+    roxygen_lines <- lines[(start + 1):(end - 1)]
+    roxygen_lines <- sub("^@", "#' @", roxygen_lines)
+    list(line = start, text = paste(roxygen_lines, collapse = "\n"))
+  }, roxygen_start, roxygen_end, SIMPLIFY = FALSE)
+
+  roxygen_comments
 }
 
 wrap_call <- function(name, return_type, args) {
