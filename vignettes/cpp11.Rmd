@@ -16,6 +16,14 @@ knitr::opts_chunk$set(
   comment = "#>",
   eval = as.logical(Sys.getenv("CPP11_EVAL", "false"))
 )
+knitr::knit_hooks$set(strip_roxygen = function(before, options, envir) {
+  if (before) {
+    code <- options$code
+    code <- gsub("/\\* roxygen start.*?roxygen end \\*/", "", code, perl = TRUE)
+    options$code <- code
+    options
+  }
+})
 library(cpp11)
 ```
 
@@ -354,7 +362,7 @@ This is easy to do in RMarkdown by using `{cpp11}` instead of `{r}` at the begin
 It is possible to use `roxygen2` to document your C++ functions. Here is an
 example of how to do this:
 
-```{cpp11, eval = FALSE}
+```{cpp11, strip_roxygen = TRUE}
 /* roxygen start
 @title Mean of a numeric vector
 @param x A numeric vector
