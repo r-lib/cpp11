@@ -1327,9 +1327,10 @@ inline SEXP r_vector<T>::reserve_data(SEXP x, bool is_altrep, R_xlen_t size) {
   SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
   if (names != R_NilValue) {
     if (Rf_xlength(names) != size) {
-      names = resize_names(names, size);
+      SEXP resized_names = PROTECT(resize_names(names, size));
+      Rf_setAttrib(out, R_NamesSymbol, resized_names);
+      UNPROTECT(1);
     }
-    Rf_setAttrib(out, R_NamesSymbol, names);
   }
 
   // Copy over "most" attributes, and set OBJECT bit and S4 bit as needed.
