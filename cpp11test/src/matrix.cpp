@@ -1,6 +1,6 @@
 #include "cpp11/matrix.hpp"
-#include "cpp11/dmatrix.hpp"
 #include "Rmath.h"
+#include "cpp11/dmatrix.hpp"
 #include "cpp11/doubles.hpp"
 using namespace cpp11;
 

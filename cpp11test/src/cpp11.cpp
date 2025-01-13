@@ -223,13 +223,6 @@ extern "C" SEXP _cpp11test_row_sums_3(SEXP x) {
   END_CPP11
 }
 // matrix.cpp
-cpp11::writable::doubles row_sums_4(cpp11::dsp_matrix<> x);
-extern "C" SEXP _cpp11test_row_sums_4(SEXP x) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(row_sums_4(cpp11::as_cpp<cpp11::decay_t<cpp11::dsp_matrix<>>>(x)));
-  END_CPP11
-}
-// matrix.cpp
 cpp11::doubles col_sums(cpp11::doubles_matrix<cpp11::by_column> x);
 extern "C" SEXP _cpp11test_col_sums(SEXP x) {
   BEGIN_CPP11
@@ -541,7 +534,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_row_sums",                 (DL_FUNC) &_cpp11test_row_sums,                 1},
     {"_cpp11test_row_sums_2",               (DL_FUNC) &_cpp11test_row_sums_2,               1},
     {"_cpp11test_row_sums_3",               (DL_FUNC) &_cpp11test_row_sums_3,               1},
-    {"_cpp11test_row_sums_4",               (DL_FUNC) &_cpp11test_row_sums_4,               1},
     {"_cpp11test_string_proxy_assignment_", (DL_FUNC) &_cpp11test_string_proxy_assignment_, 0},
     {"_cpp11test_string_push_back_",        (DL_FUNC) &_cpp11test_string_push_back_,        0},
     {"_cpp11test_sum_dbl_accumulate2_",     (DL_FUNC) &_cpp11test_sum_dbl_accumulate2_,     1},

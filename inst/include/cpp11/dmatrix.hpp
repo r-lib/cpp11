@@ -18,7 +18,7 @@ class dge_matrix {
  public:
   dge_matrix(SEXP data) {
     SEXP x_slot = R_do_slot(data, Rf_install("x"));
-    
+
     // get dimensions
 
     // nrow_ = Rf_nrows(data);
