@@ -14,6 +14,7 @@
 #include "cpp11/list_of.hpp"
 #include "cpp11/logicals.hpp"
 #include "cpp11/matrix.hpp"
+#include "cpp11/dmatrix.hpp"
 #include "cpp11/named_arg.hpp"
 #include "cpp11/protect.hpp"
 #include "cpp11/r_bool.hpp"

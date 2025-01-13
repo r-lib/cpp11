@@ -1,4 +1,5 @@
 #include "cpp11/matrix.hpp"
+#include "cpp11/dmatrix.hpp"
 #include "Rmath.h"
 #include "cpp11/doubles.hpp"
 using namespace cpp11;
@@ -82,8 +83,40 @@ using namespace Rcpp;
     }
     ++i;
   }
-
+  // 4
   return sums;
+}
+
+[[cpp11::register]] cpp11::doubles row_sums_2(cpp11::dge_matrix<> x) {
+  int nrow = x.nrow();
+  int ncol = x.ncol();
+  cpp11::writable::doubles result(nrow);
+
+  for (int i = 0; i < nrow; ++i) {
+    double sum = 0;
+    for (int j = 0; j < ncol; ++j) {
+      sum += x(i, j);
+    }
+    result[i] = sum;
+  }
+
+  return result;
+}
+
+[[cpp11::register]] cpp11::doubles row_sums_3(cpp11::dsy_matrix<> x) {
+  int nrow = x.nrow();
+  int ncol = x.ncol();
+  cpp11::writable::doubles result(nrow);
+
+  for (int i = 0; i < nrow; ++i) {
+    double sum = 0;
+    for (int j = 0; j < ncol; ++j) {
+      sum += x(i, j);
+    }
+    result[i] = sum;
+  }
+
+  return result;
 }
 
 [[cpp11::register]] cpp11::doubles col_sums(cpp11::doubles_matrix<cpp11::by_column> x) {
