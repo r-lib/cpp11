@@ -119,7 +119,6 @@ as_tibble(x, ".rows"_nm = num_rows, ".name_repair"_nm = name_repair);
 -   Some parts of [Attributes](https://CRAN.R-project.org/package=Rcpp/vignettes/Rcpp-attributes.pdf)
     -   No dependencies
     -   No random number generator restoration
-    -   No support for roxygen2 comments
     -   No interfaces
 
 ### RNGs
