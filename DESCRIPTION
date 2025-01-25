@@ -31,7 +31,6 @@ Suggests:
     glue,
     knitr,
     lobstr,
-    mockery,
     progress,
     rmarkdown,
     scales,

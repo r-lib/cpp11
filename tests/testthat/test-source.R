@@ -104,14 +104,17 @@ expect_equal(
 })
 
 test_that("generate_include_paths handles paths with spaces", {
+  # Windows test
   if (is_windows()) {
-    mockery::stub(generate_include_paths, "system.file", "C:\\a path with spaces\\cpp11")
-    expect_equal(generate_include_paths("cpp11"), "-I\"C:\\a path with spaces\\cpp11\"")
+    result <- generate_include_paths("cpp11", custom_path = "C:\\a path with spaces\\cpp11")
+    expect_equal(result, "-I\"C:\\a path with spaces\\cpp11\"")
   } else {
-    mockery::stub(generate_include_paths, "system.file", "/a path with spaces/cpp11")
-    expect_equal(generate_include_paths("cpp11"), "-I'/a path with spaces/cpp11'")
+    # Unix test
+    result <- generate_include_paths("cpp11", custom_path = "/a path with spaces/cpp11")
+    expect_equal(result, "-I'/a path with spaces/cpp11'")
   }
 })
+
 
 test_that("check_valid_attributes does not return an error if all registers are correct", {
   expect_error_free(
