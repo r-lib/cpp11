@@ -154,6 +154,7 @@ the$count <- 0L
 generate_cpp_name <- function(name, loaded_dlls = c("cpp11", names(getLoadedDLLs()))) {
   ext <- tools::file_ext(name)
   root <- tools::file_path_sans_ext(basename(name))
+  root <- gsub("[^[:alnum:]_]", "_", root)
   count <- 2
   new_name <- root
   while(new_name %in% loaded_dlls) {
