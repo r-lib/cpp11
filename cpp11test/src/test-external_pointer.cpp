@@ -10,6 +10,15 @@ void deleter(int* ptr) {
   delete ptr;
 }
 
+// Pacha: Test nullable external_pointer (#312)
+[[cpp11::register]] cpp11::external_pointer<int> nullable_extptr_1() {
+  return cpp11::external_pointer<int>(nullptr);
+}
+
+[[cpp11::register]] cpp11::external_pointer<int> nullable_extptr_2() {
+  return cpp11::external_pointer<int>(R_NilValue);
+}
+
 context("external_pointer-C++") {
   test_that("external_pointer works") {
     std::vector<int>* v = new std::vector<int>;
