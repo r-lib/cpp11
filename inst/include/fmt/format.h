@@ -2749,7 +2749,7 @@ constexpr auto operator""_a()
   return {};
 }
 #else
-constexpr auto operator"" _a(const char* s, size_t) -> detail::udl_arg<char> {
+constexpr auto operator""_a(const char* s, size_t) -> detail::udl_arg<char> {
   return {s};
 }
 #endif
@@ -2764,7 +2764,7 @@ constexpr auto operator"" _a(const char* s, size_t) -> detail::udl_arg<char> {
     std::string message = "The answer is {}"_format(42);
   \endrst
  */
-constexpr auto operator"" _format(const char* s, size_t n)
+constexpr auto operator""_format(const char* s, size_t n)
     -> detail::udl_formatter<char> {
   return {{s, n}};
 }
