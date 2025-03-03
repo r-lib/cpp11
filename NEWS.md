@@ -1,4 +1,4 @@
-# cpp11 (development version)
+# cpp11 0.5.2
 
 * Fixed an issue related to `-Wdeprecated-literal-operator` (#447, @andrjohns).
 
