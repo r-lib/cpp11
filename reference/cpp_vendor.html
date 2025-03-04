@@ -9,7 +9,7 @@ project is using. It is often used in the go language community."><script defer 
 
     <a class="navbar-brand me-2" href="../index.html">cpp11</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,14 +88,18 @@ code until you run <code>cpp_vendor()</code> again.</p>
 <span class="r-in"><span><span class="fu">cpp_vendor</span><span class="op">(</span><span class="va">dir</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"inst"</span>, <span class="st">"include"</span>, <span class="st">"cpp11"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "R.hpp"                "altrep.hpp"           "as.hpp"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "attribute_proxy.hpp"  "data_frame.hpp"       "declarations.hpp"    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "doubles.hpp"          "environment.hpp"      "external_pointer.hpp"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "function.hpp"         "integers.hpp"         "list.hpp"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "list_of.hpp"          "logicals.hpp"         "matrix.hpp"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "named_arg.hpp"        "protect.hpp"          "r_bool.hpp"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "r_string.hpp"         "r_vector.hpp"         "raws.hpp"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [22] "sexp.hpp"             "strings.hpp"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "R.hpp"                "altrep.hpp"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "as.hpp"               "attribute_proxy.hpp" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "data_frame.hpp"       "declarations.hpp"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "doubles.hpp"          "environment.hpp"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "external_pointer.hpp" "function.hpp"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "integers.hpp"         "list.hpp"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "list_of.hpp"          "logicals.hpp"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "matrix.hpp"           "named_arg.hpp"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "protect.hpp"          "r_bool.hpp"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "r_string.hpp"         "r_vector.hpp"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "raws.hpp"             "sexp.hpp"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [23] "strings.hpp"         </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># cleanup</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
