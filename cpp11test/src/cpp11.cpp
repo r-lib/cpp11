@@ -324,6 +324,41 @@ extern "C" SEXP _cpp11test_string_push_back_() {
     return cpp11::as_sexp(string_push_back_());
   END_CPP11
 }
+// strings.cpp
+cpp11::strings grow_strings_cpp11_(size_t n, int seed);
+extern "C" SEXP _cpp11test_grow_strings_cpp11_(SEXP n, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(grow_strings_cpp11_(cpp11::as_cpp<cpp11::decay_t<size_t>>(n), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+  END_CPP11
+}
+// strings.cpp
+Rcpp::CharacterVector grow_strings_rcpp_(size_t n, int seed);
+extern "C" SEXP _cpp11test_grow_strings_rcpp_(SEXP n, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(grow_strings_rcpp_(cpp11::as_cpp<cpp11::decay_t<size_t>>(n), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+  END_CPP11
+}
+// strings.cpp
+SEXP grow_strings_manual_(size_t n, int seed);
+extern "C" SEXP _cpp11test_grow_strings_manual_(SEXP n, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(grow_strings_manual_(cpp11::as_cpp<cpp11::decay_t<size_t>>(n), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+  END_CPP11
+}
+// strings.cpp
+cpp11::strings assign_cpp11_(size_t n, int seed);
+extern "C" SEXP _cpp11test_assign_cpp11_(SEXP n, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(assign_cpp11_(cpp11::as_cpp<cpp11::decay_t<size_t>>(n), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+  END_CPP11
+}
+// strings.cpp
+Rcpp::CharacterVector assign_rcpp_(size_t n, int seed);
+extern "C" SEXP _cpp11test_assign_rcpp_(SEXP n, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(assign_rcpp_(cpp11::as_cpp<cpp11::decay_t<size_t>>(n), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+  END_CPP11
+}
 // sum.cpp
 double sum_dbl_for_(cpp11::doubles x);
 extern "C" SEXP _cpp11test_sum_dbl_for_(SEXP x) {
@@ -472,6 +507,8 @@ extern "C" {
 extern SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_cpp11test_assign_cpp11_",            (DL_FUNC) &_cpp11test_assign_cpp11_,            2},
+    {"_cpp11test_assign_rcpp_",             (DL_FUNC) &_cpp11test_assign_rcpp_,             2},
     {"_cpp11test_col_sums",                 (DL_FUNC) &_cpp11test_col_sums,                 1},
     {"_cpp11test_cpp11_add_vec_for_",       (DL_FUNC) &_cpp11test_cpp11_add_vec_for_,       2},
     {"_cpp11test_cpp11_insert_",            (DL_FUNC) &_cpp11test_cpp11_insert_,            1},
@@ -488,6 +525,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_gibbs_rcpp",               (DL_FUNC) &_cpp11test_gibbs_rcpp,               2},
     {"_cpp11test_gibbs_rcpp2",              (DL_FUNC) &_cpp11test_gibbs_rcpp2,              2},
     {"_cpp11test_grow_",                    (DL_FUNC) &_cpp11test_grow_,                    1},
+    {"_cpp11test_grow_strings_cpp11_",      (DL_FUNC) &_cpp11test_grow_strings_cpp11_,      2},
+    {"_cpp11test_grow_strings_manual_",     (DL_FUNC) &_cpp11test_grow_strings_manual_,     2},
+    {"_cpp11test_grow_strings_rcpp_",       (DL_FUNC) &_cpp11test_grow_strings_rcpp_,       2},
     {"_cpp11test_my_message",               (DL_FUNC) &_cpp11test_my_message,               2},
     {"_cpp11test_my_message_n1",            (DL_FUNC) &_cpp11test_my_message_n1,            1},
     {"_cpp11test_my_message_n1fmt",         (DL_FUNC) &_cpp11test_my_message_n1fmt,         1},
