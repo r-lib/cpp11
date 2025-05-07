@@ -299,8 +299,6 @@ inline SEXP insert(SEXP x) {
   SETCDR(head, cell);
   SETCAR(next, cell);
 
-  UNPROTECT(2);
-
   return cell;
 }
 

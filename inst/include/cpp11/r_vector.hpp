@@ -1339,7 +1339,6 @@ inline SEXP r_vector<T>::reserve_data(SEXP x, bool is_altrep, R_xlen_t size) {
   // Does not look like it would ever error in our use cases, so no `safe[]`.
   Rf_copyMostAttrib(x, out);
 
-  UNPROTECT(2);
   return out;
 }
 
@@ -1364,7 +1363,6 @@ inline SEXP r_vector<T>::resize_data(SEXP x, bool is_altrep, R_xlen_t size) {
     }
   }
 
-  UNPROTECT(1);
   return out;
 }
 
@@ -1386,7 +1384,6 @@ inline SEXP r_vector<T>::resize_names(SEXP x, R_xlen_t size) {
     SET_STRING_ELT(out, i, R_BlankString);
   }
 
-  UNPROTECT(1);
   return out;
 }
 
