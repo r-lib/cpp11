@@ -35,8 +35,7 @@ class data_frame : public list {
     return R_NilValue;
   }
 
-  // @pachadotdev: + noexcept
-  static R_xlen_t calc_nrow(SEXP x) noexcept {
+  static R_xlen_t calc_nrow(SEXP x) {
     auto nms = get_attrib0(x, R_RowNamesSymbol);
     bool has_short_rownames =
         (Rf_isInteger(nms) && Rf_xlength(nms) == 2 && INTEGER(nms)[0] == NA_INTEGER);
@@ -59,8 +58,8 @@ class data_frame : public list {
   /* Adapted from
    * https://github.com/wch/r-source/blob/f2a0dfab3e26fb42b8b296fcba40cbdbdbec767d/src/main/attrib.c#L198-L207
    */
-  R_xlen_t nrow() const noexcept { return calc_nrow(*this); }
-  R_xlen_t ncol() const noexcept { return size(); }
+  R_xlen_t nrow() const { return calc_nrow(*this); }
+  R_xlen_t ncol() const { return size(); }
 };
 
 namespace writable {
@@ -90,16 +89,15 @@ class data_frame : public cpp11::data_frame {
   using cpp11::data_frame::ncol;
   using cpp11::data_frame::nrow;
 
-  // @pachadotdev: + noexcept
-  attribute_proxy<data_frame> attr(const char* name) const noexcept const {
+  attribute_proxy<data_frame> attr(const char* name) const const {
     return {*this, name};
   }
 
-  attribute_proxy<data_frame> attr(const std::string& name) const noexcept {
+  attribute_proxy<data_frame> attr(const std::string& name) const {
     return {*this, name.c_str()};
   }
 
-  attribute_proxy<data_frame> attr(SEXP name) const noexcept { return {*this, name}; }
+  attribute_proxy<data_frame> attr(SEXP name) const { return {*this, name}; }
 
   attribute_proxy<data_frame> names() const { return {*this, R_NamesSymbol}; }
 };

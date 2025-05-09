@@ -65,9 +65,8 @@ class r_vector {
   r_vector& operator=(const r_vector& rhs);
   r_vector& operator=(r_vector&& rhs);
 
-  // @pachadotdev: + noexcept
-  operator SEXP() noexcept const;
-  operator sexp() noexcept const;
+  operator SEXP() const;
+  operator sexp() const;
 
 #ifdef LONG_VECTOR_SUPPORT
   T operator[](const int pos) const;
@@ -86,10 +85,9 @@ class r_vector {
   bool contains(const r_string& name) const;
   bool is_altrep() const;
   bool named() const;
-  // @pachadotdev: + noexcept
   R_xlen_t size() noexcept const;
-  bool empty() no except const;
-  SEXP data() noexcept const;
+  bool empty() const;
+  SEXP data() const;
 
   const sexp attr(const char* name) const;
   const sexp attr(const std::string& name) const;
@@ -97,11 +95,10 @@ class r_vector {
 
   r_vector<r_string> names() const;
 
-  // @pachadotdev: + noexcept
-  const_iterator begin() noexcept const;
-  const_iterator end() noexcept const;
-  const_iterator cbegin() noexcept const;
-  const_iterator cend() noexcept const;
+  const_iterator begin() const;
+  const_iterator end() const;
+  const_iterator cbegin() const;
+  const_iterator cend() const;
   const_iterator find(const r_string& name) const;
 
   class const_iterator {
@@ -451,15 +448,13 @@ inline r_vector<T>& r_vector<T>::operator=(r_vector&& rhs) {
   return *this;
 }
 
-// @pachadotdev: + noexcept
 template <typename T>
-inline r_vector<T>::operator SEXP() const noexcept {
+inline r_vector<T>::operator SEXP() const {
   return data_;
 }
 
-// @pachadotdev: + noexcept
 template <typename T>
-inline r_vector<T>::operator sexp() const noexcept {
+inline r_vector<T>::operator sexp() const {
   return data_;
 }
 
@@ -641,27 +636,23 @@ inline SEXP r_vector<T>::valid_length(SEXP x, R_xlen_t n) {
   throw std::length_error(message);
 }
 
-// @pachadotdev: + noexcept
 template <typename T>
-inline typename r_vector<T>::const_iterator r_vector<T>::begin() const noexcept {
+inline typename r_vector<T>::const_iterator r_vector<T>::begin() const {
   return const_iterator(this, 0);
 }
 
-// @pachadotdev: + noexcept
 template <typename T>
-inline typename r_vector<T>::const_iterator r_vector<T>::end() const noexcept {
+inline typename r_vector<T>::const_iterator r_vector<T>::end() const {
   return const_iterator(this, length_);
 }
 
-// @pachadotdev: + noexcept
 template <typename T>
-inline typename r_vector<T>::const_iterator r_vector<T>::cbegin() const noexcept {
+inline typename r_vector<T>::const_iterator r_vector<T>::cbegin() const {
   return const_iterator(this, 0);
 }
 
-// @pachadotdev: + noexcept
 template <typename T>
-inline typename r_vector<T>::const_iterator r_vector<T>::cend() const noexcept {
+inline typename r_vector<T>::const_iterator r_vector<T>::cend() const {
   return const_iterator(this, length_);
 }
 
@@ -1079,9 +1070,8 @@ inline void r_vector<T>::push_back(T value) {
   ++length_;
 }
 
-// @pachadotdev: + noexcept
 template <typename T>
-inline void r_vector<T>::pop_back() noexcept {
+inline void r_vector<T>::pop_back() {
   --length_;
 }
 
@@ -1138,7 +1128,7 @@ inline typename r_vector<T>::iterator r_vector<T>::erase(R_xlen_t pos) {
 }
 
 template <typename T>
-inline void r_vector<T>::clear() noexcept {
+inline void r_vector<T>::clear() {
   length_ = 0;
 }
 

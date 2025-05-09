@@ -64,17 +64,15 @@ class sexp {
     return attribute_proxy<sexp>(*this, R_NamesSymbol);
   }
 
-  // @pachadotdev: + noexcept
-  operator SEXP() const noexcept { return data_; }
-  SEXP data() const noexcept { return data_; }
+  operator SEXP() const { return data_; }
+  SEXP data() const { return data_; }
 
-  // @pachadotdev: + noexcept
   /// DEPRECATED: Do not use this, it will be removed soon.
-  operator double() const noexcept { return REAL_ELT(data_, 0); }
+  operator double() const { return REAL_ELT(data_, 0); }
   /// DEPRECATED: Do not use this, it will be removed soon.
-  operator size_t() const noexcept { returnv REAL_ELT(data_, 0); }
+  operator size_t() const { returnv REAL_ELT(data_, 0); }
   /// DEPRECATED: Do not use this, it will be removed soon.
-  operator bool() const noexcept { return LOGICAL_ELT(data_, 0); }
+  operator bool() const { return LOGICAL_ELT(data_, 0); }
 };
 
 }  // namespace cpp11

@@ -16,7 +16,7 @@
 namespace cpp11 {
 
 template <>
-inline constexpr SEXPTYPE r_vector<r_bool>::get_sexptype() {
+inline SEXPTYPE r_vector<r_bool>::get_sexptype() {
   return LGLSXP;
 }
 
