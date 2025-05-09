@@ -649,7 +649,7 @@ inline typename r_vector<T>::const_iterator r_vector<T>::begin() const noexcept 
 
 // @pachadotdev: + noexcept
 template <typename T>
-inline typename r_vector<T>::const_iterator r_vector<T>::end() const noexcept{
+inline typename r_vector<T>::const_iterator r_vector<T>::end() const noexcept {
   return const_iterator(this, length_);
 }
 

@@ -14,7 +14,7 @@ namespace cpp11 {
 
 // @pachadotdev: + noexcept
 template <typename T>
-void default_deleter(T* obj) noexcept{
+void default_deleter(T* obj) noexcept {
   delete obj;
 }
 
