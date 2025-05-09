@@ -66,8 +66,9 @@ enable_if_r_bool<T, SEXP> as_sexp(T from) {
   return res;
 }
 
+// @pachadotdev: + noexcept
 template <>
-inline r_bool na() {
+inline r_bool na() noexcept {
   return NA_LOGICAL;
 }
 

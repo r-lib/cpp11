@@ -48,9 +48,10 @@ class environment {
 
   void remove(const char* name) { remove(safe[Rf_install](name)); }
 
-  R_xlen_t size() const { return Rf_xlength(env_); }
+  // @pachadotdev: + noexcept
+  R_xlen_t size() const noexcept { return Rf_xlength(env_); }
 
-  operator SEXP() const { return env_; }
+  operator SEXP() const noexcept { return env_; }
 };
 
 }  // namespace cpp11

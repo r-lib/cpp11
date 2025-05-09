@@ -12,8 +12,9 @@
 
 namespace cpp11 {
 
+// @pachadotdev: + noexcept
 template <typename T>
-void default_deleter(T* obj) {
+void default_deleter(T* obj) noexcept{
   delete obj;
 }
 
@@ -33,12 +34,13 @@ class external_pointer {
     return data;
   }
 
-  static void r_deleter(SEXP p) {
+  // @pachadotdev: + noexcept
+  static void r_deleter(SEXP p) noexcept {
     if (detail::r_typeof(p) != EXTPTRSXP) return;
 
     T* ptr = static_cast<T*>(R_ExternalPtrAddr(p));
 
-    if (ptr == NULL) {
+    if (ptr == nullptr) {
       return;
     }
 

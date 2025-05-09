@@ -184,9 +184,10 @@ class matrix : public matrix_slices<S> {
 
   SEXP data() const { return vector_.data(); }
 
-  R_xlen_t size() const { return vector_.size(); }
+  // @pachadotdev: + noexcept
+  R_xlen_t size() const noexcept { return vector_.size(); }
 
-  operator SEXP() const { return SEXP(vector_); }
+  operator SEXP() const noexcept { return SEXP(vector_); }
 
   // operator sexp() { return sexp(vector_); }
 

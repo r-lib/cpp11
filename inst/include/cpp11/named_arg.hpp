@@ -11,7 +11,8 @@
 namespace cpp11 {
 class named_arg {
  public:
-  explicit named_arg(const char* name) : name_(name), value_(R_NilValue) {}
+  // @pachadotdev: + noexcept
+  explicit named_arg(const char* name) noexcept : name_(name), value_(R_NilValue) {}
   named_arg& operator=(std::initializer_list<int> il) {
     value_ = as_sexp(il);
     return *this;
@@ -39,7 +40,10 @@ class named_arg {
 
 namespace literals {
 
-inline named_arg operator""_nm(const char* name, std::size_t) { return named_arg(name); }
+// @pachadotdev: + noexcept
+inline named_arg operator""_nm(const char* name, std::size_t) noexcept {
+  return named_arg(name);
+}
 
 }  // namespace literals
 
