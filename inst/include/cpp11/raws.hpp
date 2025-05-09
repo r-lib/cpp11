@@ -68,8 +68,8 @@ typedef r_vector<uint8_t> raws;
 namespace writable {
 
 template <>
-inline void r_vector<uint8_t>::set_elt(
-    SEXP x, R_xlen_t i, typename r_vector::underlying_type value) {
+inline void r_vector<uint8_t>::set_elt(SEXP x, R_xlen_t i,
+                                       typename r_vector::underlying_type value) {
   // NOPROTECT: Likely too costly to unwind protect every set elt
 #if R_VERSION >= R_Version(4, 2, 0)
   SET_RAW_ELT(x, i, value);
