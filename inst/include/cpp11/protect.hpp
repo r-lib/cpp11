@@ -281,21 +281,17 @@ inline SEXP insert(SEXP x) {
     return R_NilValue;
   }
 
-  PROTECT(x);
-
   SEXP list = get();
 
   // Get references to the head of the preserve list and the next element
-  // after the head
   SEXP head = list;
   SEXP next = CDR(list);
 
-  // Add a new cell that points to the current head + next.
-  SEXP cell = PROTECT(Rf_cons(head, next));
+  // Create the new cell
+  SEXP cell = Rf_cons(head, next);
   SET_TAG(cell, x);
 
-  // Update the head + next to point at the newly-created cell,
-  // effectively inserting that cell between the current head + next.
+  // Update the list structure
   SETCDR(head, cell);
   SETCAR(next, cell);
 
