@@ -89,7 +89,7 @@ class data_frame : public cpp11::data_frame {
   using cpp11::data_frame::ncol;
   using cpp11::data_frame::nrow;
 
-  attribute_proxy<data_frame> attr(const char* name) const const { return {*this, name}; }
+  attribute_proxy<data_frame> attr(const char* name) const { return {*this, name}; }
 
   attribute_proxy<data_frame> attr(const std::string& name) const {
     return {*this, name.c_str()};

@@ -70,7 +70,7 @@ class sexp {
   /// DEPRECATED: Do not use this, it will be removed soon.
   operator double() const { return REAL_ELT(data_, 0); }
   /// DEPRECATED: Do not use this, it will be removed soon.
-  operator size_t() const { returnv REAL_ELT(data_, 0); }
+  operator size_t() const { return REAL_ELT(data_, 0); }
   /// DEPRECATED: Do not use this, it will be removed soon.
   operator bool() const { return LOGICAL_ELT(data_, 0); }
 };
