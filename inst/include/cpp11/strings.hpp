@@ -137,12 +137,13 @@ typedef r_vector<r_string> strings;
 // 2nd, 3rd, ..., Nth name: reserve exactly one more, then emplace
 template <typename T>
 inline void r_vector<T>::push_back(const named_arg& value) {
+  push_back(value.value());
+  if (Rf_xlength(names()) == 0) {
+    cpp11::writable::strings new_nms(size());
+    names() = new_nms;
+  }
   cpp11::writable::strings nms(names());
-
-  nms.reserve(nms.size() + 1);
-  nms.push_back(value.name());
-
-  names() = nms;
+  nms[size() - 1] = value.name();
 }
 }  // namespace writable
 
