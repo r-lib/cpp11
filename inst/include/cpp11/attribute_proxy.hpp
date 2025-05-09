@@ -42,7 +42,7 @@ class attribute_proxy {
     return *this;
   }
 
-  operator SEXP() const { return safe[Rf_getAttrib](parent_.data(), symbol_); }
+  operator SEXP() const noexcept { return safe[Rf_getAttrib](parent_.data(), symbol_); }
 };
 
 }  // namespace cpp11
