@@ -186,7 +186,8 @@ struct protect {
 };
 constexpr struct protect safe = {};
 
-inline void check_user_interrupt() { safe[R_CheckUserInterrupt](); }
+// @pachadotdev: + noexcept
+inline void check_user_interrupt() noexcept { safe[R_CheckUserInterrupt](); }
 
 #ifdef CPP11_USE_FMT
 template <typename... Args>

@@ -64,8 +64,9 @@ class sexp {
     return attribute_proxy<sexp>(*this, R_NamesSymbol);
   }
 
-  operator SEXP() const { return data_; }
-  SEXP data() const { return data_; }
+  // @pachadotdev: + noexcept
+  operator SEXP() const noexcept { return data_; }
+  SEXP data() const noexcept { return data_; }
 
   /// DEPRECATED: Do not use this, it will be removed soon.
   operator double() const { return REAL_ELT(data_, 0); }
