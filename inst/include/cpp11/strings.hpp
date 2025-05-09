@@ -17,7 +17,7 @@
 namespace cpp11 {
 
 template <>
-inline SEXPTYPE r_vector<r_string>::get_sexptype() {
+inline constexpr SEXPTYPE r_vector<r_string>::get_sexptype() {
   return STRSXP;
 }
 

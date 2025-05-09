@@ -16,7 +16,7 @@
 namespace cpp11 {
 
 template <>
-inline SEXPTYPE r_vector<double>::get_sexptype() {
+inline constexpr SEXPTYPE r_vector<double>::get_sexptype() {
   return REALSXP;
 }
 
