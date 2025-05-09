@@ -85,7 +85,7 @@ class r_vector {
   bool contains(const r_string& name) const;
   bool is_altrep() const;
   bool named() const;
-  R_xlen_t size() noexcept const;
+  R_xlen_t size() const;
   bool empty() const;
   SEXP data() const;
 
