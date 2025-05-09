@@ -1320,16 +1320,17 @@ inline typename r_vector<T>::iterator r_vector<T>::iterator::operator+(R_xlen_t 
 template <typename T>
 inline SEXP r_vector<T>::reserve_data(SEXP x, bool is_altrep, R_xlen_t size) {
   // Resize core data
-  SEXP out = PROTECT(resize_data(x, is_altrep, size));
+  SEXP out = resize_data(x, is_altrep, size);
 
   // Resize names, if required
-  // Protection seems needed to make rchk happy
-  SEXP names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
+  SEXP names = Rf_getAttrib(x, R_NamesSymbol);
   if (names != R_NilValue) {
     if (Rf_xlength(names) != size) {
-      names = resize_names(names, size);
+      SEXP new_names = resize_names(names, size);
+      Rf_setAttrib(out, R_NamesSymbol, new_names);
+    } else {
+      Rf_setAttrib(out, R_NamesSymbol, names);
     }
-    Rf_setAttrib(out, R_NamesSymbol, names);
   }
 
   // Copy over "most" attributes, and set OBJECT bit and S4 bit as needed.
@@ -1338,9 +1339,6 @@ inline SEXP r_vector<T>::reserve_data(SEXP x, bool is_altrep, R_xlen_t size) {
   // as this is a vector.
   // Does not look like it would ever error in our use cases, so no `safe[]`.
   Rf_copyMostAttrib(x, out);
-
-  UNPROTECT(2);
-
   return out;
 }
 
@@ -1348,7 +1346,7 @@ template <typename T>
 inline SEXP r_vector<T>::resize_data(SEXP x, bool is_altrep, R_xlen_t size) {
   underlying_type const* v_x = get_const_p(is_altrep, x);
 
-  SEXP out = PROTECT(safe[Rf_allocVector](get_sexptype(), size));
+  SEXP out = safe[Rf_allocVector](get_sexptype(), size);
   underlying_type* v_out = get_p(ALTREP(out), out);
 
   const R_xlen_t x_size = Rf_xlength(x);
@@ -1365,30 +1363,24 @@ inline SEXP r_vector<T>::resize_data(SEXP x, bool is_altrep, R_xlen_t size) {
     }
   }
 
-  UNPROTECT(1);
-
   return out;
 }
 
 template <typename T>
 inline SEXP r_vector<T>::resize_names(SEXP x, R_xlen_t size) {
-  const SEXP* v_x = STRING_PTR_RO(x);
-
-  SEXP out = PROTECT(safe[Rf_allocVector](STRSXP, size));
+  SEXP out = safe[Rf_allocVector](STRSXP, size);
 
   const R_xlen_t x_size = Rf_xlength(x);
   const R_xlen_t copy_size = (x_size > size) ? size : x_size;
 
   for (R_xlen_t i = 0; i < copy_size; ++i) {
-    SET_STRING_ELT(out, i, v_x[i]);
+    SET_STRING_ELT(out, i, STRING_ELT(x, i));
   }
 
   // Ensure remaining names are initialized to `""`
   for (R_xlen_t i = copy_size; i < size; ++i) {
     SET_STRING_ELT(out, i, R_BlankString);
   }
-
-  UNPROTECT(1);
 
   return out;
 }
