@@ -132,9 +132,6 @@ inline r_vector<r_string>::r_vector(std::initializer_list<r_string> il)
 
 typedef r_vector<r_string> strings;
 
-// @pachadotdev:
-// 1st name - reserve one slot, then emplace
-// 2nd, 3rd, ..., Nth name: reserve exactly one more, then emplace
 template <typename T>
 inline void r_vector<T>::push_back(const named_arg& value) {
   push_back(value.value());
@@ -145,6 +142,7 @@ inline void r_vector<T>::push_back(const named_arg& value) {
   cpp11::writable::strings nms(names());
   nms[size() - 1] = value.name();
 }
+
 }  // namespace writable
 
 }  // namespace cpp11
