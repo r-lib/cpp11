@@ -148,8 +148,9 @@ context("integers-C++") {
     expect_true(x.value(0) == 1);
     expect_true(x.value(1) == 2);
     expect_true(x.value(2) == 3);
-    
-    // Test that value() works with C-style formatting (this was the original issue in #453)
+
+    // Test that value() works with C-style formatting (this was the original issue in
+    // #453)
     expect_true(x.value(0) == x[0]);
     expect_true(x.value(1) == x[1]);
     expect_true(x.value(2) == x[2]);
@@ -306,20 +307,20 @@ context("integers-C++") {
     expect_true(x.value(0) == 0);
     expect_true(x.value(1) == 10);
     expect_true(x.value(2) == 20);
-    
+
     // Test that explicit cast works
     expect_true((int)x[0] == 0);
     expect_true((int)x[1] == 10);
     expect_true((int)x[2] == 20);
-    
+
     // Test that auto assignment works (triggers implicit conversion)
     int val0 = x[0];
-    int val1 = x[1]; 
+    int val1 = x[1];
     int val2 = x[2];
     expect_true(val0 == 0);
     expect_true(val1 == 10);
     expect_true(val2 == 20);
-    
+
     // Test that value() and operator[] return equivalent results
     expect_true(x.value(0) == (int)x[0]);
     expect_true(x.value(1) == (int)x[1]);
@@ -331,17 +332,17 @@ context("integers-C++") {
 // Demo function to show the three ways to handle the proxy issue
 // To use this function:
 // 1. Run cpp11::cpp_register() to regenerate R bindings
-// 2. Rebuild and reinstall the package  
+// 2. Rebuild and reinstall the package
 // 3. Call test_proxy_issue_demo() from R
 void test_proxy_issue_demo() {
   cpp11::writable::integers x;
   for (int i = 0; i < 5; i++) {
     x.push_back(i);
-    
+
     // These all work correctly:
     Rprintf("Method 1 - cast: x[%d] = %d\n", i, (int)x[i]);
     Rprintf("Method 2 - value(): x[%d] = %d\n", i, x.value(i));
-    
+
     // This also works (auto triggers implicit conversion):
     int val = x[i];
     Rprintf("Method 3 - auto: x[%d] = %d\n", i, val);

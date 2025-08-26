@@ -54,13 +54,15 @@ class list_of : public writable::list {
 
 #ifdef LONG_VECTOR_SUPPORT
   proxy operator[](int pos) {
-    return {writable::list::operator[](static_cast<R_xlen_t>(pos))};
+    return { writable::list::operator[](static_cast<R_xlen_t>(pos)) };
   }
 #endif
 
   proxy operator[](R_xlen_t pos) { return writable::list::operator[](pos); }
 
-  proxy operator[](const char* pos) { return {writable::list::operator[](pos)}; }
+  proxy operator[](const char* pos) {
+    return { writable::list::operator[](pos) };
+  }
 
   proxy operator[](const std::string& pos) {
     return writable::list::operator[](pos.c_str());
