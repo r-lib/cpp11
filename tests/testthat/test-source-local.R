@@ -11,7 +11,9 @@ test_that("cpp_source local controls RTTI/vtable symbol visibility", {
   unload_dirs <- function(dirs) {
     dlls <- getLoadedDLLs()
     for (nm in names(dlls)) {
-      p <- dlls[[nm]]$path
+      # Some R builds/platforms expose different DLL info; access $path
+      # defensively to avoid errors when the structure differs (macOS).
+      p <- tryCatch({ dlls[[nm]]$path }, error = function(e) NULL)
       if (!is.null(p)) {
         for (d in dirs) {
           if (grepl(d, p, fixed = TRUE)) {
@@ -53,7 +55,7 @@ test_that("cpp_source local controls RTTI/vtable symbol visibility", {
   expect_silent(cpp_source(code = provider_code, dir = dirs$provider, clean = FALSE, local = TRUE))
   expect_error(
     cpp_source(code = consumer_code, dir = dirs$consumer, clean = FALSE),
-    regexp = "undefined symbol|symbol .* not found|undefined reference",
+    regexp = "undefined symbol|symbol .* not found|undefined reference|symbol not found in flat namespace",
     ignore.case = TRUE
   )
 
