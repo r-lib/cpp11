@@ -478,6 +478,20 @@ extern "C" SEXP _cpp11test_rcpp_push_and_truncate_(SEXP size_sxp) {
     return cpp11::as_sexp(rcpp_push_and_truncate_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(size_sxp)));
   END_CPP11
 }
+// test-external_pointer.cpp
+cpp11::external_pointer<int> nullable_extptr_1();
+extern "C" SEXP _cpp11test_nullable_extptr_1() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(nullable_extptr_1());
+  END_CPP11
+}
+// test-external_pointer.cpp
+cpp11::external_pointer<int> nullable_extptr_2();
+extern "C" SEXP _cpp11test_nullable_extptr_2() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(nullable_extptr_2());
+  END_CPP11
+}
 // test-protect-nested.cpp
 void test_destruction_inner();
 extern "C" SEXP _cpp11test_test_destruction_inner() {
@@ -540,6 +554,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_my_warning_n1",            (DL_FUNC) &_cpp11test_my_warning_n1,            1},
     {"_cpp11test_my_warning_n1fmt",         (DL_FUNC) &_cpp11test_my_warning_n1fmt,         1},
     {"_cpp11test_my_warning_n2fmt",         (DL_FUNC) &_cpp11test_my_warning_n2fmt,         2},
+    {"_cpp11test_nullable_extptr_1",        (DL_FUNC) &_cpp11test_nullable_extptr_1,        0},
+    {"_cpp11test_nullable_extptr_2",        (DL_FUNC) &_cpp11test_nullable_extptr_2,        0},
     {"_cpp11test_protect_many_",            (DL_FUNC) &_cpp11test_protect_many_,            1},
     {"_cpp11test_protect_many_cpp11_",      (DL_FUNC) &_cpp11test_protect_many_cpp11_,      1},
     {"_cpp11test_protect_many_preserve_",   (DL_FUNC) &_cpp11test_protect_many_preserve_,   1},

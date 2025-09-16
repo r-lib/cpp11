@@ -23,8 +23,9 @@ class external_pointer {
   sexp data_ = R_NilValue;
 
   static SEXP valid_type(SEXP data) {
-    if (data == nullptr) {
-      throw type_error(EXTPTRSXP, NILSXP);
+    // Pacha: Allow nullable external_pointer (#312)
+    if (data == R_NilValue) {
+      return data;
     }
     if (detail::r_typeof(data) != EXTPTRSXP) {
       throw type_error(EXTPTRSXP, detail::r_typeof(data));
@@ -120,7 +121,8 @@ class external_pointer {
     data_ = tmp;
   }
 
-  operator bool() noexcept { return data_ != nullptr; }
+  // Pacha: Support nullable external_pointer (#312)
+  operator bool() const noexcept { return data_ != R_NilValue; }
 };
 
 template <class T, void Deleter(T*)>
