@@ -49,7 +49,7 @@
 namespace cpp11 {
 namespace literals {
 
-constexpr R_xlen_t operator"" _xl(unsigned long long int value) { return value; }
+constexpr R_xlen_t operator""_xl(unsigned long long int value) { return value; }
 
 }  // namespace literals
 
