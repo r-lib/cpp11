@@ -124,6 +124,18 @@ col_sums <- function(x) {
   .Call(`_cpp11test_col_sums`, x)
 }
 
+mat_mat_copy_dimnames <- function(x) {
+  .Call(`_cpp11test_mat_mat_copy_dimnames`, x)
+}
+
+mat_sexp_copy_dimnames <- function(x) {
+  .Call(`_cpp11test_mat_sexp_copy_dimnames`, x)
+}
+
+mat_mat_create_dimnames <- function() {
+  .Call(`_cpp11test_mat_mat_create_dimnames`)
+}
+
 protect_one_ <- function(x, n) {
   invisible(.Call(`_cpp11test_protect_one_`, x, n))
 }

@@ -236,6 +236,27 @@ extern "C" SEXP _cpp11test_col_sums(SEXP x) {
     return cpp11::as_sexp(col_sums(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<cpp11::by_column>>>(x)));
   END_CPP11
 }
+// matrix.cpp
+cpp11::doubles_matrix<> mat_mat_copy_dimnames(cpp11::doubles_matrix<> x);
+extern "C" SEXP _cpp11test_mat_mat_copy_dimnames(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(mat_mat_copy_dimnames(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(x)));
+  END_CPP11
+}
+// matrix.cpp
+SEXP mat_sexp_copy_dimnames(cpp11::doubles_matrix<> x);
+extern "C" SEXP _cpp11test_mat_sexp_copy_dimnames(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(mat_sexp_copy_dimnames(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(x)));
+  END_CPP11
+}
+// matrix.cpp
+cpp11::doubles_matrix<> mat_mat_create_dimnames();
+extern "C" SEXP _cpp11test_mat_mat_create_dimnames() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(mat_mat_create_dimnames());
+  END_CPP11
+}
 // protect.cpp
 void protect_one_(SEXP x, int n);
 extern "C" SEXP _cpp11test_protect_one_(SEXP x, SEXP n) {
@@ -609,6 +630,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_gibbs_rcpp",               (DL_FUNC) &_cpp11test_gibbs_rcpp,               2},
     {"_cpp11test_gibbs_rcpp2",              (DL_FUNC) &_cpp11test_gibbs_rcpp2,              2},
     {"_cpp11test_grow_",                    (DL_FUNC) &_cpp11test_grow_,                    1},
+    {"_cpp11test_mat_mat_copy_dimnames",    (DL_FUNC) &_cpp11test_mat_mat_copy_dimnames,    1},
+    {"_cpp11test_mat_mat_create_dimnames",  (DL_FUNC) &_cpp11test_mat_mat_create_dimnames,  0},
+    {"_cpp11test_mat_sexp_copy_dimnames",   (DL_FUNC) &_cpp11test_mat_sexp_copy_dimnames,   1},
     {"_cpp11test_grow_strings_cpp11_",      (DL_FUNC) &_cpp11test_grow_strings_cpp11_,      2},
     {"_cpp11test_grow_strings_manual_",     (DL_FUNC) &_cpp11test_grow_strings_manual_,     2},
     {"_cpp11test_grow_strings_rcpp_",       (DL_FUNC) &_cpp11test_grow_strings_rcpp_,       2},
