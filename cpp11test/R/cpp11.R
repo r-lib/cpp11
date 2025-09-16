@@ -88,6 +88,18 @@ cpp11_insert_ <- function(num_sxp) {
   .Call(`_cpp11test_cpp11_insert_`, num_sxp)
 }
 
+ordered_map_to_list_ <- function(x) {
+  .Call(`_cpp11test_ordered_map_to_list_`, x)
+}
+
+ordered_map_to_list_2_ <- function(x) {
+  .Call(`_cpp11test_ordered_map_to_list_2_`, x)
+}
+
+unordered_map_to_list_ <- function(x) {
+  .Call(`_cpp11test_unordered_map_to_list_`, x)
+}
+
 gibbs_cpp <- function(N, thin) {
   .Call(`_cpp11test_gibbs_cpp`, N, thin)
 }

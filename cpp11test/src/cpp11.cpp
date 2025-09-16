@@ -173,6 +173,27 @@ extern "C" SEXP _cpp11test_cpp11_insert_(SEXP num_sxp) {
     return cpp11::as_sexp(cpp11_insert_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(num_sxp)));
   END_CPP11
 }
+// map.cpp
+SEXP ordered_map_to_list_(cpp11::doubles x);
+extern "C" SEXP _cpp11test_ordered_map_to_list_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(ordered_map_to_list_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
+  END_CPP11
+}
+// map.cpp
+SEXP ordered_map_to_list_2_(cpp11::doubles x);
+extern "C" SEXP _cpp11test_ordered_map_to_list_2_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(ordered_map_to_list_2_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
+  END_CPP11
+}
+// map.cpp
+SEXP unordered_map_to_list_(cpp11::doubles x);
+extern "C" SEXP _cpp11test_unordered_map_to_list_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(unordered_map_to_list_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
+  END_CPP11
+}
 // matrix.cpp
 SEXP gibbs_cpp(int N, int thin);
 extern "C" SEXP _cpp11test_gibbs_cpp(SEXP N, SEXP thin) {
@@ -603,6 +624,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_my_warning_n1",            (DL_FUNC) &_cpp11test_my_warning_n1,            1},
     {"_cpp11test_my_warning_n1fmt",         (DL_FUNC) &_cpp11test_my_warning_n1fmt,         1},
     {"_cpp11test_my_warning_n2fmt",         (DL_FUNC) &_cpp11test_my_warning_n2fmt,         2},
+    {"_cpp11test_ordered_map_to_list_",     (DL_FUNC) &_cpp11test_ordered_map_to_list_,     1},
+    {"_cpp11test_ordered_map_to_list_2_",   (DL_FUNC) &_cpp11test_ordered_map_to_list_2_,   1},
     {"_cpp11test_nullable_extptr_1",        (DL_FUNC) &_cpp11test_nullable_extptr_1,        0},
     {"_cpp11test_nullable_extptr_2",        (DL_FUNC) &_cpp11test_nullable_extptr_2,        0},
     {"_cpp11test_protect_many_",            (DL_FUNC) &_cpp11test_protect_many_,            1},
@@ -643,6 +666,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_sum_int_foreach_",         (DL_FUNC) &_cpp11test_sum_int_foreach_,         1},
     {"_cpp11test_test_destruction_inner",   (DL_FUNC) &_cpp11test_test_destruction_inner,   0},
     {"_cpp11test_test_destruction_outer",   (DL_FUNC) &_cpp11test_test_destruction_outer,   0},
+    {"_cpp11test_unordered_map_to_list_",   (DL_FUNC) &_cpp11test_unordered_map_to_list_,   1},
     {"_cpp11test_upper_bound",              (DL_FUNC) &_cpp11test_upper_bound,              2},
     {"run_testthat_tests",                  (DL_FUNC) &run_testthat_tests,                  1},
     {NULL, NULL, 0}
