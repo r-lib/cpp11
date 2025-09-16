@@ -1,7 +1,6 @@
 #pragma once
 
-#include <cstdlib>  // for abs
-#include <cstdlib>
+#include <cstdlib>           // for abs
 #include <initializer_list>  // for initializer_list
 #include <string>            // for string, basic_string
 #include <utility>           // for move

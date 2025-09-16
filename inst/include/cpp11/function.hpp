@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string.h>  // for strcmp
+#include <cstring>  // for std::strcmp (@pachadotdev use std qualifiers)
 
 #include <cstdio>   // for snprintf
 #include <string>   // for string, basic_string
