@@ -1,4 +1,4 @@
-# get_call_entries: returns an empty string for packages with .Call entries and NAMESPACE files
+# get_call_entries returns an empty string for packages with .Call entries and NAMESPACE files
 
     Code
       call_entries
@@ -11,7 +11,7 @@
       [6] "    {NULL, NULL, 0}"                           
       [7] "};"                                            
 
-# get_call_entries: works with multiple register functions.
+# get_call_entries works with multiple register functions
 
     Code
       cat(read_file(cpp_bindings))
@@ -60,7 +60,7 @@
         R_forceSymbols(dll, TRUE);
       }
 
-# cpp_register: works with a package that registers a single c++ function
+# cpp_register works with a package that registers a single C++ function
 
     Code
       cat(read_file(r_bindings))
@@ -104,7 +104,7 @@
         R_forceSymbols(dll, TRUE);
       }
 
-# cpp_register: can be run with messages
+# cpp_register can be run with messages
 
     Code
       cpp_register(p, quiet = FALSE)

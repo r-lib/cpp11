@@ -4,6 +4,12 @@
 
 * Fixed an issue related to `-Wdeprecated-literal-operator` (#447, @andrjohns).
 
+# cpp11 0.5.1.9000
+
+* Uses testthat 3e style tests (#402).
+* Removes the mockery dependence.
+* The vendoring function accepts a custom path (i.e., to use the GitHub version of the package)
+
 # cpp11 0.5.1
 
 * cpp11 now requires R >=4.0.0, in line with the

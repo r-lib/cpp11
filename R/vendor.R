@@ -16,6 +16,10 @@
 #' code until you run `cpp_vendor()` again.
 #'
 #' @inheritParams cpp_register
+#' @param headers The path to the cpp11 headers to vendor. By default this is
+#'  the path where R installed the cpp11 package. You can change this to
+#'  use a different version of cpp11, such as as the development version
+#'  from GitHub. 
 #' @return The file path to the vendored code (invisibly).
 #' @export
 #' @examples
@@ -30,17 +34,17 @@
 #'
 #' # cleanup
 #' unlink(dir, recursive = TRUE)
-cpp_vendor <- function(path = ".") {
+cpp_vendor <- function(path = ".", headers = system.file("include", "cpp11", package = "cpp11")) {
   new <- file.path(path, "inst", "include", "cpp11")
 
   if (dir.exists(new)) {
-    stop("'", new, "' already exists\n * run unlink('", new, "', recursive = TRUE)", call. = FALSE)
+    message("'", new, "' already exists, removing it")
+    cpp_unvendor(path)
   }
 
   dir.create(new , recursive = TRUE, showWarnings = FALSE)
 
-  current <- system.file("include", "cpp11", package = "cpp11")
-  if (!nzchar(current)) {
+  if (!nzchar(headers)) {
     stop("cpp11 is not installed", call. = FALSE)
   }
 
@@ -48,7 +52,7 @@ cpp_vendor <- function(path = ".") {
 
   cpp11_header <- sprintf("// cpp11 version: %s\n// vendored on: %s", cpp11_version, Sys.Date())
 
-  files <- list.files(current, full.names = TRUE)
+  files <- list.files(headers, full.names = TRUE)
 
   writeLines(
     c(cpp11_header, readLines(system.file("include", "cpp11.hpp", package = "cpp11"))),

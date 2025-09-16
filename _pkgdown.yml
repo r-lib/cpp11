@@ -25,6 +25,7 @@ reference:
   - title: Vendoring cpp11
     contents:
       - cpp_vendor
+      - cpp_unvendor
 
 navbar:
   type: default

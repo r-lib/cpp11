@@ -84,8 +84,24 @@ grow_ <- function(n) {
   .Call(`_cpp11test_grow_`, n)
 }
 
+grow_cplx_ <- function(n) {
+  .Call(`_cpp11test_grow_cplx_`, n)
+}
+
 cpp11_insert_ <- function(num_sxp) {
   .Call(`_cpp11test_cpp11_insert_`, num_sxp)
+}
+
+ordered_map_to_list_ <- function(x) {
+  .Call(`_cpp11test_ordered_map_to_list_`, x)
+}
+
+ordered_map_to_list_2_ <- function(x) {
+  .Call(`_cpp11test_ordered_map_to_list_2_`, x)
+}
+
+unordered_map_to_list_ <- function(x) {
+  .Call(`_cpp11test_unordered_map_to_list_`, x)
 }
 
 gibbs_cpp <- function(N, thin) {
@@ -110,6 +126,18 @@ row_sums <- function(x) {
 
 col_sums <- function(x) {
   .Call(`_cpp11test_col_sums`, x)
+}
+
+mat_mat_copy_dimnames <- function(x) {
+  .Call(`_cpp11test_mat_mat_copy_dimnames`, x)
+}
+
+mat_sexp_copy_dimnames <- function(x) {
+  .Call(`_cpp11test_mat_sexp_copy_dimnames`, x)
+}
+
+mat_mat_create_dimnames <- function() {
+  .Call(`_cpp11test_mat_mat_create_dimnames`)
 }
 
 protect_one_ <- function(x, n) {
@@ -156,6 +184,63 @@ rcpp_release_ <- function(n) {
   invisible(.Call(`_cpp11test_rcpp_release_`, n))
 }
 
+notroxcpp1_ <- function(x) {
+  .Call(`_cpp11test_notroxcpp1_`, x)
+}
+
+#' @title Roxygenise C++ function II
+#' @param x numeric value
+#' @description Dummy function to test roxygen2. It adds 2.0 to a double.
+#' @export
+#' @examples roxcpp2_(1.0)
+roxcpp2_ <- function(x) {
+	.Call(`_cpp11test_roxcpp2_`, x)
+}
+
+#' @title Roxygenise C++ function III
+#' @param x numeric value
+#' @description Dummy function to test roxygen2. It adds 3.0 to a double.
+#' @export
+#' @examples roxcpp3_(1.0)
+roxcpp3_ <- function(x) {
+	.Call(`_cpp11test_roxcpp3_`, x)
+}
+
+#' @title Roxygenise C++ function IV
+#' @param x numeric value
+#' @description Dummy function to test roxygen2. It adds 4.0 to a double.
+#' @export
+#' @examples roxcpp4_(1.0)
+roxcpp4_ <- function(x) {
+	.Call(`_cpp11test_roxcpp4_`, x)
+}
+
+#' @title Roxygenise C++ function V
+#' @param x numeric value
+#' @description Dummy function to test roxygen2. It adds 5.0 to a double.
+#' @export
+#' @examples roxcpp5_(1.0)
+roxcpp5_ <- function(x) {
+	.Call(`_cpp11test_roxcpp5_`, x)
+}
+
+notroxcpp6_ <- function(x) {
+  .Call(`_cpp11test_notroxcpp6_`, x)
+}
+
+#' @title Roxygenise C++ function VII
+#' @param x numeric value
+#' @description Dummy function to test roxygen2. It adds 7.0 to a double.
+#' @export
+#' @examples
+#' my_fun <- function(x) {
+#'   roxcpp7_(x)
+#' }
+#' @seealso \code{\link{roxcpp1_}}
+roxcpp7_ <- function(x) {
+	.Call(`_cpp11test_roxcpp7_`, x)
+}
+
 cpp11_safe_ <- function(x_sxp) {
   .Call(`_cpp11test_cpp11_safe_`, x_sxp)
 }
@@ -166,6 +251,26 @@ string_proxy_assignment_ <- function() {
 
 string_push_back_ <- function() {
   .Call(`_cpp11test_string_push_back_`)
+}
+
+grow_strings_cpp11_ <- function(n, seed) {
+  .Call(`_cpp11test_grow_strings_cpp11_`, n, seed)
+}
+
+grow_strings_rcpp_ <- function(n, seed) {
+  .Call(`_cpp11test_grow_strings_rcpp_`, n, seed)
+}
+
+grow_strings_manual_ <- function(n, seed) {
+  .Call(`_cpp11test_grow_strings_manual_`, n, seed)
+}
+
+assign_cpp11_ <- function(n, seed) {
+  .Call(`_cpp11test_assign_cpp11_`, n, seed)
+}
+
+assign_rcpp_ <- function(n, seed) {
+  .Call(`_cpp11test_assign_rcpp_`, n, seed)
 }
 
 sum_dbl_for_ <- function(x) {
@@ -194,6 +299,42 @@ sum_dbl_accumulate_ <- function(x) {
 
 sum_dbl_accumulate2_ <- function(x_sxp) {
   .Call(`_cpp11test_sum_dbl_accumulate2_`, x_sxp)
+}
+
+sum_cplx_for_ <- function(x) {
+  .Call(`_cpp11test_sum_cplx_for_`, x)
+}
+
+sum_cplx_for_2_ <- function(x) {
+  .Call(`_cpp11test_sum_cplx_for_2_`, x)
+}
+
+sum_cplx_for_3_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for_3_`, x_sxp)
+}
+
+sum_cplx_for_4_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for_4_`, x_sxp)
+}
+
+sum_cplx_for_5_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for_5_`, x_sxp)
+}
+
+sum_cplx_for_6_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for_6_`, x_sxp)
+}
+
+sum_cplx_foreach_ <- function(x) {
+  .Call(`_cpp11test_sum_cplx_foreach_`, x)
+}
+
+sum_cplx_accumulate_ <- function(x) {
+  .Call(`_cpp11test_sum_cplx_accumulate_`, x)
+}
+
+sum_cplx_for2_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for2_`, x_sxp)
 }
 
 sum_int_for_ <- function(x) {
@@ -234,6 +375,14 @@ rcpp_grow_ <- function(n_sxp) {
 
 rcpp_push_and_truncate_ <- function(size_sxp) {
   .Call(`_cpp11test_rcpp_push_and_truncate_`, size_sxp)
+}
+
+nullable_extptr_1 <- function() {
+  .Call(`_cpp11test_nullable_extptr_1`)
+}
+
+nullable_extptr_2 <- function() {
+  .Call(`_cpp11test_nullable_extptr_2`)
 }
 
 test_destruction_inner <- function() {
