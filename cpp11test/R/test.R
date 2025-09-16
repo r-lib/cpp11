@@ -22,6 +22,5 @@ run_tests <- function(reporter = testthat::default_reporter()) {
   on.exit(setwd(old))
   setwd(system.file("tests", package = "cpp11test"))
 
-  library(testthat)
-  test_check("cpp11test", reporter = reporter)
+  testthat::test_check("cpp11test", reporter = reporter)
 }
