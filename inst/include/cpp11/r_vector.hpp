@@ -235,7 +235,9 @@ class r_vector : public cpp11::r_vector<T> {
   proxy at(const r_string& name) const;
 
   void push_back(T value);
-  /// Implemented in `strings.hpp`
+  template <typename U = T,
+            typename std::enable_if<std::is_same<U, r_string>::value>::type* = nullptr>
+  void push_back(const std::string& value);  // Pacha: r_string only (#406)
   void push_back(const named_arg& value);
   void pop_back();
 
@@ -255,6 +257,15 @@ class r_vector : public cpp11::r_vector<T> {
   using cpp11::r_vector<T>::size;
 
   iterator find(const r_string& name) const;
+
+  /// Get the value at position without returning a proxy
+  /// This is useful when you need the actual value (e.g., for C-style printf functions)
+  /// that don't trigger implicit conversions from proxy types
+#ifdef LONG_VECTOR_SUPPORT
+  T value(const int pos) const;
+#endif
+  T value(const R_xlen_t pos) const;
+  T value(const size_type pos) const;
 
   attribute_proxy<r_vector<T>> attr(const char* name) const;
   attribute_proxy<r_vector<T>> attr(const std::string& name) const;
@@ -865,7 +876,8 @@ inline r_vector<T>::r_vector(std::initializer_list<named_arg> il)
   }
 
   unwind_protect([&] {
-    SEXP names = Rf_allocVector(STRSXP, capacity_);
+    SEXP names;
+    PROTECT(names = Rf_allocVector(STRSXP, capacity_));
     Rf_setAttrib(data_, R_NamesSymbol, names);
 
     auto it = il.begin();
@@ -898,6 +910,8 @@ inline r_vector<T>::r_vector(std::initializer_list<named_arg> il)
       SEXP name = Rf_mkCharCE(it->name(), CE_UTF8);
       SET_STRING_ELT(names, i, name);
     }
+
+    UNPROTECT(1);
   });
 }
 
@@ -1162,6 +1176,24 @@ inline typename r_vector<T>::iterator r_vector<T>::find(const r_string& name) co
 
   UNPROTECT(1);
   return end();
+}
+
+#ifdef LONG_VECTOR_SUPPORT
+template <typename T>
+inline T r_vector<T>::value(const int pos) const {
+  return value(static_cast<R_xlen_t>(pos));
+}
+#endif
+
+template <typename T>
+inline T r_vector<T>::value(const R_xlen_t pos) const {
+  // Use the parent read-only class's operator[] which returns T directly
+  return cpp11::r_vector<T>::operator[](pos);
+}
+
+template <typename T>
+inline T r_vector<T>::value(const size_type pos) const {
+  return value(static_cast<R_xlen_t>(pos));
 }
 
 template <typename T>
