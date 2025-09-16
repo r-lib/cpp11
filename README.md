@@ -1,10 +1,10 @@
 # cpp11
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/r-lib/cpp11/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/cpp11/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://app.codecov.io/gh/r-lib/cpp11/branch/main/graph/badge.svg?token=EEWYoCYxQ2)](https://app.codecov.io/gh/r-lib/cpp11)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![R-CMD-check](https://github.com/r-lib/cpp11/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/cpp11/actions/workflows/R-CMD-check.yaml)
 [![CRAN status](https://www.r-pkg.org/badges/version/cpp11)](https://CRAN.R-project.org/package=cpp11)
+[![Codecov test coverage](https://codecov.io/gh/r-lib/cpp11/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r-lib/cpp11?branch=main)
 <!-- badges: end -->
 
 cpp11 helps you to interact with R objects using C++ code.
@@ -18,7 +18,7 @@ To add cpp11 to an existing package, put your C++ files in the `src/` directory 
 LinkingTo: cpp11
 ```
 
-Then decorate C++ functions you want to expose to R with `[[cpp11::register]]`. 
+Then decorate C++ functions you want to expose to R with `[[cpp11::register]]`.
 *Note that this is a [C++11 attribute](https://en.cppreference.com/w/cpp/language/attributes), not a comment like is used in Rcpp.*
 
 cpp11 is a header only library with no hard dependencies and does not use a shared library, so it is straightforward and reliable to use in packages without fear of compile-time and run-time mismatches.
@@ -30,9 +30,9 @@ This ensures the headers will remain unchanged until you explicitly update them.
 
 See [vignette("cpp11")](https://cpp11.r-lib.org/articles/cpp11.html) to get started using cpp11 in your scripts, particularly if you are new to C++ programming.
 
-## Getting help [![RStudio community](https://img.shields.io/badge/community-cpp11-blue?style=social&logo=rstudio&logoColor=75AADB)](https://community.rstudio.com/new-topic?category=Package%20development&tags=cpp11)
+## Getting help
 
-[RStudio community](https://community.rstudio.com/new-topic?category=Package%20development&tags=cpp11) with the `cpp11` tag is the best place to ask for help using cpp11 or interfacing C++ with R.
+[Posit Community](https://forum.posit.co/) is the best place to ask for help using cpp11 or interfacing C++ with R.
 
 ## Motivations
 
@@ -78,3 +78,13 @@ Please note that the cpp11 project is released with a [Contributor Code of Condu
 
 cpp11 would not exist without Rcpp.
 Thanks to the Rcpp authors, Dirk Eddelbuettel, Romain Francois, JJ Allaire, Kevin Ushey, Qiang Kou, Nathan Russell, Douglas Bates and John Chambers for their work writing and maintaining Rcpp.
+
+## Clang format
+
+To match GHA, use clang-format-12 to format C++ code. With systems that provide clang-format-14 or newer, you can use Docker:
+
+```bash
+docker run --rm -v "$PWD":/work -w /work ubuntu:22.04 bash -lc "\
+  apt-get update && apt-get install -y clang-format-12 && \
+  find . -name '*.cpp' -o -name '*.hpp' -o -name '*.h' | xargs -r clang-format-12 -i"
+```

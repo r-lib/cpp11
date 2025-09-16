@@ -1,5 +1,149 @@
 # cpp11 (development version)
 
+# cpp11 0.5.2
+
+* Fixed an issue related to `-Wdeprecated-literal-operator` (#447, @andrjohns).
+
+# cpp11 0.5.1.9000
+
+* Uses testthat 3e style tests (#402).
+* Removes the mockery dependence.
+* The vendoring function accepts a custom path (i.e., to use the GitHub version of the package)
+
+# cpp11 0.5.1
+
+* cpp11 now requires R >=4.0.0, in line with the
+  [tidyverse version policy](https://www.tidyverse.org/blog/2019/04/r-version-support/) (#411).
+
+* Because cpp11 now requires R >=4.0.0, a number of previously optional tools
+  are now always available, allowing us to remove some dead code. In
+  particular:
+  
+  * `R_UnwindProtect()` is always available, so the defines `HAS_UNWIND_PROTECT`
+    and `CPP11_UNWIND` are no longer useful.
+
+  * ALTREP is always available, so the file `cpp11/altrep.hpp` and the define
+    `HAS_ALTREP` are no longer useful.
+
+  We would like to remove the dead code regarding these tools in the future, so
+  we ask that you please remove usage of them from your own packages (#411).
+
+* `R_NO_REMAP` and `STRICT_R_HEADERS` are now conditionally defined only if they
+  have not already been defined elsewhere. This is motivated by the fact that
+  `R_NO_REMAP` is becoming the default for C++ code in R 4.5.0 (#410).
+
+* Fixed a small protection issue flagged by rchk (#408).
+
+# cpp11 0.5.0
+
+## R non-API related changes
+
+* Removed usage of the following R non-API functions:
+
+  * `SETLENGTH()`
+
+  * `SET_TRUELENGTH()`
+
+  * `SET_GROWABLE_BIT()`
+
+  These functions were used as part of the efficient growable vectors that
+  cpp11 offered, i.e. what happens under the hood when you use `push_back()`.
+  The removal of these non-API functions means that cpp11 writable vectors that
+  have been pushed to with `push_back()` will likely force 1 extra allocation
+  when the conversion from `cpp11::writable::r_vector<T>` to `SEXP` occurs
+  (typically when you return a result back to R). This does not affect the
+  performance of `push_back()` itself, and in general these growable vectors
+  are still quite efficient (#362).
+
+* The `environment` class no longer uses the non-API function
+  `Rf_findVarInFrame3()` (#367).
+
+  * The `exists()` method now uses the new `R_existsVarInFrame()` function.
+
+  * The `SEXP` conversion operator now uses the new `R_getVar()` function. Note
+    that this is stricter than `Rf_findVarInFrame3()` in 3 ways. The object
+    must exist in the environment (i.e. `R_UnboundValue` is no longer returned),
+    the object cannot be `R_MissingArg`, and if the object was a promise, that
+    promise is now evaluated. We have backported this new strictness to older
+    versions of R as well.
+
+## New features
+
+* `cpp11::writable::r_vector<T>::proxy` now implements copy assignment.
+  Practically this means that `x[i] = y[i]` now works when both `x` and `y`
+  are writable vectors (#300, #339).
+
+* New `writable::data_frame` constructor that also takes the number of rows as
+  input. This accounts for the edge case where the input list has 0 columns but
+  you'd still like to specify a known number of rows (#272).
+
+* `std::max_element()` can now be used with writable vectors (#334).
+
+* Read only `r_vector`s now have a move constructor and move assignment
+  operator (#365).
+
+## Improvements and fixes
+
+* Repeated assignment to a `cpp11::writable::strings` vector through either
+  `x[i] = elt` or `x.push_back(elt)` is now more performant, at the tradeoff
+  of slightly less safety (as long as `elt` is actually a `CHARSXP` and `i` is
+  within bounds, there is no chance of failure, which are the same kind of
+  invariants placed on the other vector types) (#378).
+
+* Constructors for writable vectors from `initializer_list<named_arg>` now
+  check that `named_arg` contains a length 1 object of the correct type, and
+  throws either a `cpp11::type_error` or `std::length_error` if that is not the
+  case (#382).
+
+* `cpp11::package` now errors if given a package name that hasn't been loaded
+  yet. Previously it would cause R to hang indefinitely (#317).
+
+* `cpp11::function` now protects its underlying function, for maximum safety
+  (#294).
+
+* `cpp11::writable::r_vector<T>::iterator` no longer implicitly deletes its
+  copy assignment operator (#360).
+
+* Added the missing implementation for `x.at("name")` for read only vectors
+  (#370).
+
+* Fixed an issue with the `writable::matrix` copy constructor where the
+  underlying SEXP should have been copied but was not. It is now consistent with
+  the behavior of the equivalent `writable::r_vector` copy constructor.
+
+* Fixed a memory leak with the `cpp11::writable::r_vector` move assignment
+  operator (#338).
+
+* Fixed an issue where writable vectors were being protected twice (#365).
+
+* The approach for the protection list managed by cpp11 has been tweaked
+  slightly. In 0.4.6, we changed to an approach that creates one protection list
+  per compilation unit, but we now believe we've found an approach that is
+  guaranteed by the C++ standard to create one protection list per package,
+  which makes slightly more sense and still has all the benefits of the reduced
+  maintanence burden mentioned in the 0.4.6 news bullet (#364).
+
+  A side effect of this new approach is that the `preserved` object exposed
+  through `protect.hpp` no longer exists. We don't believe that anyone was using
+  this. This also means you should no longer see "unused variable" warnings
+  about `preserved` (#249).
+
+## Breaking changes
+
+* R >=3.6.0 is now required. This is in line with (and even goes beyond) the
+  tidyverse standard of supporting the previous 5 minor releases of R.
+
+* Implicit conversion from `sexp` to `bool`, `size_t`, and `double` has been
+  marked as deprecated and will be removed in the next version of cpp11. The 3
+  packages that were using this have been notified and sent PRs. The recommended
+  approach is to instead use `cpp11::as_cpp<T>`, which performs type and length
+  checking, making it much safer to use.
+
+* Dropped support for gcc 4.8, mainly an issue for extremely old CentOS 7
+  systems which used that as their default compiler. As of June 2024, CentOS 7
+  is past its vendor end of support date and therefore also out of scope for
+  Posit at this time (#359).
+
 # cpp11 0.4.7
 
 * Internal changes requested by CRAN to fix invalid format string tokens
@@ -11,7 +155,7 @@
   beyond) the tidyverse standard of supporting the previous 5 minor releases of
   R. It also ensures that `R_UnwindProtect()` is available to avoid C++ memory
   leaks (#332).
-  
+
 * `cpp11::preserved.release_all()` has been removed. This was intended to
   support expert developers on R <3.5.0 when cpp11 used a global protection
   list. Since cpp11 no longer uses a global protection list and requires R
@@ -30,7 +174,7 @@
   than it is worth and is very hard to use safely. For more information, see the
   new `vignette("FAQ")` section titled "Should I call `cpp11::unwind_protect()`
   manually?" (#327).
-  
+
 * The features and bug fixes from cpp11 0.4.4 have been added back in.
 
 # cpp11 0.4.5
@@ -41,7 +185,7 @@
 
 # cpp11 0.4.4
 
-* Davis Vaughan is now the maintainer. 
+* Davis Vaughan is now the maintainer.
 
 * `as_doubles()` and `as_integers()` now propagate missing values correctly
    (#265, #319).
@@ -51,7 +195,7 @@
 * Minor performance improvements to the cpp11 protect code. (@kevinushey)
 
 * `cpp_register()` gains an argument `extension=` governing the file extension of
-  the `src/cpp11` file. By default it's `.cpp`, but `.cc` is now supported 
+  the `src/cpp11` file. By default it's `.cpp`, but `.cc` is now supported
   as well (#292, @MichaelChirico)
 
 # cpp11 0.4.3
@@ -60,7 +204,7 @@
   better align with changes in those workflows and the latest version of R
   (#279).
 
-* `cpp_source()` errors on non-existent file (#261). 
+* `cpp_source()` errors on non-existent file (#261).
 
 * `cpp_register()` is quiet by default when R is non interactive (#289).
 
@@ -78,7 +222,7 @@
 
 ## New Features
 
-* New opt-in message formatting with the {fmt} C++ library for `cpp11::messages()` `cpp11::stop()` and `cpp11::warning()`. 
+* New opt-in message formatting with the {fmt} C++ library for `cpp11::messages()` `cpp11::stop()` and `cpp11::warning()`.
   Set the `CPP11_USE_FMT` macro to use this feature in your package. (@sbearrows, #169, #208)
 * New `as_double()` and `as_integer()` methods to coerce integers to doubles and doubles to integers to doubles (@sbearrows, #46)
 * `cpp11::matrix` iterators can now be used either row-wise or column-wise (the default) depending on the user's choice (@alyst, #229)

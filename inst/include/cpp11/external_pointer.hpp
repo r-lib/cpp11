@@ -4,7 +4,7 @@
 #include <memory>       // for bad_weak_ptr
 #include <type_traits>  // for add_lvalue_reference
 
-#include "cpp11/R.hpp"         // for SEXP, SEXPREC, TYPEOF, R_NilValue, R_C...
+#include "cpp11/R.hpp"         // for SEXP, SEXPREC, R_NilValue
 #include "cpp11/protect.hpp"   // for protect, safe, protect::function
 #include "cpp11/r_bool.hpp"    // for r_bool
 #include "cpp11/r_vector.hpp"  // for type_error
@@ -23,22 +23,23 @@ class external_pointer {
   sexp data_ = R_NilValue;
 
   static SEXP valid_type(SEXP data) {
-    if (data == nullptr) {
-      throw type_error(EXTPTRSXP, NILSXP);
+    // Pacha: Allow nullable external_pointer (#312)
+    if (data == R_NilValue) {
+      return data;
     }
-    if (TYPEOF(data) != EXTPTRSXP) {
-      throw type_error(EXTPTRSXP, TYPEOF(data));
+    if (detail::r_typeof(data) != EXTPTRSXP) {
+      throw type_error(EXTPTRSXP, detail::r_typeof(data));
     }
 
     return data;
   }
 
   static void r_deleter(SEXP p) {
-    if (TYPEOF(p) != EXTPTRSXP) return;
+    if (detail::r_typeof(p) != EXTPTRSXP) return;
 
     T* ptr = static_cast<T*>(R_ExternalPtrAddr(p));
 
-    if (ptr == NULL) {
+    if (ptr == nullptr) {
       return;
     }
 
@@ -120,7 +121,8 @@ class external_pointer {
     data_ = tmp;
   }
 
-  operator bool() noexcept { return data_ != nullptr; }
+  // Pacha: Support nullable external_pointer (#312)
+  operator bool() const noexcept { return data_ != R_NilValue; }
 };
 
 template <class T, void Deleter(T*)>

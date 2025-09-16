@@ -18,3 +18,5 @@ TAGS
 /doc/
 /Meta/
 .vscode
+.cache
+docs

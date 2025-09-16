@@ -4,8 +4,7 @@
 
 #include "cpp11/R.hpp"                // for SEXP, SEXPREC, SET_VECTOR_ELT
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
-#include "cpp11/named_arg.hpp"        // for named_arg
-#include "cpp11/protect.hpp"          // for preserved
+#include "cpp11/protect.hpp"          // for safe
 #include "cpp11/r_string.hpp"         // for r_string
 #include "cpp11/r_vector.hpp"         // for r_vector, r_vector<>::proxy
 #include "cpp11/sexp.hpp"             // for sexp
@@ -15,33 +14,15 @@
 namespace cpp11 {
 
 template <>
-inline SEXP r_vector<SEXP>::valid_type(SEXP data) {
-  if (data == nullptr) {
-    throw type_error(VECSXP, NILSXP);
-  }
-  if (TYPEOF(data) != VECSXP) {
-    throw type_error(VECSXP, TYPEOF(data));
-  }
-  return data;
+inline SEXPTYPE r_vector<SEXP>::get_sexptype() {
+  return VECSXP;
 }
 
 template <>
-inline SEXP r_vector<SEXP>::operator[](const R_xlen_t pos) const {
-  return VECTOR_ELT(data_, pos);
-}
-
-template <>
-inline SEXP r_vector<SEXP>::operator[](const r_string& name) const {
-  SEXP names = this->names();
-  R_xlen_t size = Rf_xlength(names);
-
-  for (R_xlen_t pos = 0; pos < size; ++pos) {
-    auto cur = Rf_translateCharUTF8(STRING_ELT(names, pos));
-    if (name == cur) {
-      return operator[](pos);
-    }
-  }
-  return R_NilValue;
+inline typename r_vector<SEXP>::underlying_type r_vector<SEXP>::get_elt(SEXP x,
+                                                                        R_xlen_t i) {
+  // NOPROTECT: likely too costly to unwind protect every elt
+  return VECTOR_ELT(x, i);
 }
 
 template <>
@@ -50,13 +31,32 @@ inline typename r_vector<SEXP>::underlying_type* r_vector<SEXP>::get_p(bool, SEX
 }
 
 template <>
-inline void r_vector<SEXP>::const_iterator::fill_buf(R_xlen_t) {
-  return;
+inline typename r_vector<SEXP>::underlying_type const* r_vector<SEXP>::get_const_p(
+    bool is_altrep, SEXP data) {
+  // No `VECTOR_PTR_OR_NULL()`
+  if (is_altrep) {
+    return nullptr;
+  } else {
+    // TODO: Use `VECTOR_PTR_RO()` conditionally once R 4.5.0 is officially released
+    return static_cast<SEXP const*>(DATAPTR_RO(data));
+  }
+}
+
+/// Specialization for lists, where `x["oob"]` returns `R_NilValue`, like at the R level
+template <>
+inline SEXP r_vector<SEXP>::get_oob() {
+  return R_NilValue;
 }
 
 template <>
-inline SEXP r_vector<SEXP>::const_iterator::operator*() const {
-  return VECTOR_ELT(data_->data(), pos_);
+inline void r_vector<SEXP>::get_region(SEXP x, R_xlen_t i, R_xlen_t n,
+                                       typename r_vector::underlying_type* buf) {
+  cpp11::stop("Unreachable!");
+}
+
+template <>
+inline bool r_vector<SEXP>::const_iterator::use_buf(bool is_altrep) {
+  return false;
 }
 
 typedef r_vector<SEXP> list;
@@ -64,72 +64,37 @@ typedef r_vector<SEXP> list;
 namespace writable {
 
 template <>
-inline typename r_vector<SEXP>::proxy& r_vector<SEXP>::proxy::operator=(const SEXP& rhs) {
-  SET_VECTOR_ELT(data_, index_, rhs);
-  return *this;
+inline void r_vector<SEXP>::set_elt(SEXP x, R_xlen_t i,
+                                    typename r_vector::underlying_type value) {
+  // NOPROTECT: Likely too costly to unwind protect every set elt
+  SET_VECTOR_ELT(x, i, value);
 }
 
-template <>
-inline r_vector<SEXP>::proxy::operator SEXP() const {
-  return VECTOR_ELT(data_, index_);
-}
-
-template <>
-inline r_vector<SEXP>::r_vector(std::initializer_list<SEXP> il)
-    : cpp11::r_vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())),
-      capacity_(il.size()) {
-  protect_ = preserved.insert(data_);
-  auto it = il.begin();
-  for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
-    SET_VECTOR_ELT(data_, i, *it);
-  }
-}
-
+// Requires specialization to handle the fact that, for lists, each element of the
+// initializer list is considered the scalar "element", i.e. we don't expect that
+// each `named_arg` contains a list of length 1, like we do for the other vector types.
+// This means we don't need type checks, length 1 checks, or `get_elt()` for lists.
 template <>
 inline r_vector<SEXP>::r_vector(std::initializer_list<named_arg> il)
     : cpp11::r_vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())),
       capacity_(il.size()) {
-  protect_ = preserved.insert(data_);
-  int n_protected = 0;
+  unwind_protect([&] {
+    SEXP names;
+    PROTECT(names = Rf_allocVector(STRSXP, capacity_));
+    Rf_setAttrib(data_, R_NamesSymbol, names);
 
-  try {
-    unwind_protect([&] {
-      Rf_setAttrib(data_, R_NamesSymbol, Rf_allocVector(STRSXP, capacity_));
-      SEXP names = PROTECT(Rf_getAttrib(data_, R_NamesSymbol));
-      ++n_protected;
-      auto it = il.begin();
-      for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
-        SET_VECTOR_ELT(data_, i, it->value());
-        SET_STRING_ELT(names, i, Rf_mkCharCE(it->name(), CE_UTF8));
-      }
-      UNPROTECT(n_protected);
-    });
-  } catch (const unwind_exception& e) {
-    preserved.release(protect_);
-    UNPROTECT(n_protected);
-    throw e;
-  }
-}
+    auto it = il.begin();
 
-template <>
-inline void r_vector<SEXP>::reserve(R_xlen_t new_capacity) {
-  data_ = data_ == R_NilValue ? safe[Rf_allocVector](VECSXP, new_capacity)
-                              : safe[Rf_xlengthgets](data_, new_capacity);
+    for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
+      SEXP elt = it->value();
+      set_elt(data_, i, elt);
 
-  SEXP old_protect = protect_;
-  protect_ = preserved.insert(data_);
-  preserved.release(old_protect);
+      SEXP name = Rf_mkCharCE(it->name(), CE_UTF8);
+      SET_STRING_ELT(names, i, name);
+    }
 
-  capacity_ = new_capacity;
-}
-
-template <>
-inline void r_vector<SEXP>::push_back(SEXP value) {
-  while (length_ >= capacity_) {
-    reserve(capacity_ == 0 ? 1 : capacity_ *= 2);
-  }
-  SET_VECTOR_ELT(data_, length_, value);
-  ++length_;
+    UNPROTECT(1);
+  });
 }
 
 typedef r_vector<SEXP> list;

@@ -1,3 +1,4 @@
+#include "cpp11/complexes.hpp"
 #include "cpp11/doubles.hpp"
 #include "cpp11/function.hpp"
 #include "cpp11/integers.hpp"
@@ -24,6 +25,7 @@ context("matrix-C++") {
     expect_true(x[1].size() == 2);
     expect_true(x[1].stride() == 5);
   }
+
   test_that("matrix dim attributes are correct for read only matrices") {
     auto getExportedValue = cpp11::package("base")["getExportedValue"];
 
@@ -41,6 +43,7 @@ context("matrix-C++") {
       expect_true(x[1].size() == 61);
       expect_true(x[1].stride() == 87);
     }
+
     test_that("matrix<by_column> attributes are correct") {
       cpp11::doubles_matrix<cpp11::by_column> x(getExportedValue("datasets", "volcano"));
 
@@ -103,7 +106,7 @@ context("matrix-C++") {
     expect_true(xc(10, 13) == 121);
   }
 
-  test_that("copy constructor works") {
+  test_that("copy constructor works for read only matrices") {
     auto getExportedValue = cpp11::package("base")["getExportedValue"];
     cpp11::doubles_matrix<cpp11::by_row> x(getExportedValue("datasets", "volcano"));
 
@@ -118,5 +121,78 @@ context("matrix-C++") {
     expect_true(x.ncol() == yc.ncol());
     expect_true(yc.nslices() == yc.ncol());
     expect_true(SEXP(x) == SEXP(yc));
+  }
+
+  test_that("copy constructor works for writable matrices") {
+    cpp11::writable::doubles_matrix<cpp11::by_row> x(5, 2);
+
+    auto x_dim = x.attr("dim");
+    expect_true(INTEGER_ELT(x_dim, 0) == 5);
+    expect_true(INTEGER_ELT(x_dim, 1) == 2);
+
+    cpp11::writable::doubles_matrix<cpp11::by_row> yr(x);
+    expect_true(x.nrow() == yr.nrow());
+    expect_true(x.ncol() == yr.ncol());
+    expect_true(yr.nslices() == yr.nrow());
+    // Note that a copy should be made when copying writable!
+    expect_true(SEXP(x) != SEXP(yr));
+
+    // `dim` attribute is retained on copy
+    auto yr_dim = yr.attr("dim");
+    expect_true(INTEGER_ELT(yr_dim, 0) == 5);
+    expect_true(INTEGER_ELT(yr_dim, 1) == 2);
+
+    cpp11::writable::doubles_matrix<cpp11::by_column> yc(x);
+    expect_true(x.nrow() == yc.nrow());
+    expect_true(x.ncol() == yc.ncol());
+    expect_true(yc.nslices() == yc.ncol());
+    // Note that a copy should be made when copying writable!
+    expect_true(SEXP(x) != SEXP(yc));
+
+    // `dim` attribute is retained on copy
+    auto yc_dim = yc.attr("dim");
+    expect_true(INTEGER_ELT(yc_dim, 0) == 5);
+    expect_true(INTEGER_ELT(yc_dim, 1) == 2);
+  }
+
+  test_that("copy constructor is not enabled across vector types") {
+    cpp11::writable::doubles_matrix<cpp11::by_row> x(5, 2);
+    expect_error(cpp11::writable::integers_matrix<cpp11::by_column>(x));
+  }
+
+  test_that("complex objects can be created, filled, and copied") {
+    // vector
+
+    cpp11::writable::complexes v(2);
+    v[0] = std::complex<double>(1, 2);
+    v[1] = std::complex<double>(3, 4);
+
+    cpp11::complexes vc = v;
+
+    expect_true(v.size() == vc.size());
+
+    for (int i = 0; i < 2; ++i) {
+      expect_true(v[i] == vc[i]);
+    }
+
+    // matrix
+
+    cpp11::writable::complexes_matrix<cpp11::by_row> m(5, 2);
+
+    for (int i = 0; i < 5; ++i) {
+      for (int j = 0; j < 2; ++j) {
+        m(i, j) = std::complex<double>(i, j);
+      }
+    }
+
+    cpp11::complexes_matrix<> mc = m;
+    expect_true(m.nrow() == mc.nrow());
+    expect_true(m.ncol() == mc.ncol());
+
+    for (int i = 0; i < 5; ++i) {
+      for (int j = 0; j < 2; ++j) {
+        expect_true(m(i, j) == mc(i, j));
+      }
+    }
   }
 }

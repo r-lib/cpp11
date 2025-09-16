@@ -36,4 +36,8 @@ context("function-C++") {
 
     close(con);
   }
+
+  test_that("unknown packages cause an error (#317)") {
+    expect_error_as(cpp11::package("definitely_not_a_package"), cpp11::unwind_exception);
+  }
 }

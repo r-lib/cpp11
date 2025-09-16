@@ -1,4 +1,4 @@
-pkgload::load_all("../cpp11test")
+pkgload::load_all("cpp11test")
 
 cases <- expand.grid(
   len = 3e6,

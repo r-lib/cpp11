@@ -10,6 +10,18 @@ cpp_vendor(dir = NULL, subdir = "/inst/include")
 \item{dir}{The directoyy to vendor the code into.}
 
 \item{subdir}{The subdirectory to vendor the code into.}
+cpp_vendor(
+  path = ".",
+  headers = system.file("include", "cpp11", package = "cpp11")
+)
+}
+\arguments{
+\item{path}{The path to the package root directory}
+
+\item{headers}{The path to the cpp11 headers to vendor. By default this is
+the path where R installed the cpp11 package. You can change this to
+use a different version of cpp11, such as as the development version
+from GitHub.}
 }
 \value{
 The file path to the vendored code (invisibly).

@@ -5,6 +5,9 @@ vignette: >
   %\VignetteIndexEntry{FAQ}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
+editor:
+  markdown:
+    wrap: sentence
 ---
 
 ```{r, include = FALSE}
@@ -20,30 +23,76 @@ If you have a question that you think would fit well here please [open an issue]
 
 #### 1. What are the underlying types of cpp11 objects?
 
- | vector          | element         |
- | ---             | ---             |
- | cpp11::integers | int             |
- | cpp11::doubles  | double          |
- | cpp11::logicals | cpp11::r_bool   |
- | cpp11::strings  | cpp11::r_string |
- | cpp11::raws     | uint8_t         |
- | cpp11::list     | SEXP            |
+| vector          | element         |
+|-----------------|-----------------|
+| cpp11::integers | int             |
+| cpp11::doubles  | double          |
+| cpp11::logicals | cpp11::r_bool   |
+| cpp11::strings  | cpp11::r_string |
+| cpp11::raws     | uint8_t         |
+| cpp11::list     | SEXP            |
 
+#### 2. How do I add elements to a list?
 
-#### 2. How do I add elements to a named list?
+Use the `push_back()` method.
+You will need to use `cpp11::as_sexp()` if you want to convert arbitrary C++ objects to `SEXP` before inserting them into the list.
 
-Use the `push_back()` method with the named literal syntax.
+```{cpp11}
+#include <cpp11.hpp>
+#include <vector>
+
+[[cpp11::register]]
+cpp11::writable::list foo_push() {
+  cpp11::writable::list x;
+
+  // An object that is already a `SEXP`
+  x.push_back(R_NilValue);
+
+  // A single integer
+  x.push_back(cpp11::as_sexp(1));
+
+  // A C++ vector of ints
+  std::vector<int> elt{1, 2, 3};
+  x.push_back(cpp11::as_sexp(elt));
+
+  return x;
+}
+```
+
+To create named lists, use the `push_back()` method with the named literal syntax.
 The named literal syntax is defined in the `cpp11::literals` namespace.
+In this case, creating the named literal automatically calls `as_sexp()` for you.
 
 ```{cpp11}
 #include <cpp11.hpp>
 
 [[cpp11::register]]
-cpp11::list foo_push() {
+cpp11::writable::list foo_push_named() {
   using namespace cpp11::literals;
 
   cpp11::writable::list x;
   x.push_back({"foo"_nm = 1});
+
+  return x;
+}
+```
+
+Note that if you know the size of the list ahead of time (which you often do!), then it is more efficient to state that up front.
+
+```{cpp11}
+#include <cpp11.hpp>
+#include <vector>
+
+[[cpp11::register]]
+cpp11::writable::list foo_push_sized() {
+  std::vector<int> elt{1, 2, 3};
+
+  R_xlen_t size = 3;
+
+  cpp11::writable::list x(size);
+  x[0] = R_NilValue;
+  x[1] = cpp11::as_sexp(1);
+  x[2] = cpp11::as_sexp(elt);
 
   return x;
 }
@@ -133,7 +182,6 @@ my_true()
 my_both()
 ```
 
-
 #### 8. How do I create a new empty environment?
 
 To do this you need to call the `base::new.env()` function from C++.
@@ -152,14 +200,15 @@ cpp11::environment create_environment() {
 #### 9. How do I assign and retrieve values in an environment? What happens if I try to get a value that doesn't exist?
 
 Use `[]` to retrieve or assign values from an environment by name.
-If a value does not exist it will return `R_UnboundValue`.
+If a value does not exist, it will error.
+To check for existence ahead of time, use the `exists()` method.
 
 ```{cpp11}
 #include <cpp11.hpp>
 
 [[cpp11::register]]
 bool foo_exists(cpp11::environment x) {
-  return x["foo"] != R_UnboundValue;
+  return x.exists("foo");
 }
 
 [[cpp11::register]]
@@ -219,7 +268,6 @@ std::string my_string() {
 }
 ```
 
-
 #### 12. What are the types for C++ iterators?
 
 The iterators are `::iterator` classes contained inside the vector classes.
@@ -228,9 +276,10 @@ For example the iterator for `cpp11::doubles` would be `cpp11::doubles::iterator
 #### 13. My code has `using namespace std`, why do I still have to include `std::` in the signatures of `[[cpp11::register]]` functions?
 
 The `using namespace std` directive will not be included in the generated code of the function signatures, so they still need to be fully qualified.
-However you will _not_ need to qualify the type names within those functions.
+However you will *not* need to qualify the type names within those functions.
 
 The following won't compile
+
 ```{cpp11, eval = FALSE}
 #include <cpp11.hpp>
 #include <string>
@@ -243,8 +292,8 @@ string foobar() {
 }
 ```
 
-
 But this will compile and work as intended
+
 ```{cpp11}
 #include <cpp11.hpp>
 #include <string>
@@ -262,7 +311,7 @@ std::string foobar() {
 In place modification breaks the normal semantics of R code.
 In general it should be avoided, which is why `cpp11::writable` classes always copy their data when constructed.
 
-However if you are _positive_ in-place modification is necessary for your use case you can use the move constructor to do this.
+However if you are *positive* in-place modification is necessary for your use case you can use the move constructor to do this.
 
 ```{cpp11}
 #include <cpp11.hpp>
@@ -288,7 +337,8 @@ x
 
 `cpp11::unwind_protect()` is cpp11's way of safely calling R's C API. In short, it allows you to run a function that might throw an R error, catch the `longjmp()` of that error, promote it to an exception that is thrown and caught by a try/catch that cpp11 sets up for you at `.Call()` time (which allows destructors to run), and finally tells R to continue unwinding the stack now that the C++ objects have had a chance to destruct as needed.
 
-Since `cpp11::unwind_protect()` takes an arbitrary function, you may be wondering if you should use it for your own custom needs. In general, we advise against this because this is an extremely advanced feature that is prone to subtle and hard to debug issues.
+Since `cpp11::unwind_protect()` takes an arbitrary function, you may be wondering if you should use it for your own custom needs.
+In general, we advise against this because this is an extremely advanced feature that is prone to subtle and hard to debug issues.
 
 ##### Destructors
 
@@ -310,7 +360,7 @@ A::~A() {
 void test_destructor_ok() {
   A a{};
   cpp11::unwind_protect([&] {
-    Rf_error("oh no!");  
+    Rf_error("oh no!");
   });
 }
 
@@ -318,7 +368,7 @@ void test_destructor_ok() {
 void test_destructor_bad() {
   cpp11::unwind_protect([&] {
     A a{};
-    Rf_error("oh no!");  
+    Rf_error("oh no!");
   });
 }
 ```
@@ -334,11 +384,13 @@ test_destructor_bad()
 #> Error: oh no!
 ```
 
-In general, the only code that can be called within `unwind_protect()` is "pure" C code or C++ code that only uses POD (plain-old-data) types and no exceptions. If you mix complex C++ objects with R's C API within `unwind_protect()`, then any R errors will result in a jump that prevents your destructors from running.
+In general, the only code that can be called within `unwind_protect()` is "pure" C code or C++ code that only uses POD (plain-old-data) types and no exceptions.
+If you mix complex C++ objects with R's C API within `unwind_protect()`, then any R errors will result in a jump that prevents your destructors from running.
 
 ##### Nested `unwind_protect()`
 
-Another issue that can arise has to do with _nested_ calls to `unwind_protect()`. It is very hard (if not impossible) to end up with invalidly nested `unwind_protect()` calls when using the typical cpp11 API, but you can manually create a scenario like the following:
+Another issue that can arise has to do with *nested* calls to `unwind_protect()`.
+It is very hard (if not impossible) to end up with invalidly nested `unwind_protect()` calls when using the typical cpp11 API, but you can manually create a scenario like the following:
 
 ```{cpp11}
 #include <cpp11.hpp>
@@ -347,7 +399,7 @@ Another issue that can arise has to do with _nested_ calls to `unwind_protect()`
 void test_nested() {
   cpp11::unwind_protect([&] {
     cpp11::unwind_protect([&] {
-      Rf_error("oh no!");  
+      Rf_error("oh no!");
     });
   });
 }
@@ -355,11 +407,11 @@ void test_nested() {
 
 If you were to run `test_nested()` from R, it would likely crash or hang your R session due to the following chain of events:
 
-- `test_nested()` sets up a try/catch to catch unwind exceptions
-- The outer `unwind_protect()` is called. It uses the C function `R_UnwindProtect()` to call its lambda function.
-- The inner `unwind_protect()` is called. It again uses `R_UnwindProtect()`, this time to call `Rf_error()`.
-- `Rf_error()` performs a `longjmp()` which is caught by the inner `unwind_protect()` and promoted to an exception.
-- That exception is thrown, but because we are in the outer call to `R_UnwindProtect()` (a C function), we end up throwing that exception _across_ C stack frames. This is _undefined behavior_, which is known to have caused R to crash on certain platforms.
+-   `test_nested()` sets up a try/catch to catch unwind exceptions
+-   The outer `unwind_protect()` is called. It uses the C function `R_UnwindProtect()` to call its lambda function.
+-   The inner `unwind_protect()` is called. It again uses `R_UnwindProtect()`, this time to call `Rf_error()`.
+-   `Rf_error()` performs a `longjmp()` which is caught by the inner `unwind_protect()` and promoted to an exception.
+-   That exception is thrown, but because we are in the outer call to `R_UnwindProtect()` (a C function), we end up throwing that exception *across* C stack frames. This is *undefined behavior*, which is known to have caused R to crash on certain platforms.
 
 You might think that you'd never do this, but the same scenario can also occur with a combination of 1 call to `unwind_protect()` combined with usage of the cpp11 API:
 
@@ -395,32 +447,35 @@ void test_outer() {
 }
 ```
 
-This might seem unsafe because `cpp11::package()` uses `unwind_protect()` to call the R function for `test_inner()`, which then goes back into C++ to call `cpp11::stop()`, which itself uses `unwind_protect()`, so it seems like we are in a nested scenario, but this scenario does actually work. It makes more sense if we analyze it one step at a time:
+This might seem unsafe because `cpp11::package()` uses `unwind_protect()` to call the R function for `test_inner()`, which then goes back into C++ to call `cpp11::stop()`, which itself uses `unwind_protect()`, so it seems like we are in a nested scenario, but this scenario does actually work.
+It makes more sense if we analyze it one step at a time:
 
-- Call the R function for `test_outer()`
-- A try/catch is set up to catch unwind exceptions
-- The C++ function for `test_outer()` is called
-- `cpp11::package()` uses `unwind_protect()` to call the R function for `test_inner()`
-- Call the R function for `test_inner()`
-- A try/catch is set up to catch unwind exceptions (_this is the key!_)
-- The C++ function for `test_inner()` is called
-- `cpp11::stop("oh no!")` is called, which uses `unwind_protect()` to call `Rf_error()`, causing a `longjmp()`, which is caught by that `unwind_protect()` and promoted to an exception.
-- That exception is thrown, but this time it is caught by the try/catch set up by `test_inner()` as we entered it from the R side. This prevents that exception from crossing the C++ -> C boundary.
-- The try/catch calls `R_ContinueUnwind()`, which `longjmp()`s again, and now the `unwind_protect()` set up by `cpp11::package()` catches that, and promotes it to an exception.
-- That exception is thrown and caught by the try/catch set up by `test_outer()`.
-- The try/catch calls `R_ContinueUnwind()`, which `longjmp()`s again, and at this point we can safely let the `longjmp()` proceed to force an R error.
+-   Call the R function for `test_outer()`
+-   A try/catch is set up to catch unwind exceptions
+-   The C++ function for `test_outer()` is called
+-   `cpp11::package()` uses `unwind_protect()` to call the R function for `test_inner()`
+-   Call the R function for `test_inner()`
+-   A try/catch is set up to catch unwind exceptions (*this is the key!*)
+-   The C++ function for `test_inner()` is called
+-   `cpp11::stop("oh no!")` is called, which uses `unwind_protect()` to call `Rf_error()`, causing a `longjmp()`, which is caught by that `unwind_protect()` and promoted to an exception.
+-   That exception is thrown, but this time it is caught by the try/catch set up by `test_inner()` as we entered it from the R side. This prevents that exception from crossing the C++ -\> C boundary.
+-   The try/catch calls `R_ContinueUnwind()`, which `longjmp()`s again, and now the `unwind_protect()` set up by `cpp11::package()` catches that, and promotes it to an exception.
+-   That exception is thrown and caught by the try/catch set up by `test_outer()`.
+-   The try/catch calls `R_ContinueUnwind()`, which `longjmp()`s again, and at this point we can safely let the `longjmp()` proceed to force an R error.
 
 #### 16. Ok but I really want to call `cpp11::unwind_protect()` manually
 
 If you've read the above bullet and still feel like you need to call `unwind_protect()`, then you should keep in mind the following when writing the function to unwind-protect:
 
-- You shouldn't create any C++ objects that have destructors.
-- You shouldn't use any parts of the cpp11 API that may call `unwind_protect()`.
-- You must be very careful not to call `unwind_protect()` in a nested manner.
+-   You shouldn't create any C++ objects that have destructors.
+-   You shouldn't use any parts of the cpp11 API that may call `unwind_protect()`.
+-   You must be very careful not to call `unwind_protect()` in a nested manner.
 
 In other words, if you only use plain-old-data types, are careful to never throw exceptions, and only use R's C API, then you can use `unwind_protect()`.
 
-One place you may want to do this is when working with long character vectors. Unfortunately, due to the way cpp11 must protect the individual CHARSXP objects that make up a character vector, it can currently be quite slow to use the cpp11 API for this. Consider this example of extracting out individual elements with `x[i]` vs using the native R API:
+One place you may want to do this is when working with long character vectors.
+Unfortunately, due to the way cpp11 must protect the individual CHARSXP objects that make up a character vector, it can currently be quite slow to use the cpp11 API for this.
+Consider this example of extracting out individual elements with `x[i]` vs using the native R API:
 
 ```{cpp11}
 #include <cpp11.hpp>
@@ -432,7 +487,7 @@ cpp11::sexp test_extract_cpp11(cpp11::strings x) {
   for (R_xlen_t i = 0; i < size; ++i) {
     (void) x[i];
   }
-  
+
   return R_NilValue;
 }
 
@@ -446,16 +501,17 @@ cpp11::sexp test_extract_r_api(cpp11::strings x) {
       (void) STRING_ELT(data, i);
     }
   });
-  
+
   return R_NilValue;
 }
 ```
+
 ```{r}
 set.seed(123)
 x <- sample(letters, 1e6, replace = TRUE)
 
 bench::mark(
-  test_extract_cpp11(x), 
+  test_extract_cpp11(x),
   test_extract_r_api(x)
 )
 ```

@@ -26,9 +26,7 @@
   if (buf[0] != '\0') {
     Rf_error("%s", buf);
   } else if (err != R_NilValue) {
-#ifdef HAS_UNWIND_PROTECT
     R_ContinueUnwind(err);
-#endif
   }
 
   return R_NilValue;

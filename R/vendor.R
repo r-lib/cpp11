@@ -12,8 +12,13 @@
 #' **you**. Bugfixes and new features in cpp11 will not be available for your
 #' code until you run `cpp_vendor()` again.
 #'
+#' @inheritParams cpp_register
 #' @param dir The directoyy to vendor the code into.
 #' @param subdir The subdirectory to vendor the code into.
+#' @param headers The path to the cpp11 headers to vendor. By default this is
+#'  the path where R installed the cpp11 package. You can change this to
+#'  use a different version of cpp11, such as as the development version
+#'  from GitHub. 
 #' @return The file path to the vendored code (invisibly).
 #' @export
 #' @examples
@@ -84,6 +89,8 @@ cpp_vendor <- function(dir = NULL, subdir = "/inst/include") {
   ))
 
   message("DESCRIPTION should not have lines such as 'LinkingTo: cpp11'")
+
+  files <- list.files(headers, full.names = TRUE)
 
   invisible(path)
 }

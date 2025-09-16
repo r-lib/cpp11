@@ -1,7 +1,7 @@
 Package: cpp11
 Title: A C++11 Interface for R's C Interface
-Version: 0.4.7.9000
-Authors@R: 
+Version: 0.6.0.9000
+Authors@R:
     c(
       person("Davis", "Vaughan", email = "davis@posit.co", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-4777-038X")),
       person("Jim","Hester", role = "aut", comment = c(ORCID = "0000-0002-2739-7082")),
@@ -18,7 +18,7 @@ License: MIT + file LICENSE
 URL: https://cpp11.r-lib.org, https://github.com/r-lib/cpp11
 BugReports: https://github.com/r-lib/cpp11/issues
 Depends:
-    R (>= 3.5.0)
+    R (>= 4.0.0)
 Suggests:
     bench,
     brio,
@@ -31,7 +31,6 @@ Suggests:
     glue,
     knitr,
     lobstr,
-    mockery,
     progress,
     rmarkdown,
     scales,
@@ -41,11 +40,11 @@ Suggests:
     utils,
     vctrs,
     withr
-VignetteBuilder: 
+VignetteBuilder:
     knitr
 Config/Needs/website: tidyverse/tidytemplate
 Config/testthat/edition: 3
-Config/Needs/cpp11/cpp_register: 
+Config/Needs/cpp11/cpp_register:
     brio,
     cli,
     decor,
@@ -55,4 +54,4 @@ Config/Needs/cpp11/cpp_register:
     vctrs
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2

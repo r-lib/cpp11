@@ -29,3 +29,6 @@ script.R
 ^Meta$
 ^CRAN-SUBMISSION$
 .vscode
+^\.cache$
+^docs$
+^pkgdown$

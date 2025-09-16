@@ -1,7 +1,6 @@
 #pragma once
 
-#include <cstdlib>  // for abs
-#include <cstdlib>
+#include <cstdlib>           // for abs
 #include <initializer_list>  // for initializer_list
 #include <string>            // for string, basic_string
 #include <utility>           // for move
@@ -36,12 +35,12 @@ class data_frame : public list {
     return R_NilValue;
   }
 
-  static int calc_nrow(SEXP x) {
+  static R_xlen_t calc_nrow(SEXP x) {
     auto nms = get_attrib0(x, R_RowNamesSymbol);
     bool has_short_rownames =
         (Rf_isInteger(nms) && Rf_xlength(nms) == 2 && INTEGER(nms)[0] == NA_INTEGER);
     if (has_short_rownames) {
-      return abs(INTEGER(nms)[1]);
+      return static_cast<R_xlen_t>(abs(INTEGER(nms)[1]));
     }
 
     if (!Rf_isNull(nms)) {
@@ -67,7 +66,11 @@ namespace writable {
 class data_frame : public cpp11::data_frame {
  private:
   writable::list set_data_frame_attributes(writable::list&& x) {
-    x.attr(R_RowNamesSymbol) = {NA_INTEGER, -static_cast<int>(calc_nrow(x))};
+    return set_data_frame_attributes(std::move(x), calc_nrow(x));
+  }
+
+  writable::list set_data_frame_attributes(writable::list&& x, R_xlen_t nrow) {
+    x.attr(R_RowNamesSymbol) = {NA_INTEGER, -static_cast<int>(nrow)};
     x.attr(R_ClassSymbol) = "data.frame";
     return std::move(x);
   }
@@ -76,6 +79,8 @@ class data_frame : public cpp11::data_frame {
   data_frame(const SEXP data) : cpp11::data_frame(set_data_frame_attributes(data)) {}
   data_frame(const SEXP data, bool is_altrep)
       : cpp11::data_frame(set_data_frame_attributes(data), is_altrep) {}
+  data_frame(const SEXP data, bool is_altrep, R_xlen_t nrow)
+      : cpp11::data_frame(set_data_frame_attributes(data, nrow), is_altrep) {}
   data_frame(std::initializer_list<list> il)
       : cpp11::data_frame(set_data_frame_attributes(writable::list(il))) {}
   data_frame(std::initializer_list<named_arg> il)

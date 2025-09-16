@@ -1,13 +1,15 @@
 #pragma once
 
+#include <initializer_list>  // for initializer_list
 #include <iterator>
 #include <string>  // for string
 
-#include "cpp11/R.hpp"         // for SEXP, SEXPREC, R_xlen_t, INT...
-#include "cpp11/r_bool.hpp"    // for r_bool
-#include "cpp11/r_string.hpp"  // for r_string
-#include "cpp11/r_vector.hpp"  // for r_vector
-#include "cpp11/sexp.hpp"      // for sexp
+#include "cpp11/R.hpp"          // for SEXP, SEXPREC, R_xlen_t, INT...
+#include "cpp11/r_bool.hpp"     // for r_bool
+#include "cpp11/r_complex.hpp"  // for r_complex
+#include "cpp11/r_string.hpp"   // for r_string
+#include "cpp11/r_vector.hpp"   // for r_vector
+#include "cpp11/sexp.hpp"       // for sexp
 
 namespace cpp11 {
 
@@ -165,7 +167,8 @@ class matrix : public matrix_slices<S> {
   matrix(SEXP data) : matrix_slices<S>(data), vector_(data) {}
 
   template <typename V2, typename T2, typename S2>
-  matrix(const cpp11::matrix<V2, T2, S2>& rhs) : matrix_slices<S>(rhs), vector_(rhs) {}
+  matrix(const cpp11::matrix<V2, T2, S2>& rhs)
+      : matrix_slices<S>(rhs.nrow(), rhs.ncol()), vector_(rhs.vector()) {}
 
   matrix(int nrow, int ncol)
       : matrix_slices<S>(nrow, ncol), vector_(R_xlen_t(nrow * ncol)) {
@@ -179,19 +182,57 @@ class matrix : public matrix_slices<S> {
   using matrix_slices<S>::slice_stride;
   using matrix_slices<S>::slice_offset;
 
+  V vector() const { return vector_; }
+
   SEXP data() const { return vector_.data(); }
 
   R_xlen_t size() const { return vector_.size(); }
 
   operator SEXP() const { return SEXP(vector_); }
 
-  // operator sexp() { return sexp(vector_); }
+  attribute_proxy<V> attr(const char* name) { return attribute_proxy<V>(vector_, name); }
 
-  sexp attr(const char* name) const { return SEXP(vector_.attr(name)); }
+  attribute_proxy<V> attr(const std::string& name) {
+    return attribute_proxy<V>(vector_, name.c_str());
+  }
 
-  sexp attr(const std::string& name) const { return SEXP(vector_.attr(name)); }
+  attribute_proxy<V> attr(SEXP name) { return attribute_proxy<V>(vector_, name); }
 
-  sexp attr(SEXP name) const { return SEXP(vector_.attr(name)); }
+  void attr(const char* name, SEXP value) { vector_.attr(name) = value; }
+
+  void attr(const std::string& name, SEXP value) { vector_.attr(name) = value; }
+
+  void attr(SEXP name, SEXP value) { vector_.attr(name) = value; }
+
+  void attr(const char* name, std::initializer_list<SEXP> value) {
+    SEXP attr = PROTECT(Rf_allocVector(VECSXP, value.size()));
+    int i = 0;
+    for (SEXP v : value) {
+      SET_VECTOR_ELT(attr, i++, v);
+    }
+    vector_.attr(name) = attr;
+    UNPROTECT(1);
+  }
+
+  void attr(const std::string& name, std::initializer_list<SEXP> value) {
+    SEXP attr = PROTECT(Rf_allocVector(VECSXP, value.size()));
+    int i = 0;
+    for (SEXP v : value) {
+      SET_VECTOR_ELT(attr, i++, v);
+    }
+    vector_.attr(name) = attr;
+    UNPROTECT(1);
+  }
+
+  void attr(SEXP name, std::initializer_list<SEXP> value) {
+    SEXP attr = PROTECT(Rf_allocVector(VECSXP, value.size()));
+    int i = 0;
+    for (SEXP v : value) {
+      SET_VECTOR_ELT(attr, i++, v);
+    }
+    vector_.attr(name) = attr;
+    UNPROTECT(1);
+  }
 
   r_vector<r_string> names() const { return r_vector<r_string>(vector_.names()); }
 
@@ -211,6 +252,8 @@ template <typename S = by_column>
 using logicals_matrix = matrix<r_vector<r_bool>, r_bool, S>;
 template <typename S = by_column>
 using strings_matrix = matrix<r_vector<r_string>, r_string, S>;
+template <typename S = by_column>
+using complexes_matrix = matrix<r_vector<r_complex>, r_complex, S>;
 
 namespace writable {
 template <typename S = by_column>
@@ -221,6 +264,8 @@ template <typename S = by_column>
 using logicals_matrix = matrix<r_vector<r_bool>, r_vector<r_bool>::proxy, S>;
 template <typename S = by_column>
 using strings_matrix = matrix<r_vector<r_string>, r_vector<r_string>::proxy, S>;
+template <typename S = by_column>
+using complexes_matrix = matrix<r_vector<r_complex>, r_vector<r_complex>::proxy, S>;
 }  // namespace writable
 
 // TODO: Add tests for Matrix class
