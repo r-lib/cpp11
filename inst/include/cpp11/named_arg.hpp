@@ -39,7 +39,7 @@ class named_arg {
 
 namespace literals {
 
-inline named_arg operator"" _nm(const char* name, std::size_t) { return named_arg(name); }
+inline named_arg operator""_nm(const char* name, std::size_t) { return named_arg(name); }
 
 }  // namespace literals
 
