@@ -9,6 +9,7 @@
 #include "cpp11/as.hpp"               // for as_sexp
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/protect.hpp"          // for safe
+#include "cpp11/r_bool.hpp"           // for r_bool
 #include "cpp11/r_vector.hpp"         // for r_vector, r_vector<>::proxy
 #include "cpp11/sexp.hpp"             // for sexp
 
@@ -79,6 +80,7 @@ inline int na() {
 // forward declaration
 
 typedef r_vector<double> doubles;
+typedef r_vector<r_bool> logicals;
 
 inline integers as_integers(SEXP x) {
   if (detail::r_typeof(x) == INTSXP) {
@@ -94,6 +96,14 @@ inline integers as_integers(SEXP x) {
         throw std::runtime_error("All elements must be integer-like");
       }
       return static_cast<int>(value);
+    });
+    return ret;
+  } else if (detail::r_typeof(x) == LGLSXP) {
+    logicals xn(x);
+    size_t len = xn.size();
+    writable::integers ret(len);
+    std::transform(xn.begin(), xn.end(), ret.begin(), [](bool value) {
+      return value == NA_LOGICAL ? NA_INTEGER : static_cast<int>(value);
     });
     return ret;
   }
