@@ -349,6 +349,35 @@ For the remainder of this vignette C++ code will be presented stand-alone rather
 If you want to try compiling and/or modifying the examples you should paste them into a C++ source file that includes the elements described above.
 This is easy to do in RMarkdown by using `{cpp11}` instead of `{r}` at the beginning of your code blocks.
 
+## Roxygen support
+
+It is possible to use `roxygen2` to document your C++ functions. Here is an
+example of how to do this:
+
+```{cpp11, eval = FALSE}
+/* roxygen start
+@title Mean of a numeric vector
+@param x A numeric vector
+@return The mean of the input vector
+@examples mean_cpp(1:10)
+@export
+roxygen end */
+[[cpp11::register]]
+double mean_roxygenised_cpp(doubles x) {
+  int n = x.size();
+  double total = 0;
+  for(double value : x) {
+    total += value;
+  }
+  return total / n;
+}
+```
+
+Unlike R scripts, you need to use `/* roxygen start` and `roxygen end */` to
+delimit the roxygen comments. The logic behind this is that C++ compilers
+understand `/*` and `*/` as multi-linecomments, and therefore it is not required
+to prepend `#' ` to each line of the roxygen comments as in R scripts.
+
 ### Exercises
 
 1.  With the basics of C++ in hand, it's now a great time to practice by reading and writing some simple C++ functions. For each of the following functions, read the code and figure out what the corresponding base R function is. You might not understand every part of the code yet, but you should be able to figure out the basics of what the function does.
@@ -878,8 +907,6 @@ logicals duplicated_cpp(integers x) {
 }
 ```
 
-````{=html}
-<!--- TODO: Add `as_sexp()` support for maps
 ### Map
 
 A map is similar to a set, but instead of storing presence or absence, it can store additional data.
@@ -903,8 +930,6 @@ SEXP table_cpp(doubles x) {
   return as_sexp(counts);
 }
 ```
-!-->
-````
 
 ### Exercises
 

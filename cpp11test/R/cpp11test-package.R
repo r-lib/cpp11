@@ -1,6 +1,8 @@
 #' @keywords internal
 #' @exportPattern "_$"
+#' @importFrom cpp11 cpp_source
 #' @importFrom Rcpp sourceCpp
+NULL
 "_PACKAGE"
 
 # The following block is used by usethis to automatically manage
