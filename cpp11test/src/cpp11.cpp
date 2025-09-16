@@ -166,6 +166,13 @@ extern "C" SEXP _cpp11test_grow_(SEXP n) {
     return cpp11::as_sexp(grow_(cpp11::as_cpp<cpp11::decay_t<R_xlen_t>>(n)));
   END_CPP11
 }
+// grow.cpp
+cpp11::writable::complexes grow_cplx_(R_xlen_t n);
+extern "C" SEXP _cpp11test_grow_cplx_(SEXP n) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(grow_cplx_(cpp11::as_cpp<cpp11::decay_t<R_xlen_t>>(n)));
+  END_CPP11
+}
 // insert.cpp
 SEXP cpp11_insert_(SEXP num_sxp);
 extern "C" SEXP _cpp11test_cpp11_insert_(SEXP num_sxp) {
@@ -499,6 +506,69 @@ extern "C" SEXP _cpp11test_sum_dbl_accumulate2_(SEXP x_sxp) {
     return cpp11::as_sexp(sum_dbl_accumulate2_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x_sxp)));
   END_CPP11
 }
+// sum.cpp
+cpp11::r_complex sum_cplx_for_(cpp11::complexes x);
+extern "C" SEXP _cpp11test_sum_cplx_for_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum_cplx_for_(cpp11::as_cpp<cpp11::decay_t<cpp11::complexes>>(x)));
+  END_CPP11
+}
+// sum.cpp
+cpp11::complexes sum_cplx_for_2_(cpp11::complexes x);
+extern "C" SEXP _cpp11test_sum_cplx_for_2_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum_cplx_for_2_(cpp11::as_cpp<cpp11::decay_t<cpp11::complexes>>(x)));
+  END_CPP11
+}
+// sum.cpp
+std::complex<double> sum_cplx_for_3_(cpp11::complexes x_sxp);
+extern "C" SEXP _cpp11test_sum_cplx_for_3_(SEXP x_sxp) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum_cplx_for_3_(cpp11::as_cpp<cpp11::decay_t<cpp11::complexes>>(x_sxp)));
+  END_CPP11
+}
+// sum.cpp
+std::complex<double> sum_cplx_for_4_(SEXP x_sxp);
+extern "C" SEXP _cpp11test_sum_cplx_for_4_(SEXP x_sxp) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum_cplx_for_4_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x_sxp)));
+  END_CPP11
+}
+// sum.cpp
+SEXP sum_cplx_for_5_(SEXP x_sxp);
+extern "C" SEXP _cpp11test_sum_cplx_for_5_(SEXP x_sxp) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum_cplx_for_5_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x_sxp)));
+  END_CPP11
+}
+// sum.cpp
+cpp11::complexes sum_cplx_for_6_(SEXP x_sxp);
+extern "C" SEXP _cpp11test_sum_cplx_for_6_(SEXP x_sxp) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum_cplx_for_6_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x_sxp)));
+  END_CPP11
+}
+// sum.cpp
+std::complex<double> sum_cplx_foreach_(cpp11::complexes x);
+extern "C" SEXP _cpp11test_sum_cplx_foreach_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum_cplx_foreach_(cpp11::as_cpp<cpp11::decay_t<cpp11::complexes>>(x)));
+  END_CPP11
+}
+// sum.cpp
+std::complex<double> sum_cplx_accumulate_(cpp11::complexes x);
+extern "C" SEXP _cpp11test_sum_cplx_accumulate_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum_cplx_accumulate_(cpp11::as_cpp<cpp11::decay_t<cpp11::complexes>>(x)));
+  END_CPP11
+}
+// sum.cpp
+std::complex<double> sum_cplx_for2_(SEXP x_sxp);
+extern "C" SEXP _cpp11test_sum_cplx_for2_(SEXP x_sxp) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum_cplx_for2_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x_sxp)));
+  END_CPP11
+}
 // sum_int.cpp
 double sum_int_for_(cpp11::integers x);
 extern "C" SEXP _cpp11test_sum_int_for_(SEXP x) {
@@ -630,6 +700,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_gibbs_rcpp",               (DL_FUNC) &_cpp11test_gibbs_rcpp,               2},
     {"_cpp11test_gibbs_rcpp2",              (DL_FUNC) &_cpp11test_gibbs_rcpp2,              2},
     {"_cpp11test_grow_",                    (DL_FUNC) &_cpp11test_grow_,                    1},
+    {"_cpp11test_grow_cplx_",               (DL_FUNC) &_cpp11test_grow_cplx_,               1},
     {"_cpp11test_mat_mat_copy_dimnames",    (DL_FUNC) &_cpp11test_mat_mat_copy_dimnames,    1},
     {"_cpp11test_mat_mat_create_dimnames",  (DL_FUNC) &_cpp11test_mat_mat_create_dimnames,  0},
     {"_cpp11test_mat_sexp_copy_dimnames",   (DL_FUNC) &_cpp11test_mat_sexp_copy_dimnames,   1},
@@ -677,6 +748,15 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_roxcpp7_",                 (DL_FUNC) &_cpp11test_roxcpp7_,                 1},
     {"_cpp11test_string_proxy_assignment_", (DL_FUNC) &_cpp11test_string_proxy_assignment_, 0},
     {"_cpp11test_string_push_back_",        (DL_FUNC) &_cpp11test_string_push_back_,        0},
+    {"_cpp11test_sum_cplx_accumulate_",     (DL_FUNC) &_cpp11test_sum_cplx_accumulate_,     1},
+    {"_cpp11test_sum_cplx_for2_",           (DL_FUNC) &_cpp11test_sum_cplx_for2_,           1},
+    {"_cpp11test_sum_cplx_for_",            (DL_FUNC) &_cpp11test_sum_cplx_for_,            1},
+    {"_cpp11test_sum_cplx_for_2_",          (DL_FUNC) &_cpp11test_sum_cplx_for_2_,          1},
+    {"_cpp11test_sum_cplx_for_3_",          (DL_FUNC) &_cpp11test_sum_cplx_for_3_,          1},
+    {"_cpp11test_sum_cplx_for_4_",          (DL_FUNC) &_cpp11test_sum_cplx_for_4_,          1},
+    {"_cpp11test_sum_cplx_for_5_",          (DL_FUNC) &_cpp11test_sum_cplx_for_5_,          1},
+    {"_cpp11test_sum_cplx_for_6_",          (DL_FUNC) &_cpp11test_sum_cplx_for_6_,          1},
+    {"_cpp11test_sum_cplx_foreach_",        (DL_FUNC) &_cpp11test_sum_cplx_foreach_,        1},
     {"_cpp11test_sum_dbl_accumulate2_",     (DL_FUNC) &_cpp11test_sum_dbl_accumulate2_,     1},
     {"_cpp11test_sum_dbl_accumulate_",      (DL_FUNC) &_cpp11test_sum_dbl_accumulate_,      1},
     {"_cpp11test_sum_dbl_for2_",            (DL_FUNC) &_cpp11test_sum_dbl_for2_,            1},

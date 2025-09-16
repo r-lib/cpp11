@@ -18,6 +18,7 @@
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/named_arg.hpp"        // for named_arg
 #include "cpp11/protect.hpp"          // for store
+#include "cpp11/r_complex.hpp"        // for r_complex
 #include "cpp11/r_string.hpp"         // for r_string
 #include "cpp11/sexp.hpp"             // for sexp
 
@@ -30,7 +31,6 @@ template <typename T>
 class r_vector;
 }  // namespace writable
 
-// Declarations
 template <typename T>
 class r_vector {
  public:
@@ -60,6 +60,7 @@ class r_vector {
   r_vector(const r_vector& x);
   r_vector(r_vector<T>&& x);
   r_vector(const writable::r_vector<T>& x);
+  r_vector(std::initializer_list<T> il);
   r_vector(named_arg) = delete;
 
   r_vector& operator=(const r_vector& rhs);
@@ -239,6 +240,8 @@ class r_vector : public cpp11::r_vector<T> {
             typename std::enable_if<std::is_same<U, r_string>::value>::type* = nullptr>
   void push_back(const std::string& value);  // Pacha: r_string only (#406)
   void push_back(const named_arg& value);
+  // Implemented in `complexes.hpp`
+  void push_back(const Rcomplex& value);
   void pop_back();
 
   void resize(R_xlen_t count);
