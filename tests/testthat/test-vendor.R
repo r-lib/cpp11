@@ -1,23 +1,32 @@
-describe("cpp_vendor", {
-  it("errors if cpp11 is not installed", {
-    pkg <- local_package()
-    mockery::stub(cpp_vendor, "system.file", "")
-    expect_error(
-      cpp_vendor(pkg_path(pkg)),
-      "cpp11 is not installed"
-    )
-  })
+test_that("cpp_vendor errors if cpp11 is not installed", {
+  pkg <- local_package()
 
-  it("vendors cpp11", {
-    pkg <- local_package()
-    p <- pkg_path(pkg)
+  expect_error(
+    cpp_vendor(pkg_path(pkg), headers = ""),
+    "cpp11 is not installed"
+  )
+})
 
-    cpp_vendor(pkg_path(pkg))
+test_that("cpp_vendor errors if cpp11 is already vendored", {
+  pkg <- local_package()
+  cpp_vendor(pkg_path(pkg))
 
-    expect_true(dir.exists(file.path(p, "inst", "include", "cpp11")))
-    expect_true(file.exists(file.path(p, "inst", "include", "cpp11.hpp")))
-    expect_true(file.exists(file.path(p, "inst", "include", "cpp11", "declarations.hpp")))
+  expect_error(
+    cpp_vendor(pkg_path(pkg)),
+    "already exists"
+  )
+})
 
-    expect_silent(cpp_unvendor(pkg_path(pkg)))
-  })
+test_that("cpp_vendor vendors cpp11", {
+  pkg <- local_package()
+  p <- pkg_path(pkg)
+
+  cpp_vendor(pkg_path(pkg))
+
+  expect_true(dir.exists(file.path(p, "inst", "include", "cpp11")))
+  expect_true(file.exists(file.path(p, "inst", "include", "cpp11.hpp")))
+  expect_true(file.exists(file.path(p, "inst", "include", "cpp11", "declarations.hpp")))
+
+  expect_silent(cpp_unvendor(pkg_path(pkg)))
+ })
 })
