@@ -888,15 +888,23 @@ inline r_vector<T>::r_vector(std::initializer_list<named_arg> il)
       // SAFETY: We've validated type and length ahead of this.
       const underlying_type elt = get_elt(value, 0);
 
-      // TODO: The equivalent ctor from `initializer_list<r_string>` has a specialization
-      // for `<r_string>` to translate `elt` to UTF-8 before assigning. Should we have
-      // that here too? `named_arg` doesn't do any checking here.
-      if (data_p_ != nullptr) {
-        data_p_[i] = elt;
+      if constexpr (std::is_same<T, cpp11::r_string>::value) {
+        // Translate to UTF-8 before assigning for string types
+        SEXP translated_elt = Rf_mkCharCE(Rf_translateCharUTF8(elt), CE_UTF8);
+
+        if (data_p_ != nullptr) {
+          data_p_[i] = translated_elt;
+        } else {
+          // Handles STRSXP case. VECSXP case has its own specialization.
+          // We don't expect any ALTREP cases since we just freshly allocated `data_`.
+          set_elt(data_, i, translated_elt);
+        }
       } else {
-        // Handles STRSXP case. VECSXP case has its own specialization.
-        // We don't expect any ALTREP cases since we just freshly allocated `data_`.
-        set_elt(data_, i, elt);
+        if (data_p_ != nullptr) {
+          data_p_[i] = elt;
+        } else {
+          set_elt(data_, i, elt);
+        }
       }
 
       SEXP name = Rf_mkCharCE(it->name(), CE_UTF8);
