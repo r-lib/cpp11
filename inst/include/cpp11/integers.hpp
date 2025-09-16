@@ -9,6 +9,7 @@
 #include "cpp11/as.hpp"               // for as_sexp
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/protect.hpp"          // for safe
+#include "cpp11/r_bool.hpp"           // for r_bool
 #include "cpp11/r_vector.hpp"         // for r_vector, r_vector<>::proxy
 #include "cpp11/sexp.hpp"             // for sexp
 
@@ -79,6 +80,7 @@ inline int na() {
 // forward declaration
 
 typedef r_vector<double> doubles;
+typedef r_vector<r_bool> logicals;
 
 inline integers as_integers(SEXP x) {
   if (detail::r_typeof(x) == INTSXP) {
@@ -96,9 +98,40 @@ inline integers as_integers(SEXP x) {
       return static_cast<int>(value);
     });
     return ret;
+  } else if (detail::r_typeof(x) == LGLSXP) {
+    logicals xn(x);
+    size_t len = xn.size();
+    writable::integers ret(len);
+    std::transform(xn.begin(), xn.end(), ret.begin(), [](bool value) {
+      return value == NA_LOGICAL ? NA_INTEGER : static_cast<int>(value);
+    });
+    return ret;
   }
 
   throw type_error(INTSXP, detail::r_typeof(x));
 }
 
 }  // namespace cpp11
+
+// Note: Proxy Behavior in writable::integers
+//
+// When using writable::integers, operator[] returns a proxy object that allows
+// both reading and writing. For cases where you need the actual int value
+// (e.g., when using with C-style variadic functions like Rprintf), use one of
+// these three approaches:
+//
+// 1. Direct value access: vec.value(i)        [Recommended]
+// 2. Explicit cast: (int)vec[i]
+// 3. Auto with explicit type: int val = vec[i];
+//
+// Example demonstrating the issue and solutions:
+//   writable::integers vec;
+//   vec.push_back(42);
+//
+//   // This may print garbage due to proxy object:
+//   // Rprintf("Value: %d\n", vec[0]);  // DON'T DO THIS
+//
+//   // These all work correctly:
+//   Rprintf("Value: %d\n", vec.value(0));  // Recommended
+//   Rprintf("Value: %d\n", (int)vec[0]);   // Also works
+//   int val = vec[0]; Rprintf("Value: %d\n", val);  // Also works
