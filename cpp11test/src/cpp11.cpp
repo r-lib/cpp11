@@ -373,6 +373,41 @@ extern "C" SEXP _cpp11test_string_push_back_() {
     return cpp11::as_sexp(string_push_back_());
   END_CPP11
 }
+// strings.cpp
+cpp11::strings grow_strings_cpp11_(size_t n, int seed);
+extern "C" SEXP _cpp11test_grow_strings_cpp11_(SEXP n, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(grow_strings_cpp11_(cpp11::as_cpp<cpp11::decay_t<size_t>>(n), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+  END_CPP11
+}
+// strings.cpp
+Rcpp::CharacterVector grow_strings_rcpp_(size_t n, int seed);
+extern "C" SEXP _cpp11test_grow_strings_rcpp_(SEXP n, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(grow_strings_rcpp_(cpp11::as_cpp<cpp11::decay_t<size_t>>(n), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+  END_CPP11
+}
+// strings.cpp
+SEXP grow_strings_manual_(size_t n, int seed);
+extern "C" SEXP _cpp11test_grow_strings_manual_(SEXP n, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(grow_strings_manual_(cpp11::as_cpp<cpp11::decay_t<size_t>>(n), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+  END_CPP11
+}
+// strings.cpp
+cpp11::strings assign_cpp11_(size_t n, int seed);
+extern "C" SEXP _cpp11test_assign_cpp11_(SEXP n, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(assign_cpp11_(cpp11::as_cpp<cpp11::decay_t<size_t>>(n), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+  END_CPP11
+}
+// strings.cpp
+Rcpp::CharacterVector assign_rcpp_(size_t n, int seed);
+extern "C" SEXP _cpp11test_assign_rcpp_(SEXP n, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(assign_rcpp_(cpp11::as_cpp<cpp11::decay_t<size_t>>(n), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+  END_CPP11
+}
 // sum.cpp
 double sum_dbl_for_(cpp11::doubles x);
 extern "C" SEXP _cpp11test_sum_dbl_for_(SEXP x) {
@@ -492,6 +527,20 @@ extern "C" SEXP _cpp11test_rcpp_push_and_truncate_(SEXP size_sxp) {
     return cpp11::as_sexp(rcpp_push_and_truncate_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(size_sxp)));
   END_CPP11
 }
+// test-external_pointer.cpp
+cpp11::external_pointer<int> nullable_extptr_1();
+extern "C" SEXP _cpp11test_nullable_extptr_1() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(nullable_extptr_1());
+  END_CPP11
+}
+// test-external_pointer.cpp
+cpp11::external_pointer<int> nullable_extptr_2();
+extern "C" SEXP _cpp11test_nullable_extptr_2() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(nullable_extptr_2());
+  END_CPP11
+}
 // test-protect-nested.cpp
 void test_destruction_inner();
 extern "C" SEXP _cpp11test_test_destruction_inner() {
@@ -521,6 +570,8 @@ extern "C" {
 extern SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_cpp11test_assign_cpp11_",            (DL_FUNC) &_cpp11test_assign_cpp11_,            2},
+    {"_cpp11test_assign_rcpp_",             (DL_FUNC) &_cpp11test_assign_rcpp_,             2},
     {"_cpp11test_col_sums",                 (DL_FUNC) &_cpp11test_col_sums,                 1},
     {"_cpp11test_cpp11_add_vec_for_",       (DL_FUNC) &_cpp11test_cpp11_add_vec_for_,       2},
     {"_cpp11test_cpp11_insert_",            (DL_FUNC) &_cpp11test_cpp11_insert_,            1},
@@ -537,6 +588,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_gibbs_rcpp",               (DL_FUNC) &_cpp11test_gibbs_rcpp,               2},
     {"_cpp11test_gibbs_rcpp2",              (DL_FUNC) &_cpp11test_gibbs_rcpp2,              2},
     {"_cpp11test_grow_",                    (DL_FUNC) &_cpp11test_grow_,                    1},
+    {"_cpp11test_grow_strings_cpp11_",      (DL_FUNC) &_cpp11test_grow_strings_cpp11_,      2},
+    {"_cpp11test_grow_strings_manual_",     (DL_FUNC) &_cpp11test_grow_strings_manual_,     2},
+    {"_cpp11test_grow_strings_rcpp_",       (DL_FUNC) &_cpp11test_grow_strings_rcpp_,       2},
     {"_cpp11test_my_message",               (DL_FUNC) &_cpp11test_my_message,               2},
     {"_cpp11test_my_message_n1",            (DL_FUNC) &_cpp11test_my_message_n1,            1},
     {"_cpp11test_my_message_n1fmt",         (DL_FUNC) &_cpp11test_my_message_n1fmt,         1},
@@ -549,8 +603,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_my_warning_n1",            (DL_FUNC) &_cpp11test_my_warning_n1,            1},
     {"_cpp11test_my_warning_n1fmt",         (DL_FUNC) &_cpp11test_my_warning_n1fmt,         1},
     {"_cpp11test_my_warning_n2fmt",         (DL_FUNC) &_cpp11test_my_warning_n2fmt,         2},
-    {"_cpp11test_notroxcpp1_",              (DL_FUNC) &_cpp11test_notroxcpp1_,              1},
-    {"_cpp11test_notroxcpp6_",              (DL_FUNC) &_cpp11test_notroxcpp6_,              1},
+    {"_cpp11test_nullable_extptr_1",        (DL_FUNC) &_cpp11test_nullable_extptr_1,        0},
+    {"_cpp11test_nullable_extptr_2",        (DL_FUNC) &_cpp11test_nullable_extptr_2,        0},
     {"_cpp11test_protect_many_",            (DL_FUNC) &_cpp11test_protect_many_,            1},
     {"_cpp11test_protect_many_cpp11_",      (DL_FUNC) &_cpp11test_protect_many_cpp11_,      1},
     {"_cpp11test_protect_many_preserve_",   (DL_FUNC) &_cpp11test_protect_many_preserve_,   1},

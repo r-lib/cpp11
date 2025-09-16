@@ -225,6 +225,26 @@ string_push_back_ <- function() {
   .Call(`_cpp11test_string_push_back_`)
 }
 
+grow_strings_cpp11_ <- function(n, seed) {
+  .Call(`_cpp11test_grow_strings_cpp11_`, n, seed)
+}
+
+grow_strings_rcpp_ <- function(n, seed) {
+  .Call(`_cpp11test_grow_strings_rcpp_`, n, seed)
+}
+
+grow_strings_manual_ <- function(n, seed) {
+  .Call(`_cpp11test_grow_strings_manual_`, n, seed)
+}
+
+assign_cpp11_ <- function(n, seed) {
+  .Call(`_cpp11test_assign_cpp11_`, n, seed)
+}
+
+assign_rcpp_ <- function(n, seed) {
+  .Call(`_cpp11test_assign_rcpp_`, n, seed)
+}
+
 sum_dbl_for_ <- function(x) {
   .Call(`_cpp11test_sum_dbl_for_`, x)
 }
@@ -291,6 +311,14 @@ rcpp_grow_ <- function(n_sxp) {
 
 rcpp_push_and_truncate_ <- function(size_sxp) {
   .Call(`_cpp11test_rcpp_push_and_truncate_`, size_sxp)
+}
+
+nullable_extptr_1 <- function() {
+  .Call(`_cpp11test_nullable_extptr_1`)
+}
+
+nullable_extptr_2 <- function() {
+  .Call(`_cpp11test_nullable_extptr_2`)
 }
 
 test_destruction_inner <- function() {
