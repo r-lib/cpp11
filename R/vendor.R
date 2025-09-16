@@ -34,7 +34,8 @@ cpp_vendor <- function(path = ".") {
   new <- file.path(path, "inst", "include", "cpp11")
 
   if (dir.exists(new)) {
-    stop("'", new, "' already exists\n * run unlink('", new, "', recursive = TRUE)", call. = FALSE)
+    message("'", new, "' already exists, removing it")
+    cpp_unvendor(path)
   }
 
   dir.create(new , recursive = TRUE, showWarnings = FALSE)
