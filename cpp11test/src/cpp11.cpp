@@ -173,6 +173,27 @@ extern "C" SEXP _cpp11test_cpp11_insert_(SEXP num_sxp) {
     return cpp11::as_sexp(cpp11_insert_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(num_sxp)));
   END_CPP11
 }
+// map.cpp
+SEXP ordered_map_to_list_(cpp11::doubles x);
+extern "C" SEXP _cpp11test_ordered_map_to_list_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(ordered_map_to_list_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
+  END_CPP11
+}
+// map.cpp
+SEXP ordered_map_to_list_2_(cpp11::doubles x);
+extern "C" SEXP _cpp11test_ordered_map_to_list_2_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(ordered_map_to_list_2_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
+  END_CPP11
+}
+// map.cpp
+SEXP unordered_map_to_list_(cpp11::doubles x);
+extern "C" SEXP _cpp11test_unordered_map_to_list_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(unordered_map_to_list_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
+  END_CPP11
+}
 // matrix.cpp
 SEXP gibbs_cpp(int N, int thin);
 extern "C" SEXP _cpp11test_gibbs_cpp(SEXP N, SEXP thin) {
@@ -303,6 +324,55 @@ extern "C" SEXP _cpp11test_rcpp_release_(SEXP n) {
     return R_NilValue;
   END_CPP11
 }
+// roxygen1.cpp
+double notroxcpp1_(double x);
+extern "C" SEXP _cpp11test_notroxcpp1_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(notroxcpp1_(cpp11::as_cpp<cpp11::decay_t<double>>(x)));
+  END_CPP11
+}
+// roxygen1.cpp
+double roxcpp2_(double x);
+extern "C" SEXP _cpp11test_roxcpp2_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(roxcpp2_(cpp11::as_cpp<cpp11::decay_t<double>>(x)));
+  END_CPP11
+}
+// roxygen2.cpp
+double roxcpp3_(double x);
+extern "C" SEXP _cpp11test_roxcpp3_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(roxcpp3_(cpp11::as_cpp<cpp11::decay_t<double>>(x)));
+  END_CPP11
+}
+// roxygen2.cpp
+double roxcpp4_(double x);
+extern "C" SEXP _cpp11test_roxcpp4_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(roxcpp4_(cpp11::as_cpp<cpp11::decay_t<double>>(x)));
+  END_CPP11
+}
+// roxygen3.cpp
+double roxcpp5_(double x);
+extern "C" SEXP _cpp11test_roxcpp5_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(roxcpp5_(cpp11::as_cpp<cpp11::decay_t<double>>(x)));
+  END_CPP11
+}
+// roxygen3.cpp
+double notroxcpp6_(double x);
+extern "C" SEXP _cpp11test_notroxcpp6_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(notroxcpp6_(cpp11::as_cpp<cpp11::decay_t<double>>(x)));
+  END_CPP11
+}
+// roxygen3.cpp
+double roxcpp7_(double x);
+extern "C" SEXP _cpp11test_roxcpp7_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(roxcpp7_(cpp11::as_cpp<cpp11::decay_t<double>>(x)));
+  END_CPP11
+}
 // safe.cpp
 SEXP cpp11_safe_(SEXP x_sxp);
 extern "C" SEXP _cpp11test_cpp11_safe_(SEXP x_sxp) {
@@ -322,6 +392,41 @@ cpp11::writable::strings string_push_back_();
 extern "C" SEXP _cpp11test_string_push_back_() {
   BEGIN_CPP11
     return cpp11::as_sexp(string_push_back_());
+  END_CPP11
+}
+// strings.cpp
+cpp11::strings grow_strings_cpp11_(size_t n, int seed);
+extern "C" SEXP _cpp11test_grow_strings_cpp11_(SEXP n, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(grow_strings_cpp11_(cpp11::as_cpp<cpp11::decay_t<size_t>>(n), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+  END_CPP11
+}
+// strings.cpp
+Rcpp::CharacterVector grow_strings_rcpp_(size_t n, int seed);
+extern "C" SEXP _cpp11test_grow_strings_rcpp_(SEXP n, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(grow_strings_rcpp_(cpp11::as_cpp<cpp11::decay_t<size_t>>(n), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+  END_CPP11
+}
+// strings.cpp
+SEXP grow_strings_manual_(size_t n, int seed);
+extern "C" SEXP _cpp11test_grow_strings_manual_(SEXP n, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(grow_strings_manual_(cpp11::as_cpp<cpp11::decay_t<size_t>>(n), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+  END_CPP11
+}
+// strings.cpp
+cpp11::strings assign_cpp11_(size_t n, int seed);
+extern "C" SEXP _cpp11test_assign_cpp11_(SEXP n, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(assign_cpp11_(cpp11::as_cpp<cpp11::decay_t<size_t>>(n), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+  END_CPP11
+}
+// strings.cpp
+Rcpp::CharacterVector assign_rcpp_(size_t n, int seed);
+extern "C" SEXP _cpp11test_assign_rcpp_(SEXP n, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(assign_rcpp_(cpp11::as_cpp<cpp11::decay_t<size_t>>(n), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
   END_CPP11
 }
 // sum.cpp
@@ -443,6 +548,20 @@ extern "C" SEXP _cpp11test_rcpp_push_and_truncate_(SEXP size_sxp) {
     return cpp11::as_sexp(rcpp_push_and_truncate_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(size_sxp)));
   END_CPP11
 }
+// test-external_pointer.cpp
+cpp11::external_pointer<int> nullable_extptr_1();
+extern "C" SEXP _cpp11test_nullable_extptr_1() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(nullable_extptr_1());
+  END_CPP11
+}
+// test-external_pointer.cpp
+cpp11::external_pointer<int> nullable_extptr_2();
+extern "C" SEXP _cpp11test_nullable_extptr_2() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(nullable_extptr_2());
+  END_CPP11
+}
 // test-protect-nested.cpp
 void test_destruction_inner();
 extern "C" SEXP _cpp11test_test_destruction_inner() {
@@ -472,6 +591,8 @@ extern "C" {
 extern SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_cpp11test_assign_cpp11_",            (DL_FUNC) &_cpp11test_assign_cpp11_,            2},
+    {"_cpp11test_assign_rcpp_",             (DL_FUNC) &_cpp11test_assign_rcpp_,             2},
     {"_cpp11test_col_sums",                 (DL_FUNC) &_cpp11test_col_sums,                 1},
     {"_cpp11test_cpp11_add_vec_for_",       (DL_FUNC) &_cpp11test_cpp11_add_vec_for_,       2},
     {"_cpp11test_cpp11_insert_",            (DL_FUNC) &_cpp11test_cpp11_insert_,            1},
@@ -488,6 +609,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_gibbs_rcpp",               (DL_FUNC) &_cpp11test_gibbs_rcpp,               2},
     {"_cpp11test_gibbs_rcpp2",              (DL_FUNC) &_cpp11test_gibbs_rcpp2,              2},
     {"_cpp11test_grow_",                    (DL_FUNC) &_cpp11test_grow_,                    1},
+    {"_cpp11test_grow_strings_cpp11_",      (DL_FUNC) &_cpp11test_grow_strings_cpp11_,      2},
+    {"_cpp11test_grow_strings_manual_",     (DL_FUNC) &_cpp11test_grow_strings_manual_,     2},
+    {"_cpp11test_grow_strings_rcpp_",       (DL_FUNC) &_cpp11test_grow_strings_rcpp_,       2},
     {"_cpp11test_my_message",               (DL_FUNC) &_cpp11test_my_message,               2},
     {"_cpp11test_my_message_n1",            (DL_FUNC) &_cpp11test_my_message_n1,            1},
     {"_cpp11test_my_message_n1fmt",         (DL_FUNC) &_cpp11test_my_message_n1fmt,         1},
@@ -500,6 +624,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_my_warning_n1",            (DL_FUNC) &_cpp11test_my_warning_n1,            1},
     {"_cpp11test_my_warning_n1fmt",         (DL_FUNC) &_cpp11test_my_warning_n1fmt,         1},
     {"_cpp11test_my_warning_n2fmt",         (DL_FUNC) &_cpp11test_my_warning_n2fmt,         2},
+    {"_cpp11test_ordered_map_to_list_",     (DL_FUNC) &_cpp11test_ordered_map_to_list_,     1},
+    {"_cpp11test_ordered_map_to_list_2_",   (DL_FUNC) &_cpp11test_ordered_map_to_list_2_,   1},
+    {"_cpp11test_nullable_extptr_1",        (DL_FUNC) &_cpp11test_nullable_extptr_1,        0},
+    {"_cpp11test_nullable_extptr_2",        (DL_FUNC) &_cpp11test_nullable_extptr_2,        0},
     {"_cpp11test_protect_many_",            (DL_FUNC) &_cpp11test_protect_many_,            1},
     {"_cpp11test_protect_many_cpp11_",      (DL_FUNC) &_cpp11test_protect_many_cpp11_,      1},
     {"_cpp11test_protect_many_preserve_",   (DL_FUNC) &_cpp11test_protect_many_preserve_,   1},
@@ -518,6 +646,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_rcpp_sum_int_for_",        (DL_FUNC) &_cpp11test_rcpp_sum_int_for_,        1},
     {"_cpp11test_remove_altrep",            (DL_FUNC) &_cpp11test_remove_altrep,            1},
     {"_cpp11test_row_sums",                 (DL_FUNC) &_cpp11test_row_sums,                 1},
+    {"_cpp11test_roxcpp2_",                 (DL_FUNC) &_cpp11test_roxcpp2_,                 1},
+    {"_cpp11test_roxcpp3_",                 (DL_FUNC) &_cpp11test_roxcpp3_,                 1},
+    {"_cpp11test_roxcpp4_",                 (DL_FUNC) &_cpp11test_roxcpp4_,                 1},
+    {"_cpp11test_roxcpp5_",                 (DL_FUNC) &_cpp11test_roxcpp5_,                 1},
+    {"_cpp11test_roxcpp7_",                 (DL_FUNC) &_cpp11test_roxcpp7_,                 1},
     {"_cpp11test_string_proxy_assignment_", (DL_FUNC) &_cpp11test_string_proxy_assignment_, 0},
     {"_cpp11test_string_push_back_",        (DL_FUNC) &_cpp11test_string_push_back_,        0},
     {"_cpp11test_sum_dbl_accumulate2_",     (DL_FUNC) &_cpp11test_sum_dbl_accumulate2_,     1},
@@ -533,6 +666,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_sum_int_foreach_",         (DL_FUNC) &_cpp11test_sum_int_foreach_,         1},
     {"_cpp11test_test_destruction_inner",   (DL_FUNC) &_cpp11test_test_destruction_inner,   0},
     {"_cpp11test_test_destruction_outer",   (DL_FUNC) &_cpp11test_test_destruction_outer,   0},
+    {"_cpp11test_unordered_map_to_list_",   (DL_FUNC) &_cpp11test_unordered_map_to_list_,   1},
     {"_cpp11test_upper_bound",              (DL_FUNC) &_cpp11test_upper_bound,              2},
     {"run_testthat_tests",                  (DL_FUNC) &run_testthat_tests,                  1},
     {NULL, NULL, 0}

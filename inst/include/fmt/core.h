@@ -19,62 +19,62 @@
 #define FMT_VERSION 80000
 
 #ifdef __clang__
-#  define FMT_CLANG_VERSION (__clang_major__ * 100 + __clang_minor__)
+#define FMT_CLANG_VERSION (__clang_major__ * 100 + __clang_minor__)
 #else
-#  define FMT_CLANG_VERSION 0
+#define FMT_CLANG_VERSION 0
 #endif
 
 #if defined(__GNUC__) && !defined(__clang__)
-#  define FMT_GCC_VERSION (__GNUC__ * 100 + __GNUC_MINOR__)
-#  define FMT_GCC_PRAGMA(arg) _Pragma(arg)
+#define FMT_GCC_VERSION (__GNUC__ * 100 + __GNUC_MINOR__)
+#define FMT_GCC_PRAGMA(arg) _Pragma(arg)
 #else
-#  define FMT_GCC_VERSION 0
-#  define FMT_GCC_PRAGMA(arg)
+#define FMT_GCC_VERSION 0
+#define FMT_GCC_PRAGMA(arg)
 #endif
 
 #if __cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  define FMT_HAS_GXX_CXX11 FMT_GCC_VERSION
+#define FMT_HAS_GXX_CXX11 FMT_GCC_VERSION
 #else
-#  define FMT_HAS_GXX_CXX11 0
+#define FMT_HAS_GXX_CXX11 0
 #endif
 
 #if defined(__INTEL_COMPILER)
-#  define FMT_ICC_VERSION __INTEL_COMPILER
+#define FMT_ICC_VERSION __INTEL_COMPILER
 #else
-#  define FMT_ICC_VERSION 0
+#define FMT_ICC_VERSION 0
 #endif
 
 #ifdef __NVCC__
-#  define FMT_NVCC __NVCC__
+#define FMT_NVCC __NVCC__
 #else
-#  define FMT_NVCC 0
+#define FMT_NVCC 0
 #endif
 
 #ifdef _MSC_VER
-#  define FMT_MSC_VER _MSC_VER
-#  define FMT_MSC_WARNING(...) __pragma(warning(__VA_ARGS__))
+#define FMT_MSC_VER _MSC_VER
+#define FMT_MSC_WARNING(...) __pragma(warning(__VA_ARGS__))
 #else
-#  define FMT_MSC_VER 0
-#  define FMT_MSC_WARNING(...)
+#define FMT_MSC_VER 0
+#define FMT_MSC_WARNING(...)
 #endif
 
 #ifdef __has_feature
-#  define FMT_HAS_FEATURE(x) __has_feature(x)
+#define FMT_HAS_FEATURE(x) __has_feature(x)
 #else
-#  define FMT_HAS_FEATURE(x) 0
+#define FMT_HAS_FEATURE(x) 0
 #endif
 
 #if defined(__has_include) && !defined(__INTELLISENSE__) && \
     (!FMT_ICC_VERSION || FMT_ICC_VERSION >= 1600)
-#  define FMT_HAS_INCLUDE(x) __has_include(x)
+#define FMT_HAS_INCLUDE(x) __has_include(x)
 #else
-#  define FMT_HAS_INCLUDE(x) 0
+#define FMT_HAS_INCLUDE(x) 0
 #endif
 
 #ifdef __has_cpp_attribute
-#  define FMT_HAS_CPP_ATTRIBUTE(x) __has_cpp_attribute(x)
+#define FMT_HAS_CPP_ATTRIBUTE(x) __has_cpp_attribute(x)
 #else
-#  define FMT_HAS_CPP_ATTRIBUTE(x) 0
+#define FMT_HAS_CPP_ATTRIBUTE(x) 0
 #endif
 
 #define FMT_HAS_CPP14_ATTRIBUTE(attribute) \
@@ -86,224 +86,218 @@
 // Check if relaxed C++14 constexpr is supported.
 // GCC doesn't allow throw in constexpr until version 6 (bug 67371).
 #ifndef FMT_USE_CONSTEXPR
-#  define FMT_USE_CONSTEXPR                                           \
-    (FMT_HAS_FEATURE(cxx_relaxed_constexpr) || FMT_MSC_VER >= 1910 || \
-     (FMT_GCC_VERSION >= 600 && __cplusplus >= 201402L)) &&           \
-        !FMT_NVCC && !FMT_ICC_VERSION
+#define FMT_USE_CONSTEXPR                                           \
+  (FMT_HAS_FEATURE(cxx_relaxed_constexpr) || FMT_MSC_VER >= 1910 || \
+   (FMT_GCC_VERSION >= 600 && __cplusplus >= 201402L)) &&           \
+      !FMT_NVCC && !FMT_ICC_VERSION
 #endif
 #if FMT_USE_CONSTEXPR
-#  define FMT_CONSTEXPR constexpr
-#  define FMT_CONSTEXPR_DECL constexpr
+#define FMT_CONSTEXPR constexpr
+#define FMT_CONSTEXPR_DECL constexpr
 #else
-#  define FMT_CONSTEXPR
-#  define FMT_CONSTEXPR_DECL
+#define FMT_CONSTEXPR
+#define FMT_CONSTEXPR_DECL
 #endif
 
 // Check if constexpr std::char_traits<>::compare,length is supported.
 #if defined(__GLIBCXX__)
-#  if __cplusplus >= 201703L && defined(_GLIBCXX_RELEASE) && \
-      _GLIBCXX_RELEASE >= 7  // GCC 7+ libstdc++ has _GLIBCXX_RELEASE.
-#    define FMT_CONSTEXPR_CHAR_TRAITS constexpr
-#  endif
-#elif defined(_LIBCPP_VERSION) && __cplusplus >= 201703L && \
-    _LIBCPP_VERSION >= 4000
-#  define FMT_CONSTEXPR_CHAR_TRAITS constexpr
+#if __cplusplus >= 201703L && defined(_GLIBCXX_RELEASE) && \
+    _GLIBCXX_RELEASE >= 7  // GCC 7+ libstdc++ has _GLIBCXX_RELEASE.
+#define FMT_CONSTEXPR_CHAR_TRAITS constexpr
+#endif
+#elif defined(_LIBCPP_VERSION) && __cplusplus >= 201703L && _LIBCPP_VERSION >= 4000
+#define FMT_CONSTEXPR_CHAR_TRAITS constexpr
 #elif FMT_MSC_VER >= 1914 && _MSVC_LANG >= 201703L
-#  define FMT_CONSTEXPR_CHAR_TRAITS constexpr
+#define FMT_CONSTEXPR_CHAR_TRAITS constexpr
 #endif
 #ifndef FMT_CONSTEXPR_CHAR_TRAITS
-#  define FMT_CONSTEXPR_CHAR_TRAITS
+#define FMT_CONSTEXPR_CHAR_TRAITS
 #endif
 
 #ifndef FMT_OVERRIDE
-#  if FMT_HAS_FEATURE(cxx_override_control) || \
-      (FMT_GCC_VERSION >= 408 && FMT_HAS_GXX_CXX11) || FMT_MSC_VER >= 1900
-#    define FMT_OVERRIDE override
-#  else
-#    define FMT_OVERRIDE
-#  endif
+#if FMT_HAS_FEATURE(cxx_override_control) || \
+    (FMT_GCC_VERSION >= 408 && FMT_HAS_GXX_CXX11) || FMT_MSC_VER >= 1900
+#define FMT_OVERRIDE override
+#else
+#define FMT_OVERRIDE
+#endif
 #endif
 
 // Check if exceptions are disabled.
 #ifndef FMT_EXCEPTIONS
-#  if (defined(__GNUC__) && !defined(__EXCEPTIONS)) || \
-      FMT_MSC_VER && !_HAS_EXCEPTIONS
-#    define FMT_EXCEPTIONS 0
-#  else
-#    define FMT_EXCEPTIONS 1
-#  endif
+#if (defined(__GNUC__) && !defined(__EXCEPTIONS)) || FMT_MSC_VER && !_HAS_EXCEPTIONS
+#define FMT_EXCEPTIONS 0
+#else
+#define FMT_EXCEPTIONS 1
+#endif
 #endif
 
 // Define FMT_USE_NOEXCEPT to make fmt use noexcept (C++11 feature).
 #ifndef FMT_USE_NOEXCEPT
-#  define FMT_USE_NOEXCEPT 0
+#define FMT_USE_NOEXCEPT 0
 #endif
 
 #if FMT_USE_NOEXCEPT || FMT_HAS_FEATURE(cxx_noexcept) || \
     (FMT_GCC_VERSION >= 408 && FMT_HAS_GXX_CXX11) || FMT_MSC_VER >= 1900
-#  define FMT_DETECTED_NOEXCEPT noexcept
-#  define FMT_HAS_CXX11_NOEXCEPT 1
+#define FMT_DETECTED_NOEXCEPT noexcept
+#define FMT_HAS_CXX11_NOEXCEPT 1
 #else
-#  define FMT_DETECTED_NOEXCEPT throw()
-#  define FMT_HAS_CXX11_NOEXCEPT 0
+#define FMT_DETECTED_NOEXCEPT throw()
+#define FMT_HAS_CXX11_NOEXCEPT 0
 #endif
 
 #ifndef FMT_NOEXCEPT
-#  if FMT_EXCEPTIONS || FMT_HAS_CXX11_NOEXCEPT
-#    define FMT_NOEXCEPT FMT_DETECTED_NOEXCEPT
-#  else
-#    define FMT_NOEXCEPT
-#  endif
+#if FMT_EXCEPTIONS || FMT_HAS_CXX11_NOEXCEPT
+#define FMT_NOEXCEPT FMT_DETECTED_NOEXCEPT
+#else
+#define FMT_NOEXCEPT
+#endif
 #endif
 
 // [[noreturn]] is disabled on MSVC and NVCC because of bogus unreachable code
 // warnings.
-#if FMT_EXCEPTIONS && FMT_HAS_CPP_ATTRIBUTE(noreturn) && !FMT_MSC_VER && \
-    !FMT_NVCC
-#  define FMT_NORETURN [[noreturn]]
+#if FMT_EXCEPTIONS && FMT_HAS_CPP_ATTRIBUTE(noreturn) && !FMT_MSC_VER && !FMT_NVCC
+#define FMT_NORETURN [[noreturn]]
 #else
-#  define FMT_NORETURN
+#define FMT_NORETURN
 #endif
 
 #ifndef FMT_MAYBE_UNUSED
-#  if FMT_HAS_CPP17_ATTRIBUTE(maybe_unused)
-#    define FMT_MAYBE_UNUSED [[maybe_unused]]
-#  else
-#    define FMT_MAYBE_UNUSED
-#  endif
+#if FMT_HAS_CPP17_ATTRIBUTE(maybe_unused)
+#define FMT_MAYBE_UNUSED [[maybe_unused]]
+#else
+#define FMT_MAYBE_UNUSED
+#endif
 #endif
 
 #if __cplusplus == 201103L || __cplusplus == 201402L
-#  if defined(__INTEL_COMPILER) || defined(__PGI)
-#    define FMT_FALLTHROUGH
-#  elif defined(__clang__)
-#    define FMT_FALLTHROUGH [[clang::fallthrough]]
-#  elif FMT_GCC_VERSION >= 700 && \
-      (!defined(__EDG_VERSION__) || __EDG_VERSION__ >= 520)
-#    define FMT_FALLTHROUGH [[gnu::fallthrough]]
-#  else
-#    define FMT_FALLTHROUGH
-#  endif
+#if defined(__INTEL_COMPILER) || defined(__PGI)
+#define FMT_FALLTHROUGH
+#elif defined(__clang__)
+#define FMT_FALLTHROUGH [[clang::fallthrough]]
+#elif FMT_GCC_VERSION >= 700 && (!defined(__EDG_VERSION__) || __EDG_VERSION__ >= 520)
+#define FMT_FALLTHROUGH [[gnu::fallthrough]]
+#else
+#define FMT_FALLTHROUGH
+#endif
 #elif FMT_HAS_CPP17_ATTRIBUTE(fallthrough) || \
     (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L)
-#  define FMT_FALLTHROUGH [[fallthrough]]
+#define FMT_FALLTHROUGH [[fallthrough]]
 #else
-#  define FMT_FALLTHROUGH
+#define FMT_FALLTHROUGH
 #endif
 
 #ifndef FMT_USE_FLOAT
-#  define FMT_USE_FLOAT 1
+#define FMT_USE_FLOAT 1
 #endif
 #ifndef FMT_USE_DOUBLE
-#  define FMT_USE_DOUBLE 1
+#define FMT_USE_DOUBLE 1
 #endif
 #ifndef FMT_USE_LONG_DOUBLE
-#  define FMT_USE_LONG_DOUBLE 1
+#define FMT_USE_LONG_DOUBLE 1
 #endif
 
 #ifndef FMT_INLINE
-#  if FMT_GCC_VERSION || FMT_CLANG_VERSION
-#    define FMT_INLINE inline __attribute__((always_inline))
-#  else
-#    define FMT_INLINE inline
-#  endif
+#if FMT_GCC_VERSION || FMT_CLANG_VERSION
+#define FMT_INLINE inline __attribute__((always_inline))
+#else
+#define FMT_INLINE inline
+#endif
 #endif
 
 #ifndef FMT_USE_INLINE_NAMESPACES
-#  if FMT_HAS_FEATURE(cxx_inline_namespaces) || FMT_GCC_VERSION >= 404 || \
-      (FMT_MSC_VER >= 1900 && (!defined(_MANAGED) || !_MANAGED))
-#    define FMT_USE_INLINE_NAMESPACES 1
-#  else
-#    define FMT_USE_INLINE_NAMESPACES 0
-#  endif
+#if FMT_HAS_FEATURE(cxx_inline_namespaces) || FMT_GCC_VERSION >= 404 || \
+    (FMT_MSC_VER >= 1900 && (!defined(_MANAGED) || !_MANAGED))
+#define FMT_USE_INLINE_NAMESPACES 1
+#else
+#define FMT_USE_INLINE_NAMESPACES 0
+#endif
 #endif
 
 #ifndef FMT_BEGIN_NAMESPACE
-#  if FMT_USE_INLINE_NAMESPACES
-#    define FMT_INLINE_NAMESPACE inline namespace
-#    define FMT_END_NAMESPACE \
-      }                       \
-      }
-#  else
-#    define FMT_INLINE_NAMESPACE namespace
-#    define FMT_END_NAMESPACE \
-      }                       \
-      using namespace v7;     \
-      }
-#  endif
-#  define FMT_BEGIN_NAMESPACE \
-    namespace fmt {           \
-    FMT_INLINE_NAMESPACE v7 {
+#if FMT_USE_INLINE_NAMESPACES
+#define FMT_INLINE_NAMESPACE inline namespace
+#define FMT_END_NAMESPACE \
+  }                       \
+  }
+#else
+#define FMT_INLINE_NAMESPACE namespace
+#define FMT_END_NAMESPACE \
+  }                       \
+  using namespace v7;     \
+  }
+#endif
+#define FMT_BEGIN_NAMESPACE \
+  namespace fmt {           \
+  FMT_INLINE_NAMESPACE v7 {
 #endif
 
 #ifndef FMT_MODULE_EXPORT
-#  define FMT_MODULE_EXPORT
-#  define FMT_MODULE_EXPORT_BEGIN
-#  define FMT_MODULE_EXPORT_END
-#  define FMT_BEGIN_DETAIL_NAMESPACE namespace detail {
-#  define FMT_END_DETAIL_NAMESPACE }
+#define FMT_MODULE_EXPORT
+#define FMT_MODULE_EXPORT_BEGIN
+#define FMT_MODULE_EXPORT_END
+#define FMT_BEGIN_DETAIL_NAMESPACE namespace detail {
+#define FMT_END_DETAIL_NAMESPACE }
 #endif
 
 #if !defined(FMT_HEADER_ONLY) && defined(_WIN32)
-#  define FMT_CLASS_API FMT_MSC_WARNING(suppress : 4275)
-#  ifdef FMT_EXPORT
-#    define FMT_API __declspec(dllexport)
-#  elif defined(FMT_SHARED)
-#    define FMT_API __declspec(dllimport)
-#  endif
+#define FMT_CLASS_API FMT_MSC_WARNING(suppress : 4275)
+#ifdef FMT_EXPORT
+#define FMT_API __declspec(dllexport)
+#elif defined(FMT_SHARED)
+#define FMT_API __declspec(dllimport)
+#endif
 #else
-#  define FMT_CLASS_API
-#  if defined(FMT_EXPORT) || defined(FMT_SHARED)
-#    if defined(__GNUC__) || defined(__clang__)
-#      define FMT_API __attribute__((visibility("default")))
-#    endif
-#  endif
+#define FMT_CLASS_API
+#if defined(FMT_EXPORT) || defined(FMT_SHARED)
+#if defined(__GNUC__) || defined(__clang__)
+#define FMT_API __attribute__((visibility("default")))
+#endif
+#endif
 #endif
 #ifndef FMT_API
-#  define FMT_API
+#define FMT_API
 #endif
 
 #if FMT_GCC_VERSION
-#  define FMT_GCC_VISIBILITY_HIDDEN __attribute__((visibility("hidden")))
+#define FMT_GCC_VISIBILITY_HIDDEN __attribute__((visibility("hidden")))
 #else
-#  define FMT_GCC_VISIBILITY_HIDDEN
+#define FMT_GCC_VISIBILITY_HIDDEN
 #endif
 
 // libc++ supports string_view in pre-c++17.
 #if (FMT_HAS_INCLUDE(<string_view>) &&                       \
      (__cplusplus > 201402L || defined(_LIBCPP_VERSION))) || \
     (defined(_MSVC_LANG) && _MSVC_LANG > 201402L && _MSC_VER >= 1910)
-#  include <string_view>
-#  define FMT_USE_STRING_VIEW
+#include <string_view>
+#define FMT_USE_STRING_VIEW
 #elif FMT_HAS_INCLUDE("experimental/string_view") && __cplusplus >= 201402L
-#  include <experimental/string_view>
-#  define FMT_USE_EXPERIMENTAL_STRING_VIEW
+#include <experimental/string_view>
+#define FMT_USE_EXPERIMENTAL_STRING_VIEW
 #endif
 
 #ifndef FMT_UNICODE
-#  define FMT_UNICODE !FMT_MSC_VER
+#define FMT_UNICODE !FMT_MSC_VER
 #endif
 
 #ifndef FMT_CONSTEVAL
-#  if ((FMT_GCC_VERSION >= 1000 || FMT_CLANG_VERSION >= 1101) && \
-       __cplusplus > 201703L) ||                                 \
-      (defined(__cpp_consteval) &&                               \
-       !FMT_MSC_VER)  // consteval is broken in MSVC.
-#    define FMT_CONSTEVAL consteval
-#    define FMT_HAS_CONSTEVAL
-#  else
-#    define FMT_CONSTEVAL
-#  endif
+#if ((FMT_GCC_VERSION >= 1000 || FMT_CLANG_VERSION >= 1101) && __cplusplus > 201703L) || \
+    (defined(__cpp_consteval) && !FMT_MSC_VER)  // consteval is broken in MSVC.
+#define FMT_CONSTEVAL consteval
+#define FMT_HAS_CONSTEVAL
+#else
+#define FMT_CONSTEVAL
+#endif
 #endif
 
 #ifndef FMT_USE_NONTYPE_TEMPLATE_PARAMETERS
-#  if defined(__cpp_nontype_template_args) &&                \
-      ((FMT_GCC_VERSION >= 903 && __cplusplus >= 201709L) || \
-       __cpp_nontype_template_args >= 201911L)
-#    define FMT_USE_NONTYPE_TEMPLATE_PARAMETERS 1
-#  else
-#    define FMT_USE_NONTYPE_TEMPLATE_PARAMETERS 0
-#  endif
+#if defined(__cpp_nontype_template_args) &&                \
+    ((FMT_GCC_VERSION >= 903 && __cplusplus >= 201709L) || \
+     __cpp_nontype_template_args >= 201911L)
+#define FMT_USE_NONTYPE_TEMPLATE_PARAMETERS 1
+#else
+#define FMT_USE_NONTYPE_TEMPLATE_PARAMETERS 0
+#endif
 #endif
 
 // Enable minimal optimizations for more compact code in debug mode.
@@ -320,13 +314,18 @@ template <bool B, class T = void>
 using enable_if_t = typename std::enable_if<B, T>::type;
 template <bool B, class T, class F>
 using conditional_t = typename std::conditional<B, T, F>::type;
-template <bool B> using bool_constant = std::integral_constant<bool, B>;
+template <bool B>
+using bool_constant = std::integral_constant<bool, B>;
 template <typename T>
 using remove_reference_t = typename std::remove_reference<T>::type;
 template <typename T>
 using remove_cvref_t = typename std::remove_cv<remove_reference_t<T>>::type;
-template <typename T> struct type_identity { using type = T; };
-template <typename T> using type_identity_t = typename type_identity<T>::type;
+template <typename T>
+struct type_identity {
+  using type = T;
+};
+template <typename T>
+using type_identity_t = typename type_identity<T>::type;
 
 struct monostate {
   constexpr monostate() {}
@@ -336,9 +335,9 @@ struct monostate {
 // shorter symbols: https://godbolt.org/z/sWw4vP. Extra parentheses are needed
 // to workaround a bug in MSVC 2019 (see #1140 and #1186).
 #ifdef FMT_DOC
-#  define FMT_ENABLE_IF(...)
+#define FMT_ENABLE_IF(...)
 #else
-#  define FMT_ENABLE_IF(...) enable_if_t<(__VA_ARGS__), int> = 0
+#define FMT_ENABLE_IF(...) enable_if_t<(__VA_ARGS__), int> = 0
 #endif
 
 FMT_BEGIN_DETAIL_NAMESPACE
@@ -352,58 +351,62 @@ constexpr FMT_INLINE auto is_constant_evaluated() FMT_NOEXCEPT -> bool {
 }
 
 // A function to suppress "conditional expression is constant" warnings.
-template <typename T> constexpr auto const_check(T value) -> T { return value; }
+template <typename T>
+constexpr auto const_check(T value) -> T {
+  return value;
+}
 
-FMT_NORETURN FMT_API void assert_fail(const char* file, int line,
-                                      const char* message);
+FMT_NORETURN FMT_API void assert_fail(const char* file, int line, const char* message);
 
 #ifndef FMT_ASSERT
-#  ifdef NDEBUG
+#ifdef NDEBUG
 // FMT_ASSERT is not empty to avoid -Werror=empty-body.
-#    define FMT_ASSERT(condition, message) ((void)0)
-#  else
-#    define FMT_ASSERT(condition, message)                                    \
-      ((condition) /* void() fails with -Winvalid-constexpr on clang 4.0.1 */ \
-           ? (void)0                                                          \
-           : ::fmt::detail::assert_fail(__FILE__, __LINE__, (message)))
-#  endif
+#define FMT_ASSERT(condition, message) ((void)0)
+#else
+#define FMT_ASSERT(condition, message)                                    \
+  ((condition) /* void() fails with -Winvalid-constexpr on clang 4.0.1 */ \
+       ? (void)0                                                          \
+       : ::fmt::detail::assert_fail(__FILE__, __LINE__, (message)))
+#endif
 #endif
 
 #if defined(FMT_USE_STRING_VIEW)
-template <typename Char> using std_string_view = std::basic_string_view<Char>;
+template <typename Char>
+using std_string_view = std::basic_string_view<Char>;
 #elif defined(FMT_USE_EXPERIMENTAL_STRING_VIEW)
 template <typename Char>
 using std_string_view = std::experimental::basic_string_view<Char>;
 #else
-template <typename T> struct std_string_view {};
+template <typename T>
+struct std_string_view {};
 #endif
 
 #ifdef FMT_USE_INT128
 // Do nothing.
-#elif defined(__SIZEOF_INT128__) && !FMT_NVCC && \
-    !(FMT_CLANG_VERSION && FMT_MSC_VER)
-#  define FMT_USE_INT128 1
+#elif defined(__SIZEOF_INT128__) && !FMT_NVCC && !(FMT_CLANG_VERSION && FMT_MSC_VER)
+#define FMT_USE_INT128 1
 using int128_t = __int128_t;
 using uint128_t = __uint128_t;
-template <typename T> inline auto convert_for_visit(T value) -> T {
+template <typename T>
+inline auto convert_for_visit(T value) -> T {
   return value;
 }
 #else
-#  define FMT_USE_INT128 0
+#define FMT_USE_INT128 0
 #endif
 #if !FMT_USE_INT128
 enum class int128_t {};
 enum class uint128_t {};
 // Reduce template instantiations.
-template <typename T> inline auto convert_for_visit(T) -> monostate {
+template <typename T>
+inline auto convert_for_visit(T) -> monostate {
   return {};
 }
 #endif
 
 // Casts a nonnegative integer to unsigned.
 template <typename Int>
-FMT_CONSTEXPR auto to_unsigned(Int value) ->
-    typename std::make_unsigned<Int>::type {
+FMT_CONSTEXPR auto to_unsigned(Int value) -> typename std::make_unsigned<Int>::type {
   FMT_ASSERT(value >= 0, "negative value");
   return static_cast<typename std::make_unsigned<Int>::type>(value);
 }
@@ -414,8 +417,8 @@ constexpr auto is_utf8() -> bool {
   // Avoid buggy sign extensions in MSVC's constant evaluation mode.
   // https://developercommunity.visualstudio.com/t/C-difference-in-behavior-for-unsigned/1233612
   using uchar = unsigned char;
-  return FMT_UNICODE || (sizeof(micro) == 3 && uchar(micro[0]) == 0xC2 &&
-                         uchar(micro[1]) == 0xB5);
+  return FMT_UNICODE ||
+         (sizeof(micro) == 3 && uchar(micro[0]) == 0xC2 && uchar(micro[1]) == 0xB5);
 }
 FMT_END_DETAIL_NAMESPACE
 
@@ -426,7 +429,8 @@ FMT_END_DETAIL_NAMESPACE
   compiled with a different ``-std`` option than the client code (which is not
   recommended).
  */
-template <typename Char> class basic_string_view {
+template <typename Char>
+class basic_string_view {
  private:
   const Char* data_;
   size_t size_;
@@ -438,9 +442,8 @@ template <typename Char> class basic_string_view {
   constexpr basic_string_view() FMT_NOEXCEPT : data_(nullptr), size_(0) {}
 
   /** Constructs a string reference object from a C string and a size. */
-  constexpr basic_string_view(const Char* s, size_t count) FMT_NOEXCEPT
-      : data_(s),
-        size_(count) {}
+  constexpr basic_string_view(const Char* s, size_t count) FMT_NOEXCEPT : data_(s),
+                                                                          size_(count) {}
 
   /**
     \rst
@@ -460,15 +463,13 @@ template <typename Char> class basic_string_view {
 
   /** Constructs a string reference from a ``std::basic_string`` object. */
   template <typename Traits, typename Alloc>
-  FMT_CONSTEXPR basic_string_view(
-      const std::basic_string<Char, Traits, Alloc>& s) FMT_NOEXCEPT
-      : data_(s.data()),
-        size_(s.size()) {}
+  FMT_CONSTEXPR basic_string_view(const std::basic_string<Char, Traits, Alloc>& s)
+      FMT_NOEXCEPT : data_(s.data()),
+                     size_(s.size()) {}
 
-  template <typename S, FMT_ENABLE_IF(std::is_same<
-                                      S, detail::std_string_view<Char>>::value)>
-  FMT_CONSTEXPR basic_string_view(S s) FMT_NOEXCEPT : data_(s.data()),
-                                                      size_(s.size()) {}
+  template <typename S,
+            FMT_ENABLE_IF(std::is_same<S, detail::std_string_view<Char>>::value)>
+  FMT_CONSTEXPR basic_string_view(S s) FMT_NOEXCEPT : data_(s.data()), size_(s.size()) {}
 
   /** Returns a pointer to the string data. */
   constexpr auto data() const -> const Char* { return data_; }
@@ -479,9 +480,7 @@ template <typename Char> class basic_string_view {
   constexpr auto begin() const -> iterator { return data_; }
   constexpr auto end() const -> iterator { return data_ + size_; }
 
-  constexpr auto operator[](size_t pos) const -> const Char& {
-    return data_[pos];
-  }
+  constexpr auto operator[](size_t pos) const -> const Char& { return data_[pos]; }
 
   FMT_CONSTEXPR void remove_prefix(size_t n) {
     data_ += n;
@@ -492,14 +491,12 @@ template <typename Char> class basic_string_view {
   FMT_CONSTEXPR_CHAR_TRAITS auto compare(basic_string_view other) const -> int {
     size_t str_size = size_ < other.size_ ? size_ : other.size_;
     int result = std::char_traits<Char>::compare(data_, other.data_, str_size);
-    if (result == 0)
-      result = size_ == other.size_ ? 0 : (size_ < other.size_ ? -1 : 1);
+    if (result == 0) result = size_ == other.size_ ? 0 : (size_ < other.size_ ? -1 : 1);
     return result;
   }
 
   FMT_CONSTEXPR_CHAR_TRAITS friend auto operator==(basic_string_view lhs,
-                                                   basic_string_view rhs)
-      -> bool {
+                                                   basic_string_view rhs) -> bool {
     return lhs.compare(rhs) == 0;
   }
   friend auto operator!=(basic_string_view lhs, basic_string_view rhs) -> bool {
@@ -522,8 +519,10 @@ template <typename Char> class basic_string_view {
 using string_view = basic_string_view<char>;
 
 /** Specifies if ``T`` is a character type. Can be specialized by users. */
-template <typename T> struct is_char : std::false_type {};
-template <> struct is_char<char> : std::true_type {};
+template <typename T>
+struct is_char : std::false_type {};
+template <>
+struct is_char<char> : std::true_type {};
 
 /**
   \rst
@@ -553,15 +552,13 @@ inline auto to_string_view(const std::basic_string<Char, Traits, Alloc>& s)
 }
 
 template <typename Char>
-constexpr auto to_string_view(basic_string_view<Char> s)
-    -> basic_string_view<Char> {
+constexpr auto to_string_view(basic_string_view<Char> s) -> basic_string_view<Char> {
   return s;
 }
 
 template <typename Char,
           FMT_ENABLE_IF(!std::is_empty<detail::std_string_view<Char>>::value)>
-inline auto to_string_view(detail::std_string_view<Char> s)
-    -> basic_string_view<Char> {
+inline auto to_string_view(detail::std_string_view<Char> s) -> basic_string_view<Char> {
   return s;
 }
 
@@ -573,8 +570,7 @@ template <typename S>
 struct is_compile_string : std::is_base_of<compile_string, S> {};
 
 template <typename S, FMT_ENABLE_IF(is_compile_string<S>::value)>
-constexpr auto to_string_view(const S& s)
-    -> basic_string_view<typename S::char_type> {
+constexpr auto to_string_view(const S& s) -> basic_string_view<typename S::char_type> {
   return basic_string_view<typename S::char_type>(s);
 }
 
@@ -587,11 +583,12 @@ using fmt::v7::to_string_view;
 // It should be a constexpr function but MSVC 2017 fails to compile it in
 // enable_if and MSVC 2015 fails to compile it as an alias template.
 template <typename S>
-struct is_string : std::is_class<decltype(to_string_view(std::declval<S>()))> {
-};
+struct is_string : std::is_class<decltype(to_string_view(std::declval<S>()))> {};
 
-template <typename S, typename = void> struct char_t_impl {};
-template <typename S> struct char_t_impl<S, enable_if_t<is_string<S>::value>> {
+template <typename S, typename = void>
+struct char_t_impl {};
+template <typename S>
+struct char_t_impl<S, enable_if_t<is_string<S>::value>> {
   using result = decltype(to_string_view(std::declval<S>()));
   using type = typename result::value_type;
 };
@@ -618,7 +615,8 @@ struct error_handler {
 FMT_END_DETAIL_NAMESPACE
 
 /** String's character type. */
-template <typename S> using char_t = typename detail::char_t_impl<S>::type;
+template <typename S>
+using char_t = typename detail::char_t_impl<S>::type;
 
 /**
   \rst
@@ -637,25 +635,20 @@ class basic_format_parse_context : private ErrorHandler {
   using char_type = Char;
   using iterator = typename basic_string_view<Char>::iterator;
 
-  explicit constexpr basic_format_parse_context(
-      basic_string_view<Char> format_str, ErrorHandler eh = {},
-      int next_arg_id = 0)
+  explicit constexpr basic_format_parse_context(basic_string_view<Char> format_str,
+                                                ErrorHandler eh = {}, int next_arg_id = 0)
       : ErrorHandler(eh), format_str_(format_str), next_arg_id_(next_arg_id) {}
 
   /**
     Returns an iterator to the beginning of the format string range being
     parsed.
    */
-  constexpr auto begin() const FMT_NOEXCEPT -> iterator {
-    return format_str_.begin();
-  }
+  constexpr auto begin() const FMT_NOEXCEPT -> iterator { return format_str_.begin(); }
 
   /**
     Returns an iterator past the end of the format string range being parsed.
    */
-  constexpr auto end() const FMT_NOEXCEPT -> iterator {
-    return format_str_.end();
-  }
+  constexpr auto end() const FMT_NOEXCEPT -> iterator { return format_str_.end(); }
 
   /** Advances the begin iterator to ``it``. */
   FMT_CONSTEXPR void advance_to(iterator it) {
@@ -687,18 +680,19 @@ class basic_format_parse_context : private ErrorHandler {
 
   FMT_CONSTEXPR void check_arg_id(basic_string_view<Char>) {}
 
-  FMT_CONSTEXPR void on_error(const char* message) {
-    ErrorHandler::on_error(message);
-  }
+  FMT_CONSTEXPR void on_error(const char* message) { ErrorHandler::on_error(message); }
 
   constexpr auto error_handler() const -> ErrorHandler { return *this; }
 };
 
 using format_parse_context = basic_format_parse_context<char>;
 
-template <typename Context> class basic_format_arg;
-template <typename Context> class basic_format_args;
-template <typename Context> class dynamic_format_arg_store;
+template <typename Context>
+class basic_format_arg;
+template <typename Context>
+class basic_format_args;
+template <typename Context>
+class dynamic_format_arg_store;
 
 // A formatter for objects of type T.
 template <typename T, typename Char = char, typename Enable = void>
@@ -710,11 +704,11 @@ struct formatter {
 // Specifies if T has an enabled formatter specialization. A type can be
 // formattable even if it doesn't have a formatter e.g. via a conversion.
 template <typename T, typename Context>
-using has_formatter =
-    std::is_constructible<typename Context::template formatter_type<T>>;
+using has_formatter = std::is_constructible<typename Context::template formatter_type<T>>;
 
 // Checks whether T is a container with contiguous storage.
-template <typename T> struct is_contiguous : std::false_type {};
+template <typename T>
+struct is_contiguous : std::false_type {};
 template <typename Char>
 struct is_contiguous<std::basic_string<Char>> : std::true_type {};
 
@@ -724,8 +718,7 @@ FMT_BEGIN_DETAIL_NAMESPACE
 
 // Extracts a reference to the container from back_insert_iterator.
 template <typename Container>
-inline auto get_container(std::back_insert_iterator<Container> it)
-    -> Container& {
+inline auto get_container(std::back_insert_iterator<Container> it) -> Container& {
   using bi_iterator = std::back_insert_iterator<Container>;
   struct accessor : bi_iterator {
     accessor(bi_iterator iter) : bi_iterator(iter) {}
@@ -735,17 +728,14 @@ inline auto get_container(std::back_insert_iterator<Container> it)
 }
 
 template <typename Char, typename InputIt, typename OutputIt>
-FMT_CONSTEXPR auto copy_str(InputIt begin, InputIt end, OutputIt out)
-    -> OutputIt {
+FMT_CONSTEXPR auto copy_str(InputIt begin, InputIt end, OutputIt out) -> OutputIt {
   while (begin != end) *out++ = static_cast<Char>(*begin++);
   return out;
 }
 
 template <typename Char, FMT_ENABLE_IF(std::is_same<Char, char>::value)>
-FMT_CONSTEXPR auto copy_str(const Char* begin, const Char* end, Char* out)
-    -> Char* {
-  if (is_constant_evaluated())
-    return copy_str<Char, const Char*, Char*>(begin, end, out);
+FMT_CONSTEXPR auto copy_str(const Char* begin, const Char* end, Char* out) -> Char* {
+  if (is_constant_evaluated()) return copy_str<Char, const Char*, Char*>(begin, end, out);
   auto size = to_unsigned(end - begin);
   memcpy(out, begin, size);
   return out + size;
@@ -757,7 +747,8 @@ FMT_CONSTEXPR auto copy_str(const Char* begin, const Char* end, Char* out)
   class and shouldn't be used directly, only via `~fmt::basic_memory_buffer`.
   \endrst
  */
-template <typename T> class buffer {
+template <typename T>
+class buffer {
  private:
   T* ptr_;
   size_t size_;
@@ -768,10 +759,9 @@ template <typename T> class buffer {
   FMT_MSC_WARNING(suppress : 26495)
   buffer(size_t sz) FMT_NOEXCEPT : size_(sz), capacity_(sz) {}
 
-  buffer(T* p = nullptr, size_t sz = 0, size_t cap = 0) FMT_NOEXCEPT
-      : ptr_(p),
-        size_(sz),
-        capacity_(cap) {}
+  buffer(T* p = nullptr, size_t sz = 0, size_t cap = 0) FMT_NOEXCEPT : ptr_(p),
+                                                                       size_(sz),
+                                                                       capacity_(cap) {}
 
   ~buffer() = default;
   buffer(buffer&&) = default;
@@ -834,10 +824,15 @@ template <typename T> class buffer {
   }
 
   /** Appends data to the end of the buffer. */
-  template <typename U> void append(const U* begin, const U* end);
+  template <typename U>
+  void append(const U* begin, const U* end);
 
-  template <typename I> auto operator[](I index) -> T& { return ptr_[index]; }
-  template <typename I> auto operator[](I index) const -> const T& {
+  template <typename I>
+  auto operator[](I index) -> T& {
+    return ptr_[index];
+  }
+  template <typename I>
+  auto operator[](I index) const -> const T& {
     return ptr_[index];
   }
 };
@@ -896,7 +891,8 @@ class iterator_buffer final : public Traits, public buffer<T> {
   auto count() const -> size_t { return Traits::count() + this->size(); }
 };
 
-template <typename T> class iterator_buffer<T*, T> final : public buffer<T> {
+template <typename T>
+class iterator_buffer<T*, T> final : public buffer<T> {
  protected:
   void grow(size_t) final FMT_OVERRIDE {}
 
@@ -908,9 +904,9 @@ template <typename T> class iterator_buffer<T*, T> final : public buffer<T> {
 
 // A buffer that writes to a container with the contiguous storage.
 template <typename Container>
-class iterator_buffer<std::back_insert_iterator<Container>,
-                      enable_if_t<is_contiguous<Container>::value,
-                                  typename Container::value_type>>
+class iterator_buffer<
+    std::back_insert_iterator<Container>,
+    enable_if_t<is_contiguous<Container>::value, typename Container::value_type>>
     final : public buffer<typename Container::value_type> {
  private:
   Container& container_;
@@ -932,7 +928,8 @@ class iterator_buffer<std::back_insert_iterator<Container>,
 };
 
 // A buffer that counts the number of code units written discarding the output.
-template <typename T = char> class counting_buffer final : public buffer<T> {
+template <typename T = char>
+class counting_buffer final : public buffer<T> {
  private:
   enum { buffer_size = 256 };
   T data_[buffer_size];
@@ -965,7 +962,8 @@ template <typename Buffer>
 auto get_iterator(Buffer& buf) -> decltype(buf.out()) {
   return buf.out();
 }
-template <typename T> auto get_iterator(buffer<T>& buf) -> buffer_appender<T> {
+template <typename T>
+auto get_iterator(buffer<T>& buf) -> buffer_appender<T> {
   return buffer_appender<T>(buf);
 }
 
@@ -976,18 +974,19 @@ struct fallback_formatter {
 
 // Specifies if T has an enabled fallback_formatter specialization.
 template <typename T, typename Char>
-using has_fallback_formatter =
-    std::is_constructible<fallback_formatter<T, Char>>;
+using has_fallback_formatter = std::is_constructible<fallback_formatter<T, Char>>;
 
 struct view {};
 
-template <typename Char, typename T> struct named_arg : view {
+template <typename Char, typename T>
+struct named_arg : view {
   const Char* name;
   const T& value;
   named_arg(const Char* n, const T& v) : name(n), value(v) {}
 };
 
-template <typename Char> struct named_arg_info {
+template <typename Char>
+struct named_arg_info {
   const Char* name;
   int id;
 };
@@ -1014,45 +1013,49 @@ struct arg_data<T, Char, NUM_ARGS, 0> {
   template <typename... U>
   FMT_CONSTEXPR FMT_INLINE arg_data(const U&... init) : args_{init...} {}
   FMT_CONSTEXPR FMT_INLINE auto args() const -> const T* { return args_; }
-  FMT_CONSTEXPR FMT_INLINE auto named_args() -> std::nullptr_t {
-    return nullptr;
-  }
+  FMT_CONSTEXPR FMT_INLINE auto named_args() -> std::nullptr_t { return nullptr; }
 };
 
 template <typename Char>
 inline void init_named_args(named_arg_info<Char>*, int, int) {}
 
-template <typename T> struct is_named_arg : std::false_type {};
-template <typename T> struct is_statically_named_arg : std::false_type {};
+template <typename T>
+struct is_named_arg : std::false_type {};
+template <typename T>
+struct is_statically_named_arg : std::false_type {};
 
 template <typename T, typename Char>
 struct is_named_arg<named_arg<Char, T>> : std::true_type {};
 
 template <typename Char, typename T, typename... Tail,
           FMT_ENABLE_IF(!is_named_arg<T>::value)>
-void init_named_args(named_arg_info<Char>* named_args, int arg_count,
-                     int named_arg_count, const T&, const Tail&... args) {
+void init_named_args(named_arg_info<Char>* named_args, int arg_count, int named_arg_count,
+                     const T&, const Tail&... args) {
   init_named_args(named_args, arg_count + 1, named_arg_count, args...);
 }
 
 template <typename Char, typename T, typename... Tail,
           FMT_ENABLE_IF(is_named_arg<T>::value)>
-void init_named_args(named_arg_info<Char>* named_args, int arg_count,
-                     int named_arg_count, const T& arg, const Tail&... args) {
+void init_named_args(named_arg_info<Char>* named_args, int arg_count, int named_arg_count,
+                     const T& arg, const Tail&... args) {
   named_args[named_arg_count++] = {arg.name, arg_count};
   init_named_args(named_args, arg_count + 1, named_arg_count, args...);
 }
 
 template <typename... Args>
-FMT_CONSTEXPR FMT_INLINE void init_named_args(std::nullptr_t, int, int,
-                                              const Args&...) {}
+FMT_CONSTEXPR FMT_INLINE void init_named_args(std::nullptr_t, int, int, const Args&...) {}
 
-template <bool B = false> constexpr auto count() -> size_t { return B ? 1 : 0; }
-template <bool B1, bool B2, bool... Tail> constexpr auto count() -> size_t {
+template <bool B = false>
+constexpr auto count() -> size_t {
+  return B ? 1 : 0;
+}
+template <bool B1, bool B2, bool... Tail>
+constexpr auto count() -> size_t {
   return (B1 ? 1 : 0) + count<B2, Tail...>();
 }
 
-template <typename... Args> constexpr auto count_named_args() -> size_t {
+template <typename... Args>
+constexpr auto count_named_args() -> size_t {
   return count<is_named_arg<Args>::value...>();
 }
 
@@ -1085,8 +1088,7 @@ struct type_constant : std::integral_constant<type, type::custom_type> {};
 
 #define FMT_TYPE_CONSTANT(Type, constant) \
   template <typename Char>                \
-  struct type_constant<Type, Char>        \
-      : std::integral_constant<type, type::constant> {}
+  struct type_constant<Type, Char> : std::integral_constant<type, type::constant> {}
 
 FMT_TYPE_CONSTANT(int, int_type);
 FMT_TYPE_CONSTANT(unsigned, uint_type);
@@ -1111,24 +1113,28 @@ constexpr bool is_arithmetic_type(type t) {
   return t > type::none_type && t <= type::last_numeric_type;
 }
 
-template <typename Char> struct string_value {
+template <typename Char>
+struct string_value {
   const Char* data;
   size_t size;
 };
 
-template <typename Char> struct named_arg_value {
+template <typename Char>
+struct named_arg_value {
   const named_arg_info<Char>* data;
   size_t size;
 };
 
-template <typename Context> struct custom_value {
+template <typename Context>
+struct custom_value {
   using parse_context = typename Context::parse_context_type;
   const void* value;
   void (*format)(const void* arg, parse_context& parse_ctx, Context& ctx);
 };
 
 // A formatting argument value.
-template <typename Context> class value {
+template <typename Context>
+class value {
  public:
   using char_type = typename Context::char_type;
 
@@ -1175,15 +1181,16 @@ template <typename Context> class value {
   FMT_INLINE value(const named_arg_info<char_type>* args, size_t size)
       : named_args{args, size} {}
 
-  template <typename T> FMT_CONSTEXPR FMT_INLINE value(const T& val) {
+  template <typename T>
+  FMT_CONSTEXPR FMT_INLINE value(const T& val) {
     custom.value = &val;
     // Get the formatter type through the context to allow different contexts
     // have different extension points, e.g. `formatter<T>` for `format` and
     // `printf_formatter<T>` for `printf`.
-    custom.format = format_custom_arg<
-        T, conditional_t<has_formatter<T, Context>::value,
-                         typename Context::template formatter_type<T>,
-                         fallback_formatter<T, char_type>>>;
+    custom.format =
+        format_custom_arg<T, conditional_t<has_formatter<T, Context>::value,
+                                           typename Context::template formatter_type<T>,
+                                           fallback_formatter<T, char_type>>>;
   }
 
  private:
@@ -1210,26 +1217,20 @@ using ulong_type = conditional_t<long_short, unsigned, unsigned long long>;
 struct unformattable {};
 
 // Maps formatting arguments to core types.
-template <typename Context> struct arg_mapper {
+template <typename Context>
+struct arg_mapper {
   using char_type = typename Context::char_type;
 
   FMT_CONSTEXPR FMT_INLINE auto map(signed char val) -> int { return val; }
-  FMT_CONSTEXPR FMT_INLINE auto map(unsigned char val) -> unsigned {
-    return val;
-  }
+  FMT_CONSTEXPR FMT_INLINE auto map(unsigned char val) -> unsigned { return val; }
   FMT_CONSTEXPR FMT_INLINE auto map(short val) -> int { return val; }
-  FMT_CONSTEXPR FMT_INLINE auto map(unsigned short val) -> unsigned {
-    return val;
-  }
+  FMT_CONSTEXPR FMT_INLINE auto map(unsigned short val) -> unsigned { return val; }
   FMT_CONSTEXPR FMT_INLINE auto map(int val) -> int { return val; }
   FMT_CONSTEXPR FMT_INLINE auto map(unsigned val) -> unsigned { return val; }
   FMT_CONSTEXPR FMT_INLINE auto map(long val) -> long_type { return val; }
-  FMT_CONSTEXPR FMT_INLINE auto map(unsigned long val) -> ulong_type {
-    return val;
-  }
+  FMT_CONSTEXPR FMT_INLINE auto map(unsigned long val) -> ulong_type { return val; }
   FMT_CONSTEXPR FMT_INLINE auto map(long long val) -> long long { return val; }
-  FMT_CONSTEXPR FMT_INLINE auto map(unsigned long long val)
-      -> unsigned long long {
+  FMT_CONSTEXPR FMT_INLINE auto map(unsigned long long val) -> unsigned long long {
     return val;
   }
   FMT_CONSTEXPR FMT_INLINE auto map(int128_t val) -> int128_t { return val; }
@@ -1238,49 +1239,39 @@ template <typename Context> struct arg_mapper {
 
   template <typename T, FMT_ENABLE_IF(is_char<T>::value)>
   FMT_CONSTEXPR FMT_INLINE auto map(T val) -> char_type {
-    static_assert(
-        std::is_same<T, char>::value || std::is_same<T, char_type>::value,
-        "mixing character types is disallowed");
+    static_assert(std::is_same<T, char>::value || std::is_same<T, char_type>::value,
+                  "mixing character types is disallowed");
     return val;
   }
 
   FMT_CONSTEXPR FMT_INLINE auto map(float val) -> float { return val; }
   FMT_CONSTEXPR FMT_INLINE auto map(double val) -> double { return val; }
-  FMT_CONSTEXPR FMT_INLINE auto map(long double val) -> long double {
-    return val;
-  }
+  FMT_CONSTEXPR FMT_INLINE auto map(long double val) -> long double { return val; }
 
-  FMT_CONSTEXPR FMT_INLINE auto map(char_type* val) -> const char_type* {
-    return val;
-  }
+  FMT_CONSTEXPR FMT_INLINE auto map(char_type* val) -> const char_type* { return val; }
   FMT_CONSTEXPR FMT_INLINE auto map(const char_type* val) -> const char_type* {
     return val;
   }
   template <typename T, FMT_ENABLE_IF(is_string<T>::value)>
-  FMT_CONSTEXPR FMT_INLINE auto map(const T& val)
-      -> basic_string_view<char_type> {
+  FMT_CONSTEXPR FMT_INLINE auto map(const T& val) -> basic_string_view<char_type> {
     static_assert(std::is_same<char_type, char_t<T>>::value,
                   "mixing character types is disallowed");
     return to_string_view(val);
   }
   template <typename T,
-            FMT_ENABLE_IF(
-                std::is_constructible<basic_string_view<char_type>, T>::value &&
-                !is_string<T>::value && !has_formatter<T, Context>::value &&
-                !has_fallback_formatter<T, char_type>::value)>
-  FMT_CONSTEXPR FMT_INLINE auto map(const T& val)
-      -> basic_string_view<char_type> {
+            FMT_ENABLE_IF(std::is_constructible<basic_string_view<char_type>, T>::value &&
+                          !is_string<T>::value && !has_formatter<T, Context>::value &&
+                          !has_fallback_formatter<T, char_type>::value)>
+  FMT_CONSTEXPR FMT_INLINE auto map(const T& val) -> basic_string_view<char_type> {
     return basic_string_view<char_type>(val);
   }
   template <
       typename T,
-      FMT_ENABLE_IF(
-          std::is_constructible<std_string_view<char_type>, T>::value &&
-          !std::is_constructible<basic_string_view<char_type>, T>::value &&
-          !is_string<T>::value && !has_formatter<T, Context>::value &&
-          !has_fallback_formatter<T, char_type>::value)>
-  FMT_CONSTEXPR FMT_INLINE auto map(const T& val)
-      -> basic_string_view<char_type> {
+      FMT_ENABLE_IF(std::is_constructible<std_string_view<char_type>, T>::value &&
+                    !std::is_constructible<basic_string_view<char_type>, T>::value &&
+                    !is_string<T>::value && !has_formatter<T, Context>::value &&
+                    !has_fallback_formatter<T, char_type>::value)>
+  FMT_CONSTEXPR FMT_INLINE auto map(const T& val) -> basic_string_view<char_type> {
     return std_string_view<char_type>(val);
   }
   FMT_CONSTEXPR FMT_INLINE auto map(const signed char* val) -> const char* {
@@ -1301,12 +1292,8 @@ template <typename Context> struct arg_mapper {
   }
 
   FMT_CONSTEXPR FMT_INLINE auto map(void* val) -> const void* { return val; }
-  FMT_CONSTEXPR FMT_INLINE auto map(const void* val) -> const void* {
-    return val;
-  }
-  FMT_CONSTEXPR FMT_INLINE auto map(std::nullptr_t val) -> const void* {
-    return val;
-  }
+  FMT_CONSTEXPR FMT_INLINE auto map(const void* val) -> const void* { return val; }
+  FMT_CONSTEXPR FMT_INLINE auto map(std::nullptr_t val) -> const void* { return val; }
 
   // We use SFINAE instead of a const T* parameter to avoid conflicting with
   // the C array overload.
@@ -1326,18 +1313,16 @@ template <typename Context> struct arg_mapper {
   }
 
   template <typename T,
-            FMT_ENABLE_IF(std::is_enum<T>::value &&
-                          !has_formatter<T, Context>::value &&
+            FMT_ENABLE_IF(std::is_enum<T>::value && !has_formatter<T, Context>::value &&
                           !has_fallback_formatter<T, char_type>::value)>
   FMT_CONSTEXPR FMT_INLINE auto map(const T& val)
       -> decltype(std::declval<arg_mapper>().map(
           static_cast<typename std::underlying_type<T>::type>(val))) {
     return map(static_cast<typename std::underlying_type<T>::type>(val));
   }
-  template <typename T,
-            FMT_ENABLE_IF(!is_string<T>::value && !is_char<T>::value &&
-                          (has_formatter<T, Context>::value ||
-                           has_fallback_formatter<T, char_type>::value))>
+  template <typename T, FMT_ENABLE_IF(!is_string<T>::value && !is_char<T>::value &&
+                                      (has_formatter<T, Context>::value ||
+                                       has_fallback_formatter<T, char_type>::value))>
   FMT_CONSTEXPR FMT_INLINE auto map(const T& val) -> const T& {
     return val;
   }
@@ -1394,7 +1379,8 @@ class appender : public std::back_insert_iterator<detail::buffer<char>> {
 
 // A formatting argument. It is a trivially copyable/constructible type to
 // allow storage in basic_memory_buffer.
-template <typename Context> class basic_format_arg {
+template <typename Context>
+class basic_format_arg {
  private:
   detail::value<Context> value_;
   detail::type type_;
@@ -1424,8 +1410,7 @@ template <typename Context> class basic_format_arg {
    public:
     explicit handle(detail::custom_value<Context> custom) : custom_(custom) {}
 
-    void format(typename Context::parse_context_type& parse_ctx,
-                Context& ctx) const {
+    void format(typename Context::parse_context_type& parse_ctx, Context& ctx) const {
       custom_.format(custom_.value, parse_ctx, ctx);
     }
 
@@ -1442,9 +1427,7 @@ template <typename Context> class basic_format_arg {
   auto type() const -> detail::type { return type_; }
 
   auto is_integral() const -> bool { return detail::is_integral_type(type_); }
-  auto is_arithmetic() const -> bool {
-    return detail::is_arithmetic_type(type_);
-  }
+  auto is_arithmetic() const -> bool { return detail::is_arithmetic_type(type_); }
 };
 
 /**
@@ -1455,42 +1438,43 @@ template <typename Context> class basic_format_arg {
   \endrst
  */
 template <typename Visitor, typename Context>
-FMT_CONSTEXPR FMT_INLINE auto visit_format_arg(
-    Visitor&& vis, const basic_format_arg<Context>& arg) -> decltype(vis(0)) {
+FMT_CONSTEXPR FMT_INLINE auto visit_format_arg(Visitor&& vis,
+                                               const basic_format_arg<Context>& arg)
+    -> decltype(vis(0)) {
   switch (arg.type_) {
-  case detail::type::none_type:
-    break;
-  case detail::type::int_type:
-    return vis(arg.value_.int_value);
-  case detail::type::uint_type:
-    return vis(arg.value_.uint_value);
-  case detail::type::long_long_type:
-    return vis(arg.value_.long_long_value);
-  case detail::type::ulong_long_type:
-    return vis(arg.value_.ulong_long_value);
-  case detail::type::int128_type:
-    return vis(detail::convert_for_visit(arg.value_.int128_value));
-  case detail::type::uint128_type:
-    return vis(detail::convert_for_visit(arg.value_.uint128_value));
-  case detail::type::bool_type:
-    return vis(arg.value_.bool_value);
-  case detail::type::char_type:
-    return vis(arg.value_.char_value);
-  case detail::type::float_type:
-    return vis(arg.value_.float_value);
-  case detail::type::double_type:
-    return vis(arg.value_.double_value);
-  case detail::type::long_double_type:
-    return vis(arg.value_.long_double_value);
-  case detail::type::cstring_type:
-    return vis(arg.value_.string.data);
-  case detail::type::string_type:
-    using sv = basic_string_view<typename Context::char_type>;
-    return vis(sv(arg.value_.string.data, arg.value_.string.size));
-  case detail::type::pointer_type:
-    return vis(arg.value_.pointer);
-  case detail::type::custom_type:
-    return vis(typename basic_format_arg<Context>::handle(arg.value_.custom));
+    case detail::type::none_type:
+      break;
+    case detail::type::int_type:
+      return vis(arg.value_.int_value);
+    case detail::type::uint_type:
+      return vis(arg.value_.uint_value);
+    case detail::type::long_long_type:
+      return vis(arg.value_.long_long_value);
+    case detail::type::ulong_long_type:
+      return vis(arg.value_.ulong_long_value);
+    case detail::type::int128_type:
+      return vis(detail::convert_for_visit(arg.value_.int128_value));
+    case detail::type::uint128_type:
+      return vis(detail::convert_for_visit(arg.value_.uint128_value));
+    case detail::type::bool_type:
+      return vis(arg.value_.bool_value);
+    case detail::type::char_type:
+      return vis(arg.value_.char_value);
+    case detail::type::float_type:
+      return vis(arg.value_.float_value);
+    case detail::type::double_type:
+      return vis(arg.value_.double_value);
+    case detail::type::long_double_type:
+      return vis(arg.value_.long_double_value);
+    case detail::type::cstring_type:
+      return vis(arg.value_.string.data);
+    case detail::type::string_type:
+      using sv = basic_string_view<typename Context::char_type>;
+      return vis(sv(arg.value_.string.data, arg.value_.string.size));
+    case detail::type::pointer_type:
+      return vis(arg.value_.pointer);
+    case detail::type::custom_type:
+      return vis(typename basic_format_arg<Context>::handle(arg.value_.custom));
   }
   return vis(monostate());
 }
@@ -1505,28 +1489,30 @@ auto copy_str(InputIt begin, InputIt end, appender out) -> appender {
 
 #if FMT_GCC_VERSION && FMT_GCC_VERSION < 500
 // A workaround for gcc 4.8 to make void_t work in a SFINAE context.
-template <typename... Ts> struct void_t_impl { using type = void; };
+template <typename... Ts>
+struct void_t_impl {
+  using type = void;
+};
 template <typename... Ts>
 using void_t = typename detail::void_t_impl<Ts...>::type;
 #else
-template <typename...> using void_t = void;
+template <typename...>
+using void_t = void;
 #endif
 
 template <typename It, typename T, typename Enable = void>
 struct is_output_iterator : std::false_type {};
 
 template <typename It, typename T>
-struct is_output_iterator<
-    It, T,
-    void_t<typename std::iterator_traits<It>::iterator_category,
-           decltype(*std::declval<It>() = std::declval<T>())>>
+struct is_output_iterator<It, T,
+                          void_t<typename std::iterator_traits<It>::iterator_category,
+                                 decltype(*std::declval<It>() = std::declval<T>())>>
     : std::true_type {};
 
 template <typename OutputIt>
 struct is_back_insert_iterator : std::false_type {};
 template <typename Container>
-struct is_back_insert_iterator<std::back_insert_iterator<Container>>
-    : std::true_type {};
+struct is_back_insert_iterator<std::back_insert_iterator<Container>> : std::true_type {};
 
 template <typename OutputIt>
 struct is_contiguous_back_insert_iterator : std::false_type {};
@@ -1543,14 +1529,17 @@ class locale_ref {
 
  public:
   constexpr locale_ref() : locale_(nullptr) {}
-  template <typename Locale> explicit locale_ref(const Locale& loc);
+  template <typename Locale>
+  explicit locale_ref(const Locale& loc);
 
   explicit operator bool() const FMT_NOEXCEPT { return locale_ != nullptr; }
 
-  template <typename Locale> auto get() const -> Locale;
+  template <typename Locale>
+  auto get() const -> Locale;
 };
 
-template <typename> constexpr auto encode_types() -> unsigned long long {
+template <typename>
+constexpr auto encode_types() -> unsigned long long {
   return 0;
 }
 
@@ -1571,26 +1560,24 @@ FMT_CONSTEXPR auto make_arg(const T& value) -> basic_format_arg<Context> {
 // The type template parameter is there to avoid an ODR violation when using
 // a fallback formatter in one translation unit and an implicit conversion in
 // another (not recommended).
-template <bool IS_PACKED, typename Context, type, typename T,
-          FMT_ENABLE_IF(IS_PACKED)>
+template <bool IS_PACKED, typename Context, type, typename T, FMT_ENABLE_IF(IS_PACKED)>
 FMT_CONSTEXPR FMT_INLINE auto make_arg(const T& val) -> value<Context> {
   const auto& arg = arg_mapper<Context>().map(val);
-  static_assert(
-      !std::is_same<decltype(arg), const unformattable&>::value,
-      "Cannot format an argument. To make type T formattable provide a "
-      "formatter<T> specialization: https://fmt.dev/latest/api.html#udt");
+  static_assert(!std::is_same<decltype(arg), const unformattable&>::value,
+                "Cannot format an argument. To make type T formattable provide a "
+                "formatter<T> specialization: https://fmt.dev/latest/api.html#udt");
   return {arg};
 }
 
-template <bool IS_PACKED, typename Context, type, typename T,
-          FMT_ENABLE_IF(!IS_PACKED)>
+template <bool IS_PACKED, typename Context, type, typename T, FMT_ENABLE_IF(!IS_PACKED)>
 inline auto make_arg(const T& value) -> basic_format_arg<Context> {
   return make_arg<Context>(value);
 }
 FMT_END_DETAIL_NAMESPACE
 
 // Formatting context.
-template <typename OutputIt, typename Char> class basic_format_context {
+template <typename OutputIt, typename Char>
+class basic_format_context {
  public:
   /** The character type for the output. */
   using char_type = Char;
@@ -1604,7 +1591,8 @@ template <typename OutputIt, typename Char> class basic_format_context {
   using iterator = OutputIt;
   using format_arg = basic_format_arg<basic_format_context>;
   using parse_context_type = basic_format_parse_context<Char>;
-  template <typename T> using formatter_type = formatter<T, char_type>;
+  template <typename T>
+  using formatter_type = formatter<T, char_type>;
 
   basic_format_context(basic_format_context&&) = default;
   basic_format_context(const basic_format_context&) = delete;
@@ -1613,9 +1601,9 @@ template <typename OutputIt, typename Char> class basic_format_context {
    Constructs a ``basic_format_context`` object. References to the arguments are
    stored in the object so make sure they have appropriate lifetimes.
    */
-  constexpr basic_format_context(
-      OutputIt out, basic_format_args<basic_format_context> ctx_args,
-      detail::locale_ref loc = detail::locale_ref())
+  constexpr basic_format_context(OutputIt out,
+                                 basic_format_args<basic_format_context> ctx_args,
+                                 detail::locale_ref loc = detail::locale_ref())
       : out_(out), args_(ctx_args), loc_(loc) {}
 
   constexpr auto arg(int id) const -> format_arg { return args_.get(id); }
@@ -1625,9 +1613,7 @@ template <typename OutputIt, typename Char> class basic_format_context {
   FMT_CONSTEXPR auto arg_id(basic_string_view<char_type> name) -> int {
     return args_.get_id(name);
   }
-  auto args() const -> const basic_format_args<basic_format_context>& {
-    return args_;
-  }
+  auto args() const -> const basic_format_args<basic_format_context>& { return args_; }
 
   FMT_CONSTEXPR auto error_handler() -> detail::error_handler { return {}; }
   void on_error(const char* message) { error_handler().on_error(message); }
@@ -1644,20 +1630,18 @@ template <typename OutputIt, typename Char> class basic_format_context {
 };
 
 template <typename Char>
-using buffer_context =
-    basic_format_context<detail::buffer_appender<Char>, Char>;
+using buffer_context = basic_format_context<detail::buffer_appender<Char>, Char>;
 using format_context = buffer_context<char>;
 
 // Workaround an alias issue: https://stackoverflow.com/q/62767544/471164.
-#define FMT_BUFFER_CONTEXT(Char) \
-  basic_format_context<detail::buffer_appender<Char>, Char>
+#define FMT_BUFFER_CONTEXT(Char) basic_format_context<detail::buffer_appender<Char>, Char>
 
 template <typename T, typename Char = char>
-using is_formattable = bool_constant<
-    !std::is_same<decltype(detail::arg_mapper<buffer_context<Char>>().map(
-                      std::declval<T>())),
-                  detail::unformattable>::value &&
-    !detail::has_fallback_formatter<T, Char>::value>;
+using is_formattable =
+    bool_constant<!std::is_same<decltype(detail::arg_mapper<buffer_context<Char>>().map(
+                                    std::declval<T>())),
+                                detail::unformattable>::value &&
+                  !detail::has_fallback_formatter<T, Char>::value>;
 
 /**
   \rst
@@ -1678,11 +1662,10 @@ class format_arg_store
   static const size_t num_named_args = detail::count_named_args<Args...>();
   static const bool is_packed = num_args <= detail::max_packed_args;
 
-  using value_type = conditional_t<is_packed, detail::value<Context>,
-                                   basic_format_arg<Context>>;
+  using value_type =
+      conditional_t<is_packed, detail::value<Context>, basic_format_arg<Context>>;
 
-  detail::arg_data<value_type, typename Context::char_type, num_args,
-                   num_named_args>
+  detail::arg_data<value_type, typename Context::char_type, num_args, num_named_args>
       data_;
 
   friend class basic_format_args<Context>;
@@ -1690,9 +1673,8 @@ class format_arg_store
   static constexpr unsigned long long desc =
       (is_packed ? detail::encode_types<Context, Args...>()
                  : detail::is_unpacked_bit | num_args) |
-      (num_named_args != 0
-           ? static_cast<unsigned long long>(detail::has_named_args_bit)
-           : 0);
+      (num_named_args != 0 ? static_cast<unsigned long long>(detail::has_named_args_bit)
+                           : 0);
 
  public:
   FMT_CONSTEXPR FMT_INLINE format_arg_store(const Args&... args)
@@ -1700,9 +1682,9 @@ class format_arg_store
 #if FMT_GCC_VERSION && FMT_GCC_VERSION < 409
         basic_format_args<Context>(*this),
 #endif
-        data_{detail::make_arg<
-            is_packed, Context,
-            detail::mapped_type_constant<Args, Context>::value>(args)...} {
+        data_{detail::make_arg<is_packed, Context,
+                               detail::mapped_type_constant<Args, Context>::value>(
+            args)...} {
     detail::init_named_args(data_.named_args(), 0, 0, args...);
   }
 };
@@ -1748,7 +1730,8 @@ inline auto arg(const Char* name, const T& arg) -> detail::named_arg<Char, T> {
     format_args args = make_format_args(42);  // Error: dangling reference
   \endrst
  */
-template <typename Context> class basic_format_args {
+template <typename Context>
+class basic_format_args {
  public:
   using size_type = int;
   using format_arg = basic_format_arg<Context>;
@@ -1797,10 +1780,8 @@ template <typename Context> class basic_format_args {
    \endrst
    */
   template <typename... Args>
-  constexpr FMT_INLINE basic_format_args(
-      const format_arg_store<Context, Args...>& store)
-      : basic_format_args(format_arg_store<Context, Args...>::desc,
-                          store.data_.args()) {}
+  constexpr FMT_INLINE basic_format_args(const format_arg_store<Context, Args...>& store)
+      : basic_format_args(format_arg_store<Context, Args...>::desc, store.data_.args()) {}
 
   /**
    \rst
@@ -1808,8 +1789,7 @@ template <typename Context> class basic_format_args {
    `~fmt::dynamic_format_arg_store`.
    \endrst
    */
-  constexpr FMT_INLINE basic_format_args(
-      const dynamic_format_arg_store<Context>& store)
+  constexpr FMT_INLINE basic_format_args(const dynamic_format_arg_store<Context>& store)
       : basic_format_args(store.get_types(), store.data()) {}
 
   /**
@@ -1818,8 +1798,7 @@ template <typename Context> class basic_format_args {
    \endrst
    */
   constexpr basic_format_args(const format_arg* args, int count)
-      : basic_format_args(detail::is_unpacked_bit | detail::to_unsigned(count),
-                          args) {}
+      : basic_format_args(detail::is_unpacked_bit | detail::to_unsigned(count), args) {}
 
   /** Returns the argument with the specified id. */
   FMT_CONSTEXPR auto get(int id) const -> format_arg {
@@ -1844,8 +1823,7 @@ template <typename Context> class basic_format_args {
   template <typename Char>
   auto get_id(basic_string_view<Char> name) const -> int {
     if (!has_named_args()) return -1;
-    const auto& named_args =
-        (is_packed() ? values_[-1] : args_[-1].value_).named_args;
+    const auto& named_args = (is_packed() ? values_[-1] : args_[-1].value_).named_args;
     for (size_t i = 0; i < named_args.size; ++i) {
       if (named_args.data[i].name == name) return named_args.data[i].id;
     }
@@ -1854,8 +1832,7 @@ template <typename Context> class basic_format_args {
 
   auto max_size() const -> int {
     unsigned long long max_packed = detail::max_packed_args;
-    return static_cast<int>(is_packed() ? max_packed
-                                        : desc_ & ~detail::is_unpacked_bit);
+    return static_cast<int>(is_packed() ? max_packed : desc_ & ~detail::is_unpacked_bit);
   }
 };
 
@@ -1880,7 +1857,8 @@ FMT_BEGIN_DETAIL_NAMESPACE
 void throw_format_error(const char* message);
 
 // Workaround an array initialization issue in gcc 4.8.
-template <typename Char> struct fill_t {
+template <typename Char>
+struct fill_t {
  private:
   enum { max_size = 4 };
   Char data_[max_size] = {Char(' '), Char(0), Char(0), Char(0)};
@@ -1905,7 +1883,8 @@ template <typename Char> struct fill_t {
 FMT_END_DETAIL_NAMESPACE
 
 // Format specifiers for built-in and string types.
-template <typename Char> struct basic_format_specs {
+template <typename Char>
+struct basic_format_specs {
   int width;
   int precision;
   char type;
@@ -1932,11 +1911,11 @@ FMT_BEGIN_DETAIL_NAMESPACE
 enum class arg_id_kind { none, index, name };
 
 // An argument reference.
-template <typename Char> struct arg_ref {
+template <typename Char>
+struct arg_ref {
   FMT_CONSTEXPR arg_ref() : kind(arg_id_kind::none), val() {}
 
-  FMT_CONSTEXPR explicit arg_ref(int index)
-      : kind(arg_id_kind::index), val(index) {}
+  FMT_CONSTEXPR explicit arg_ref(int index) : kind(arg_id_kind::index), val(index) {}
   FMT_CONSTEXPR explicit arg_ref(basic_string_view<Char> name)
       : kind(arg_id_kind::name), val(name) {}
 
@@ -1968,21 +1947,18 @@ struct dynamic_format_specs : basic_format_specs<Char> {
 struct auto_id {};
 
 // A format specifier handler that sets fields in basic_format_specs.
-template <typename Char> class specs_setter {
+template <typename Char>
+class specs_setter {
  protected:
   basic_format_specs<Char>& specs_;
 
  public:
-  explicit FMT_CONSTEXPR specs_setter(basic_format_specs<Char>& specs)
-      : specs_(specs) {}
+  explicit FMT_CONSTEXPR specs_setter(basic_format_specs<Char>& specs) : specs_(specs) {}
 
-  FMT_CONSTEXPR specs_setter(const specs_setter& other)
-      : specs_(other.specs_) {}
+  FMT_CONSTEXPR specs_setter(const specs_setter& other) : specs_(other.specs_) {}
 
   FMT_CONSTEXPR void on_align(align_t align) { specs_.align = align; }
-  FMT_CONSTEXPR void on_fill(basic_string_view<Char> fill) {
-    specs_.fill = fill;
-  }
+  FMT_CONSTEXPR void on_fill(basic_string_view<Char> fill) { specs_.fill = fill; }
   FMT_CONSTEXPR void on_sign(sign_t s) { specs_.sign = s; }
   FMT_CONSTEXPR void on_hash() { specs_.alt = true; }
   FMT_CONSTEXPR void on_localized() { specs_.localized = true; }
@@ -1993,21 +1969,16 @@ template <typename Char> class specs_setter {
   }
 
   FMT_CONSTEXPR void on_width(int width) { specs_.width = width; }
-  FMT_CONSTEXPR void on_precision(int precision) {
-    specs_.precision = precision;
-  }
+  FMT_CONSTEXPR void on_precision(int precision) { specs_.precision = precision; }
   FMT_CONSTEXPR void end_precision() {}
 
-  FMT_CONSTEXPR void on_type(Char type) {
-    specs_.type = static_cast<char>(type);
-  }
+  FMT_CONSTEXPR void on_type(Char type) { specs_.type = static_cast<char>(type); }
 };
 
 // Format spec handler that saves references to arguments representing dynamic
 // width and precision to be resolved at formatting time.
 template <typename ParseContext>
-class dynamic_specs_handler
-    : public specs_setter<typename ParseContext::char_type> {
+class dynamic_specs_handler : public specs_setter<typename ParseContext::char_type> {
  public:
   using char_type = typename ParseContext::char_type;
 
@@ -2016,21 +1987,19 @@ class dynamic_specs_handler
       : specs_setter<char_type>(specs), specs_(specs), context_(ctx) {}
 
   FMT_CONSTEXPR dynamic_specs_handler(const dynamic_specs_handler& other)
-      : specs_setter<char_type>(other),
-        specs_(other.specs_),
-        context_(other.context_) {}
+      : specs_setter<char_type>(other), specs_(other.specs_), context_(other.context_) {}
 
-  template <typename Id> FMT_CONSTEXPR void on_dynamic_width(Id arg_id) {
+  template <typename Id>
+  FMT_CONSTEXPR void on_dynamic_width(Id arg_id) {
     specs_.width_ref = make_arg_ref(arg_id);
   }
 
-  template <typename Id> FMT_CONSTEXPR void on_dynamic_precision(Id arg_id) {
+  template <typename Id>
+  FMT_CONSTEXPR void on_dynamic_precision(Id arg_id) {
     specs_.precision_ref = make_arg_ref(arg_id);
   }
 
-  FMT_CONSTEXPR void on_error(const char* message) {
-    context_.on_error(message);
-  }
+  FMT_CONSTEXPR void on_error(const char* message) { context_.on_error(message); }
 
  private:
   dynamic_format_specs<char_type>& specs_;
@@ -2047,8 +2016,7 @@ class dynamic_specs_handler
     return arg_ref_type(context_.next_arg_id());
   }
 
-  FMT_CONSTEXPR auto make_arg_ref(basic_string_view<char_type> arg_id)
-      -> arg_ref_type {
+  FMT_CONSTEXPR auto make_arg_ref(basic_string_view<char_type> arg_id) -> arg_ref_type {
     context_.check_arg_id(arg_id);
     basic_string_view<char_type> format_str(
         context_.begin(), to_unsigned(context_.end() - context_.begin()));
@@ -2056,7 +2024,8 @@ class dynamic_specs_handler
   }
 };
 
-template <typename Char> constexpr bool is_ascii_letter(Char c) {
+template <typename Char>
+constexpr bool is_ascii_letter(Char c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
@@ -2066,8 +2035,7 @@ constexpr auto to_ascii(Char value) -> Char {
   return value;
 }
 template <typename Char, FMT_ENABLE_IF(std::is_enum<Char>::value)>
-constexpr auto to_ascii(Char value) ->
-    typename std::underlying_type<Char>::type {
+constexpr auto to_ascii(Char value) -> typename std::underlying_type<Char>::type {
   return value;
 }
 
@@ -2096,8 +2064,7 @@ FMT_CONSTEXPR auto find(Ptr first, Ptr last, T value, Ptr& out) -> bool {
 template <>
 inline auto find<false, char>(const char* first, const char* last, char value,
                               const char*& out) -> bool {
-  out = static_cast<const char*>(
-      std::memchr(first, value, to_unsigned(last - first)));
+  out = static_cast<const char*>(std::memchr(first, value, to_unsigned(last - first)));
   return out != nullptr;
 }
 
@@ -2116,8 +2083,7 @@ FMT_CONSTEXPR auto parse_nonnegative_int(const Char*& begin, const Char* end,
   } while (p != end && '0' <= *p && *p <= '9');
   auto num_digits = p - begin;
   begin = p;
-  if (num_digits <= std::numeric_limits<int>::digits10)
-    return static_cast<int>(value);
+  if (num_digits <= std::numeric_limits<int>::digits10) return static_cast<int>(value);
   // Check for overflow.
   const unsigned max = to_unsigned((std::numeric_limits<int>::max)());
   return num_digits == std::numeric_limits<int>::digits10 + 1 &&
@@ -2128,31 +2094,30 @@ FMT_CONSTEXPR auto parse_nonnegative_int(const Char*& begin, const Char* end,
 
 // Parses fill and alignment.
 template <typename Char, typename Handler>
-FMT_CONSTEXPR auto parse_align(const Char* begin, const Char* end,
-                               Handler&& handler) -> const Char* {
+FMT_CONSTEXPR auto parse_align(const Char* begin, const Char* end, Handler&& handler)
+    -> const Char* {
   FMT_ASSERT(begin != end, "");
   auto align = align::none;
   auto p = begin + code_point_length(begin);
   if (p >= end) p = begin;
   for (;;) {
     switch (to_ascii(*p)) {
-    case '<':
-      align = align::left;
-      break;
-    case '>':
-      align = align::right;
-      break;
-    case '^':
-      align = align::center;
-      break;
-    default:
-      break;
+      case '<':
+        align = align::left;
+        break;
+      case '>':
+        align = align::right;
+        break;
+      case '^':
+        align = align::center;
+        break;
+      default:
+        break;
     }
     if (align != align::none) {
       if (p != begin) {
         auto c = *begin;
-        if (c == '{')
-          return handler.on_error("invalid fill character '{'"), begin;
+        if (c == '{') return handler.on_error("invalid fill character '{'"), begin;
         handler.on_fill(basic_string_view<Char>(begin, to_unsigned(p - begin)));
         begin = p + 1;
       } else
@@ -2167,7 +2132,8 @@ FMT_CONSTEXPR auto parse_align(const Char* begin, const Char* end,
   return begin;
 }
 
-template <typename Char> FMT_CONSTEXPR bool is_name_start(Char c) {
+template <typename Char>
+FMT_CONSTEXPR bool is_name_start(Char c) {
   return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || '_' == c;
 }
 
@@ -2179,8 +2145,7 @@ FMT_CONSTEXPR auto do_parse_arg_id(const Char* begin, const Char* end,
   if (c >= '0' && c <= '9') {
     int index = 0;
     if (c != '0')
-      index =
-          parse_nonnegative_int(begin, end, (std::numeric_limits<int>::max)());
+      index = parse_nonnegative_int(begin, end, (std::numeric_limits<int>::max)());
     else
       ++begin;
     if (begin == end || (*begin != '}' && *begin != ':'))
@@ -2211,8 +2176,8 @@ FMT_CONSTEXPR FMT_INLINE auto parse_arg_id(const Char* begin, const Char* end,
 }
 
 template <typename Char, typename Handler>
-FMT_CONSTEXPR auto parse_width(const Char* begin, const Char* end,
-                               Handler&& handler) -> const Char* {
+FMT_CONSTEXPR auto parse_width(const Char* begin, const Char* end, Handler&& handler)
+    -> const Char* {
   using detail::auto_id;
   struct width_adapter {
     Handler& handler;
@@ -2245,8 +2210,8 @@ FMT_CONSTEXPR auto parse_width(const Char* begin, const Char* end,
 }
 
 template <typename Char, typename Handler>
-FMT_CONSTEXPR auto parse_precision(const Char* begin, const Char* end,
-                                   Handler&& handler) -> const Char* {
+FMT_CONSTEXPR auto parse_precision(const Char* begin, const Char* end, Handler&& handler)
+    -> const Char* {
   using detail::auto_id;
   struct precision_adapter {
     Handler& handler;
@@ -2271,8 +2236,7 @@ FMT_CONSTEXPR auto parse_precision(const Char* begin, const Char* end,
       handler.on_error("number is too big");
   } else if (c == '{') {
     ++begin;
-    if (begin != end)
-      begin = parse_arg_id(begin, end, precision_adapter{handler});
+    if (begin != end) begin = parse_arg_id(begin, end, precision_adapter{handler});
     if (begin == end || *begin++ != '}')
       return handler.on_error("invalid format string"), begin;
   } else {
@@ -2285,12 +2249,9 @@ FMT_CONSTEXPR auto parse_precision(const Char* begin, const Char* end,
 // Parses standard format specifiers and sends notifications about parsed
 // components to handler.
 template <typename Char, typename SpecHandler>
-FMT_CONSTEXPR FMT_INLINE auto parse_format_specs(const Char* begin,
-                                                 const Char* end,
-                                                 SpecHandler&& handler)
-    -> const Char* {
-  if (begin + 1 < end && begin[1] == '}' && is_ascii_letter(*begin) &&
-      *begin != 'L') {
+FMT_CONSTEXPR FMT_INLINE auto parse_format_specs(const Char* begin, const Char* end,
+                                                 SpecHandler&& handler) -> const Char* {
+  if (begin + 1 < end && begin[1] == '}' && is_ascii_letter(*begin) && *begin != 'L') {
     handler.on_type(*begin++);
     return begin;
   }
@@ -2302,20 +2263,20 @@ FMT_CONSTEXPR FMT_INLINE auto parse_format_specs(const Char* begin,
 
   // Parse sign.
   switch (to_ascii(*begin)) {
-  case '+':
-    handler.on_sign(sign::plus);
-    ++begin;
-    break;
-  case '-':
-    handler.on_sign(sign::minus);
-    ++begin;
-    break;
-  case ' ':
-    handler.on_sign(sign::space);
-    ++begin;
-    break;
-  default:
-    break;
+    case '+':
+      handler.on_sign(sign::plus);
+      ++begin;
+      break;
+    case '-':
+      handler.on_sign(sign::minus);
+      ++begin;
+      break;
+    case ' ':
+      handler.on_sign(sign::space);
+      ++begin;
+      break;
+    default:
+      break;
   }
   if (begin == end) return begin;
 
@@ -2390,8 +2351,8 @@ FMT_CONSTEXPR auto parse_replacement_field(const Char* begin, const Char* end,
 }
 
 template <bool IS_CONSTEXPR, typename Char, typename Handler>
-FMT_CONSTEXPR FMT_INLINE void parse_format_string(
-    basic_string_view<Char> format_str, Handler&& handler) {
+FMT_CONSTEXPR FMT_INLINE void parse_format_string(basic_string_view<Char> format_str,
+                                                  Handler&& handler) {
   // this is most likely a name-lookup defect in msvc's modules implementation
   using detail::find;
 
@@ -2443,13 +2404,12 @@ FMT_CONSTEXPR FMT_INLINE void parse_format_string(
 }
 
 template <typename T, typename ParseContext>
-FMT_CONSTEXPR auto parse_format_specs(ParseContext& ctx)
-    -> decltype(ctx.begin()) {
+FMT_CONSTEXPR auto parse_format_specs(ParseContext& ctx) -> decltype(ctx.begin()) {
   using char_type = typename ParseContext::char_type;
   using context = buffer_context<char_type>;
-  using mapped_type = conditional_t<
-      mapped_type_constant<T, context>::value != type::custom_type,
-      decltype(arg_mapper<context>().map(std::declval<const T&>())), T>;
+  using mapped_type =
+      conditional_t<mapped_type_constant<T, context>::value != type::custom_type,
+                    decltype(arg_mapper<context>().map(std::declval<const T&>())), T>;
   auto f = conditional_t<has_formatter<mapped_type, context>::value,
                          formatter<mapped_type, char_type>,
                          fallback_formatter<T, char_type>>();
@@ -2461,8 +2421,7 @@ FMT_CONSTEXPR auto parse_format_specs(ParseContext& ctx)
 // and would be redundant since argument ids are checked when arguments are
 // retrieved anyway.
 template <typename Char, typename ErrorHandler = error_handler>
-class compile_parse_context
-    : public basic_format_parse_context<Char, ErrorHandler> {
+class compile_parse_context : public basic_format_parse_context<Char, ErrorHandler> {
  private:
   int num_args_;
   using base = basic_format_parse_context<Char, ErrorHandler>;
@@ -2489,18 +2448,18 @@ class compile_parse_context
 template <typename ErrorHandler>
 FMT_CONSTEXPR void check_int_type_spec(char spec, ErrorHandler&& eh) {
   switch (spec) {
-  case 0:
-  case 'd':
-  case 'x':
-  case 'X':
-  case 'b':
-  case 'B':
-  case 'o':
-  case 'c':
-    break;
-  default:
-    eh.on_error("invalid type specifier");
-    break;
+    case 0:
+    case 'd':
+    case 'x':
+    case 'X':
+    case 'b':
+    case 'B':
+    case 'o':
+    case 'c':
+      break;
+    default:
+      eh.on_error("invalid type specifier");
+      break;
   }
 }
 
@@ -2538,51 +2497,49 @@ struct float_specs {
 
 template <typename ErrorHandler = error_handler, typename Char>
 FMT_CONSTEXPR auto parse_float_type_spec(const basic_format_specs<Char>& specs,
-                                         ErrorHandler&& eh = {})
-    -> float_specs {
+                                         ErrorHandler&& eh = {}) -> float_specs {
   auto result = float_specs();
   result.showpoint = specs.alt;
   result.locale = specs.localized;
   switch (specs.type) {
-  case 0:
-    result.format = float_format::general;
-    break;
-  case 'G':
-    result.upper = true;
-    FMT_FALLTHROUGH;
-  case 'g':
-    result.format = float_format::general;
-    break;
-  case 'E':
-    result.upper = true;
-    FMT_FALLTHROUGH;
-  case 'e':
-    result.format = float_format::exp;
-    result.showpoint |= specs.precision != 0;
-    break;
-  case 'F':
-    result.upper = true;
-    FMT_FALLTHROUGH;
-  case 'f':
-    result.format = float_format::fixed;
-    result.showpoint |= specs.precision != 0;
-    break;
-  case 'A':
-    result.upper = true;
-    FMT_FALLTHROUGH;
-  case 'a':
-    result.format = float_format::hex;
-    break;
-  default:
-    eh.on_error("invalid type specifier");
-    break;
+    case 0:
+      result.format = float_format::general;
+      break;
+    case 'G':
+      result.upper = true;
+      FMT_FALLTHROUGH;
+    case 'g':
+      result.format = float_format::general;
+      break;
+    case 'E':
+      result.upper = true;
+      FMT_FALLTHROUGH;
+    case 'e':
+      result.format = float_format::exp;
+      result.showpoint |= specs.precision != 0;
+      break;
+    case 'F':
+      result.upper = true;
+      FMT_FALLTHROUGH;
+    case 'f':
+      result.format = float_format::fixed;
+      result.showpoint |= specs.precision != 0;
+      break;
+    case 'A':
+      result.upper = true;
+      FMT_FALLTHROUGH;
+    case 'a':
+      result.format = float_format::hex;
+      break;
+    default:
+      eh.on_error("invalid type specifier");
+      break;
   }
   return result;
 }
 
 template <typename Char, typename ErrorHandler = error_handler>
-FMT_CONSTEXPR auto check_cstring_type_spec(Char spec, ErrorHandler&& eh = {})
-    -> bool {
+FMT_CONSTEXPR auto check_cstring_type_spec(Char spec, ErrorHandler&& eh = {}) -> bool {
   if (spec == 0 || spec == 's') return true;
   if (spec != 'p') eh.on_error("invalid type specifier");
   return false;
@@ -2600,7 +2557,8 @@ FMT_CONSTEXPR void check_pointer_type_spec(Char spec, ErrorHandler&& eh) {
 
 // A parse_format_specs handler that checks if specifiers are consistent with
 // the argument type.
-template <typename Handler> class specs_checker : public Handler {
+template <typename Handler>
+class specs_checker : public Handler {
  private:
   detail::type arg_type_;
 
@@ -2656,8 +2614,7 @@ constexpr auto get_arg_index_by_name(basic_string_view<Char> name) -> int {
   if constexpr (detail::is_statically_named_arg<T>()) {
     if (name == T::name) return N;
   }
-  if constexpr (sizeof...(Args) > 0)
-    return get_arg_index_by_name<N + 1, Args...>(name);
+  if constexpr (sizeof...(Args) > 0) return get_arg_index_by_name<N + 1, Args...>(name);
   (void)name;  // Workaround an MSVC bug about "unused" parameter.
   return invalid_arg_index;
 }
@@ -2666,8 +2623,7 @@ constexpr auto get_arg_index_by_name(basic_string_view<Char> name) -> int {
 template <typename... Args, typename Char>
 FMT_CONSTEXPR auto get_arg_index_by_name(basic_string_view<Char> name) -> int {
 #if FMT_USE_NONTYPE_TEMPLATE_PARAMETERS
-  if constexpr (sizeof...(Args) > 0)
-    return get_arg_index_by_name<0, Args...>(name);
+  if constexpr (sizeof...(Args) > 0) return get_arg_index_by_name<0, Args...>(name);
 #endif
   (void)name;
   return invalid_arg_index;
@@ -2686,17 +2642,15 @@ class format_string_checker {
   parse_func parse_funcs_[num_args > 0 ? num_args : 1];
 
  public:
-  explicit FMT_CONSTEXPR format_string_checker(
-      basic_string_view<Char> format_str, ErrorHandler eh)
+  explicit FMT_CONSTEXPR format_string_checker(basic_string_view<Char> format_str,
+                                               ErrorHandler eh)
       : context_(format_str, num_args, eh),
         parse_funcs_{&parse_format_specs<Args, parse_context_type>...} {}
 
   FMT_CONSTEXPR void on_text(const Char*, const Char*) {}
 
   FMT_CONSTEXPR auto on_arg_id() -> int { return context_.next_arg_id(); }
-  FMT_CONSTEXPR auto on_arg_id(int id) -> int {
-    return context_.check_arg_id(id), id;
-  }
+  FMT_CONSTEXPR auto on_arg_id(int id) -> int { return context_.check_arg_id(id), id; }
   FMT_CONSTEXPR auto on_arg_id(basic_string_view<Char> id) -> int {
 #if FMT_USE_NONTYPE_TEMPLATE_PARAMETERS
     auto index = get_arg_index_by_name<Args...>(id);
@@ -2718,13 +2672,10 @@ class format_string_checker {
     return id >= 0 && id < num_args ? parse_funcs_[id](context_) : begin;
   }
 
-  FMT_CONSTEXPR void on_error(const char* message) {
-    context_.on_error(message);
-  }
+  FMT_CONSTEXPR void on_error(const char* message) { context_.on_error(message); }
 };
 
-template <typename... Args, typename S,
-          enable_if_t<(is_compile_string<S>::value), int>>
+template <typename... Args, typename S, enable_if_t<(is_compile_string<S>::value), int>>
 void check_format_string(S format_str) {
   FMT_CONSTEXPR auto s = to_string_view(format_str);
   using checker = format_string_checker<typename S::char_type, error_handler,
@@ -2735,10 +2686,9 @@ void check_format_string(S format_str) {
 }
 
 template <typename Char>
-void vformat_to(
-    buffer<Char>& buf, basic_string_view<Char> fmt,
-    basic_format_args<FMT_BUFFER_CONTEXT(type_identity_t<Char>)> args,
-    detail::locale_ref loc = {});
+void vformat_to(buffer<Char>& buf, basic_string_view<Char> fmt,
+                basic_format_args<FMT_BUFFER_CONTEXT(type_identity_t<Char>)> args,
+                detail::locale_ref loc = {});
 
 FMT_API void vprint_mojibake(std::FILE*, string_view, format_args);
 #ifndef _WIN32
@@ -2749,9 +2699,9 @@ FMT_END_DETAIL_NAMESPACE
 // A formatter specialization for the core types corresponding to detail::type
 // constants.
 template <typename T, typename Char>
-struct formatter<T, Char,
-                 enable_if_t<detail::type_constant<T, Char>::value !=
-                             detail::type::custom_type>> {
+struct formatter<
+    T, Char,
+    enable_if_t<detail::type_constant<T, Char>::value != detail::type::custom_type>> {
  private:
   detail::dynamic_format_specs<Char> specs_;
 
@@ -2764,59 +2714,58 @@ struct formatter<T, Char,
     if (begin == end) return begin;
     using handler_type = detail::dynamic_specs_handler<ParseContext>;
     auto type = detail::type_constant<T, Char>::value;
-    auto checker =
-        detail::specs_checker<handler_type>(handler_type(specs_, ctx), type);
+    auto checker = detail::specs_checker<handler_type>(handler_type(specs_, ctx), type);
     auto it = detail::parse_format_specs(begin, end, checker);
     auto eh = ctx.error_handler();
     switch (type) {
-    case detail::type::none_type:
-      FMT_ASSERT(false, "invalid argument type");
-      break;
-    case detail::type::bool_type:
-      if (!specs_.type || specs_.type == 's') break;
-      FMT_FALLTHROUGH;
-    case detail::type::int_type:
-    case detail::type::uint_type:
-    case detail::type::long_long_type:
-    case detail::type::ulong_long_type:
-    case detail::type::int128_type:
-    case detail::type::uint128_type:
-      detail::check_int_type_spec(specs_.type, eh);
-      break;
-    case detail::type::char_type:
-      detail::check_char_specs(specs_, eh);
-      break;
-    case detail::type::float_type:
-      if (detail::const_check(FMT_USE_FLOAT))
-        detail::parse_float_type_spec(specs_, eh);
-      else
-        FMT_ASSERT(false, "float support disabled");
-      break;
-    case detail::type::double_type:
-      if (detail::const_check(FMT_USE_DOUBLE))
-        detail::parse_float_type_spec(specs_, eh);
-      else
-        FMT_ASSERT(false, "double support disabled");
-      break;
-    case detail::type::long_double_type:
-      if (detail::const_check(FMT_USE_LONG_DOUBLE))
-        detail::parse_float_type_spec(specs_, eh);
-      else
-        FMT_ASSERT(false, "long double support disabled");
-      break;
-    case detail::type::cstring_type:
-      detail::check_cstring_type_spec(specs_.type, eh);
-      break;
-    case detail::type::string_type:
-      detail::check_string_type_spec(specs_.type, eh);
-      break;
-    case detail::type::pointer_type:
-      detail::check_pointer_type_spec(specs_.type, eh);
-      break;
-    case detail::type::custom_type:
-      // Custom format specifiers are checked in parse functions of
-      // formatter specializations.
-      break;
+      case detail::type::none_type:
+        FMT_ASSERT(false, "invalid argument type");
+        break;
+      case detail::type::bool_type:
+        if (!specs_.type || specs_.type == 's') break;
+        FMT_FALLTHROUGH;
+      case detail::type::int_type:
+      case detail::type::uint_type:
+      case detail::type::long_long_type:
+      case detail::type::ulong_long_type:
+      case detail::type::int128_type:
+      case detail::type::uint128_type:
+        detail::check_int_type_spec(specs_.type, eh);
+        break;
+      case detail::type::char_type:
+        detail::check_char_specs(specs_, eh);
+        break;
+      case detail::type::float_type:
+        if (detail::const_check(FMT_USE_FLOAT))
+          detail::parse_float_type_spec(specs_, eh);
+        else
+          FMT_ASSERT(false, "float support disabled");
+        break;
+      case detail::type::double_type:
+        if (detail::const_check(FMT_USE_DOUBLE))
+          detail::parse_float_type_spec(specs_, eh);
+        else
+          FMT_ASSERT(false, "double support disabled");
+        break;
+      case detail::type::long_double_type:
+        if (detail::const_check(FMT_USE_LONG_DOUBLE))
+          detail::parse_float_type_spec(specs_, eh);
+        else
+          FMT_ASSERT(false, "long double support disabled");
+        break;
+      case detail::type::cstring_type:
+        detail::check_cstring_type_spec(specs_.type, eh);
+        break;
+      case detail::type::string_type:
+        detail::check_string_type_spec(specs_.type, eh);
+        break;
+      case detail::type::pointer_type:
+        detail::check_pointer_type_spec(specs_.type, eh);
+        break;
+      case detail::type::custom_type:
+        // Custom format specifiers are checked in parse functions of
+        // formatter specializations.
+        break;
     }
     return it;
   }
@@ -2826,21 +2775,23 @@ struct formatter<T, Char,
       -> decltype(ctx.out());
 };
 
-template <typename Char> struct basic_runtime { basic_string_view<Char> str; };
+template <typename Char>
+struct basic_runtime {
+  basic_string_view<Char> str;
+};
 
-template <typename Char, typename... Args> class basic_format_string {
+template <typename Char, typename... Args>
+class basic_format_string {
  private:
   basic_string_view<Char> str_;
 
  public:
   template <typename S,
-            FMT_ENABLE_IF(
-                std::is_convertible<const S&, basic_string_view<Char>>::value)>
+            FMT_ENABLE_IF(std::is_convertible<const S&, basic_string_view<Char>>::value)>
   FMT_CONSTEVAL basic_format_string(const S& s) : str_(s) {
     static_assert(
-        detail::count<
-            (std::is_base_of<detail::view, remove_reference_t<Args>>::value &&
-             std::is_reference<Args>::value)...>() == 0,
+        detail::count<(std::is_base_of<detail::view, remove_reference_t<Args>>::value &&
+                       std::is_reference<Args>::value)...>() == 0,
         "passing views as lvalues is disallowed");
 #ifdef FMT_HAS_CONSTEVAL
     if constexpr (detail::count_named_args<Args...>() == 0) {
@@ -2859,15 +2810,18 @@ template <typename Char, typename... Args> class basic_format_string {
 
 #if FMT_GCC_VERSION && FMT_GCC_VERSION < 409
 // Workaround broken conversion on older gcc.
-template <typename... Args> using format_string = string_view;
-template <typename S> auto runtime(const S& s) -> basic_string_view<char_t<S>> {
+template <typename... Args>
+using format_string = string_view;
+template <typename S>
+auto runtime(const S& s) -> basic_string_view<char_t<S>> {
   return s;
 }
 #else
 template <typename... Args>
 using format_string = basic_format_string<char, type_identity_t<Args>...>;
 // Creates a runtime format string.
-template <typename S> auto runtime(const S& s) -> basic_runtime<char_t<S>> {
+template <typename S>
+auto runtime(const S& s) -> basic_runtime<char_t<S>> {
   return {{s}};
 }
 #endif
@@ -2919,7 +2873,8 @@ FMT_INLINE auto format_to(OutputIt out, format_string<T...> fmt, T&&... args)
   return vformat_to(out, fmt, fmt::make_format_args(args...));
 }
 
-template <typename OutputIt> struct format_to_n_result {
+template <typename OutputIt>
+struct format_to_n_result {
   /** Iterator past the end of the output range. */
   OutputIt out;
   /** Total (not truncated) output size. */
@@ -2930,8 +2885,7 @@ template <typename OutputIt, typename... T,
           FMT_ENABLE_IF(detail::is_output_iterator<OutputIt, char>::value)>
 auto vformat_to_n(OutputIt out, size_t n, string_view fmt, format_args args)
     -> format_to_n_result<OutputIt> {
-  using buffer =
-      detail::iterator_buffer<OutputIt, char, detail::fixed_buffer_traits>;
+  using buffer = detail::iterator_buffer<OutputIt, char, detail::fixed_buffer_traits>;
   auto buf = buffer(out, n);
   detail::vformat_to(buf, fmt, args);
   return {buf.out(), buf.count()};
@@ -3001,6 +2955,6 @@ FMT_GCC_PRAGMA("GCC pop_options")
 FMT_END_NAMESPACE
 
 #ifdef FMT_HEADER_ONLY
-#  include "format.h"
+#include "format.h"
 #endif
 #endif  // FMT_CORE_H_
