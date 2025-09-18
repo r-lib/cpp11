@@ -84,6 +84,10 @@ grow_ <- function(n) {
   .Call(`_cpp11test_grow_`, n)
 }
 
+grow_cplx_ <- function(n) {
+  .Call(`_cpp11test_grow_cplx_`, n)
+}
+
 cpp11_insert_ <- function(num_sxp) {
   .Call(`_cpp11test_cpp11_insert_`, num_sxp)
 }
@@ -196,26 +200,6 @@ string_push_back_ <- function() {
   .Call(`_cpp11test_string_push_back_`)
 }
 
-grow_strings_cpp11_ <- function(n, seed) {
-  .Call(`_cpp11test_grow_strings_cpp11_`, n, seed)
-}
-
-grow_strings_rcpp_ <- function(n, seed) {
-  .Call(`_cpp11test_grow_strings_rcpp_`, n, seed)
-}
-
-grow_strings_manual_ <- function(n, seed) {
-  .Call(`_cpp11test_grow_strings_manual_`, n, seed)
-}
-
-assign_cpp11_ <- function(n, seed) {
-  .Call(`_cpp11test_assign_cpp11_`, n, seed)
-}
-
-assign_rcpp_ <- function(n, seed) {
-  .Call(`_cpp11test_assign_rcpp_`, n, seed)
-}
-
 sum_dbl_for_ <- function(x) {
   .Call(`_cpp11test_sum_dbl_for_`, x)
 }
@@ -242,6 +226,42 @@ sum_dbl_accumulate_ <- function(x) {
 
 sum_dbl_accumulate2_ <- function(x_sxp) {
   .Call(`_cpp11test_sum_dbl_accumulate2_`, x_sxp)
+}
+
+sum_cplx_for_ <- function(x) {
+  .Call(`_cpp11test_sum_cplx_for_`, x)
+}
+
+sum_cplx_for_2_ <- function(x) {
+  .Call(`_cpp11test_sum_cplx_for_2_`, x)
+}
+
+sum_cplx_for_3_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for_3_`, x_sxp)
+}
+
+sum_cplx_for_4_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for_4_`, x_sxp)
+}
+
+sum_cplx_for_5_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for_5_`, x_sxp)
+}
+
+sum_cplx_for_6_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for_6_`, x_sxp)
+}
+
+sum_cplx_foreach_ <- function(x) {
+  .Call(`_cpp11test_sum_cplx_foreach_`, x)
+}
+
+sum_cplx_accumulate_ <- function(x) {
+  .Call(`_cpp11test_sum_cplx_accumulate_`, x)
+}
+
+sum_cplx_for2_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for2_`, x_sxp)
 }
 
 sum_int_for_ <- function(x) {
@@ -282,14 +302,6 @@ rcpp_grow_ <- function(n_sxp) {
 
 rcpp_push_and_truncate_ <- function(size_sxp) {
   .Call(`_cpp11test_rcpp_push_and_truncate_`, size_sxp)
-}
-
-nullable_extptr_1 <- function() {
-  .Call(`_cpp11test_nullable_extptr_1`)
-}
-
-nullable_extptr_2 <- function() {
-  .Call(`_cpp11test_nullable_extptr_2`)
 }
 
 test_destruction_inner <- function() {

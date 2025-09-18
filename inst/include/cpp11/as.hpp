@@ -3,6 +3,7 @@
 #include <cmath>             // for modf
 #include <initializer_list>  // for initializer_list
 #include <memory>            // for std::shared_ptr, std::weak_ptr, std::unique_ptr
+#include <complex>
 #include <stdexcept>
 #include <string>       // for string, basic_string
 #include <type_traits>  // for decay, enable_if, is_same, is_convertible
@@ -70,6 +71,14 @@ using enable_if_std_string = enable_if_t<std::is_same<T, std::string>::value, R>
 
 template <typename T, typename R = void>
 using enable_if_c_string = enable_if_t<std::is_same<T, const char*>::value, R>;
+
+// Detect std::complex types to avoid treating them as containers in generic
+// container overloads.
+template <typename>
+struct is_std_complex : std::false_type {};
+
+template <typename T>
+struct is_std_complex<std::complex<T>> : std::true_type {};
 
 // https://stackoverflow.com/a/1521682/2055486
 //
@@ -169,6 +178,15 @@ enable_if_floating_point<T, T> as_cpp(SEXP from) {
   throw std::length_error("Expected single double value");
 }
 
+// Definition for converting SEXP to std::complex<double>
+inline std::complex<double> as_cpp(SEXP x) {
+  if (TYPEOF(x) != CPLXSXP || Rf_length(x) != 1) {
+    throw std::invalid_argument("Expected a single complex number.");
+  }
+  Rcomplex c = COMPLEX(x)[0];
+  return {c.r, c.i};
+}
+
 template <typename T>
 enable_if_char<T, T> as_cpp(SEXP from) {
   if (Rf_isString(from)) {
@@ -213,6 +231,15 @@ enable_if_floating_point<T, SEXP> as_sexp(T from) {
   return safe[Rf_ScalarReal](from);
 }
 
+// Specialization for converting std::complex<double> to SEXP
+inline SEXP as_sexp(const std::complex<double>& x) {
+  SEXP result = PROTECT(Rf_allocVector(CPLXSXP, 1));
+  COMPLEX(result)[0].r = x.real();
+  COMPLEX(result)[0].i = x.imag();
+  UNPROTECT(1);
+  return result;
+}
+
 template <typename T>
 enable_if_bool<T, SEXP> as_sexp(T from) {
   return safe[Rf_ScalarLogical](from);
@@ -229,7 +256,8 @@ enable_if_std_string<T, SEXP> as_sexp(const T& from) {
 }
 
 template <typename Container, typename T = typename Container::value_type,
-          typename = disable_if_convertible_to_sexp<Container>>
+          typename = disable_if_convertible_to_sexp<Container>,
+          typename = enable_if_t<!is_std_complex<Container>::value>>
 enable_if_integral<T, SEXP> as_sexp(const Container& from) {
   R_xlen_t size = from.size();
   SEXP data = safe[Rf_allocVector](INTSXP, size);
@@ -247,7 +275,8 @@ inline SEXP as_sexp(std::initializer_list<int> from) {
 }
 
 template <typename Container, typename T = typename Container::value_type,
-          typename = disable_if_convertible_to_sexp<Container>>
+          typename = disable_if_convertible_to_sexp<Container>,
+          typename = enable_if_t<!is_std_complex<Container>::value>>
 enable_if_floating_point<T, SEXP> as_sexp(const Container& from) {
   R_xlen_t size = from.size();
   SEXP data = safe[Rf_allocVector](REALSXP, size);
@@ -265,7 +294,8 @@ inline SEXP as_sexp(std::initializer_list<double> from) {
 }
 
 template <typename Container, typename T = typename Container::value_type,
-          typename = disable_if_convertible_to_sexp<Container>>
+          typename = disable_if_convertible_to_sexp<Container>,
+          typename = enable_if_t<!is_std_complex<Container>::value>>
 enable_if_bool<T, SEXP> as_sexp(const Container& from) {
   R_xlen_t size = from.size();
   SEXP data = safe[Rf_allocVector](LGLSXP, size);

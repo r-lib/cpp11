@@ -18,6 +18,7 @@
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/named_arg.hpp"        // for named_arg
 #include "cpp11/protect.hpp"          // for store
+#include "cpp11/r_complex.hpp"        // for r_complex
 #include "cpp11/r_string.hpp"         // for r_string
 #include "cpp11/sexp.hpp"             // for sexp
 
@@ -1396,10 +1397,12 @@ inline SEXP r_vector<T>::resize_names(SEXP x, R_xlen_t size) {
 // rather than three things false?
 template <typename C, typename T>
 using is_container_but_not_sexp_or_string = typename std::enable_if<
-    !std::is_constructible<C, SEXP>::value &&
-        !std::is_same<typename std::decay<C>::type, std::string>::value &&
-        !std::is_same<typename std::decay<T>::type, std::string>::value,
-    typename std::decay<C>::type>::type;
+  !std::is_constructible<C, SEXP>::value &&
+    !std::is_same<typename std::decay<C>::type, std::string>::value &&
+    !std::is_same<typename std::decay<T>::type, std::string>::value &&
+    //! Exclude std::complex from being treated as a container
+    !std::is_same<typename std::decay<C>::type, std::complex<typename std::decay<T>::type>>::value,
+  typename std::decay<C>::type>::type;
 
 template <typename C, typename T = typename std::decay<C>::type::value_type>
 // typename T = typename C::value_type>

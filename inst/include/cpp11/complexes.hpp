@@ -219,7 +219,9 @@ inline std::complex<T>& operator+=(std::complex<T>& lhs, const cpp11::r_complex&
   return lhs;
 }
 
-// Add constructor for initializer_list
+// Add constructor for initializer_list for the writable r_vector specialization
+namespace writable {
+
 template <>
 inline r_vector<r_complex>::r_vector(std::initializer_list<r_complex> il) {
   R_xlen_t size = il.size();
@@ -234,6 +236,8 @@ inline r_vector<r_complex>::r_vector(std::initializer_list<r_complex> il) {
   UNPROTECT(1);
   data_ = data;
 }
+
+}  // namespace writable
 
 // Comparison operators for r_vector<r_complex>
 template <>
