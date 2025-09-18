@@ -223,18 +223,20 @@ inline std::complex<T>& operator+=(std::complex<T>& lhs, const cpp11::r_complex&
 namespace writable {
 
 template <>
-inline r_vector<r_complex>::r_vector(std::initializer_list<r_complex> il) {
-  R_xlen_t size = il.size();
-  SEXP data = PROTECT(Rf_allocVector(CPLXSXP, size));
+inline r_vector<r_complex>::r_vector(std::initializer_list<r_complex> il)
+    : cpp11::r_vector<r_complex>(safe[Rf_allocVector](CPLXSXP, il.size())),
+      capacity_(il.size()) {
   auto it = il.begin();
-  for (R_xlen_t i = 0; i < size; ++i, ++it) {
-    Rcomplex r;
-    r.r = it->real();
-    r.i = it->imag();
-    COMPLEX(data)[i] = r;
+
+  if (data_p_ != nullptr) {
+    for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
+      data_p_[i] = static_cast<underlying_type>(*it);
+    }
+  } else {
+    for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
+      set_elt(data_, i, static_cast<underlying_type>(*it));
+    }
   }
-  UNPROTECT(1);
-  data_ = data;
 }
 
 }  // namespace writable
