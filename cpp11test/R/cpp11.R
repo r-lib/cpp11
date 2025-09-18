@@ -156,6 +156,34 @@ rcpp_release_ <- function(n) {
   invisible(.Call(`_cpp11test_rcpp_release_`, n))
 }
 
+notroxcpp1_ <- function(x) {
+  .Call(`_cpp11test_notroxcpp1_`, x)
+}
+
+roxcpp2_ <- function(x) {
+  .Call(`_cpp11test_roxcpp2_`, x)
+}
+
+roxcpp3_ <- function(x) {
+  .Call(`_cpp11test_roxcpp3_`, x)
+}
+
+roxcpp4_ <- function(x) {
+  .Call(`_cpp11test_roxcpp4_`, x)
+}
+
+roxcpp5_ <- function(x) {
+  .Call(`_cpp11test_roxcpp5_`, x)
+}
+
+notroxcpp6_ <- function(x) {
+  .Call(`_cpp11test_notroxcpp6_`, x)
+}
+
+roxcpp7_ <- function(x) {
+  .Call(`_cpp11test_roxcpp7_`, x)
+}
+
 cpp11_safe_ <- function(x_sxp) {
   .Call(`_cpp11test_cpp11_safe_`, x_sxp)
 }
@@ -166,6 +194,26 @@ string_proxy_assignment_ <- function() {
 
 string_push_back_ <- function() {
   .Call(`_cpp11test_string_push_back_`)
+}
+
+grow_strings_cpp11_ <- function(n, seed) {
+  .Call(`_cpp11test_grow_strings_cpp11_`, n, seed)
+}
+
+grow_strings_rcpp_ <- function(n, seed) {
+  .Call(`_cpp11test_grow_strings_rcpp_`, n, seed)
+}
+
+grow_strings_manual_ <- function(n, seed) {
+  .Call(`_cpp11test_grow_strings_manual_`, n, seed)
+}
+
+assign_cpp11_ <- function(n, seed) {
+  .Call(`_cpp11test_assign_cpp11_`, n, seed)
+}
+
+assign_rcpp_ <- function(n, seed) {
+  .Call(`_cpp11test_assign_rcpp_`, n, seed)
 }
 
 sum_dbl_for_ <- function(x) {
@@ -234,6 +282,14 @@ rcpp_grow_ <- function(n_sxp) {
 
 rcpp_push_and_truncate_ <- function(size_sxp) {
   .Call(`_cpp11test_rcpp_push_and_truncate_`, size_sxp)
+}
+
+nullable_extptr_1 <- function() {
+  .Call(`_cpp11test_nullable_extptr_1`)
+}
+
+nullable_extptr_2 <- function() {
+  .Call(`_cpp11test_nullable_extptr_2`)
 }
 
 test_destruction_inner <- function() {
