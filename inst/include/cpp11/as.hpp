@@ -296,18 +296,14 @@ template <typename Container, typename AsCstring>
 SEXP as_sexp_strings(const Container& from, AsCstring&& c_str) {
   R_xlen_t size = from.size();
 
-  SEXP data;
-  try {
-    data = PROTECT(safe[Rf_allocVector](STRSXP, size));
+  SEXP data = PROTECT(safe[Rf_allocVector](STRSXP, size));
 
+  unwind_protect([&] {
     auto it = from.begin();
     for (R_xlen_t i = 0; i < size; ++i, ++it) {
-      SET_STRING_ELT(data, i, safe[Rf_mkCharCE](c_str(*it), CE_UTF8));
+      SET_STRING_ELT(data, i, Rf_mkCharCE(c_str(*it), CE_UTF8));
     }
-  } catch (const unwind_exception& e) {
-    UNPROTECT(1);
-    throw e;
-  }
+  });
 
   UNPROTECT(1);
   return data;
