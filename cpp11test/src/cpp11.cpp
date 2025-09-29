@@ -173,6 +173,20 @@ extern "C" SEXP _cpp11test_cpp11_insert_(SEXP num_sxp) {
     return cpp11::as_sexp(cpp11_insert_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(num_sxp)));
   END_CPP11
 }
+// map.cpp
+SEXP ordered_map_to_list_(cpp11::doubles x);
+extern "C" SEXP _cpp11test_ordered_map_to_list_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(ordered_map_to_list_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
+  END_CPP11
+}
+// map.cpp
+SEXP unordered_map_to_list_(cpp11::doubles x);
+extern "C" SEXP _cpp11test_unordered_map_to_list_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(unordered_map_to_list_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
+  END_CPP11
+}
 // matrix.cpp
 SEXP gibbs_cpp(int N, int thin);
 extern "C" SEXP _cpp11test_gibbs_cpp(SEXP N, SEXP thin) {
@@ -206,6 +220,27 @@ cpp11::doubles row_sums(cpp11::doubles_matrix<cpp11::by_row> x);
 extern "C" SEXP _cpp11test_row_sums(SEXP x) {
   BEGIN_CPP11
     return cpp11::as_sexp(row_sums(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<cpp11::by_row>>>(x)));
+  END_CPP11
+}
+// matrix.cpp
+cpp11::doubles_matrix<> mat_mat_copy_dimnames(cpp11::doubles_matrix<> x);
+extern "C" SEXP _cpp11test_mat_mat_copy_dimnames(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(mat_mat_copy_dimnames(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(x)));
+  END_CPP11
+}
+// matrix.cpp
+SEXP mat_sexp_copy_dimnames(cpp11::doubles_matrix<> x);
+extern "C" SEXP _cpp11test_mat_sexp_copy_dimnames(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(mat_sexp_copy_dimnames(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<>>>(x)));
+  END_CPP11
+}
+// matrix.cpp
+cpp11::doubles_matrix<> mat_mat_create_dimnames();
+extern "C" SEXP _cpp11test_mat_mat_create_dimnames() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(mat_mat_create_dimnames());
   END_CPP11
 }
 // matrix.cpp
@@ -502,6 +537,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_gibbs_rcpp",               (DL_FUNC) &_cpp11test_gibbs_rcpp,               2},
     {"_cpp11test_gibbs_rcpp2",              (DL_FUNC) &_cpp11test_gibbs_rcpp2,              2},
     {"_cpp11test_grow_",                    (DL_FUNC) &_cpp11test_grow_,                    1},
+    {"_cpp11test_mat_mat_copy_dimnames",    (DL_FUNC) &_cpp11test_mat_mat_copy_dimnames,    1},
+    {"_cpp11test_mat_mat_create_dimnames",  (DL_FUNC) &_cpp11test_mat_mat_create_dimnames,  0},
+    {"_cpp11test_mat_sexp_copy_dimnames",   (DL_FUNC) &_cpp11test_mat_sexp_copy_dimnames,   1},
     {"_cpp11test_my_message",               (DL_FUNC) &_cpp11test_my_message,               2},
     {"_cpp11test_my_message_n1",            (DL_FUNC) &_cpp11test_my_message_n1,            1},
     {"_cpp11test_my_message_n1fmt",         (DL_FUNC) &_cpp11test_my_message_n1fmt,         1},
@@ -516,6 +554,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_my_warning_n2fmt",         (DL_FUNC) &_cpp11test_my_warning_n2fmt,         2},
     {"_cpp11test_nullable_extptr_1",        (DL_FUNC) &_cpp11test_nullable_extptr_1,        0},
     {"_cpp11test_nullable_extptr_2",        (DL_FUNC) &_cpp11test_nullable_extptr_2,        0},
+    {"_cpp11test_ordered_map_to_list_",     (DL_FUNC) &_cpp11test_ordered_map_to_list_,     1},
     {"_cpp11test_protect_many_",            (DL_FUNC) &_cpp11test_protect_many_,            1},
     {"_cpp11test_protect_many_cpp11_",      (DL_FUNC) &_cpp11test_protect_many_cpp11_,      1},
     {"_cpp11test_protect_many_preserve_",   (DL_FUNC) &_cpp11test_protect_many_preserve_,   1},
@@ -549,6 +588,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_sum_int_foreach_",         (DL_FUNC) &_cpp11test_sum_int_foreach_,         1},
     {"_cpp11test_test_destruction_inner",   (DL_FUNC) &_cpp11test_test_destruction_inner,   0},
     {"_cpp11test_test_destruction_outer",   (DL_FUNC) &_cpp11test_test_destruction_outer,   0},
+    {"_cpp11test_unordered_map_to_list_",   (DL_FUNC) &_cpp11test_unordered_map_to_list_,   1},
     {"_cpp11test_upper_bound",              (DL_FUNC) &_cpp11test_upper_bound,              2},
     {"run_testthat_tests",                  (DL_FUNC) &run_testthat_tests,                  1},
     {NULL, NULL, 0}

@@ -88,6 +88,14 @@ cpp11_insert_ <- function(num_sxp) {
   .Call(`_cpp11test_cpp11_insert_`, num_sxp)
 }
 
+ordered_map_to_list_ <- function(x) {
+  .Call(`_cpp11test_ordered_map_to_list_`, x)
+}
+
+unordered_map_to_list_ <- function(x) {
+  .Call(`_cpp11test_unordered_map_to_list_`, x)
+}
+
 gibbs_cpp <- function(N, thin) {
   .Call(`_cpp11test_gibbs_cpp`, N, thin)
 }
@@ -106,6 +114,18 @@ gibbs_rcpp2 <- function(N, thin) {
 
 row_sums <- function(x) {
   .Call(`_cpp11test_row_sums`, x)
+}
+
+mat_mat_copy_dimnames <- function(x) {
+  .Call(`_cpp11test_mat_mat_copy_dimnames`, x)
+}
+
+mat_sexp_copy_dimnames <- function(x) {
+  .Call(`_cpp11test_mat_sexp_copy_dimnames`, x)
+}
+
+mat_mat_create_dimnames <- function() {
+  .Call(`_cpp11test_mat_mat_create_dimnames`)
 }
 
 col_sums <- function(x) {

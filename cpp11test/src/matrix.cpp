@@ -1,6 +1,8 @@
 #include "cpp11/matrix.hpp"
 #include "Rmath.h"
 #include "cpp11/doubles.hpp"
+#include "cpp11/list.hpp"
+#include "cpp11/strings.hpp"
 using namespace cpp11;
 
 [[cpp11::register]] SEXP gibbs_cpp(int N, int thin) {
@@ -84,6 +86,40 @@ using namespace Rcpp;
   }
 
   return sums;
+}
+
+[[cpp11::register]] cpp11::doubles_matrix<> mat_mat_copy_dimnames(
+    cpp11::doubles_matrix<> x) {
+  cpp11::writable::doubles_matrix<> out = x;
+
+  out.attr("dimnames") = x.attr("dimnames");
+
+  return out;
+}
+
+[[cpp11::register]] SEXP mat_sexp_copy_dimnames(cpp11::doubles_matrix<> x) {
+  cpp11::writable::doubles_matrix<> out = x;
+
+  out.attr("dimnames") = x.attr("dimnames");
+
+  return out;
+}
+
+[[cpp11::register]] cpp11::doubles_matrix<> mat_mat_create_dimnames() {
+  cpp11::writable::doubles_matrix<> out(2, 2);
+
+  out(0, 0) = 1;
+  out(0, 1) = 2;
+  out(1, 0) = 3;
+  out(1, 1) = 4;
+
+  cpp11::writable::list dimnames(2);
+  dimnames[0] = cpp11::strings({"a", "b"});
+  dimnames[1] = cpp11::strings({"c", "d"});
+
+  out.attr("dimnames") = dimnames;
+
+  return out;
 }
 
 [[cpp11::register]] cpp11::doubles col_sums(cpp11::doubles_matrix<cpp11::by_column> x) {

@@ -18,6 +18,13 @@
 #'   uses 'CXX11' if unset.
 #' @param dir The directory to store the generated source files. `tempfile()` is
 #'   used by default. The directory will be removed if `clean` is `TRUE`.
+#' @param local Passed to [dyn.load()]. If `TRUE` (the default) the shared
+#'   library is loaded with local symbols; if `FALSE` symbols are made global
+#'   (equivalent to `dyn.load(..., local = FALSE)`), which can be required when
+#'   other shared objects need to see RTTI/vtable symbols from this library.
+#' @note See the unit test that demonstrates this usage at
+#' \code{tests/testthat/test-source-local.R} (shows how `local = FALSE` exports
+#' the necessary symbols so separate shared objects can link against them).
 #' @return For [cpp_source()] and `[cpp_function()]` the results of
 #'   [dyn.load()] (invisibly). For `[cpp_eval()]` the results of the evaluated
 #'   expression.
@@ -65,7 +72,7 @@
 #' }
 #'
 #' @export
-cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11"), dir = tempfile()) {
+cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11"), dir = tempfile(), local = TRUE) {
   stop_unless_installed(c("brio", "callr", "cli", "decor", "desc", "glue", "tibble", "vctrs"))
   if (!missing(file) && !file.exists(file)) {
     stop("Can't find `file` at this path:\n", file, "\n", call. = FALSE)
@@ -145,7 +152,7 @@ cpp_source <- function(file, code = NULL, env = parent.frame(), clean = TRUE, qu
   brio::write_lines(r_functions, r_path)
   source(r_path, local = env)
 
-  dyn.load(shared_lib, local = TRUE, now = TRUE)
+  dyn.load(shared_lib, local = local, now = TRUE)
 }
 
 the <- new.env(parent = emptyenv())
@@ -183,7 +190,7 @@ generate_makevars <- function(includes, cxx_std) {
 
 #' @rdname cpp_source
 #' @export
-cpp_function <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11")) {
+cpp_function <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11"), local = TRUE) {
   cpp_source(code = paste(c('#include "cpp11.hpp"',
         "using namespace ::cpp11;",
         "namespace writable = ::cpp11::writable;",
@@ -193,7 +200,8 @@ cpp_function <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE,
     env = env,
     clean = clean,
     quiet = quiet,
-    cxx_std = cxx_std
+    cxx_std = cxx_std,
+    local = local
   )
 }
 
@@ -201,7 +209,7 @@ utils::globalVariables("f")
 
 #' @rdname cpp_source
 #' @export
-cpp_eval <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11")) {
+cpp_eval <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx_std = Sys.getenv("CXX_STD", "CXX11"), local = TRUE) {
   cpp_source(code = paste(c('#include "cpp11.hpp"',
         "using namespace ::cpp11;",
         "namespace writable = ::cpp11::writable;",
@@ -214,7 +222,8 @@ cpp_eval <- function(code, env = parent.frame(), clean = TRUE, quiet = TRUE, cxx
     env = env,
     clean = clean,
     quiet = quiet,
-    cxx_std = cxx_std
+    cxx_std = cxx_std,
+    local = local
   )
   f()
 }

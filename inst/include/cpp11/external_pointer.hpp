@@ -39,7 +39,7 @@ class external_pointer {
 
     T* ptr = static_cast<T*>(R_ExternalPtrAddr(p));
 
-    if (ptr == NULL) {
+    if (ptr == nullptr) {
       return;
     }
 
