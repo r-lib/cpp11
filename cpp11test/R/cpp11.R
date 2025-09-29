@@ -256,6 +256,14 @@ rcpp_push_and_truncate_ <- function(size_sxp) {
   .Call(`_cpp11test_rcpp_push_and_truncate_`, size_sxp)
 }
 
+nullable_extptr_1 <- function() {
+  .Call(`_cpp11test_nullable_extptr_1`)
+}
+
+nullable_extptr_2 <- function() {
+  .Call(`_cpp11test_nullable_extptr_2`)
+}
+
 test_destruction_inner <- function() {
   invisible(.Call(`_cpp11test_test_destruction_inner`))
 }
