@@ -874,7 +874,8 @@ inline r_vector<T>::r_vector(std::initializer_list<named_arg> il)
   }
 
   unwind_protect([&] {
-    SEXP names = Rf_allocVector(STRSXP, capacity_);
+    SEXP names;
+    PROTECT(names = Rf_allocVector(STRSXP, capacity_));
     Rf_setAttrib(data_, R_NamesSymbol, names);
 
     auto it = il.begin();
@@ -899,6 +900,8 @@ inline r_vector<T>::r_vector(std::initializer_list<named_arg> il)
       SEXP name = Rf_mkCharCE(it->name(), CE_UTF8);
       SET_STRING_ELT(names, i, name);
     }
+
+    UNPROTECT(1);
   });
 }
 
