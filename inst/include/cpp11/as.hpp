@@ -2,10 +2,13 @@
 
 #include <cmath>             // for modf
 #include <initializer_list>  // for initializer_list
+#include <map>               // for std::map
 #include <memory>            // for std::shared_ptr, std::weak_ptr, std::unique_ptr
 #include <stdexcept>
-#include <string>       // for string, basic_string
-#include <type_traits>  // for decay, enable_if, is_same, is_convertible
+#include <string>         // for string, basic_string
+#include <type_traits>    // for decay, enable_if, is_same, is_convertible
+#include <unordered_map>  // for std::unordered_map
+#include <vector>         // for std::vector
 
 #include "cpp11/R.hpp"        // for SEXP, SEXPREC, Rf_xlength, R_xlen_t
 #include "cpp11/protect.hpp"  // for stop, protect, safe, protect::function
@@ -184,8 +187,14 @@ template <typename T>
 enable_if_c_string<T, T> as_cpp(SEXP from) {
   if (Rf_isString(from)) {
     if (Rf_xlength(from) == 1) {
-      // TODO: use vmaxget / vmaxset here?
-      return {unwind_protect([&] { return Rf_translateCharUTF8(STRING_ELT(from, 0)); })};
+      void* vmax = vmaxget();
+
+      const char* result =
+          unwind_protect([&] { return Rf_translateCharUTF8(STRING_ELT(from, 0)); });
+
+      vmaxset(vmax);
+
+      return {result};
     }
   }
 
@@ -243,7 +252,7 @@ enable_if_integral<T, SEXP> as_sexp(const Container& from) {
 }
 
 inline SEXP as_sexp(std::initializer_list<int> from) {
-  return as_sexp<std::initializer_list<int>>(from);
+  return as_sexp(std::vector<int>(from));
 }
 
 template <typename Container, typename T = typename Container::value_type,
@@ -261,7 +270,7 @@ enable_if_floating_point<T, SEXP> as_sexp(const Container& from) {
 }
 
 inline SEXP as_sexp(std::initializer_list<double> from) {
-  return as_sexp<std::initializer_list<double>>(from);
+  return as_sexp(std::vector<double>(from));
 }
 
 template <typename Container, typename T = typename Container::value_type,
@@ -279,7 +288,7 @@ enable_if_bool<T, SEXP> as_sexp(const Container& from) {
 }
 
 inline SEXP as_sexp(std::initializer_list<bool> from) {
-  return as_sexp<std::initializer_list<bool>>(from);
+  return as_sexp(std::vector<bool>(from));
 }
 
 namespace detail {
@@ -287,18 +296,14 @@ template <typename Container, typename AsCstring>
 SEXP as_sexp_strings(const Container& from, AsCstring&& c_str) {
   R_xlen_t size = from.size();
 
-  SEXP data;
-  try {
-    data = PROTECT(safe[Rf_allocVector](STRSXP, size));
+  SEXP data = PROTECT(safe[Rf_allocVector](STRSXP, size));
 
+  unwind_protect([&] {
     auto it = from.begin();
     for (R_xlen_t i = 0; i < size; ++i, ++it) {
-      SET_STRING_ELT(data, i, safe[Rf_mkCharCE](c_str(*it), CE_UTF8));
+      SET_STRING_ELT(data, i, Rf_mkCharCE(c_str(*it), CE_UTF8));
     }
-  } catch (const unwind_exception& e) {
-    UNPROTECT(1);
-    throw e;
-  }
+  });
 
   UNPROTECT(1);
   return data;
@@ -325,12 +330,81 @@ enable_if_c_string<T, SEXP> as_sexp(const Container& from) {
 }
 
 inline SEXP as_sexp(std::initializer_list<const char*> from) {
-  return as_sexp<std::initializer_list<const char*>>(from);
+  return as_sexp(std::vector<const char*>(from));
 }
 
 template <typename T, typename = disable_if_r_string<T>>
 enable_if_convertible_to_sexp<T, SEXP> as_sexp(const T& from) {
   return from;
+}
+
+// Pacha: Specialization for std::map
+// NOTE: I did not use templates to avoid clashes with doubles/function/etc.
+inline SEXP as_sexp(const std::map<std::string, SEXP>& map) {
+  R_xlen_t size = map.size();
+  SEXP result = PROTECT(Rf_allocVector(VECSXP, size));
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, size));
+
+  auto it = map.begin();
+  for (R_xlen_t i = 0; i < size; ++i, ++it) {
+    SET_VECTOR_ELT(result, i, it->second);
+    SET_STRING_ELT(names, i, Rf_mkCharCE(it->first.c_str(), CE_UTF8));
+  }
+
+  Rf_setAttrib(result, R_NamesSymbol, names);
+  UNPROTECT(2);
+  return result;
+}
+
+// Specialization for std::map<double, int>
+inline SEXP as_sexp(const std::map<double, int>& map) {
+  R_xlen_t size = map.size();
+  SEXP result = PROTECT(Rf_allocVector(VECSXP, size));
+  SEXP names = PROTECT(Rf_allocVector(REALSXP, size));
+
+  auto it = map.begin();
+  for (R_xlen_t i = 0; i < size; ++i, ++it) {
+    SET_VECTOR_ELT(result, i, Rf_ScalarInteger(it->second));
+    REAL(names)[i] = it->first;
+  }
+
+  Rf_setAttrib(result, R_NamesSymbol, names);
+  UNPROTECT(2);
+  return result;
+}
+
+// Pacha: Specialization for std::unordered_map
+inline SEXP as_sexp(const std::unordered_map<std::string, SEXP>& map) {
+  R_xlen_t size = map.size();
+  SEXP result = PROTECT(Rf_allocVector(VECSXP, size));
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, size));
+
+  auto it = map.begin();
+  for (R_xlen_t i = 0; i < size; ++i, ++it) {
+    SET_VECTOR_ELT(result, i, it->second);
+    SET_STRING_ELT(names, i, Rf_mkCharCE(it->first.c_str(), CE_UTF8));
+  }
+
+  Rf_setAttrib(result, R_NamesSymbol, names);
+  UNPROTECT(2);
+  return result;
+}
+
+// Specialization for std::unordered_map<double, int>
+inline SEXP as_sexp(const std::unordered_map<double, int>& map) {
+  R_xlen_t size = map.size();
+  SEXP result = PROTECT(Rf_allocVector(VECSXP, size));
+  SEXP names = PROTECT(Rf_allocVector(REALSXP, size));
+
+  auto it = map.begin();
+  for (R_xlen_t i = 0; i < size; ++i, ++it) {
+    SET_VECTOR_ELT(result, i, Rf_ScalarInteger(it->second));
+    REAL(names)[i] = it->first;
+  }
+
+  Rf_setAttrib(result, R_NamesSymbol, names);
+  UNPROTECT(2);
+  return result;
 }
 
 }  // namespace cpp11
