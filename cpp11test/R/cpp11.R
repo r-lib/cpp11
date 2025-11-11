@@ -92,6 +92,14 @@ cpp11_insert_ <- function(num_sxp) {
   .Call(`_cpp11test_cpp11_insert_`, num_sxp)
 }
 
+ordered_map_to_list_ <- function(x) {
+  .Call(`_cpp11test_ordered_map_to_list_`, x)
+}
+
+unordered_map_to_list_ <- function(x) {
+  .Call(`_cpp11test_unordered_map_to_list_`, x)
+}
+
 gibbs_cpp <- function(N, thin) {
   .Call(`_cpp11test_gibbs_cpp`, N, thin)
 }
@@ -158,34 +166,6 @@ cpp11_release_ <- function(n) {
 
 rcpp_release_ <- function(n) {
   invisible(.Call(`_cpp11test_rcpp_release_`, n))
-}
-
-notroxcpp1_ <- function(x) {
-  .Call(`_cpp11test_notroxcpp1_`, x)
-}
-
-roxcpp2_ <- function(x) {
-  .Call(`_cpp11test_roxcpp2_`, x)
-}
-
-roxcpp3_ <- function(x) {
-  .Call(`_cpp11test_roxcpp3_`, x)
-}
-
-roxcpp4_ <- function(x) {
-  .Call(`_cpp11test_roxcpp4_`, x)
-}
-
-roxcpp5_ <- function(x) {
-  .Call(`_cpp11test_roxcpp5_`, x)
-}
-
-notroxcpp6_ <- function(x) {
-  .Call(`_cpp11test_notroxcpp6_`, x)
-}
-
-roxcpp7_ <- function(x) {
-  .Call(`_cpp11test_roxcpp7_`, x)
 }
 
 cpp11_safe_ <- function(x_sxp) {
