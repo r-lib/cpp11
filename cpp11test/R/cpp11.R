@@ -84,6 +84,10 @@ grow_ <- function(n) {
   .Call(`_cpp11test_grow_`, n)
 }
 
+grow_cplx_ <- function(n) {
+  .Call(`_cpp11test_grow_cplx_`, n)
+}
+
 cpp11_insert_ <- function(num_sxp) {
   .Call(`_cpp11test_cpp11_insert_`, num_sxp)
 }
@@ -156,6 +160,34 @@ rcpp_release_ <- function(n) {
   invisible(.Call(`_cpp11test_rcpp_release_`, n))
 }
 
+notroxcpp1_ <- function(x) {
+  .Call(`_cpp11test_notroxcpp1_`, x)
+}
+
+roxcpp2_ <- function(x) {
+  .Call(`_cpp11test_roxcpp2_`, x)
+}
+
+roxcpp3_ <- function(x) {
+  .Call(`_cpp11test_roxcpp3_`, x)
+}
+
+roxcpp4_ <- function(x) {
+  .Call(`_cpp11test_roxcpp4_`, x)
+}
+
+roxcpp5_ <- function(x) {
+  .Call(`_cpp11test_roxcpp5_`, x)
+}
+
+notroxcpp6_ <- function(x) {
+  .Call(`_cpp11test_notroxcpp6_`, x)
+}
+
+roxcpp7_ <- function(x) {
+  .Call(`_cpp11test_roxcpp7_`, x)
+}
+
 cpp11_safe_ <- function(x_sxp) {
   .Call(`_cpp11test_cpp11_safe_`, x_sxp)
 }
@@ -194,6 +226,42 @@ sum_dbl_accumulate_ <- function(x) {
 
 sum_dbl_accumulate2_ <- function(x_sxp) {
   .Call(`_cpp11test_sum_dbl_accumulate2_`, x_sxp)
+}
+
+sum_cplx_for_ <- function(x) {
+  .Call(`_cpp11test_sum_cplx_for_`, x)
+}
+
+sum_cplx_for_2_ <- function(x) {
+  .Call(`_cpp11test_sum_cplx_for_2_`, x)
+}
+
+sum_cplx_for_3_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for_3_`, x_sxp)
+}
+
+sum_cplx_for_4_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for_4_`, x_sxp)
+}
+
+sum_cplx_for_5_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for_5_`, x_sxp)
+}
+
+sum_cplx_for_6_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for_6_`, x_sxp)
+}
+
+sum_cplx_foreach_ <- function(x) {
+  .Call(`_cpp11test_sum_cplx_foreach_`, x)
+}
+
+sum_cplx_accumulate_ <- function(x) {
+  .Call(`_cpp11test_sum_cplx_accumulate_`, x)
+}
+
+sum_cplx_for2_ <- function(x_sxp) {
+  .Call(`_cpp11test_sum_cplx_for2_`, x_sxp)
 }
 
 sum_int_for_ <- function(x) {
