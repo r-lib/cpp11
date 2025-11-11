@@ -1432,18 +1432,14 @@ inline SEXP r_vector<T>::resize_names(SEXP x, R_xlen_t size) {
 
 }  // namespace writable
 
-// TODO: is there a better condition we could use, e.g. assert something true
-// rather than three things false?
-template <typename C, typename T>
-using is_container_but_not_sexp_or_string = typename std::enable_if<
+// Ensure that C is not constructible from SEXP, and neither C nor T is a std::string
+template <typename C, typename T = typename std::decay<C>::type::value_type>
+typename std::enable_if<
     !std::is_constructible<C, SEXP>::value &&
         !std::is_same<typename std::decay<C>::type, std::string>::value &&
         !std::is_same<typename std::decay<T>::type, std::string>::value,
-    typename std::decay<C>::type>::type;
-
-template <typename C, typename T = typename std::decay<C>::type::value_type>
-// typename T = typename C::value_type>
-is_container_but_not_sexp_or_string<C, T> as_cpp(SEXP from) {
+    C>::type
+as_cpp(SEXP from) {
   auto obj = cpp11::r_vector<T>(from);
   return {obj.begin(), obj.end()};
 }
