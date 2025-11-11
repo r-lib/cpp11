@@ -18,6 +18,7 @@
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/named_arg.hpp"        // for named_arg
 #include "cpp11/protect.hpp"          // for store
+#include "cpp11/r_complex.hpp"        // for r_complex
 #include "cpp11/r_string.hpp"         // for r_string
 #include "cpp11/sexp.hpp"             // for sexp
 
@@ -235,7 +236,9 @@ class r_vector : public cpp11::r_vector<T> {
   proxy at(const r_string& name) const;
 
   void push_back(T value);
-  /// Implemented in `strings.hpp`
+  template <typename U = T,
+            typename std::enable_if<std::is_same<U, r_string>::value>::type* = nullptr>
+  void push_back(const std::string& value);  // Pacha: r_string only (#406)
   void push_back(const named_arg& value);
   void pop_back();
 
@@ -886,15 +889,23 @@ inline r_vector<T>::r_vector(std::initializer_list<named_arg> il)
       // SAFETY: We've validated type and length ahead of this.
       const underlying_type elt = get_elt(value, 0);
 
-      // TODO: The equivalent ctor from `initializer_list<r_string>` has a specialization
-      // for `<r_string>` to translate `elt` to UTF-8 before assigning. Should we have
-      // that here too? `named_arg` doesn't do any checking here.
-      if (data_p_ != nullptr) {
-        data_p_[i] = elt;
+      if constexpr (std::is_same<T, cpp11::r_string>::value) {
+        // Translate to UTF-8 before assigning for string types
+        SEXP translated_elt = Rf_mkCharCE(Rf_translateCharUTF8(elt), CE_UTF8);
+
+        if (data_p_ != nullptr) {
+          data_p_[i] = translated_elt;
+        } else {
+          // Handles STRSXP case. VECSXP case has its own specialization.
+          // We don't expect any ALTREP cases since we just freshly allocated `data_`.
+          set_elt(data_, i, translated_elt);
+        }
       } else {
-        // Handles STRSXP case. VECSXP case has its own specialization.
-        // We don't expect any ALTREP cases since we just freshly allocated `data_`.
-        set_elt(data_, i, elt);
+        if (data_p_ != nullptr) {
+          data_p_[i] = elt;
+        } else {
+          set_elt(data_, i, elt);
+        }
       }
 
       SEXP name = Rf_mkCharCE(it->name(), CE_UTF8);
