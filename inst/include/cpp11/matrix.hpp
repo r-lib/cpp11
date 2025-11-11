@@ -254,6 +254,8 @@ template <typename S = by_column>
 using logicals_matrix = matrix<r_vector<r_bool>, r_bool, S>;
 template <typename S = by_column>
 using strings_matrix = matrix<r_vector<r_string>, r_string, S>;
+template <typename S = by_column>
+using complexes_matrix = matrix<r_vector<r_complex>, r_complex, S>;
 
 namespace writable {
 template <typename S = by_column>
@@ -264,6 +266,8 @@ template <typename S = by_column>
 using logicals_matrix = matrix<r_vector<r_bool>, r_vector<r_bool>::proxy, S>;
 template <typename S = by_column>
 using strings_matrix = matrix<r_vector<r_string>, r_vector<r_string>::proxy, S>;
+template <typename S = by_column>
+using complexes_matrix = matrix<r_vector<r_complex>, r_vector<r_complex>::proxy, S>;
 }  // namespace writable
 
 // TODO: Add tests for Matrix class
