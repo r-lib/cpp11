@@ -18,6 +18,7 @@
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/named_arg.hpp"        // for named_arg
 #include "cpp11/protect.hpp"          // for store
+#include "cpp11/r_complex.hpp"        // for r_complex
 #include "cpp11/r_string.hpp"         // for r_string
 #include "cpp11/sexp.hpp"             // for sexp
 
@@ -235,7 +236,9 @@ class r_vector : public cpp11::r_vector<T> {
   proxy at(const r_string& name) const;
 
   void push_back(T value);
-  /// Implemented in `strings.hpp`
+  template <typename U = T,
+            typename std::enable_if<std::is_same<U, r_string>::value>::type* = nullptr>
+  void push_back(const std::string& value);  // Pacha: r_string only (#406)
   void push_back(const named_arg& value);
   void pop_back();
 
@@ -255,6 +258,15 @@ class r_vector : public cpp11::r_vector<T> {
   using cpp11::r_vector<T>::size;
 
   iterator find(const r_string& name) const;
+
+  /// Get the value at position without returning a proxy
+  /// This is useful when you need the actual value (e.g., for C-style printf functions)
+  /// that don't trigger implicit conversions from proxy types
+#ifdef LONG_VECTOR_SUPPORT
+  T value(const int pos) const;
+#endif
+  T value(const R_xlen_t pos) const;
+  T value(const size_type pos) const;
 
   attribute_proxy<r_vector<T>> attr(const char* name) const;
   attribute_proxy<r_vector<T>> attr(const std::string& name) const;
@@ -865,7 +877,8 @@ inline r_vector<T>::r_vector(std::initializer_list<named_arg> il)
   }
 
   unwind_protect([&] {
-    SEXP names = Rf_allocVector(STRSXP, capacity_);
+    SEXP names;
+    PROTECT(names = Rf_allocVector(STRSXP, capacity_));
     Rf_setAttrib(data_, R_NamesSymbol, names);
 
     auto it = il.begin();
@@ -876,20 +889,30 @@ inline r_vector<T>::r_vector(std::initializer_list<named_arg> il)
       // SAFETY: We've validated type and length ahead of this.
       const underlying_type elt = get_elt(value, 0);
 
-      // TODO: The equivalent ctor from `initializer_list<r_string>` has a specialization
-      // for `<r_string>` to translate `elt` to UTF-8 before assigning. Should we have
-      // that here too? `named_arg` doesn't do any checking here.
-      if (data_p_ != nullptr) {
-        data_p_[i] = elt;
+      if constexpr (std::is_same<T, cpp11::r_string>::value) {
+        // Translate to UTF-8 before assigning for string types
+        SEXP translated_elt = Rf_mkCharCE(Rf_translateCharUTF8(elt), CE_UTF8);
+
+        if (data_p_ != nullptr) {
+          data_p_[i] = translated_elt;
+        } else {
+          // Handles STRSXP case. VECSXP case has its own specialization.
+          // We don't expect any ALTREP cases since we just freshly allocated `data_`.
+          set_elt(data_, i, translated_elt);
+        }
       } else {
-        // Handles STRSXP case. VECSXP case has its own specialization.
-        // We don't expect any ALTREP cases since we just freshly allocated `data_`.
-        set_elt(data_, i, elt);
+        if (data_p_ != nullptr) {
+          data_p_[i] = elt;
+        } else {
+          set_elt(data_, i, elt);
+        }
       }
 
       SEXP name = Rf_mkCharCE(it->name(), CE_UTF8);
       SET_STRING_ELT(names, i, name);
     }
+
+    UNPROTECT(1);
   });
 }
 
@@ -1156,6 +1179,24 @@ inline typename r_vector<T>::iterator r_vector<T>::find(const r_string& name) co
   return end();
 }
 
+#ifdef LONG_VECTOR_SUPPORT
+template <typename T>
+inline T r_vector<T>::value(const int pos) const {
+  return value(static_cast<R_xlen_t>(pos));
+}
+#endif
+
+template <typename T>
+inline T r_vector<T>::value(const R_xlen_t pos) const {
+  // Use the parent read-only class's operator[] which returns T directly
+  return cpp11::r_vector<T>::operator[](pos);
+}
+
+template <typename T>
+inline T r_vector<T>::value(const size_type pos) const {
+  return value(static_cast<R_xlen_t>(pos));
+}
+
 template <typename T>
 inline attribute_proxy<r_vector<T>> r_vector<T>::attr(const char* name) const {
   return attribute_proxy<r_vector<T>>(*this, name);
@@ -1392,18 +1433,14 @@ inline SEXP r_vector<T>::resize_names(SEXP x, R_xlen_t size) {
 
 }  // namespace writable
 
-// TODO: is there a better condition we could use, e.g. assert something true
-// rather than three things false?
-template <typename C, typename T>
-using is_container_but_not_sexp_or_string = typename std::enable_if<
+// Ensure that C is not constructible from SEXP, and neither C nor T is a std::string
+template <typename C, typename T = typename std::decay<C>::type::value_type>
+typename std::enable_if<
     !std::is_constructible<C, SEXP>::value &&
         !std::is_same<typename std::decay<C>::type, std::string>::value &&
         !std::is_same<typename std::decay<T>::type, std::string>::value,
-    typename std::decay<C>::type>::type;
-
-template <typename C, typename T = typename std::decay<C>::type::value_type>
-// typename T = typename C::value_type>
-is_container_but_not_sexp_or_string<C, T> as_cpp(SEXP from) {
+    C>::type
+as_cpp(SEXP from) {
   auto obj = cpp11::r_vector<T>(from);
   return {obj.begin(), obj.end()};
 }
