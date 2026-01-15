@@ -6,7 +6,8 @@
 #include <string>            // for string, basic_string
 #include <utility>           // for move
 
-#include "R_ext/Arith.h"              // for NA_INTEGER
+#include "R_ext/Arith.h"  // for NA_INTEGER
+#include "Rversion.h"
 #include "cpp11/R.hpp"                // for Rf_xlength, SEXP, SEXPREC, INTEGER
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
 #include "cpp11/list.hpp"             // for list, r_vector<>::r_vector, r_v...
@@ -24,6 +25,7 @@ class data_frame : public list {
 
   friend class writable::data_frame;
 
+#if R_VERSION < R_Version(4, 6, 0)
   /* we cannot use Rf_getAttrib because it has a special case for c(NA, -n) and creates
    * the full vector */
   static SEXP get_attrib0(SEXP x, SEXP sym) {
@@ -35,8 +37,10 @@ class data_frame : public list {
 
     return R_NilValue;
   }
+#endif
 
   static R_xlen_t calc_nrow(SEXP x) {
+#if R_VERSION < R_Version(4, 6, 0)
     auto nms = get_attrib0(x, R_RowNamesSymbol);
     bool has_short_rownames =
         (Rf_isInteger(nms) && Rf_xlength(nms) == 2 && INTEGER(nms)[0] == NA_INTEGER);
@@ -47,6 +51,9 @@ class data_frame : public list {
     if (!Rf_isNull(nms)) {
       return Rf_xlength(nms);
     }
+#else
+    if (Rf_isDataFrame(x)) return R_nrow(x);
+#endif
 
     if (Rf_xlength(x) == 0) {
       return 0;
