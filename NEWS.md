@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* Fixed an rchk issue related to `std::initializer_list<named_arg>` (#457, @pachadotdev).
+
 # cpp11 0.5.2
 
 * Fixed an issue related to `-Wdeprecated-literal-operator` (#447, @andrjohns).
@@ -12,7 +14,7 @@
 * Because cpp11 now requires R >=4.0.0, a number of previously optional tools
   are now always available, allowing us to remove some dead code. In
   particular:
-  
+
   * `R_UnwindProtect()` is always available, so the defines `HAS_UNWIND_PROTECT`
     and `CPP11_UNWIND` are no longer useful.
 
