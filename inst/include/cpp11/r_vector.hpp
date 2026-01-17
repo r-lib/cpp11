@@ -1,9 +1,8 @@
 #pragma once
 
-#include <stddef.h>  // for ptrdiff_t, size_t
-
 #include <algorithm>         // for max
 #include <array>             // for array
+#include <cstddef>           // for ptrdiff_t, size_t
 #include <cstdio>            // for snprintf
 #include <cstring>           // for memcpy
 #include <exception>         // for exception

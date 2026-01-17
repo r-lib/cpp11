@@ -1,8 +1,7 @@
 #pragma once
 
-#include <stddef.h>  // for size_t
-
-#include <string>  // for string, basic_string
+#include <cstddef>  // for size_t
+#include <string>   // for string, basic_string
 
 #include "cpp11/R.hpp"                // for SEXP, SEXPREC, REAL_ELT, R_NilV...
 #include "cpp11/attribute_proxy.hpp"  // for attribute_proxy
