@@ -78,11 +78,9 @@ template <>
 inline r_vector<SEXP>::r_vector(std::initializer_list<named_arg> il)
     : cpp11::r_vector<SEXP>(safe[Rf_allocVector](VECSXP, il.size())),
       capacity_(il.size()) {
-  unwind_protect([&] {
-    SEXP names;
-    PROTECT(names = Rf_allocVector(STRSXP, capacity_));
-    Rf_setAttrib(data_, R_NamesSymbol, names);
+  sexp names = safe[Rf_allocVector](STRSXP, capacity_);
 
+  unwind_protect([&] {
     auto it = il.begin();
 
     for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
@@ -92,9 +90,9 @@ inline r_vector<SEXP>::r_vector(std::initializer_list<named_arg> il)
       SEXP name = Rf_mkCharCE(it->name(), CE_UTF8);
       SET_STRING_ELT(names, i, name);
     }
-
-    UNPROTECT(1);
   });
+
+  safe[Rf_setAttrib](data_, R_NamesSymbol, names);
 }
 
 typedef r_vector<SEXP> list;

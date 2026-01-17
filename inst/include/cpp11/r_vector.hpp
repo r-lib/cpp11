@@ -864,11 +864,9 @@ inline r_vector<T>::r_vector(std::initializer_list<named_arg> il)
     valid_length(value, 1);
   }
 
-  unwind_protect([&] {
-    SEXP names;
-    PROTECT(names = Rf_allocVector(STRSXP, capacity_));
-    Rf_setAttrib(data_, R_NamesSymbol, names);
+  sexp names = safe[Rf_allocVector](STRSXP, capacity_);
 
+  unwind_protect([&] {
     auto it = il.begin();
 
     for (R_xlen_t i = 0; i < capacity_; ++i, ++it) {
@@ -891,9 +889,9 @@ inline r_vector<T>::r_vector(std::initializer_list<named_arg> il)
       SEXP name = Rf_mkCharCE(it->name(), CE_UTF8);
       SET_STRING_ELT(names, i, name);
     }
-
-    UNPROTECT(1);
   });
+
+  safe[Rf_setAttrib](data_, R_NamesSymbol, names);
 }
 
 template <typename T>
