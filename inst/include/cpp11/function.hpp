@@ -1,8 +1,7 @@
 #pragma once
 
-#include <string.h>  // for strcmp
-
 #include <cstdio>   // for snprintf
+#include <cstring>  // for strcmp
 #include <string>   // for string, basic_string
 #include <utility>  // for forward
 

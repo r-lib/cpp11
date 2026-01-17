@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stddef.h>  // for size_t
+#include <cstddef>  // for size_t
 
 #include <initializer_list>  // for initializer_list
 
