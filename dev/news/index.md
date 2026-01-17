@@ -2,6 +2,12 @@
 
 ## cpp11 (development version)
 
+- Improved hygiene around using C++ specific C compatibility headers
+  (i.e. by using `<cstring>` rather than `<string.h>` and `<cstddef>`
+  rather than `<stddef.h>`)
+  ([\#454](https://github.com/r-lib/cpp11/issues/454),
+  [@MichaelChirico](https://github.com/MichaelChirico)).
+
 - Fixed an rchk issue related to `std::initializer_list<named_arg>`
   ([\#457](https://github.com/r-lib/cpp11/issues/457),
   [@pachadotdev](https://github.com/pachadotdev)).
