@@ -1,7 +1,6 @@
 #pragma once
 
-#include <cstdlib>  // for abs
-#include <cstdlib>
+#include <cstdlib>           // for abs
 #include <initializer_list>  // for initializer_list
 #include <string>            // for string, basic_string
 #include <utility>           // for move
@@ -24,42 +23,38 @@ class data_frame : public list {
 
   friend class writable::data_frame;
 
-  /* we cannot use Rf_getAttrib because it has a special case for c(NA, -n) and creates
-   * the full vector */
-  static SEXP get_attrib0(SEXP x, SEXP sym) {
-    for (SEXP attr = ATTRIB(x); attr != R_NilValue; attr = CDR(attr)) {
-      if (TAG(attr) == sym) {
-        return CAR(attr);
-      }
+  static R_xlen_t calculate_nrow(SEXP x) {
+    // If there is a `R_RowNamesSymbol`, we take the number of rows from there
+    // (regardless of whether or not there is a `"data.frame"` class yet!).
+    //
+    // As of R >=3.5, `Rf_getAttrib(R_RowNamesSymbol)` returns one of the following:
+    // - A character vector
+    // - An integer vector
+    // - An ALTREP integer compact intrange (converted cheaply from `c(NA, -n)`)
+    //
+    // We can take the `Rf_xlength()` of all of these cheaply.
+    //
+    // We used to worry about `Rf_getAttrib()` fully expanding `c(NA, -n)`, but with
+    // ALTREP integer compact intranges that is no longer the case.
+    SEXP row_names = Rf_getAttrib(x, R_RowNamesSymbol);
+    if (row_names != R_NilValue) {
+      return Rf_xlength(row_names);
     }
 
-    return R_NilValue;
-  }
-
-  static R_xlen_t calc_nrow(SEXP x) {
-    auto nms = get_attrib0(x, R_RowNamesSymbol);
-    bool has_short_rownames =
-        (Rf_isInteger(nms) && Rf_xlength(nms) == 2 && INTEGER(nms)[0] == NA_INTEGER);
-    if (has_short_rownames) {
-      return static_cast<R_xlen_t>(abs(INTEGER(nms)[1]));
-    }
-
-    if (!Rf_isNull(nms)) {
-      return Rf_xlength(nms);
-    }
-
+    // Otherwise it's a bare list, and we infer the number of rows from the first element
+    // (i.e. first column). Calling `Rf_xlength()` on the first column isn't 100% right
+    // (it doesn't dispatch to `length()`, nor does it correctly handle df-cols or
+    // matrix-cols), but it is close enough and people can use the data_frame constructor
+    // that allows you to specify `nrow` directly as needed.
     if (Rf_xlength(x) == 0) {
       return 0;
+    } else {
+      return Rf_xlength(VECTOR_ELT(x, 0));
     }
-
-    return Rf_xlength(VECTOR_ELT(x, 0));
   }
 
  public:
-  /* Adapted from
-   * https://github.com/wch/r-source/blob/f2a0dfab3e26fb42b8b296fcba40cbdbdbec767d/src/main/attrib.c#L198-L207
-   */
-  R_xlen_t nrow() const { return calc_nrow(*this); }
+  R_xlen_t nrow() const { return calculate_nrow(*this); }
   R_xlen_t ncol() const { return size(); }
 };
 
@@ -67,10 +62,11 @@ namespace writable {
 class data_frame : public cpp11::data_frame {
  private:
   writable::list set_data_frame_attributes(writable::list&& x) {
-    return set_data_frame_attributes(std::move(x), calc_nrow(x));
+    return set_data_frame_attributes(std::move(x), calculate_nrow(x));
   }
 
   writable::list set_data_frame_attributes(writable::list&& x, R_xlen_t nrow) {
+    // `Rf_setAttrib(R_RowNamesSymbol)` will keep `c(NA, -n)` in compact form
     x.attr(R_RowNamesSymbol) = {NA_INTEGER, -static_cast<int>(nrow)};
     x.attr(R_ClassSymbol) = "data.frame";
     return std::move(x);

@@ -26,42 +26,123 @@ context("data_frame-C++") {
   }
 
   test_that("data_frame::nrow works with 0x0 dfs") {
+    // From bare list
     SEXP x = PROTECT(Rf_allocVector(VECSXP, 0));
-
-    cpp11::data_frame df(x);
-    expect_true(df.nrow() == 0);
-
+    cpp11::data_frame x_df(x);
+    expect_true(x_df.nrow() == 0);
     UNPROTECT(1);
-  }
 
-  test_that("data_frame::nrow works with 10x0 dfs") {
-    using namespace cpp11::literals;
-    cpp11::writable::list x(0_xl);
-    x.attr(R_RowNamesSymbol) = {NA_INTEGER, -10};
+    // From bare list with `R_RowNamesSymbol`
+    SEXP y = PROTECT(Rf_allocVector(VECSXP, 0));
+    SEXP y_row_names = PROTECT(Rf_allocVector(INTSXP, 2));
+    SET_INTEGER_ELT(y_row_names, 0, NA_INTEGER);
+    SET_INTEGER_ELT(y_row_names, 1, 0);
+    Rf_setAttrib(y, R_RowNamesSymbol, y_row_names);
+    cpp11::data_frame y_df(y);
+    expect_true(y_df.nrow() == 0);
+    UNPROTECT(2);
 
-    cpp11::data_frame df(x);
-    expect_true(df.nrow() == 10);
+    // From classed data frame with `R_RowNamesSymbol`
+    SEXP z = PROTECT(Rf_allocVector(VECSXP, 0));
+    SEXP z_row_names = PROTECT(Rf_allocVector(INTSXP, 2));
+    SET_INTEGER_ELT(z_row_names, 0, NA_INTEGER);
+    SET_INTEGER_ELT(z_row_names, 1, 0);
+    Rf_setAttrib(z, R_RowNamesSymbol, z_row_names);
+    SEXP z_class = PROTECT(Rf_allocVector(STRSXP, 1));
+    SET_STRING_ELT(z_class, 0, Rf_mkChar("data.frame"));
+    Rf_setAttrib(z, R_ClassSymbol, z_class);
+    cpp11::data_frame z_df(z);
+    expect_true(z_df.nrow() == 0);
+    UNPROTECT(3);
   }
 
   test_that("writable::data_frame::nrow works with 0x0 dfs") {
+    using namespace cpp11::literals;
+
+    // From bare list
     SEXP x = PROTECT(Rf_allocVector(VECSXP, 0));
-
-    cpp11::writable::data_frame df(x);
-    expect_true(df.nrow() == 0);
-
+    cpp11::writable::data_frame x_df(x);
+    expect_true(x_df.nrow() == 0);
     UNPROTECT(1);
+
+    // From bare list with `R_RowNamesSymbol`
+    cpp11::writable::list y(0_xl);
+    y.attr(R_RowNamesSymbol) = {NA_INTEGER, 0};
+    cpp11::writable::data_frame y_df(y);
+    expect_true(y_df.nrow() == 0);
+
+    // From classed data frame with `R_RowNamesSymbol`
+    cpp11::writable::list z(0_xl);
+    z.attr(R_RowNamesSymbol) = {NA_INTEGER, 0};
+    z.attr(R_ClassSymbol) = "data.frame";
+    cpp11::writable::data_frame z_df(z);
+    expect_true(z_df.nrow() == 0);
+  }
+
+  test_that("data_frame::nrow works with 10x0 dfs") {
+    // From bare list with `R_RowNamesSymbol`
+    SEXP y = PROTECT(Rf_allocVector(VECSXP, 0));
+    SEXP y_row_names = PROTECT(Rf_allocVector(INTSXP, 2));
+    SET_INTEGER_ELT(y_row_names, 0, NA_INTEGER);
+    SET_INTEGER_ELT(y_row_names, 1, 10);
+    Rf_setAttrib(y, R_RowNamesSymbol, y_row_names);
+    cpp11::data_frame y_df(y);
+    expect_true(y_df.nrow() == 10);
+    UNPROTECT(2);
+
+    // From classed data frame with `R_RowNamesSymbol`
+    SEXP z = PROTECT(Rf_allocVector(VECSXP, 0));
+    SEXP z_row_names = PROTECT(Rf_allocVector(INTSXP, 2));
+    SET_INTEGER_ELT(z_row_names, 0, NA_INTEGER);
+    SET_INTEGER_ELT(z_row_names, 1, 10);
+    Rf_setAttrib(z, R_RowNamesSymbol, z_row_names);
+    SEXP z_class = PROTECT(Rf_allocVector(STRSXP, 1));
+    SET_STRING_ELT(z_class, 0, Rf_mkChar("data.frame"));
+    Rf_setAttrib(z, R_ClassSymbol, z_class);
+    cpp11::data_frame z_df(z);
+    expect_true(z_df.nrow() == 10);
+    UNPROTECT(3);
   }
 
   test_that("writable::data_frame::nrow works with 10x0 dfs (#272)") {
-    SEXP x = PROTECT(Rf_allocVector(VECSXP, 0));
+    using namespace cpp11::literals;
 
-    bool is_altrep = false;
-    R_xlen_t nrow = 10;
+    // From bare list with `R_RowNamesSymbol`
+    cpp11::writable::list y(0_xl);
+    y.attr(R_RowNamesSymbol) = {NA_INTEGER, 10};
+    cpp11::writable::data_frame y_df(y);
+    expect_true(y_df.nrow() == 10);
+
+    // From classed data frame with `R_RowNamesSymbol`
+    cpp11::writable::list z(0_xl);
+    z.attr(R_RowNamesSymbol) = {NA_INTEGER, 10};
+    z.attr(R_ClassSymbol) = "data.frame";
+    cpp11::writable::data_frame z_df(z);
+    expect_true(z_df.nrow() == 10);
 
     // Manually specify `nrow` using special constructor
-    cpp11::writable::data_frame df(x, is_altrep, nrow);
+    bool is_altrep = false;
+    SEXP x = PROTECT(Rf_allocVector(VECSXP, 0));
+    cpp11::writable::data_frame df(x, is_altrep, 10);
     expect_true(df.nrow() == 10);
+    UNPROTECT(1);
+  }
 
+  test_that("data_frame::nrow works with 0x1 dfs") {
+    // From bare list
+    SEXP x = PROTECT(Rf_allocVector(VECSXP, 1));
+    SET_VECTOR_ELT(x, 0, Rf_allocVector(INTSXP, 0));
+    cpp11::data_frame x_df(x);
+    expect_true(x_df.nrow() == 0);
+    UNPROTECT(1);
+  }
+
+  test_that("writable::data_frame::nrow works with 0x1 dfs") {
+    // From bare list
+    SEXP x = PROTECT(Rf_allocVector(VECSXP, 1));
+    SET_VECTOR_ELT(x, 0, Rf_allocVector(INTSXP, 0));
+    cpp11::writable::data_frame x_df(x);
+    expect_true(x_df.nrow() == 0);
     UNPROTECT(1);
   }
 
