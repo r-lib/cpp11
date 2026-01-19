@@ -2,6 +2,9 @@
 
 ## cpp11 (development version)
 
+- Removed non-API usage of `ATTRIB()`
+  ([\#481](https://github.com/r-lib/cpp11/issues/481)).
+
 - Improved hygiene around using C++ specific C compatibility headers
   (i.e. by using `<cstring>` rather than `<string.h>` and `<cstddef>`
   rather than `<stddef.h>`)
