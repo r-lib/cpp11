@@ -1,4 +1,4 @@
-# cpp11 (development version)
+# cpp11 0.5.3
 
 * Removed non-API usage of `ATTRIB()` (#481).
 
