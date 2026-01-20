@@ -153,7 +153,7 @@ is_named(c(x = "foo"))
 
 #### 7. How do I return a `cpp11::writable::logicals` object with only a `FALSE` value?
 
-You need to use [list initialization](https://en.cppreference.com/w/cpp/language/list_initialization) with `{}` to create the object.
+You need to use [list initialization](https://en.cppreference.com/w/cpp/language/list_initialization.html) with `{}` to create the object.
 
 ```{cpp11}
 #include <cpp11.hpp>

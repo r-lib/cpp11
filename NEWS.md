@@ -13,7 +13,7 @@
 # cpp11 0.5.1
 
 * cpp11 now requires R >=4.0.0, in line with the
-  [tidyverse version policy](https://www.tidyverse.org/blog/2019/04/r-version-support/) (#411).
+  [tidyverse version policy](https://tidyverse.org/blog/2019/04/r-version-support/) (#411).
 
 * Because cpp11 now requires R >=4.0.0, a number of previously optional tools
   are now always available, allowing us to remove some dead code. In
