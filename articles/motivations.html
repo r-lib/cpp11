@@ -8,8 +8,8 @@
 <title>Motivations for cpp11 • cpp11</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.9/font.css" rel="stylesheet">
-<link href="../deps/Source_Code_Pro-0.4.9/font.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Motivations for cpp11">
@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cpp11</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -307,7 +307,7 @@ sequences which would otherwise be too big to fit in memory.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fl">1</span><span class="op">:</span><span class="fl">1e9</span></span>
 <span><span class="co">#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20</span></span>
-<span><span class="co">#&gt;  [ reached getOption("max.print") -- omitted 999999980 entries ]</span></span></code></pre></div>
+<span><span class="co">#&gt;  [ reached 'max' / getOption("max.print") -- omitted 999999980 entries ]</span></span></code></pre></div>
 <p>Because Rcpp predates the introduction of ALTREP, it does not support
 the interfaces needed to access ALTREP objects. This means the objects
 must be converted to normal R objects as soon as they are used by
@@ -563,16 +563,16 @@ uses <code>Rf_mkCharCE(, CE_UTF8)</code> when creating new
 <p>C++11 provides a host of new features to the C++ language. cpp11 uses
 a number of these including</p>
 <ul>
-<li><a href="https://en.cppreference.com/w/cpp/language/move_constructor" class="external-link">move
+<li><a href="https://en.cppreference.com/w/cpp/language/move_constructor.html" class="external-link">move
 semantics</a></li>
-<li><a href="https://en.cppreference.com/w/cpp/header/type_traits" class="external-link">type
+<li><a href="https://en.cppreference.com/w/cpp/header/type_traits.html" class="external-link">type
 traits</a></li>
-<li><a href="https://en.cppreference.com/w/cpp/utility/initializer_list" class="external-link">initializer_list</a></li>
-<li><a href="https://en.cppreference.com/w/cpp/language/parameter_pack" class="external-link">variadic
+<li><a href="https://en.cppreference.com/w/cpp/utility/initializer_list.html" class="external-link">initializer_list</a></li>
+<li><a href="https://en.cppreference.com/w/cpp/language/parameter_pack.html" class="external-link">variadic
 templates / parameter packs</a></li>
-<li><a href="https://en.cppreference.com/w/cpp/language/user_literal" class="external-link">user
+<li><a href="https://en.cppreference.com/w/cpp/language/user_literal.html" class="external-link">user
 defined literals</a></li>
-<li><a href="https://en.cppreference.com/w/cpp/language/attributes" class="external-link">user
+<li><a href="https://en.cppreference.com/w/cpp/language/attributes.html" class="external-link">user
 defined attributes</a></li>
 </ul>
 </div>
@@ -723,7 +723,9 @@ numbers of objects than using <code>R_PreserveObject()</code> /
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"len"</span>, <span class="st">"pkg"</span>, <span class="st">"min"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">b_release</span>, <span class="st">"release.Rds"</span>, version <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="motivations_files/figure-html/unnamed-chunk-19-1.svg" width="700"></p>
+<pre><code><span><span class="co">#&gt; Ignoring unknown labels:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> <span style="color: #00BB00;">tite</span> : <span style="color: #0000BB;">"cpp11 uses constant time protection"</span></span></span></code></pre>
+<p><img src="motivations_files/figure-html/unnamed-chunk-19-1.svg" class="r-plt" alt="" width="700"></p>
 <p>This plot shows the average time to protect and release a given
 object is essentially constant for cpp11. Whereas it is linear or worse
 with the number of objects being tracked for Rcpp.</p>
@@ -799,7 +801,7 @@ as the entire vector has to be copied each call.</p>
 extra space. Because of this you can do ~10,000,000 vector appends with
 cpp11 in approximately the same amount of time that Rcpp does 10,000, as
 this benchmark demonstrates.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>len <span class="op">=</span> <span class="fl">10</span> <span class="op">^</span> <span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span>, pkg <span class="op">=</span> <span class="st">"cpp11"</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
 <span>  <span class="va">grid</span>,</span>
@@ -815,7 +817,7 @@ this benchmark demonstrates.</p>
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"len"</span>, <span class="st">"pkg"</span>, <span class="st">"min"</span>, <span class="st">"mem_alloc"</span>, <span class="st">"n_itr"</span>, <span class="st">"n_gc"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">b_grow</span>, <span class="st">"growth.Rds"</span>, version <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="motivations_files/figure-html/unnamed-chunk-22-1.svg" width="700"></p>
+<p><img src="motivations_files/figure-html/unnamed-chunk-22-1.svg" class="r-plt" alt="" width="700"></p>
 <table class="table">
 <thead><tr class="header">
 <th align="right">len</th>
@@ -955,7 +957,7 @@ in the same package!) and continue to enrich the R community.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
   </div></footer>
