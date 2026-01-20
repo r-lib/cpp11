@@ -2,6 +2,10 @@
 
 ## cpp11 (development version)
 
+## cpp11 0.5.3
+
+CRAN release: 2026-01-20
+
 - Removed non-API usage of `ATTRIB()`
   ([\#481](https://github.com/r-lib/cpp11/issues/481)).
 
