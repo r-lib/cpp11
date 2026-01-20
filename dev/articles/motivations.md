@@ -407,15 +407,16 @@ C++11 provides a host of new features to the C++ language. cpp11 uses a
 number of these including
 
 - [move
-  semantics](https://en.cppreference.com/w/cpp/language/move_constructor)
-- [type traits](https://en.cppreference.com/w/cpp/header/type_traits)
-- [initializer_list](https://en.cppreference.com/w/cpp/utility/initializer_list)
+  semantics](https://en.cppreference.com/w/cpp/language/move_constructor.html)
+- [type
+  traits](https://en.cppreference.com/w/cpp/header/type_traits.html)
+- [initializer_list](https://en.cppreference.com/w/cpp/utility/initializer_list.html)
 - [variadic templates / parameter
-  packs](https://en.cppreference.com/w/cpp/language/parameter_pack)
+  packs](https://en.cppreference.com/w/cpp/language/parameter_pack.html)
 - [user defined
-  literals](https://en.cppreference.com/w/cpp/language/user_literal)
+  literals](https://en.cppreference.com/w/cpp/language/user_literal.html)
 - [user defined
-  attributes](https://en.cppreference.com/w/cpp/language/attributes)
+  attributes](https://en.cppreference.com/w/cpp/language/attributes.html)
 
 ### Simpler implementation
 

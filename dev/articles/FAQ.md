@@ -146,7 +146,7 @@ is_named(c(x = "foo"))
 #### 7. How do I return a `cpp11::writable::logicals` object with only a `FALSE` value?
 
 You need to use [list
-initialization](https://en.cppreference.com/w/cpp/language/list_initialization)
+initialization](https://en.cppreference.com/w/cpp/language/list_initialization.html)
 with [`{}`](https://rdrr.io/r/base/Paren.html) to create the object.
 
 ``` cpp
@@ -338,10 +338,10 @@ void add_one(cpp11::sexp x_sexp) {
 ``` r
 x <- c(1L, 2L, 3L, 4L)
 .Internal(inspect(x))
-#> @55f96daedbb8 13 INTSXP g0c2 [MARK,REF(2)] (len=4, tl=0) 1,2,3,4
+#> @55bb7c3055f8 13 INTSXP g0c2 [MARK,REF(2)] (len=4, tl=0) 1,2,3,4
 add_one(x)
 .Internal(inspect(x))
-#> @55f96daedbb8 13 INTSXP g0c2 [MARK,REF(5)] (len=4, tl=0) 2,3,4,5
+#> @55bb7c3055f8 13 INTSXP g0c2 [MARK,REF(5)] (len=4, tl=0) 2,3,4,5
 x
 #> [1] 2 3 4 5
 ```
@@ -590,8 +590,8 @@ bench::mark(
 #> # A tibble: 2 × 6
 #>   expression                 min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr>            <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 test_extract_cpp11(x)  39.73ms  42.43ms      23.0        0B     42.2
-#> 2 test_extract_r_api(x)   1.86ms   1.87ms     532.         0B      0
+#> 1 test_extract_cpp11(x)  41.94ms  43.35ms      22.4        0B     41.0
+#> 2 test_extract_r_api(x)   1.86ms   1.87ms     531.         0B      0
 ```
 
 We plan to improve on this in the future, but for now this is one of the

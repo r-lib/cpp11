@@ -126,8 +126,8 @@ In particular the [substitution failure is not an error
 (SFINAE)](https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error)
 technique is used to control overloading of the functions. If we could
 use C++20 a lot of this code would be made simpler with
-[Concepts](https://en.cppreference.com/w/cpp/language/constraints), but
-alas.
+[Concepts](https://en.cppreference.com/w/cpp/language/constraints.html),
+but alas.
 
 The most common C++ types are included in the test suite and should work
 without issues, as more exotic types are used in real projects

@@ -107,9 +107,9 @@ your code. We won’t spend much time on advanced features like
 object-oriented programming or templates because the focus is on writing
 small, self-contained functions, not big programs. A working knowledge
 of C++ is helpful, but not essential. Many good tutorials and references
-are freely available, including <a href="https://www.learncpp.com/" class="external-link uri">https://www.learncpp.com/</a> and <a href="https://en.cppreference.com/w/cpp" class="external-link uri">https://en.cppreference.com/w/cpp</a>. For more advanced
-topics, the <em>Effective C++</em> series by Scott Meyers is a popular
-choice.</p>
+are freely available, including <a href="https://www.learncpp.com/" class="external-link uri">https://www.learncpp.com/</a> and <a href="https://en.cppreference.com/w/cpp.html" class="external-link uri">https://en.cppreference.com/w/cpp.html</a>. For more
+advanced topics, the <em>Effective C++</em> series by Scott Meyers is a
+popular choice.</p>
 <div class="section level3">
 <h3 id="outline">Outline<a class="anchor" aria-label="anchor" href="#outline"></a>
 </h3>
@@ -169,7 +169,7 @@ R:</p>
 <span><span class="va">add</span></span>
 <span><span class="co">#&gt; function (x, y, z) </span></span>
 <span><span class="co">#&gt; {</span></span>
-<span><span class="co">#&gt;     .Call("_code_1e36502a7839_add", x, y, z, PACKAGE = "code_1e36502a7839")</span></span>
+<span><span class="co">#&gt;     .Call("_code_1e7d5554419a_add", x, y, z, PACKAGE = "code_1e7d5554419a")</span></span>
 <span><span class="co">#&gt; }</span></span>
 <span><span class="fu">add</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 6</span></span></code></pre></div>
@@ -328,9 +328,9 @@ while <code>sum_r()</code> is several orders of magnitude slower.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> sum(x)       2.02µs   2.05µs   <span style="text-decoration: underline;">475</span>823.        0B      0  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sum_cpp(x)   1.92µs   1.98µs   <span style="text-decoration: underline;">468</span>563.        0B     46.9</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> sum_r(x)    25.95µs  26.23µs    <span style="text-decoration: underline;">37</span>544.    31.7KB      0</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> sum(x)       2.02µs   2.05µs   <span style="text-decoration: underline;">475</span>297.        0B      0  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sum_cpp(x)   1.89µs   1.94µs   <span style="text-decoration: underline;">475</span>223.        0B     47.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> sum_r(x)    25.75µs  26.06µs    <span style="text-decoration: underline;">37</span>816.    31.7KB      0</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="vector-input-vector-output">Vector input, vector output<a class="anchor" aria-label="anchor" href="#vector-input-vector-output"></a>
@@ -378,8 +378,8 @@ going to be fast.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">#&gt;   expression             min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> pdist_r(0.5, y)     4.82ms   4.91ms      202.    7.63MB     103.</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> pdist_cpp(0.5, y)   3.83ms    3.9ms      255.    7.63MB     124.</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> pdist_r(0.5, y)      4.9ms   5.47ms      187.    7.63MB     93.6</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> pdist_cpp(0.5, y)   3.92ms    4.5ms      234.    7.63MB    117.</span></span></code></pre></div>
 <p>On my computer, it takes around 5 ms with a 1 million element
 <code>y</code> vector. The C++ function is about 2.5 times faster, ~2
 ms, but assuming it took you 10 minutes to write the C++ function, you’d
@@ -607,7 +607,7 @@ code.</p>
 <p>All R objects have attributes, which can be queried and modified with
 <code>.attr()</code>. cpp11 also provides <code>.names()</code> as an
 alias for the <code>names</code> attribute. The following code snippet
-illustrates these methods. Note the use of <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{}</a></code> <a href="https://en.cppreference.com/w/cpp/utility/initializer_list" class="external-link">initializer
+illustrates these methods. Note the use of <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{}</a></code> <a href="https://en.cppreference.com/w/cpp.html/utility/initializer_list" class="external-link">initializer
 list</a> syntax. This allows you to create an R vector from C++ scalar
 values:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="pp">#include </span><span class="im">"cpp11.hpp"</span></span>
@@ -785,8 +785,8 @@ everything you need to know about the STL, but hopefully the examples
 will show you the power of the STL, and persuade you that it’s useful to
 learn more.</p>
 <p>If you need an algorithm or data structure that isn’t implemented in
-STL, one place to look is <a href="https://www.boost.org/doc/" class="external-link">boost</a>. Installing boost on your
-computer is beyond the scope of this vignette, but once you have it
+STL, one place to look is <a href="https://www.boost.org/libraries/" class="external-link">boost</a>. Installing boost on
+your computer is beyond the scope of this vignette, but once you have it
 installed, you can use boost data structures and algorithms by including
 the appropriate header file with (e.g.)
 <code>#include &lt;boost/array.hpp&gt;</code>.</p>
@@ -866,7 +866,7 @@ uses a <code>double</code>, not an <code>int</code>.). To use
 <h3 id="algorithms">Algorithms<a class="anchor" aria-label="anchor" href="#algorithms"></a>
 </h3>
 <p>The <code>&lt;algorithm&gt;</code> header provides a large number of
-algorithms that work with iterators. A good reference is available at <a href="https://en.cppreference.com/w/cpp/algorithm" class="external-link uri">https://en.cppreference.com/w/cpp/algorithm</a>. For
+algorithms that work with iterators. A good reference is available at <a href="https://en.cppreference.com/w/cpp.html/algorithm" class="external-link uri">https://en.cppreference.com/w/cpp.html/algorithm</a>. For
 example, we could write a basic cpp11 version of
 <code><a href="https://rdrr.io/r/base/findInterval.html" class="external-link">findInterval()</a></code> that takes two arguments, a vector of values
 and a vector of breaks, and locates the bin that each x falls into. This
@@ -923,7 +923,7 @@ they just have different performance trade-offs. For example, the
 <code>deque</code> (pronounced “deck”) has a very similar interface to
 vectors but a different underlying implementation that has different
 performance trade-offs. You may want to try it for your problem. A good
-reference for STL data structures is <a href="https://en.cppreference.com/w/cpp/container" class="external-link uri">https://en.cppreference.com/w/cpp/container</a> — I
+reference for STL data structures is <a href="https://en.cppreference.com/w/cpp.html/container" class="external-link uri">https://en.cppreference.com/w/cpp.html/container</a> — I
 recommend you keep it open while working with the STL.</p>
 <p>cpp11 knows how to convert from many STL data structures to their R
 equivalents, so you can return them from your functions without
@@ -986,7 +986,7 @@ the corresponding length to 1.</p>
 with the iterator <code>lengths.rbegin()</code> which always points to
 the last element of the vector. You might want to try implementing
 that.)</p>
-<p>Other methods of a vector are described at <a href="https://en.cppreference.com/w/cpp/container/vector" class="external-link uri">https://en.cppreference.com/w/cpp/container/vector</a>.</p>
+<p>Other methods of a vector are described at <a href="https://en.cppreference.com/w/cpp.html/container/vector" class="external-link uri">https://en.cppreference.com/w/cpp.html/container/vector</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="sets">Sets<a class="anchor" aria-label="anchor" href="#sets"></a>
@@ -1005,7 +1005,8 @@ way to determine which is fastest for your data. Like vectors, sets are
 templated, so you need to request the appropriate type of set for your
 purpose: <code>unordered_set&lt;int&gt;</code>,
 <code>unordered_set&lt;bool&gt;</code>, etc. More details are available
-at <a href="https://en.cppreference.com/w/cpp/container/set" class="external-link uri">https://en.cppreference.com/w/cpp/container/set</a> and <a href="https://en.cppreference.com/w/cpp/container/unordered_set" class="external-link uri">https://en.cppreference.com/w/cpp/container/unordered_set</a>.</p>
+at <a href="https://en.cppreference.com/w/cpp.html/container/set" class="external-link uri">https://en.cppreference.com/w/cpp.html/container/set</a> and
+<a href="https://en.cppreference.com/w/cpp.html/container/unordered_set" class="external-link uri">https://en.cppreference.com/w/cpp.html/container/unordered_set</a>.</p>
 <p>The following function uses an unordered set to implement an
 equivalent to <code><a href="https://rdrr.io/r/base/duplicated.html" class="external-link">duplicated()</a></code> for integer vectors. Note the
 use of <code>seen.insert(x[i]).second</code>. <code>insert()</code>
@@ -1153,8 +1154,8 @@ running the loops in C++:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">#&gt;   expression   min median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> r           42.8   42.4       1        32.3     10.0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> cpp          1      1        42.1       1        1</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> r           45.4   45.1       1        32.3      <span style="color: #BB0000;">Inf</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> cpp          1      1        44.7       1        <span style="color: #BB0000;">NaN</span></span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="r-vectorisation-versus-c-vectorisation">R vectorisation versus C++ vectorisation<a class="anchor" aria-label="anchor" href="#r-vectorisation-versus-c-vectorisation"></a>
@@ -1253,9 +1254,9 @@ Finally, we can benchmark our three approaches:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> vacc1        1.54ms    1.6ms      611.    7.86KB     32.9</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> vacc2       41.69µs   43.4µs    <span style="text-decoration: underline;">21</span>615.  146.68KB     39.8</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> vacc3       12.15µs   12.4µs    <span style="text-decoration: underline;">79</span>688.   14.02KB     15.9</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> vacc1        1.52ms   1.62ms      594.    7.86KB     37.3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> vacc2       41.69µs  44.02µs    <span style="text-decoration: underline;">20</span>740.  146.68KB     37.8</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> vacc3       12.08µs  12.33µs    <span style="text-decoration: underline;">77</span>076.   14.02KB     15.4</span></span></code></pre></div>
 <p>Not surprisingly, our original approach with loops is very slow.
 Vectorising in R gives a huge speedup, and we can eke out even more
 performance (about ten times) with the C++ loop. I was a little

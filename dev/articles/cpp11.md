@@ -38,7 +38,7 @@ object-oriented programming or templates because the focus is on writing
 small, self-contained functions, not big programs. A working knowledge
 of C++ is helpful, but not essential. Many good tutorials and references
 are freely available, including <https://www.learncpp.com/> and
-<https://en.cppreference.com/w/cpp>. For more advanced topics, the
+<https://en.cppreference.com/w/cpp.html>. For more advanced topics, the
 *Effective C++* series by Scott Meyers is a popular choice.
 
 ### Outline
@@ -102,7 +102,7 @@ cpp_function('int add(int x, int y, int z) {
 add
 #> function (x, y, z) 
 #> {
-#>     .Call("_code_1e36502a7839_add", x, y, z, PACKAGE = "code_1e36502a7839")
+#>     .Call("_code_1e7d5554419a_add", x, y, z, PACKAGE = "code_1e7d5554419a")
 #> }
 add(1, 2, 3)
 #> [1] 6
@@ -282,9 +282,9 @@ bench::mark(
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 sum(x)       2.02µs   2.05µs   475823.        0B      0  
-#> 2 sum_cpp(x)   1.92µs   1.98µs   468563.        0B     46.9
-#> 3 sum_r(x)    25.95µs  26.23µs    37544.    31.7KB      0
+#> 1 sum(x)       2.02µs   2.05µs   475297.        0B      0  
+#> 2 sum_cpp(x)   1.89µs   1.94µs   475223.        0B     47.5
+#> 3 sum_r(x)    25.75µs  26.06µs    37816.    31.7KB      0
 ```
 
 ### Vector input, vector output
@@ -337,8 +337,8 @@ bench::mark(
 #> # A tibble: 2 × 6
 #>   expression             min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr>        <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 pdist_r(0.5, y)     4.82ms   4.91ms      202.    7.63MB     103.
-#> 2 pdist_cpp(0.5, y)   3.83ms    3.9ms      255.    7.63MB     124.
+#> 1 pdist_r(0.5, y)      4.9ms   5.47ms      187.    7.63MB     93.6
+#> 2 pdist_cpp(0.5, y)   3.92ms    4.5ms      234.    7.63MB    117.
 ```
 
 On my computer, it takes around 5 ms with a 1 million element `y`
@@ -599,7 +599,7 @@ All R objects have attributes, which can be queried and modified with
 `.attr()`. cpp11 also provides `.names()` as an alias for the `names`
 attribute. The following code snippet illustrates these methods. Note
 the use of [`{}`](https://rdrr.io/r/base/Paren.html) [initializer
-list](https://en.cppreference.com/w/cpp/utility/initializer_list)
+list](https://en.cppreference.com/w/cpp.html/utility/initializer_list)
 syntax. This allows you to create an R vector from C++ scalar values:
 
 ``` cpp
@@ -788,7 +788,7 @@ will show you the power of the STL, and persuade you that it’s useful to
 learn more.
 
 If you need an algorithm or data structure that isn’t implemented in
-STL, one place to look is [boost](https://www.boost.org/doc/).
+STL, one place to look is [boost](https://www.boost.org/libraries/).
 Installing boost on your computer is beyond the scope of this vignette,
 but once you have it installed, you can use boost data structures and
 algorithms by including the appropriate header file with (e.g.)
@@ -878,8 +878,8 @@ double sum4(doubles x) {
 
 The `<algorithm>` header provides a large number of algorithms that work
 with iterators. A good reference is available at
-<https://en.cppreference.com/w/cpp/algorithm>. For example, we could
-write a basic cpp11 version of
+<https://en.cppreference.com/w/cpp.html/algorithm>. For example, we
+could write a basic cpp11 version of
 [`findInterval()`](https://rdrr.io/r/base/findInterval.html) that takes
 two arguments, a vector of values and a vector of breaks, and locates
 the bin that each x falls into. This shows off a few more advanced
@@ -936,8 +936,8 @@ performance trade-offs. For example, the `deque` (pronounced “deck”) has
 a very similar interface to vectors but a different underlying
 implementation that has different performance trade-offs. You may want
 to try it for your problem. A good reference for STL data structures is
-<https://en.cppreference.com/w/cpp/container> — I recommend you keep it
-open while working with the STL.
+<https://en.cppreference.com/w/cpp.html/container> — I recommend you
+keep it open while working with the STL.
 
 cpp11 knows how to convert from many STL data structures to their R
 equivalents, so you can return them from your functions without
@@ -1003,7 +1003,7 @@ list rle_cpp(doubles x) {
 vector. You might want to try implementing that.)
 
 Other methods of a vector are described at
-<https://en.cppreference.com/w/cpp/container/vector>.
+<https://en.cppreference.com/w/cpp.html/container/vector>.
 
 ### Sets
 
@@ -1019,8 +1019,8 @@ output. Benchmarking with your expected dataset is the best way to
 determine which is fastest for your data. Like vectors, sets are
 templated, so you need to request the appropriate type of set for your
 purpose: `unordered_set<int>`, `unordered_set<bool>`, etc. More details
-are available at <https://en.cppreference.com/w/cpp/container/set> and
-<https://en.cppreference.com/w/cpp/container/unordered_set>.
+are available at <https://en.cppreference.com/w/cpp.html/container/set>
+and <https://en.cppreference.com/w/cpp.html/container/unordered_set>.
 
 The following function uses an unordered set to implement an equivalent
 to [`duplicated()`](https://rdrr.io/r/base/duplicated.html) for integer
@@ -1160,8 +1160,8 @@ bench::mark(
 #> # A tibble: 2 × 6
 #>   expression   min median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <dbl>  <dbl>     <dbl>     <dbl>    <dbl>
-#> 1 r           42.8   42.4       1        32.3     10.0
-#> 2 cpp          1      1        42.1       1        1
+#> 1 r           45.4   45.1       1        32.3      Inf
+#> 2 cpp          1      1        44.7       1        NaN
 ```
 
 ### R vectorisation versus C++ vectorisation
@@ -1278,9 +1278,9 @@ bench::mark(
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 vacc1        1.54ms    1.6ms      611.    7.86KB     32.9
-#> 2 vacc2       41.69µs   43.4µs    21615.  146.68KB     39.8
-#> 3 vacc3       12.15µs   12.4µs    79688.   14.02KB     15.9
+#> 1 vacc1        1.52ms   1.62ms      594.    7.86KB     37.3
+#> 2 vacc2       41.69µs  44.02µs    20740.  146.68KB     37.8
+#> 3 vacc3       12.08µs  12.33µs    77076.   14.02KB     15.4
 ```
 
 Not surprisingly, our original approach with loops is very slow.

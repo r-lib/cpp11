@@ -28,7 +28,7 @@ CRAN release: 2025-03-03
 CRAN release: 2024-12-04
 
 - cpp11 now requires R \>=4.0.0, in line with the [tidyverse version
-  policy](https://www.tidyverse.org/blog/2019/04/r-version-support/)
+  policy](https://tidyverse.org/blog/2019/04/r-version-support/)
   ([\#411](https://github.com/r-lib/cpp11/issues/411)).
 
 - Because cpp11 now requires R \>=4.0.0, a number of previously optional
