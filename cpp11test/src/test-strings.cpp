@@ -251,9 +251,9 @@ context("strings-C++") {
 
   test_that("strings::operator=() and strings::at() do compile") {
     cpp11::writable::strings x(Rf_mkChar("foo"));
-
     x[0] = "bar";
     x.at(0) = "bar";
+    expect_true(x[0] == Rf_mkChar("bar"));
   }
 
   test_that("strings::operator=() works with std:strings") {
