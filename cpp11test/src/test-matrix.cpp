@@ -24,37 +24,39 @@ context("matrix-C++") {
     expect_true(x[1].size() == 2);
     expect_true(x[1].stride() == 5);
   }
-  test_that("matrix dim attributes are correct for read only matrices") {
+
+  test_that("matrix<by_row> attributes are correct") {
     auto getExportedValue = cpp11::package("base")["getExportedValue"];
 
-    test_that("matrix<by_row> attributes are correct") {
-      cpp11::doubles_matrix<cpp11::by_row> x(getExportedValue("datasets", "volcano"));
+    cpp11::doubles_matrix<cpp11::by_row> x(getExportedValue("datasets", "volcano"));
 
-      expect_true(x.size() == 5307);
-      expect_true(x.nrow() == 87);
-      expect_true(x.ncol() == 61);
-      expect_true(x.nslices() == 87);
-      expect_true(x.slice_size() == 61);
-      expect_true(x.slice_stride() == 87);
-      expect_true(x.slice_offset(0) == 0);
-      expect_true(x.slice_offset(1) == 1);
-      expect_true(x[1].size() == 61);
-      expect_true(x[1].stride() == 87);
-    }
-    test_that("matrix<by_column> attributes are correct") {
-      cpp11::doubles_matrix<cpp11::by_column> x(getExportedValue("datasets", "volcano"));
+    expect_true(x.size() == 5307);
+    expect_true(x.nrow() == 87);
+    expect_true(x.ncol() == 61);
+    expect_true(x.nslices() == 87);
+    expect_true(x.slice_size() == 61);
+    expect_true(x.slice_stride() == 87);
+    expect_true(x.slice_offset(0) == 0);
+    expect_true(x.slice_offset(1) == 1);
+    expect_true(x[1].size() == 61);
+    expect_true(x[1].stride() == 87);
+  }
 
-      expect_true(x.size() == 5307);
-      expect_true(x.nrow() == 87);
-      expect_true(x.ncol() == 61);
-      expect_true(x.nslices() == 61);
-      expect_true(x.slice_size() == 87);
-      expect_true(x.slice_stride() == 1);
-      expect_true(x.slice_offset(0) == 0);
-      expect_true(x.slice_offset(1) == 87);
-      expect_true(x[1].size() == 87);
-      expect_true(x[1].stride() == 1);
-    }
+  test_that("matrix<by_column> attributes are correct") {
+    auto getExportedValue = cpp11::package("base")["getExportedValue"];
+
+    cpp11::doubles_matrix<cpp11::by_column> x(getExportedValue("datasets", "volcano"));
+
+    expect_true(x.size() == 5307);
+    expect_true(x.nrow() == 87);
+    expect_true(x.ncol() == 61);
+    expect_true(x.nslices() == 61);
+    expect_true(x.slice_size() == 87);
+    expect_true(x.slice_stride() == 1);
+    expect_true(x.slice_offset(0) == 0);
+    expect_true(x.slice_offset(1) == 87);
+    expect_true(x[1].size() == 87);
+    expect_true(x[1].stride() == 1);
   }
 
   test_that("row based subsetting works") {
