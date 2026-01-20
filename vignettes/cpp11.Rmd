@@ -510,7 +510,7 @@ f("x"_nm = "y", "value"_nm = 1);
 All R objects have attributes, which can be queried and modified with `.attr()`.
 cpp11 also provides `.names()` as an alias for the `names` attribute.
 The following code snippet illustrates these methods.
-Note the use of `{}` [initializer list](https://en.cppreference.com/w/cpp.html/utility/initializer_list) syntax.
+Note the use of `{}` [initializer list](https://en.cppreference.com/w/cpp/utility/initializer_list.html) syntax.
 This allows you to create an R vector from C++ scalar values:
 
 ```{r attribs, engine = "cpp11"}
@@ -736,7 +736,7 @@ local({
 ### Algorithms
 
 The `<algorithm>` header provides a large number of algorithms that work with iterators.
-A good reference is available at <https://en.cppreference.com/w/cpp.html/algorithm>.
+A good reference is available at <https://en.cppreference.com/w/cpp/algorithm.html>.
 For example, we could write a basic cpp11 version of `findInterval()` that takes two arguments, a vector of values and a vector of breaks, and locates the bin that each x falls into.
 This shows off a few more advanced iterator features.
 Read the code below and see if you can figure out how it works.
@@ -790,7 +790,7 @@ The most important of these data structures are the `vector`, the `unordered_set
 We'll focus on these three in this section, but using the others is similar: they just have different performance trade-offs.
 For example, the `deque` (pronounced "deck") has a very similar interface to vectors but a different underlying implementation that has different performance trade-offs.
 You may want to try it for your problem.
-A good reference for STL data structures is <https://en.cppreference.com/w/cpp.html/container> --- I recommend you keep it open while working with the STL.
+A good reference for STL data structures is <https://en.cppreference.com/w/cpp/container.html> --- I recommend you keep it open while working with the STL.
 
 cpp11 knows how to convert from many STL data structures to their R equivalents, so you can return them from your functions without explicitly converting to R data structures.
 
@@ -843,7 +843,7 @@ list rle_cpp(doubles x) {
 (An alternative implementation would be to replace `i` with the iterator `lengths.rbegin()` which always points to the last element of the vector.
 You might want to try implementing that.)
 
-Other methods of a vector are described at <https://en.cppreference.com/w/cpp.html/container/vector>.
+Other methods of a vector are described at <https://en.cppreference.com/w/cpp/container/vector.html>.
 
 ### Sets
 
@@ -854,7 +854,7 @@ Unordered sets can somtimes be much faster (because they use a hash table intern
 Often even if you need an ordered set, you could consider using an unordered set and then sorting the output.
 Benchmarking with your expected dataset is the best way to determine which is fastest for your data.
 Like vectors, sets are templated, so you need to request the appropriate type of set for your purpose: `unordered_set<int>`, `unordered_set<bool>`, etc.
-More details are available at <https://en.cppreference.com/w/cpp.html/container/set> and <https://en.cppreference.com/w/cpp.html/container/unordered_set>.
+More details are available at <https://en.cppreference.com/w/cpp/container/set.html> and <https://en.cppreference.com/w/cpp/container/unordered_set.html>.
 
 The following function uses an unordered set to implement an equivalent to `duplicated()` for integer vectors.
 Note the use of `seen.insert(x[i]).second`.
