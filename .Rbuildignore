@@ -32,3 +32,4 @@ script.R
 ^\.cache$
 ^docs$
 ^pkgdown$
+^\.claude$
