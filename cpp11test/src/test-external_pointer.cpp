@@ -59,18 +59,19 @@ context("external_pointer-C++") {
       expect_true(strcmp(CHAR(STRING_ELT(class_attr_after, 0)), "test_class") == 0);
 
       // Clean up
-      p_moved.release();
+      delete p_moved.release();
     }
 
     // Test move assignment operator
     {
       int* value1 = new int(1);
-      int* value2 = new int(2);
       cpp11::external_pointer<int> p1(value1);
-      cpp11::external_pointer<int> p2(value2);
 
       // Set an attribute on p1
       Rf_setAttrib(p1, R_ClassSymbol, Rf_mkString("test_class"));
+
+      // Create p2 with nullptr (no memory leak)
+      cpp11::external_pointer<int> p2(nullptr);
 
       // Move assign p1 to p2
       p2 = std::move(p1);
@@ -81,7 +82,7 @@ context("external_pointer-C++") {
       expect_true(strcmp(CHAR(STRING_ELT(class_attr_after, 0)), "test_class") == 0);
 
       // Clean up
-      p2.release();
+      delete p2.release();
     }
   }
 }
