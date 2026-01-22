@@ -3,6 +3,7 @@
 #include "cpp11/doubles.hpp"
 #include "cpp11/function.hpp"
 #include "cpp11/integers.hpp"
+#include "cpp11/logicals.hpp"
 #include "cpp11/sexp.hpp"
 #include "cpp11/strings.hpp"
 
@@ -452,6 +453,22 @@ context("doubles-C++") {
     cpp11::doubles na2(cpp11::as_doubles(na));
     expect_true(cpp11::is_na(na2[0]));
     expect_true(!cpp11::is_na(na2[1]));
+  }
+
+  test_that("as_doubles(logicals)") {
+    cpp11::writable::logicals y;
+
+    for (int i = 0; i < 4; i++) {
+      y.push_back(i % 2 == 0);
+    }
+
+    cpp11::doubles i(cpp11::as_doubles(y));
+
+    expect_true(i[0] == 1.0);
+    expect_true(i[1] == 0.0);
+    expect_true(i[2] == 1.0);
+    expect_true(i[3] == 0.0);
+    expect_true(cpp11::detail::r_typeof(i) == REALSXP);
   }
 
   test_that("doubles operator[] and at") {
