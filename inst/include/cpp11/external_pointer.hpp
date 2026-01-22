@@ -74,6 +74,7 @@ class external_pointer {
   external_pointer& operator=(external_pointer&& rhs) noexcept {
     data_ = rhs.data_;
     rhs.data_ = R_NilValue;
+    return *this;
   }
 
   external_pointer& operator=(std::nullptr_t) noexcept { reset(); };
