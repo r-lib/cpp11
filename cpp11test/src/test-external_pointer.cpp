@@ -36,4 +36,53 @@ context("external_pointer-C++") {
     uniq.reset();
     expect_true(deleted == true);
   }
+
+  test_that("external_pointer preserves attributes when moved (issue #308)") {
+    // Test move constructor
+    {
+      int* value = new int(42);
+      cpp11::external_pointer<int> p(value);
+
+      // Set an attribute on the external pointer
+      Rf_setAttrib(p, R_ClassSymbol, Rf_mkString("test_class"));
+
+      // Verify attribute exists before move
+      SEXP class_attr = Rf_getAttrib(p, R_ClassSymbol);
+      expect_true(class_attr != R_NilValue);
+
+      // Move the external pointer using move constructor
+      cpp11::external_pointer<int> p_moved = std::move(p);
+
+      // Verify attribute is preserved after move
+      SEXP class_attr_after = Rf_getAttrib(p_moved, R_ClassSymbol);
+      expect_true(class_attr_after != R_NilValue);
+      expect_true(strcmp(CHAR(STRING_ELT(class_attr_after, 0)), "test_class") == 0);
+
+      // Clean up
+      delete p_moved.release();
+    }
+
+    // Test move assignment operator
+    {
+      int* value1 = new int(1);
+      cpp11::external_pointer<int> p1(value1);
+
+      // Set an attribute on p1
+      Rf_setAttrib(p1, R_ClassSymbol, Rf_mkString("test_class"));
+
+      // Create p2 with nullptr (no memory leak)
+      cpp11::external_pointer<int> p2(nullptr);
+
+      // Move assign p1 to p2
+      p2 = std::move(p1);
+
+      // Verify attribute is preserved after move assignment
+      SEXP class_attr_after = Rf_getAttrib(p2, R_ClassSymbol);
+      expect_true(class_attr_after != R_NilValue);
+      expect_true(strcmp(CHAR(STRING_ELT(class_attr_after, 0)), "test_class") == 0);
+
+      // Clean up
+      delete p2.release();
+    }
+  }
 }
