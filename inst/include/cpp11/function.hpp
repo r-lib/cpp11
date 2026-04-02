@@ -11,6 +11,11 @@
 #include "cpp11/protect.hpp"    // for protect, protect::function, safe
 #include "cpp11/sexp.hpp"       // for sexp
 
+#ifdef CPP11_USE_FMT
+#define FMT_HEADER_ONLY
+#include "fmt/core.h"
+#endif
+
 namespace cpp11 {
 
 class function {
