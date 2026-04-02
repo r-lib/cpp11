@@ -2,6 +2,7 @@
 #include "cpp11.hpp"
 using namespace cpp11;
 
+#define RCPP_NO_R_HEADERS_CHECK
 #include <Rcpp.h>
 #include <algorithm>
 using namespace Rcpp;

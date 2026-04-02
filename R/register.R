@@ -89,7 +89,13 @@ cpp_register <- function(path = ".", quiet = !is_interactive(), extension = c(".
 
   extra_includes <-  character()
   if (pkg_links_to_rcpp(path)) {
-    extra_includes <- c(extra_includes, "#include <cpp11/R.hpp>", "#include <Rcpp.h>", "using namespace Rcpp;")
+    extra_includes <- c(
+      extra_includes,
+      "#include <cpp11/R.hpp>",
+      "#define RCPP_NO_R_HEADERS_CHECK",
+      "#include <Rcpp.h>",
+      "using namespace Rcpp;"
+    )
   }
 
   pkg_types <- c(
