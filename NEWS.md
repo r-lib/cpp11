@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* Fixed a bug with `CPP11_USE_FMT` where the input was not being correctly wrapped in `fmt::runtime()`.
+
 # cpp11 0.5.3
 
 * Removed non-API usage of `ATTRIB()` (#481).

@@ -111,7 +111,7 @@ inline void r_message(const char* x) {
 
 inline void message(const char* fmt_arg) {
 #ifdef CPP11_USE_FMT
-  std::string msg = fmt::format(fmt_arg);
+  std::string msg = fmt::format(fmt::runtime(fmt_arg));
   safe[detail::r_message](msg.c_str());
 #else
   char buff[1024];
@@ -126,7 +126,7 @@ inline void message(const char* fmt_arg) {
 template <typename... Args>
 void message(const char* fmt_arg, Args... args) {
 #ifdef CPP11_USE_FMT
-  std::string msg = fmt::format(fmt_arg, args...);
+  std::string msg = fmt::format(fmt::runtime(fmt_arg), args...);
   safe[detail::r_message](msg.c_str());
 #else
   char buff[1024];
