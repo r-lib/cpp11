@@ -113,6 +113,29 @@ inline bool r_env_has(SEXP env, SEXP sym) {
 #endif
 }
 
+/// Get a namespace from the namespace registry
+///
+/// Returns `R_NilValue` if the namespace is not in the registry, i.e. if the package has
+/// not been loaded yet.
+///
+/// Unlike `R_FindNamespace()`, does not attempt to load the package, does not error when
+/// the namespace can't be found, and does not go through R.
+///
+/// SAFETY: Keep as a pure C function. Call like an R API function, i.e. wrap in `safe[]`
+/// as required.
+inline SEXP r_ns_env(const char* name) {
+#if R_VERSION >= R_Version(4, 6, 0)
+  return R_getRegisteredNamespace(name);
+#else
+  SEXP sym = Rf_install(name);
+  SEXP out = Rf_findVarInFrame3(R_NamespaceRegistry, sym, TRUE);
+  if (out == R_UnboundValue) {
+    out = R_NilValue;
+  }
+  return out;
+#endif
+}
+
 }  // namespace detail
 
 template <typename T>
