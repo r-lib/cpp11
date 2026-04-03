@@ -32,6 +32,7 @@ using namespace cpp11;
   return mat;
 }
 
+#define RCPP_NO_R_HEADERS_CHECK
 #include <Rcpp.h>
 using namespace Rcpp;
 

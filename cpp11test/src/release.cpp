@@ -1,7 +1,8 @@
 #include <vector>
 #include "cpp11/sexp.hpp"
 
-#include "Rcpp.h"
+#define RCPP_NO_R_HEADERS_CHECK
+#include <Rcpp.h>
 
 [[cpp11::register]] void cpp11_release_(int n) {
   std::vector<cpp11::sexp> x;

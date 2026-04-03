@@ -227,3 +227,22 @@ test_that("cpp_source fails informatively for nonexistent file", {
     transform = ~ sub("^.+[.]cpp$", "{NON_EXISTENT_FILEPATH}", .x)
   )
 })
+
+test_that("`cpp11::package` throws expected error on unknown packages", {
+  skip_on_os("solaris")
+  dll_info <- cpp_source(
+    code = '
+    #include "cpp11/function.hpp"
+
+    [[cpp11::register]]
+    SEXP test() {
+      auto pkg = cpp11::package("definitely_not_a_package");
+      return R_NilValue;
+    }
+    ', clean = TRUE)
+  on.exit(dyn.unload(dll_info[["path"]]))
+
+  expect_snapshot(error = TRUE, {
+    test()
+  })
+})

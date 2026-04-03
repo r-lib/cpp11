@@ -7,7 +7,8 @@
 
 #include <testthat.h>
 
-#include "Rcpp.h"
+#define RCPP_NO_R_HEADERS_CHECK
+#include <Rcpp.h>
 
 context("as_cpp-C++") {
   test_that("as_cpp<integer>(INTSEXP)") {

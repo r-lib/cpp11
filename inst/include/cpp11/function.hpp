@@ -8,8 +8,13 @@
 #include "cpp11/R.hpp"          // for SEXP, SEXPREC, CDR, Rf_install, SETCAR
 #include "cpp11/as.hpp"         // for as_sexp
 #include "cpp11/named_arg.hpp"  // for named_arg
-#include "cpp11/protect.hpp"    // for protect, protect::function, safe
+#include "cpp11/protect.hpp"    // for protect, protect::function, safe, stop
 #include "cpp11/sexp.hpp"       // for sexp
+
+#ifdef CPP11_USE_FMT
+#define FMT_HEADER_ONLY
+#include "fmt/core.h"
+#endif
 
 namespace cpp11 {
 
@@ -66,8 +71,11 @@ class package {
     if (strcmp(name, "base") == 0) {
       return R_BaseEnv;
     }
-    sexp name_sexp = safe[Rf_install](name);
-    return safe[detail::r_env_get](R_NamespaceRegistry, name_sexp);
+    SEXP env = safe[detail::r_ns_env](name);
+    if (env == R_NilValue) {
+      stop("Can't find namespace: '%s'.", name);
+    }
+    return env;
   }
 
   // Either base env or in namespace registry, so no protection needed
@@ -106,7 +114,7 @@ inline void r_message(const char* x) {
 
 inline void message(const char* fmt_arg) {
 #ifdef CPP11_USE_FMT
-  std::string msg = fmt::format(fmt_arg);
+  std::string msg = fmt::format(fmt::runtime(fmt_arg));
   safe[detail::r_message](msg.c_str());
 #else
   char buff[1024];
@@ -121,7 +129,7 @@ inline void message(const char* fmt_arg) {
 template <typename... Args>
 void message(const char* fmt_arg, Args... args) {
 #ifdef CPP11_USE_FMT
-  std::string msg = fmt::format(fmt_arg, args...);
+  std::string msg = fmt::format(fmt::runtime(fmt_arg), args...);
   safe[detail::r_message](msg.c_str());
 #else
   char buff[1024];

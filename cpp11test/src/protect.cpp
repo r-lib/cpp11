@@ -1,7 +1,8 @@
 #include <cpp11/sexp.hpp>
 #include <vector>
 
-#include "Rcpp.h"
+#define RCPP_NO_R_HEADERS_CHECK
+#include <Rcpp.h>
 
 [[cpp11::register]] void protect_one_(SEXP x, int n) {
   for (R_xlen_t i = 0; i < n; ++i) {
