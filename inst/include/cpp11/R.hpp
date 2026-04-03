@@ -128,11 +128,11 @@ inline SEXP r_ns_env(const char* name) {
   return R_getRegisteredNamespace(name);
 #else
   SEXP sym = Rf_install(name);
-  SEXP out = Rf_findVarInFrame3(R_NamespaceRegistry, sym, TRUE);
-  if (out == R_UnboundValue) {
-    out = R_NilValue;
+  if (r_env_has(R_NamespaceRegistry, sym)) {
+    return r_env_get(R_NamespaceRegistry, sym);
+  } else {
+    return R_NilValue;
   }
-  return out;
 #endif
 }
 
