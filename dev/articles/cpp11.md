@@ -102,7 +102,7 @@ cpp_function('int add(int x, int y, int z) {
 add
 #> function (x, y, z) 
 #> {
-#>     .Call("_code_1fda35025037_add", x, y, z, PACKAGE = "code_1fda35025037")
+#>     .Call("_code_1ece15f9e9bd_add", x, y, z, PACKAGE = "code_1ece15f9e9bd")
 #> }
 add(1, 2, 3)
 #> [1] 6
@@ -282,9 +282,9 @@ bench::mark(
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 sum(x)       2.02µs   2.05µs   465202.        0B      0  
-#> 2 sum_cpp(x)   1.89µs   1.95µs   468965.        0B     46.9
-#> 3 sum_r(x)    25.97µs  26.27µs    37296.    31.7KB      0
+#> 1 sum(x)       1.02µs   1.08µs   908135.        0B      0  
+#> 2 sum_cpp(x)      2µs   2.05µs   443335.        0B     44.3
+#> 3 sum_r(x)     25.5µs  27.76µs    35771.    31.7KB      0
 ```
 
 ### Vector input, vector output
@@ -337,8 +337,8 @@ bench::mark(
 #> # A tibble: 2 × 6
 #>   expression             min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr>        <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 pdist_r(0.5, y)     4.66ms   4.81ms      203.    7.63MB     99.6
-#> 2 pdist_cpp(0.5, y)   3.67ms   3.77ms      265.    7.63MB    135.
+#> 1 pdist_r(0.5, y)      4.1ms    4.4ms      225.    7.63MB     110.
+#> 2 pdist_cpp(0.5, y)   2.81ms   3.12ms      322.    7.63MB     165.
 ```
 
 On my computer, it takes around 5 ms with a 1 million element `y`
@@ -1160,8 +1160,8 @@ bench::mark(
 #> # A tibble: 2 × 6
 #>   expression   min median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <dbl>  <dbl>     <dbl>     <dbl>    <dbl>
-#> 1 r           26.4   26.9       1        32.3     16.6
-#> 2 cpp          1      1        26.9       1        1
+#> 1 r           23.7   24.8       1        32.3      Inf
+#> 2 cpp          1      1        24.9       1        NaN
 ```
 
 ### R vectorisation versus C++ vectorisation
@@ -1278,9 +1278,9 @@ bench::mark(
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 vacc1        1.54ms   1.61ms      608.    7.86KB     28.3
-#> 2 vacc2       42.53µs  44.54µs    21058.  146.68KB     38.3
-#> 3 vacc3        12.1µs  12.35µs    79429.   14.02KB     15.9
+#> 1 vacc1        1.44ms   1.65ms      604.    7.86KB     21.7
+#> 2 vacc2       40.52µs  43.42µs    22222.  146.68KB     40.9
+#> 3 vacc3       10.98µs  11.36µs    85202.   14.02KB     17.0
 ```
 
 Not surprisingly, our original approach with loops is very slow.
