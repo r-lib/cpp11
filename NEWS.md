@@ -1,3 +1,5 @@
+# cpp11 (development version)
+
 # cpp11 0.5.4
 
 * Removed non-API usage of `R_NamespaceRegistry`.
