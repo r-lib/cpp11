@@ -2,6 +2,10 @@
 
 ## cpp11 (development version)
 
+## cpp11 0.5.4
+
+CRAN release: 2026-04-04
+
 - Removed non-API usage of `R_NamespaceRegistry`.
 
 - Fixed a bug with `CPP11_USE_FMT` where the input was not being

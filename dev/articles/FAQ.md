@@ -338,10 +338,10 @@ void add_one(cpp11::sexp x_sexp) {
 ``` r
 x <- c(1L, 2L, 3L, 4L)
 .Internal(inspect(x))
-#> @55a2fe4a7c38 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4
+#> @564c46e47368 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4
 add_one(x)
 .Internal(inspect(x))
-#> @55a2fe4a7c38 13 INTSXP g0c2 [REF(5)] (len=4, tl=0) 2,3,4,5
+#> @564c46e47368 13 INTSXP g0c2 [REF(5)] (len=4, tl=0) 2,3,4,5
 x
 #> [1] 2 3 4 5
 ```
@@ -590,8 +590,8 @@ bench::mark(
 #> # A tibble: 2 × 6
 #>   expression                 min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr>            <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 test_extract_cpp11(x)  37.87ms  41.12ms      23.8        0B     43.5
-#> 2 test_extract_r_api(x)   1.44ms   1.45ms     686.         0B      0
+#> 1 test_extract_cpp11(x)  40.53ms  44.56ms      21.8        0B     39.6
+#> 2 test_extract_r_api(x)   1.86ms   1.88ms     508.         0B      0
 ```
 
 We plan to improve on this in the future, but for now this is one of the
