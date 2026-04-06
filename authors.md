@@ -22,12 +22,12 @@ Source:
 [`DESCRIPTION`](https://github.com/r-lib/cpp11/blob/main/DESCRIPTION)
 
 Vaughan D, Hester J, François R (2026). *cpp11: A C++11 Interface for
-R's C Interface*. R package version 0.5.3, <https://cpp11.r-lib.org>.
+R's C Interface*. R package version 0.5.4, <https://cpp11.r-lib.org>.
 
     @Manual{,
       title = {cpp11: A C++11 Interface for R's C Interface},
       author = {Davis Vaughan and Jim Hester and Romain François},
       year = {2026},
-      note = {R package version 0.5.3},
+      note = {R package version 0.5.4},
       url = {https://cpp11.r-lib.org},
     }

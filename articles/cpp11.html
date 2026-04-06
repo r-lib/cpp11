@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cpp11</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -168,7 +168,7 @@ R:</p>
 <span><span class="va">add</span></span>
 <span><span class="co">#&gt; function (x, y, z) </span></span>
 <span><span class="co">#&gt; {</span></span>
-<span><span class="co">#&gt;     .Call("_code_1e5b63eefd44_add", x, y, z, PACKAGE = "code_1e5b63eefd44")</span></span>
+<span><span class="co">#&gt;     .Call("_code_1ed067577389_add", x, y, z, PACKAGE = "code_1ed067577389")</span></span>
 <span><span class="co">#&gt; }</span></span>
 <span><span class="fu">add</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 6</span></span></code></pre></div>
@@ -327,9 +327,9 @@ while <code>sum_r()</code> is several orders of magnitude slower.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> sum(x)       2.02µs   2.05µs   <span style="text-decoration: underline;">474</span>230.        0B      0  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sum_cpp(x)   1.91µs   1.96µs   <span style="text-decoration: underline;">471</span>336.        0B     47.1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> sum_r(x)    25.77µs  26.01µs    <span style="text-decoration: underline;">37</span>878.    31.7KB      0</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> sum(x)       1.05µs   1.07µs   <span style="text-decoration: underline;">909</span>814.        0B      0  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sum_cpp(x)      2µs   2.05µs   <span style="text-decoration: underline;">443</span>403.        0B     44.3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> sum_r(x)    25.38µs  27.69µs    <span style="text-decoration: underline;">35</span>912.    31.7KB      0</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="vector-input-vector-output">Vector input, vector output<a class="anchor" aria-label="anchor" href="#vector-input-vector-output"></a>
@@ -377,8 +377,8 @@ going to be fast.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">#&gt;   expression             min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> pdist_r(0.5, y)     4.84ms   5.41ms      189.    7.63MB     96.1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> pdist_cpp(0.5, y)   3.84ms   4.21ms      238.    7.63MB    119.</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> pdist_r(0.5, y)     3.55ms   3.91ms      252.    7.63MB     128.</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> pdist_cpp(0.5, y)   2.55ms   2.77ms      358.    7.63MB     177.</span></span></code></pre></div>
 <p>On my computer, it takes around 5 ms with a 1 million element
 <code>y</code> vector. The C++ function is about 2.5 times faster, ~2
 ms, but assuming it took you 10 minutes to write the C++ function, you’d
@@ -1153,8 +1153,8 @@ running the loops in C++:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">#&gt;   expression   min median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> r           42.0   42.0       1        32.3     10.1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> cpp          1      1        41.8       1        1</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> r           24.2   24.7       1        32.3      <span style="color: #BB0000;">Inf</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> cpp          1      1        24.7       1        <span style="color: #BB0000;">NaN</span></span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="r-vectorisation-versus-c-vectorisation">R vectorisation versus C++ vectorisation<a class="anchor" aria-label="anchor" href="#r-vectorisation-versus-c-vectorisation"></a>
@@ -1253,9 +1253,9 @@ Finally, we can benchmark our three approaches:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> vacc1        1.52ms   1.58ms      620.    7.86KB     35.7</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> vacc2       41.45µs  43.42µs    <span style="text-decoration: underline;">20</span>704.  146.68KB     37.9</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> vacc3       12.13µs  12.35µs    <span style="text-decoration: underline;">79</span>712.   14.02KB     15.9</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> vacc1        1.43ms   1.64ms      613.    7.86KB     21.7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> vacc2       40.26µs  43.08µs    <span style="text-decoration: underline;">22</span>184.  146.68KB     40.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> vacc3       10.61µs  11.01µs    <span style="text-decoration: underline;">88</span>267.   14.02KB     17.7</span></span></code></pre></div>
 <p>Not surprisingly, our original approach with loops is very slow.
 Vectorising in R gives a huge speedup, and we can eke out even more
 performance (about ten times) with the C++ loop. I was a little
