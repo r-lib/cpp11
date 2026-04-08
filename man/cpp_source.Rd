@@ -13,7 +13,8 @@ cpp_source(
   clean = TRUE,
   quiet = TRUE,
   cxx_std = Sys.getenv("CXX_STD", "CXX11"),
-  dir = tempfile()
+  dir = tempfile(),
+  local = TRUE
 )
 
 cpp_function(
@@ -21,7 +22,8 @@ cpp_function(
   env = parent.frame(),
   clean = TRUE,
   quiet = TRUE,
-  cxx_std = Sys.getenv("CXX_STD", "CXX11")
+  cxx_std = Sys.getenv("CXX_STD", "CXX11"),
+  local = TRUE
 )
 
 cpp_eval(
@@ -29,7 +31,8 @@ cpp_eval(
   env = parent.frame(),
   clean = TRUE,
   quiet = TRUE,
-  cxx_std = Sys.getenv("CXX_STD", "CXX11")
+  cxx_std = Sys.getenv("CXX_STD", "CXX11"),
+  local = TRUE
 )
 }
 \arguments{
@@ -49,6 +52,11 @@ uses 'CXX11' if unset.}
 
 \item{dir}{The directory to store the generated source files. \code{tempfile()} is
 used by default. The directory will be removed if \code{clean} is \code{TRUE}.}
+
+\item{local}{Passed to \code{\link[=dyn.load]{dyn.load()}}. If \code{TRUE} (the default) the shared
+library is loaded with local symbols; if \code{FALSE} symbols are made global
+(equivalent to \code{dyn.load(..., local = FALSE)}), which can be required when
+other shared objects need to see RTTI/vtable symbols from this library.}
 }
 \value{
 For \code{\link[=cpp_source]{cpp_source()}} and \verb{[cpp_function()]} the results of
@@ -64,6 +72,11 @@ expression.
 Within C++ code you can use \verb{[[cpp11::linking_to("pkgxyz")]]} to link to
 external packages. This is equivalent to putting those packages in the
 \code{LinkingTo} field in a package DESCRIPTION.
+}
+\note{
+See the unit test that demonstrates this usage at
+\code{tests/testthat/test-source-local.R} (shows how \code{local = FALSE} exports
+the necessary symbols so separate shared objects can link against them).
 }
 \examples{
 
