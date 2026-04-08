@@ -78,3 +78,13 @@ Please note that the cpp11 project is released with a [Contributor Code of Condu
 
 cpp11 would not exist without Rcpp.
 Thanks to the Rcpp authors, Dirk Eddelbuettel, Romain Francois, JJ Allaire, Kevin Ushey, Qiang Kou, Nathan Russell, Douglas Bates and John Chambers for their work writing and maintaining Rcpp.
+
+## Clang format
+
+To match GHA, use clang-format-12 to format C++ code. With systems that provide clang-format-14 or newer, you can use Docker:
+
+```bash
+docker run --rm -v "$PWD":/work -w /work ubuntu:22.04 bash -lc "\
+  apt-get update && apt-get install -y clang-format-12 && \
+  find . -name '*.cpp' -o -name '*.hpp' -o -name '*.h' | xargs -r clang-format-12 -i"
+```
