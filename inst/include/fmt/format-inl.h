@@ -19,11 +19,11 @@
 #include <exception>
 
 #ifndef FMT_STATIC_THOUSANDS_SEPARATOR
-#  include <locale>
+#include <locale>
 #endif
 
 #ifdef _WIN32
-#  include <io.h>  // _isatty
+#include <io.h>  // _isatty
 #endif
 
 #include "format.h"
@@ -41,7 +41,7 @@ FMT_FUNC void assert_fail(const char* file, int line, const char* message) {
 }
 
 #ifndef _MSC_VER
-#  define FMT_SNPRINTF snprintf
+#define FMT_SNPRINTF snprintf
 #else  // _MSC_VER
 inline int fmt_snprintf(char* buffer, size_t size, const char* format, ...) {
   va_list args;
@@ -50,7 +50,7 @@ inline int fmt_snprintf(char* buffer, size_t size, const char* format, ...) {
   va_end(args);
   return result;
 }
-#  define FMT_SNPRINTF fmt_snprintf
+#define FMT_SNPRINTF fmt_snprintf
 #endif  // _MSC_VER
 
 FMT_FUNC void format_error_code(detail::buffer<char>& out, int error_code,
@@ -86,8 +86,7 @@ FMT_FUNC void report_error(format_func func, int error_code,
 }
 
 // A wrapper around fwrite that throws on error.
-inline void fwrite_fully(const void* ptr, size_t size, size_t count,
-                         FILE* stream) {
+inline void fwrite_fully(const void* ptr, size_t size, size_t count, FILE* stream) {
   size_t written = std::fwrite(ptr, size, count, stream);
   if (written < count) FMT_THROW(system_error(errno, "cannot write to file"));
 }
@@ -98,7 +97,8 @@ locale_ref::locale_ref(const Locale& loc) : locale_(&loc) {
   static_assert(std::is_same<Locale, std::locale>::value, "");
 }
 
-template <typename Locale> Locale locale_ref::get() const {
+template <typename Locale>
+Locale locale_ref::get() const {
   static_assert(std::is_same<Locale, std::locale>::value, "");
   return locale_ ? *static_cast<const std::locale*>(locale_) : std::locale();
 }
@@ -110,16 +110,17 @@ FMT_FUNC auto thousands_sep_impl(locale_ref loc) -> thousands_sep_result<Char> {
   auto thousands_sep = grouping.empty() ? Char() : facet.thousands_sep();
   return {std::move(grouping), thousands_sep};
 }
-template <typename Char> FMT_FUNC Char decimal_point_impl(locale_ref loc) {
-  return std::use_facet<std::numpunct<Char>>(loc.get<std::locale>())
-      .decimal_point();
+template <typename Char>
+FMT_FUNC Char decimal_point_impl(locale_ref loc) {
+  return std::use_facet<std::numpunct<Char>>(loc.get<std::locale>()).decimal_point();
 }
 #else
 template <typename Char>
 FMT_FUNC auto thousands_sep_impl(locale_ref) -> thousands_sep_result<Char> {
   return {"\03", FMT_STATIC_THOUSANDS_SEPARATOR};
 }
-template <typename Char> FMT_FUNC Char decimal_point_impl(locale_ref) {
+template <typename Char>
+FMT_FUNC Char decimal_point_impl(locale_ref) {
   return '.';
 }
 #endif
@@ -137,7 +138,8 @@ FMT_FUNC std::system_error vsystem_error(int error_code, string_view format_str,
 
 namespace detail {
 
-template <> FMT_FUNC int count_digits<4>(detail::fallback_uintptr n) {
+template <>
+FMT_FUNC int count_digits<4>(detail::fallback_uintptr n) {
   // fallback_uintptr is always stored in little endian.
   int i = static_cast<int>(sizeof(void*)) - 1;
   while (i > 0 && n.value[i] == 0) --i;
@@ -146,22 +148,29 @@ template <> FMT_FUNC int count_digits<4>(detail::fallback_uintptr n) {
 }
 
 #if __cplusplus < 201703L
-template <typename T> constexpr const char basic_data<T>::digits[][2];
-template <typename T> constexpr const char basic_data<T>::hex_digits[];
-template <typename T> constexpr const char basic_data<T>::signs[];
-template <typename T> constexpr const unsigned basic_data<T>::prefixes[];
-template <typename T> constexpr const char basic_data<T>::left_padding_shifts[];
+template <typename T>
+constexpr const char basic_data<T>::digits[][2];
+template <typename T>
+constexpr const char basic_data<T>::hex_digits[];
+template <typename T>
+constexpr const char basic_data<T>::signs[];
+template <typename T>
+constexpr const unsigned basic_data<T>::prefixes[];
+template <typename T>
+constexpr const char basic_data<T>::left_padding_shifts[];
 template <typename T>
 constexpr const char basic_data<T>::right_padding_shifts[];
 #endif
 
-template <typename T> struct bits {
+template <typename T>
+struct bits {
   static FMT_CONSTEXPR_DECL const int value =
       static_cast<int>(sizeof(T) * std::numeric_limits<unsigned char>::digits);
 };
 
 class fp;
-template <int SHIFT = 0> fp normalize(fp value);
+template <int SHIFT = 0>
+fp normalize(fp value);
 
 // Lower (upper) boundary is a value half way between a floating-point value
 // and its predecessor (successor). Boundaries have the same exponent as the
@@ -189,17 +198,18 @@ class fp {
   // normalized form.
   static FMT_CONSTEXPR_DECL const int double_significand_size =
       std::numeric_limits<double>::digits - 1;
-  static FMT_CONSTEXPR_DECL const uint64_t implicit_bit =
-      1ULL << double_significand_size;
-  static FMT_CONSTEXPR_DECL const int significand_size =
-      bits<significand_type>::value;
+  static FMT_CONSTEXPR_DECL const uint64_t implicit_bit = 1ULL << double_significand_size;
+  static FMT_CONSTEXPR_DECL const int significand_size = bits<significand_type>::value;
 
   fp() : f(0), e(0) {}
   fp(uint64_t f_val, int e_val) : f(f_val), e(e_val) {}
 
   // Constructs fp from an IEEE754 double. It is a template to prevent compile
   // errors on platforms where double is not IEEE754.
-  template <typename Double> explicit fp(Double d) { assign(d); }
+  template <typename Double>
+  explicit fp(Double d) {
+    assign(d);
+  }
 
   // Assigns d to this and return true iff predecessor is closer than successor.
   template <typename Float, FMT_ENABLE_IF(is_supported_float<Float>::value)>
@@ -216,8 +226,7 @@ class fp {
     constexpr bool is_double = sizeof(Float) == sizeof(uint64_t);
     auto u = bit_cast<conditional_t<is_double, uint64_t, uint32_t>>(d);
     f = u & significand_mask;
-    int biased_e =
-        static_cast<int>((u & exponent_mask) >> float_significand_size);
+    int biased_e = static_cast<int>((u & exponent_mask) >> float_significand_size);
     // Predecessor is closer if d is a normalized power of 2 (f == 0) other than
     // the smallest normalized number (biased_e > 1).
     bool is_predecessor_closer = f == 0 && biased_e > 1;
@@ -237,7 +246,8 @@ class fp {
 };
 
 // Normalizes the value converted from double and multiplied by (1 << SHIFT).
-template <int SHIFT> fp normalize(fp value) {
+template <int SHIFT>
+fp normalize(fp value) {
   // Handle subnormals.
   const auto shifted_implicit_bit = fp::implicit_bit << SHIFT;
   while ((value.f & shifted_implicit_bit) == 0) {
@@ -245,8 +255,7 @@ template <int SHIFT> fp normalize(fp value) {
     --value.e;
   }
   // Subtract 1 to account for hidden bit.
-  const auto offset =
-      fp::significand_size - fp::double_significand_size - SHIFT - 1;
+  const auto offset = fp::significand_size - fp::double_significand_size - SHIFT - 1;
   value.f <<= offset;
   value.e -= offset;
   return value;
@@ -280,34 +289,27 @@ inline fp get_cached_power(int min_exponent, int& pow10_exponent) {
   // Normalized 64-bit significands of pow(10, k), for k = -348, -340, ..., 340.
   // These are generated by support/compute-powers.py.
   static constexpr const uint64_t pow10_significands[] = {
-      0xfa8fd5a0081c0288, 0xbaaee17fa23ebf76, 0x8b16fb203055ac76,
-      0xcf42894a5dce35ea, 0x9a6bb0aa55653b2d, 0xe61acf033d1a45df,
-      0xab70fe17c79ac6ca, 0xff77b1fcbebcdc4f, 0xbe5691ef416bd60c,
-      0x8dd01fad907ffc3c, 0xd3515c2831559a83, 0x9d71ac8fada6c9b5,
-      0xea9c227723ee8bcb, 0xaecc49914078536d, 0x823c12795db6ce57,
-      0xc21094364dfb5637, 0x9096ea6f3848984f, 0xd77485cb25823ac7,
-      0xa086cfcd97bf97f4, 0xef340a98172aace5, 0xb23867fb2a35b28e,
-      0x84c8d4dfd2c63f3b, 0xc5dd44271ad3cdba, 0x936b9fcebb25c996,
-      0xdbac6c247d62a584, 0xa3ab66580d5fdaf6, 0xf3e2f893dec3f126,
-      0xb5b5ada8aaff80b8, 0x87625f056c7c4a8b, 0xc9bcff6034c13053,
-      0x964e858c91ba2655, 0xdff9772470297ebd, 0xa6dfbd9fb8e5b88f,
-      0xf8a95fcf88747d94, 0xb94470938fa89bcf, 0x8a08f0f8bf0f156b,
-      0xcdb02555653131b6, 0x993fe2c6d07b7fac, 0xe45c10c42a2b3b06,
-      0xaa242499697392d3, 0xfd87b5f28300ca0e, 0xbce5086492111aeb,
-      0x8cbccc096f5088cc, 0xd1b71758e219652c, 0x9c40000000000000,
-      0xe8d4a51000000000, 0xad78ebc5ac620000, 0x813f3978f8940984,
-      0xc097ce7bc90715b3, 0x8f7e32ce7bea5c70, 0xd5d238a4abe98068,
-      0x9f4f2726179a2245, 0xed63a231d4c4fb27, 0xb0de65388cc8ada8,
-      0x83c7088e1aab65db, 0xc45d1df942711d9a, 0x924d692ca61be758,
-      0xda01ee641a708dea, 0xa26da3999aef774a, 0xf209787bb47d6b85,
-      0xb454e4a179dd1877, 0x865b86925b9bc5c2, 0xc83553c5c8965d3d,
-      0x952ab45cfa97a0b3, 0xde469fbd99a05fe3, 0xa59bc234db398c25,
-      0xf6c69a72a3989f5c, 0xb7dcbf5354e9bece, 0x88fcf317f22241e2,
-      0xcc20ce9bd35c78a5, 0x98165af37b2153df, 0xe2a0b5dc971f303a,
-      0xa8d9d1535ce3b396, 0xfb9b7cd9a4a7443c, 0xbb764c4ca7a44410,
-      0x8bab8eefb6409c1a, 0xd01fef10a657842c, 0x9b10a4e5e9913129,
-      0xe7109bfba19c0c9d, 0xac2820d9623bf429, 0x80444b5e7aa7cf85,
-      0xbf21e44003acdd2d, 0x8e679c2f5e44ff8f, 0xd433179d9c8cb841,
+      0xfa8fd5a0081c0288, 0xbaaee17fa23ebf76, 0x8b16fb203055ac76, 0xcf42894a5dce35ea,
+      0x9a6bb0aa55653b2d, 0xe61acf033d1a45df, 0xab70fe17c79ac6ca, 0xff77b1fcbebcdc4f,
+      0xbe5691ef416bd60c, 0x8dd01fad907ffc3c, 0xd3515c2831559a83, 0x9d71ac8fada6c9b5,
+      0xea9c227723ee8bcb, 0xaecc49914078536d, 0x823c12795db6ce57, 0xc21094364dfb5637,
+      0x9096ea6f3848984f, 0xd77485cb25823ac7, 0xa086cfcd97bf97f4, 0xef340a98172aace5,
+      0xb23867fb2a35b28e, 0x84c8d4dfd2c63f3b, 0xc5dd44271ad3cdba, 0x936b9fcebb25c996,
+      0xdbac6c247d62a584, 0xa3ab66580d5fdaf6, 0xf3e2f893dec3f126, 0xb5b5ada8aaff80b8,
+      0x87625f056c7c4a8b, 0xc9bcff6034c13053, 0x964e858c91ba2655, 0xdff9772470297ebd,
+      0xa6dfbd9fb8e5b88f, 0xf8a95fcf88747d94, 0xb94470938fa89bcf, 0x8a08f0f8bf0f156b,
+      0xcdb02555653131b6, 0x993fe2c6d07b7fac, 0xe45c10c42a2b3b06, 0xaa242499697392d3,
+      0xfd87b5f28300ca0e, 0xbce5086492111aeb, 0x8cbccc096f5088cc, 0xd1b71758e219652c,
+      0x9c40000000000000, 0xe8d4a51000000000, 0xad78ebc5ac620000, 0x813f3978f8940984,
+      0xc097ce7bc90715b3, 0x8f7e32ce7bea5c70, 0xd5d238a4abe98068, 0x9f4f2726179a2245,
+      0xed63a231d4c4fb27, 0xb0de65388cc8ada8, 0x83c7088e1aab65db, 0xc45d1df942711d9a,
+      0x924d692ca61be758, 0xda01ee641a708dea, 0xa26da3999aef774a, 0xf209787bb47d6b85,
+      0xb454e4a179dd1877, 0x865b86925b9bc5c2, 0xc83553c5c8965d3d, 0x952ab45cfa97a0b3,
+      0xde469fbd99a05fe3, 0xa59bc234db398c25, 0xf6c69a72a3989f5c, 0xb7dcbf5354e9bece,
+      0x88fcf317f22241e2, 0xcc20ce9bd35c78a5, 0x98165af37b2153df, 0xe2a0b5dc971f303a,
+      0xa8d9d1535ce3b396, 0xfb9b7cd9a4a7443c, 0xbb764c4ca7a44410, 0x8bab8eefb6409c1a,
+      0xd01fef10a657842c, 0x9b10a4e5e9913129, 0xe7109bfba19c0c9d, 0xac2820d9623bf429,
+      0x80444b5e7aa7cf85, 0xbf21e44003acdd2d, 0x8e679c2f5e44ff8f, 0xd433179d9c8cb841,
       0x9e19db92b4e31ba9, 0xeb96bf6ebadf77d9, 0xaf87023b9bf0ee6b,
   };
 
@@ -419,8 +421,7 @@ class bigint {
     double_bigit carry = 0;
     for (size_t i = 0, n = bigits_.size(); i < n; ++i) {
       double_bigit result = bigits_[i] * lower + (carry & mask);
-      carry =
-          bigits_[i] * upper + (result >> bigit_bits) + (carry >> bigit_bits);
+      carry = bigits_[i] * upper + (result >> bigit_bits) + (carry >> bigit_bits);
       bigits_[i] = static_cast<bigit>(result);
     }
     while (carry != 0) {
@@ -472,7 +473,8 @@ class bigint {
     return *this;
   }
 
-  template <typename Int> bigint& operator*=(Int value) {
+  template <typename Int>
+  bigint& operator*=(Int value) {
     FMT_ASSERT(value > 0, "");
     multiply(uint32_or_64_or_128_t<Int>(value));
     return *this;
@@ -480,8 +482,7 @@ class bigint {
 
   friend int compare(const bigint& lhs, const bigint& rhs) {
     int num_lhs_bigits = lhs.num_bigits(), num_rhs_bigits = rhs.num_bigits();
-    if (num_lhs_bigits != num_rhs_bigits)
-      return num_lhs_bigits > num_rhs_bigits ? 1 : -1;
+    if (num_lhs_bigits != num_rhs_bigits) return num_lhs_bigits > num_rhs_bigits ? 1 : -1;
     int i = static_cast<int>(lhs.bigits_.size()) - 1;
     int j = static_cast<int>(rhs.bigits_.size()) - 1;
     int end = i - j;
@@ -495,8 +496,7 @@ class bigint {
   }
 
   // Returns compare(lhs1 + lhs2, rhs).
-  friend int add_compare(const bigint& lhs1, const bigint& lhs2,
-                         const bigint& rhs) {
+  friend int add_compare(const bigint& lhs1, const bigint& lhs2, const bigint& rhs) {
     int max_lhs_bigits = (std::max)(lhs1.num_bigits(), lhs2.num_bigits());
     int num_rhs_bigits = rhs.num_bigits();
     if (max_lhs_bigits + 1 < num_rhs_bigits) return -1;
@@ -556,8 +556,7 @@ class bigint {
       sum >>= bits<bigit>::value;  // Compute the carry.
     }
     // Do the same for the top half.
-    for (int bigit_index = num_bigits; bigit_index < num_result_bigits;
-         ++bigit_index) {
+    for (int bigit_index = num_bigits; bigit_index < num_result_bigits; ++bigit_index) {
       for (int j = num_bigits - 1, i = bigit_index - j; i < num_bigits;)
         sum += static_cast<double_bigit>(n[i++]) * n[j--];
       (*this)[bigit_index] = static_cast<bigit>(sum);
@@ -605,15 +604,14 @@ enum class round_direction { unknown, up, down };
 // error should be less than divisor / 2.
 inline round_direction get_round_direction(uint64_t divisor, uint64_t remainder,
                                            uint64_t error) {
-  FMT_ASSERT(remainder < divisor, "");  // divisor - remainder won't overflow.
-  FMT_ASSERT(error < divisor, "");      // divisor - error won't overflow.
+  FMT_ASSERT(remainder < divisor, "");      // divisor - remainder won't overflow.
+  FMT_ASSERT(error < divisor, "");          // divisor - error won't overflow.
   FMT_ASSERT(error < divisor - error, "");  // error * 2 won't overflow.
   // Round down if (remainder + error) * 2 <= divisor.
   if (remainder <= divisor - remainder && error * 2 <= divisor - remainder * 2)
     return round_direction::down;
   // Round up if (remainder - error) * 2 >= divisor.
-  if (remainder >= error &&
-      remainder - error >= divisor - (remainder - error)) {
+  if (remainder >= error && remainder - error >= divisor - (remainder - error)) {
     return round_direction::up;
   }
   return round_direction::unknown;
@@ -628,9 +626,8 @@ enum result {
 }
 
 inline uint64_t power_of_10_64(int exp) {
-  static constexpr const uint64_t data[] = {1, FMT_POWERS_OF_10(1),
-                                            FMT_POWERS_OF_10(1000000000ULL),
-                                            10000000000000000000ULL};
+  static constexpr const uint64_t data[] = {
+      1, FMT_POWERS_OF_10(1), FMT_POWERS_OF_10(1000000000ULL), 10000000000000000000ULL};
   return data[exp];
 }
 
@@ -651,8 +648,8 @@ FMT_INLINE digits::result grisu_gen_digits(fp value, uint64_t error, int& exp,
   uint64_t fractional = value.f & (one.f - 1);
   exp = count_digits(integral);  // kappa in Grisu.
   // Divide by 10 to prevent overflow.
-  auto result = handler.on_start(power_of_10_64(exp - 1) << -one.e,
-                                 value.f / 10, error * 10, exp);
+  auto result =
+      handler.on_start(power_of_10_64(exp - 1) << -one.e, value.f / 10, error * 10, exp);
   if (result != digits::more) return result;
   // Generate digits for the integral part. This can produce up to 10 digits.
   do {
@@ -664,45 +661,44 @@ FMT_INLINE digits::result grisu_gen_digits(fp value, uint64_t error, int& exp,
     // This optimization by Milo Yip reduces the number of integer divisions by
     // one per iteration.
     switch (exp) {
-    case 10:
-      divmod_integral(1000000000);
-      break;
-    case 9:
-      divmod_integral(100000000);
-      break;
-    case 8:
-      divmod_integral(10000000);
-      break;
-    case 7:
-      divmod_integral(1000000);
-      break;
-    case 6:
-      divmod_integral(100000);
-      break;
-    case 5:
-      divmod_integral(10000);
-      break;
-    case 4:
-      divmod_integral(1000);
-      break;
-    case 3:
-      divmod_integral(100);
-      break;
-    case 2:
-      divmod_integral(10);
-      break;
-    case 1:
-      digit = integral;
-      integral = 0;
-      break;
-    default:
-      FMT_ASSERT(false, "invalid number of digits");
+      case 10:
+        divmod_integral(1000000000);
+        break;
+      case 9:
+        divmod_integral(100000000);
+        break;
+      case 8:
+        divmod_integral(10000000);
+        break;
+      case 7:
+        divmod_integral(1000000);
+        break;
+      case 6:
+        divmod_integral(100000);
+        break;
+      case 5:
+        divmod_integral(10000);
+        break;
+      case 4:
+        divmod_integral(1000);
+        break;
+      case 3:
+        divmod_integral(100);
+        break;
+      case 2:
+        divmod_integral(10);
+        break;
+      case 1:
+        digit = integral;
+        integral = 0;
+        break;
+      default:
+        FMT_ASSERT(false, "invalid number of digits");
     }
     --exp;
     auto remainder = (static_cast<uint64_t>(integral) << -one.e) + fractional;
     result = handler.on_digit(static_cast<char>('0' + digit),
-                              power_of_10_64(exp) << -one.e, remainder, error,
-                              exp, true);
+                              power_of_10_64(exp) << -one.e, remainder, error, exp, true);
     if (result != digits::more) return result;
   } while (exp > 0);
   // Generate digits for the fractional part.
@@ -783,14 +779,11 @@ struct uint128_wrapper {
   uint128_t internal_;
 
   constexpr uint128_wrapper(uint64_t high, uint64_t low) FMT_NOEXCEPT
-      : internal_{static_cast<uint128_t>(low) |
-                  (static_cast<uint128_t>(high) << 64)} {}
+      : internal_{static_cast<uint128_t>(low) | (static_cast<uint128_t>(high) << 64)} {}
 
   constexpr uint128_wrapper(uint128_t u) : internal_{u} {}
 
-  constexpr uint64_t high() const FMT_NOEXCEPT {
-    return uint64_t(internal_ >> 64);
-  }
+  constexpr uint64_t high() const FMT_NOEXCEPT { return uint64_t(internal_ >> 64); }
   constexpr uint64_t low() const FMT_NOEXCEPT { return uint64_t(internal_); }
 
   uint128_wrapper& operator+=(uint64_t n) FMT_NOEXCEPT {
@@ -801,24 +794,23 @@ struct uint128_wrapper {
   uint64_t high_;
   uint64_t low_;
 
-  constexpr uint128_wrapper(uint64_t high, uint64_t low) FMT_NOEXCEPT
-      : high_{high},
-        low_{low} {}
+  constexpr uint128_wrapper(uint64_t high, uint64_t low) FMT_NOEXCEPT : high_{high},
+                                                                        low_{low} {}
 
   constexpr uint64_t high() const FMT_NOEXCEPT { return high_; }
   constexpr uint64_t low() const FMT_NOEXCEPT { return low_; }
 
   uint128_wrapper& operator+=(uint64_t n) FMT_NOEXCEPT {
-#  if defined(_MSC_VER) && defined(_M_X64)
+#if defined(_MSC_VER) && defined(_M_X64)
     unsigned char carry = _addcarry_u64(0, low_, n, &low_);
     _addcarry_u64(carry, high_, 0, &high_);
     return *this;
-#  else
+#else
     uint64_t sum = low_ + n;
     high_ += (sum < low_ ? 1 : 0);
     low_ = sum;
     return *this;
-#  endif
+#endif
   }
 #endif
 };
@@ -889,17 +881,14 @@ inline uint64_t umul192_middle64(uint64_t x, uint128_wrapper y) FMT_NOEXCEPT {
 
 // Computes lower 64 bits of multiplication of a 32-bit unsigned integer and a
 // 64-bit unsigned integer.
-inline uint64_t umul96_lower64(uint32_t x, uint64_t y) FMT_NOEXCEPT {
-  return x * y;
-}
+inline uint64_t umul96_lower64(uint32_t x, uint64_t y) FMT_NOEXCEPT { return x * y; }
 
 // Computes floor(log10(pow(2, e))) for e in [-1700, 1700] using the method from
 // https://fmt.dev/papers/Grisu-Exact.pdf#page=5, section 3.4.
 inline int floor_log10_pow2(int e) FMT_NOEXCEPT {
   FMT_ASSERT(e <= 1700 && e >= -1700, "too large exponent");
   const int shift = 22;
-  return (e * static_cast<int>(data::log10_2_significand >> (64 - shift))) >>
-         shift;
+  return (e * static_cast<int>(data::log10_2_significand >> (64 - shift))) >> shift;
 }
 
 // Various fast log computations.
@@ -908,19 +897,16 @@ inline int floor_log2_pow10(int e) FMT_NOEXCEPT {
   const uint64_t log2_10_integer_part = 3;
   const uint64_t log2_10_fractional_digits = 0x5269e12f346e2bf9;
   const int shift_amount = 19;
-  return (e * static_cast<int>(
-                  (log2_10_integer_part << shift_amount) |
-                  (log2_10_fractional_digits >> (64 - shift_amount)))) >>
+  return (e * static_cast<int>((log2_10_integer_part << shift_amount) |
+                               (log2_10_fractional_digits >> (64 - shift_amount)))) >>
          shift_amount;
 }
 inline int floor_log10_pow2_minus_log10_4_over_3(int e) FMT_NOEXCEPT {
   FMT_ASSERT(e <= 1700 && e >= -1700, "too large exponent");
   const uint64_t log10_4_over_3_fractional_digits = 0x1ffbfc2bbc780375;
   const int shift_amount = 22;
-  return (e * static_cast<int>(data::log10_2_significand >>
-                               (64 - shift_amount)) -
-          static_cast<int>(log10_4_over_3_fractional_digits >>
-                           (64 - shift_amount))) >>
+  return (e * static_cast<int>(data::log10_2_significand >> (64 - shift_amount)) -
+          static_cast<int>(log10_4_over_3_fractional_digits >> (64 - shift_amount))) >>
          shift_amount;
 }
 
@@ -945,7 +931,8 @@ inline bool divisible_by_power_of_2(uint64_t x, int exp) FMT_NOEXCEPT {
 }
 
 // Table entry type for divisibility test.
-template <typename T> struct divtest_table_entry {
+template <typename T>
+struct divtest_table_entry {
   T mod_inv;
   T max_quotient;
 };
@@ -954,41 +941,27 @@ template <typename T> struct divtest_table_entry {
 inline bool divisible_by_power_of_5(uint32_t x, int exp) FMT_NOEXCEPT {
   FMT_ASSERT(exp <= 10, "too large exponent");
   static constexpr const divtest_table_entry<uint32_t> divtest_table[] = {
-      {0x00000001, 0xffffffff}, {0xcccccccd, 0x33333333},
-      {0xc28f5c29, 0x0a3d70a3}, {0x26e978d5, 0x020c49ba},
-      {0x3afb7e91, 0x0068db8b}, {0x0bcbe61d, 0x0014f8b5},
-      {0x68c26139, 0x000431bd}, {0xae8d46a5, 0x0000d6bf},
-      {0x22e90e21, 0x00002af3}, {0x3a2e9c6d, 0x00000897},
-      {0x3ed61f49, 0x000001b7}};
+      {0x00000001, 0xffffffff}, {0xcccccccd, 0x33333333}, {0xc28f5c29, 0x0a3d70a3},
+      {0x26e978d5, 0x020c49ba}, {0x3afb7e91, 0x0068db8b}, {0x0bcbe61d, 0x0014f8b5},
+      {0x68c26139, 0x000431bd}, {0xae8d46a5, 0x0000d6bf}, {0x22e90e21, 0x00002af3},
+      {0x3a2e9c6d, 0x00000897}, {0x3ed61f49, 0x000001b7}};
   return x * divtest_table[exp].mod_inv <= divtest_table[exp].max_quotient;
 }
 inline bool divisible_by_power_of_5(uint64_t x, int exp) FMT_NOEXCEPT {
   FMT_ASSERT(exp <= 23, "too large exponent");
   static constexpr const divtest_table_entry<uint64_t> divtest_table[] = {
-      {0x0000000000000001, 0xffffffffffffffff},
-      {0xcccccccccccccccd, 0x3333333333333333},
-      {0x8f5c28f5c28f5c29, 0x0a3d70a3d70a3d70},
-      {0x1cac083126e978d5, 0x020c49ba5e353f7c},
-      {0xd288ce703afb7e91, 0x0068db8bac710cb2},
-      {0x5d4e8fb00bcbe61d, 0x0014f8b588e368f0},
-      {0x790fb65668c26139, 0x000431bde82d7b63},
-      {0xe5032477ae8d46a5, 0x0000d6bf94d5e57a},
-      {0xc767074b22e90e21, 0x00002af31dc46118},
-      {0x8e47ce423a2e9c6d, 0x0000089705f4136b},
-      {0x4fa7f60d3ed61f49, 0x000001b7cdfd9d7b},
-      {0x0fee64690c913975, 0x00000057f5ff85e5},
-      {0x3662e0e1cf503eb1, 0x000000119799812d},
-      {0xa47a2cf9f6433fbd, 0x0000000384b84d09},
-      {0x54186f653140a659, 0x00000000b424dc35},
-      {0x7738164770402145, 0x0000000024075f3d},
-      {0xe4a4d1417cd9a041, 0x000000000734aca5},
-      {0xc75429d9e5c5200d, 0x000000000170ef54},
-      {0xc1773b91fac10669, 0x000000000049c977},
-      {0x26b172506559ce15, 0x00000000000ec1e4},
-      {0xd489e3a9addec2d1, 0x000000000002f394},
-      {0x90e860bb892c8d5d, 0x000000000000971d},
-      {0x502e79bf1b6f4f79, 0x0000000000001e39},
-      {0xdcd618596be30fe5, 0x000000000000060b}};
+      {0x0000000000000001, 0xffffffffffffffff}, {0xcccccccccccccccd, 0x3333333333333333},
+      {0x8f5c28f5c28f5c29, 0x0a3d70a3d70a3d70}, {0x1cac083126e978d5, 0x020c49ba5e353f7c},
+      {0xd288ce703afb7e91, 0x0068db8bac710cb2}, {0x5d4e8fb00bcbe61d, 0x0014f8b588e368f0},
+      {0x790fb65668c26139, 0x000431bde82d7b63}, {0xe5032477ae8d46a5, 0x0000d6bf94d5e57a},
+      {0xc767074b22e90e21, 0x00002af31dc46118}, {0x8e47ce423a2e9c6d, 0x0000089705f4136b},
+      {0x4fa7f60d3ed61f49, 0x000001b7cdfd9d7b}, {0x0fee64690c913975, 0x00000057f5ff85e5},
+      {0x3662e0e1cf503eb1, 0x000000119799812d}, {0xa47a2cf9f6433fbd, 0x0000000384b84d09},
+      {0x54186f653140a659, 0x00000000b424dc35}, {0x7738164770402145, 0x0000000024075f3d},
+      {0xe4a4d1417cd9a041, 0x000000000734aca5}, {0xc75429d9e5c5200d, 0x000000000170ef54},
+      {0xc1773b91fac10669, 0x000000000049c977}, {0x26b172506559ce15, 0x00000000000ec1e4},
+      {0xd489e3a9addec2d1, 0x000000000002f394}, {0x90e860bb892c8d5d, 0x000000000000971d},
+      {0x502e79bf1b6f4f79, 0x0000000000001e39}, {0xdcd618596be30fe5, 0x000000000000060b}};
   return x * divtest_table[exp].mod_inv <= divtest_table[exp].max_quotient;
 }
 
@@ -1013,7 +986,8 @@ bool check_divisibility_and_divide_by_pow5(uint32_t& n) FMT_NOEXCEPT {
 
 // Computes floor(n / pow(10, N)) for small n and N.
 // Precondition: n <= pow(10, N + 1).
-template <int N> uint32_t small_division_by_pow10(uint32_t n) FMT_NOEXCEPT {
+template <int N>
+uint32_t small_division_by_pow10(uint32_t n) FMT_NOEXCEPT {
   static constexpr struct {
     uint32_t magic_number;
     int shift_amount;
@@ -1034,9 +1008,11 @@ inline uint64_t divide_by_10_to_kappa_plus_1(uint64_t n) FMT_NOEXCEPT {
 }
 
 // Various subroutines using pow10 cache
-template <class T> struct cache_accessor;
+template <class T>
+struct cache_accessor;
 
-template <> struct cache_accessor<float> {
+template <>
+struct cache_accessor<float> {
   using carrier_uint = float_info<float>::carrier_uint;
   using cache_entry_type = uint64_t;
 
@@ -1044,32 +1020,26 @@ template <> struct cache_accessor<float> {
     FMT_ASSERT(k >= float_info<float>::min_k && k <= float_info<float>::max_k,
                "k is out of range");
     constexpr const uint64_t pow10_significands[] = {
-        0x81ceb32c4b43fcf5, 0xa2425ff75e14fc32, 0xcad2f7f5359a3b3f,
-        0xfd87b5f28300ca0e, 0x9e74d1b791e07e49, 0xc612062576589ddb,
-        0xf79687aed3eec552, 0x9abe14cd44753b53, 0xc16d9a0095928a28,
-        0xf1c90080baf72cb2, 0x971da05074da7bef, 0xbce5086492111aeb,
-        0xec1e4a7db69561a6, 0x9392ee8e921d5d08, 0xb877aa3236a4b44a,
-        0xe69594bec44de15c, 0x901d7cf73ab0acda, 0xb424dc35095cd810,
-        0xe12e13424bb40e14, 0x8cbccc096f5088cc, 0xafebff0bcb24aaff,
-        0xdbe6fecebdedd5bf, 0x89705f4136b4a598, 0xabcc77118461cefd,
-        0xd6bf94d5e57a42bd, 0x8637bd05af6c69b6, 0xa7c5ac471b478424,
-        0xd1b71758e219652c, 0x83126e978d4fdf3c, 0xa3d70a3d70a3d70b,
-        0xcccccccccccccccd, 0x8000000000000000, 0xa000000000000000,
-        0xc800000000000000, 0xfa00000000000000, 0x9c40000000000000,
-        0xc350000000000000, 0xf424000000000000, 0x9896800000000000,
-        0xbebc200000000000, 0xee6b280000000000, 0x9502f90000000000,
-        0xba43b74000000000, 0xe8d4a51000000000, 0x9184e72a00000000,
-        0xb5e620f480000000, 0xe35fa931a0000000, 0x8e1bc9bf04000000,
-        0xb1a2bc2ec5000000, 0xde0b6b3a76400000, 0x8ac7230489e80000,
-        0xad78ebc5ac620000, 0xd8d726b7177a8000, 0x878678326eac9000,
-        0xa968163f0a57b400, 0xd3c21bcecceda100, 0x84595161401484a0,
-        0xa56fa5b99019a5c8, 0xcecb8f27f4200f3a, 0x813f3978f8940984,
-        0xa18f07d736b90be5, 0xc9f2c9cd04674ede, 0xfc6f7c4045812296,
-        0x9dc5ada82b70b59d, 0xc5371912364ce305, 0xf684df56c3e01bc6,
-        0x9a130b963a6c115c, 0xc097ce7bc90715b3, 0xf0bdc21abb48db20,
-        0x96769950b50d88f4, 0xbc143fa4e250eb31, 0xeb194f8e1ae525fd,
-        0x92efd1b8d0cf37be, 0xb7abc627050305ad, 0xe596b7b0c643c719,
-        0x8f7e32ce7bea5c6f, 0xb35dbf821ae4f38b, 0xe0352f62a19e306e};
+        0x81ceb32c4b43fcf5, 0xa2425ff75e14fc32, 0xcad2f7f5359a3b3f, 0xfd87b5f28300ca0e,
+        0x9e74d1b791e07e49, 0xc612062576589ddb, 0xf79687aed3eec552, 0x9abe14cd44753b53,
+        0xc16d9a0095928a28, 0xf1c90080baf72cb2, 0x971da05074da7bef, 0xbce5086492111aeb,
+        0xec1e4a7db69561a6, 0x9392ee8e921d5d08, 0xb877aa3236a4b44a, 0xe69594bec44de15c,
+        0x901d7cf73ab0acda, 0xb424dc35095cd810, 0xe12e13424bb40e14, 0x8cbccc096f5088cc,
+        0xafebff0bcb24aaff, 0xdbe6fecebdedd5bf, 0x89705f4136b4a598, 0xabcc77118461cefd,
+        0xd6bf94d5e57a42bd, 0x8637bd05af6c69b6, 0xa7c5ac471b478424, 0xd1b71758e219652c,
+        0x83126e978d4fdf3c, 0xa3d70a3d70a3d70b, 0xcccccccccccccccd, 0x8000000000000000,
+        0xa000000000000000, 0xc800000000000000, 0xfa00000000000000, 0x9c40000000000000,
+        0xc350000000000000, 0xf424000000000000, 0x9896800000000000, 0xbebc200000000000,
+        0xee6b280000000000, 0x9502f90000000000, 0xba43b74000000000, 0xe8d4a51000000000,
+        0x9184e72a00000000, 0xb5e620f480000000, 0xe35fa931a0000000, 0x8e1bc9bf04000000,
+        0xb1a2bc2ec5000000, 0xde0b6b3a76400000, 0x8ac7230489e80000, 0xad78ebc5ac620000,
+        0xd8d726b7177a8000, 0x878678326eac9000, 0xa968163f0a57b400, 0xd3c21bcecceda100,
+        0x84595161401484a0, 0xa56fa5b99019a5c8, 0xcecb8f27f4200f3a, 0x813f3978f8940984,
+        0xa18f07d736b90be5, 0xc9f2c9cd04674ede, 0xfc6f7c4045812296, 0x9dc5ada82b70b59d,
+        0xc5371912364ce305, 0xf684df56c3e01bc6, 0x9a130b963a6c115c, 0xc097ce7bc90715b3,
+        0xf0bdc21abb48db20, 0x96769950b50d88f4, 0xbc143fa4e250eb31, 0xeb194f8e1ae525fd,
+        0x92efd1b8d0cf37be, 0xb7abc627050305ad, 0xe596b7b0c643c719, 0x8f7e32ce7bea5c6f,
+        0xb35dbf821ae4f38b, 0xe0352f62a19e306e};
     return pow10_significands[k - float_info<float>::min_k];
   }
 
@@ -1083,8 +1053,7 @@ template <> struct cache_accessor<float> {
     return static_cast<uint32_t>(cache >> (64 - 1 - beta_minus_1));
   }
 
-  static bool compute_mul_parity(carrier_uint two_f,
-                                 const cache_entry_type& cache,
+  static bool compute_mul_parity(carrier_uint two_f, const cache_entry_type& cache,
                                  int beta_minus_1) FMT_NOEXCEPT {
     FMT_ASSERT(beta_minus_1 >= 1, "");
     FMT_ASSERT(beta_minus_1 < 64, "");
@@ -1109,14 +1078,14 @@ template <> struct cache_accessor<float> {
   static carrier_uint compute_round_up_for_shorter_interval_case(
       const cache_entry_type& cache, int beta_minus_1) FMT_NOEXCEPT {
     return (static_cast<carrier_uint>(
-                cache >>
-                (64 - float_info<float>::significand_bits - 2 - beta_minus_1)) +
+                cache >> (64 - float_info<float>::significand_bits - 2 - beta_minus_1)) +
             1) /
            2;
   }
 };
 
-template <> struct cache_accessor<double> {
+template <>
+struct cache_accessor<double> {
   using carrier_uint = float_info<double>::carrier_uint;
   using cache_entry_type = uint128_wrapper;
 
@@ -1778,14 +1747,12 @@ template <> struct cache_accessor<double> {
     return pow10_significands[k - float_info<double>::min_k];
 #else
     static constexpr const uint64_t powers_of_5_64[] = {
-        0x0000000000000001, 0x0000000000000005, 0x0000000000000019,
-        0x000000000000007d, 0x0000000000000271, 0x0000000000000c35,
-        0x0000000000003d09, 0x000000000001312d, 0x000000000005f5e1,
-        0x00000000001dcd65, 0x00000000009502f9, 0x0000000002e90edd,
-        0x000000000e8d4a51, 0x0000000048c27395, 0x000000016bcc41e9,
-        0x000000071afd498d, 0x0000002386f26fc1, 0x000000b1a2bc2ec5,
-        0x000003782dace9d9, 0x00001158e460913d, 0x000056bc75e2d631,
-        0x0001b1ae4d6e2ef5, 0x000878678326eac9, 0x002a5a058fc295ed,
+        0x0000000000000001, 0x0000000000000005, 0x0000000000000019, 0x000000000000007d,
+        0x0000000000000271, 0x0000000000000c35, 0x0000000000003d09, 0x000000000001312d,
+        0x000000000005f5e1, 0x00000000001dcd65, 0x00000000009502f9, 0x0000000002e90edd,
+        0x000000000e8d4a51, 0x0000000048c27395, 0x000000016bcc41e9, 0x000000071afd498d,
+        0x0000002386f26fc1, 0x000000b1a2bc2ec5, 0x000003782dace9d9, 0x00001158e460913d,
+        0x000056bc75e2d631, 0x0001b1ae4d6e2ef5, 0x000878678326eac9, 0x002a5a058fc295ed,
         0x00d3c21bcecceda1, 0x0422ca8b0a00a425, 0x14adf4b7320334b9};
 
     static constexpr const uint32_t pow10_recovery_errors[] = {
@@ -1815,25 +1782,23 @@ template <> struct cache_accessor<double> {
     // Try to recover the real cache.
     uint64_t pow5 = powers_of_5_64[offset];
     uint128_wrapper recovered_cache = umul128(base_cache.high(), pow5);
-    uint128_wrapper middle_low =
-        umul128(base_cache.low() - (kb < 0 ? 1u : 0u), pow5);
+    uint128_wrapper middle_low = umul128(base_cache.low() - (kb < 0 ? 1u : 0u), pow5);
 
     recovered_cache += middle_low.high();
 
     uint64_t high_to_middle = recovered_cache.high() << (64 - alpha);
     uint64_t middle_to_low = recovered_cache.low() << (64 - alpha);
 
-    recovered_cache =
-        uint128_wrapper{(recovered_cache.low() >> alpha) | high_to_middle,
-                        ((middle_low.low() >> alpha) | middle_to_low)};
+    recovered_cache = uint128_wrapper{(recovered_cache.low() >> alpha) | high_to_middle,
+                                      ((middle_low.low() >> alpha) | middle_to_low)};
 
     if (kb < 0) recovered_cache += 1;
 
     // Get error.
     int error_idx = (k - float_info<double>::min_k) / 16;
-    uint32_t error = (pow10_recovery_errors[error_idx] >>
-                      ((k - float_info<double>::min_k) % 16) * 2) &
-                     0x3;
+    uint32_t error =
+        (pow10_recovery_errors[error_idx] >> ((k - float_info<double>::min_k) % 16) * 2) &
+        0x3;
 
     // Add the error back.
     FMT_ASSERT(recovered_cache.low() + error >= recovered_cache.low(), "");
@@ -1851,8 +1816,7 @@ template <> struct cache_accessor<double> {
     return static_cast<uint32_t>(cache.high() >> (64 - 1 - beta_minus_1));
   }
 
-  static bool compute_mul_parity(carrier_uint two_f,
-                                 const cache_entry_type& cache,
+  static bool compute_mul_parity(carrier_uint two_f, const cache_entry_type& cache,
                                  int beta_minus_1) FMT_NOEXCEPT {
     FMT_ASSERT(beta_minus_1 >= 1, "");
     FMT_ASSERT(beta_minus_1 < 64, "");
@@ -1886,15 +1850,12 @@ template <> struct cache_accessor<double> {
 // Various integer checks
 template <class T>
 bool is_left_endpoint_integer_shorter_interval(int exponent) FMT_NOEXCEPT {
-  return exponent >=
-             float_info<
-                 T>::case_shorter_interval_left_endpoint_lower_threshold &&
-         exponent <=
-             float_info<T>::case_shorter_interval_left_endpoint_upper_threshold;
+  return exponent >= float_info<T>::case_shorter_interval_left_endpoint_lower_threshold &&
+         exponent <= float_info<T>::case_shorter_interval_left_endpoint_upper_threshold;
 }
 template <class T>
-bool is_endpoint_integer(typename float_info<T>::carrier_uint two_f,
-                         int exponent, int minus_k) FMT_NOEXCEPT {
+bool is_endpoint_integer(typename float_info<T>::carrier_uint two_f, int exponent,
+                         int minus_k) FMT_NOEXCEPT {
   if (exponent < float_info<T>::case_fc_pm_half_lower_threshold) return false;
   // For k >= 0.
   if (exponent <= float_info<T>::case_fc_pm_half_upper_threshold) return true;
@@ -2061,23 +2022,22 @@ FMT_INLINE decimal_fp<T> shorter_interval_case(int exponent) FMT_NOEXCEPT {
 
   // Otherwise, compute the round-up of y
   ret_value.significand =
-      cache_accessor<T>::compute_round_up_for_shorter_interval_case(
-          cache, beta_minus_1);
+      cache_accessor<T>::compute_round_up_for_shorter_interval_case(cache, beta_minus_1);
   ret_value.exponent = minus_k;
 
   // When tie occurs, choose one of them according to the rule
   if (exponent >= float_info<T>::shorter_interval_tie_lower_threshold &&
       exponent <= float_info<T>::shorter_interval_tie_upper_threshold) {
-    ret_value.significand = ret_value.significand % 2 == 0
-                                ? ret_value.significand
-                                : ret_value.significand - 1;
+    ret_value.significand = ret_value.significand % 2 == 0 ? ret_value.significand
+                                                           : ret_value.significand - 1;
   } else if (ret_value.significand < xi) {
     ++ret_value.significand;
   }
   return ret_value;
 }
 
-template <typename T> decimal_fp<T> to_decimal(T x) FMT_NOEXCEPT {
+template <typename T>
+decimal_fp<T> to_decimal(T x) FMT_NOEXCEPT {
   // Step 1: integer promotion & Schubfach multiplier calculation.
 
   using carrier_uint = typename float_info<T>::carrier_uint;
@@ -2088,8 +2048,8 @@ template <typename T> decimal_fp<T> to_decimal(T x) FMT_NOEXCEPT {
   const carrier_uint significand_mask =
       (static_cast<carrier_uint>(1) << float_info<T>::significand_bits) - 1;
   carrier_uint significand = (br & significand_mask);
-  int exponent = static_cast<int>((br & exponent_mask<T>()) >>
-                                  float_info<T>::significand_bits);
+  int exponent =
+      static_cast<int>((br & exponent_mask<T>()) >> float_info<T>::significand_bits);
 
   if (exponent != 0) {  // Check if normal.
     exponent += float_info<T>::exponent_bias - float_info<T>::significand_bits;
@@ -2097,8 +2057,7 @@ template <typename T> decimal_fp<T> to_decimal(T x) FMT_NOEXCEPT {
     // Shorter interval case; proceed like Schubfach.
     if (significand == 0) return shorter_interval_case<T>(exponent);
 
-    significand |=
-        (static_cast<carrier_uint>(1) << float_info<T>::significand_bits);
+    significand |= (static_cast<carrier_uint>(1) << float_info<T>::significand_bits);
   } else {
     // Subnormal case; the interval is always regular.
     if (significand == 0) return {0, 0};
@@ -2118,8 +2077,7 @@ template <typename T> decimal_fp<T> to_decimal(T x) FMT_NOEXCEPT {
   const uint32_t deltai = cache_accessor<T>::compute_delta(cache, beta_minus_1);
   const carrier_uint two_fc = significand << 1;
   const carrier_uint two_fr = two_fc | 1;
-  const carrier_uint zi =
-      cache_accessor<T>::compute_mul(two_fr << beta_minus_1, cache);
+  const carrier_uint zi = cache_accessor<T>::compute_mul(two_fr << beta_minus_1, cache);
 
   // Step 2: Try larger divisor; remove trailing zeros if necessary
 
@@ -2127,8 +2085,8 @@ template <typename T> decimal_fp<T> to_decimal(T x) FMT_NOEXCEPT {
   // better than the compiler; we are computing zi / big_divisor here
   decimal_fp<T> ret_value;
   ret_value.significand = divide_by_10_to_kappa_plus_1(zi);
-  uint32_t r = static_cast<uint32_t>(zi - float_info<T>::big_divisor *
-                                              ret_value.significand);
+  uint32_t r =
+      static_cast<uint32_t>(zi - float_info<T>::big_divisor * ret_value.significand);
 
   if (r > deltai) {
     goto small_divisor_case_label;
@@ -2145,8 +2103,7 @@ template <typename T> decimal_fp<T> to_decimal(T x) FMT_NOEXCEPT {
     // Check conditions in the order different from the paper
     // to take advantage of short-circuiting
     const carrier_uint two_fl = two_fc - 1;
-    if ((!include_left_endpoint ||
-         !is_endpoint_integer<T>(two_fl, exponent, minus_k)) &&
+    if ((!include_left_endpoint || !is_endpoint_integer<T>(two_fl, exponent, minus_k)) &&
         !cache_accessor<T>::compute_mul_parity(two_fl, cache, beta_minus_1)) {
       goto small_divisor_case_label;
     }
@@ -2168,8 +2125,7 @@ small_divisor_case_label:
 
   // Is dist divisible by 2^kappa?
   if ((dist & mask) == 0) {
-    const bool approx_y_parity =
-        ((dist ^ (float_info<T>::small_divisor / 2)) & 1) != 0;
+    const bool approx_y_parity = ((dist ^ (float_info<T>::small_divisor / 2)) & 1) != 0;
     dist >>= float_info<T>::kappa;
 
     // Is dist divisible by 5^kappa?
@@ -2204,8 +2160,7 @@ small_divisor_case_label:
   else {
     // Since we know dist is small, we might be able to optimize the division
     // better than the compiler; we are computing dist / small_divisor here
-    ret_value.significand +=
-        small_division_by_pow10<float_info<T>::kappa>(dist);
+    ret_value.significand += small_division_by_pow10<float_info<T>::kappa>(dist);
   }
   return ret_value;
 }
@@ -2283,8 +2238,7 @@ void fallback_format(Double d, int num_digits, bool binary32, buffer<char>& buf,
         } else if (high) {
           int result = add_compare(numerator, numerator, denominator);
           // Round half to even.
-          if (result > 0 || (result == 0 && (digit % 2) != 0))
-            ++data[num_digits - 1];
+          if (result > 0 || (result == 0 && (digit % 2) != 0)) ++data[num_digits - 1];
         }
         buf.try_resize(to_unsigned(num_digits));
         exp10 -= num_digits - 1;
@@ -2367,8 +2321,8 @@ int format_float(T value, int precision, float_specs specs, buffer<char>& buf) {
   const int min_exp = -60;  // alpha in Grisu.
   int cached_exp10 = 0;     // K in Grisu.
   fp normalized = normalize(fp(value));
-  const auto cached_pow = get_cached_power(
-      min_exp - (normalized.e + fp::significand_size), cached_exp10);
+  const auto cached_pow =
+      get_cached_power(min_exp - (normalized.e + fp::significand_size), cached_exp10);
   normalized = normalized * cached_pow;
   // Limit precision to the maximum possible number of significant digits in an
   // IEEE754 double because we don't need to generate zeros.
@@ -2395,16 +2349,14 @@ int format_float(T value, int precision, float_specs specs, buffer<char>& buf) {
 }  // namespace detail
 
 template <typename T>
-int snprintf_float(T value, int precision, float_specs specs,
-                   buffer<char>& buf) {
+int snprintf_float(T value, int precision, float_specs specs, buffer<char>& buf) {
   // Buffer capacity must be non-zero, otherwise MSVC's vsnprintf_s will fail.
   FMT_ASSERT(buf.capacity() > buf.size(), "empty buffer");
   static_assert(!std::is_same<T, float>::value, "");
 
   // Subtract 1 to account for the difference in precision since we use %e for
   // both general and exponent format.
-  if (specs.format == float_format::general ||
-      specs.format == float_format::exp)
+  if (specs.format == float_format::general || specs.format == float_format::exp)
     precision = (precision >= 0 ? precision : 6) - 1;
 
   // Build the format string.
@@ -2430,15 +2382,13 @@ int snprintf_float(T value, int precision, float_specs specs,
     auto capacity = buf.capacity() - offset;
 #ifdef FMT_FUZZ
     if (precision > 100000)
-      throw std::runtime_error(
-          "fuzz mode - avoid large allocation inside snprintf");
+      throw std::runtime_error("fuzz mode - avoid large allocation inside snprintf");
 #endif
     // Suppress the warning about a nonliteral format string.
     // Cannot use auto because of a bug in MinGW (#1532).
     int (*snprintf_ptr)(char*, size_t, const char*, ...) = FMT_SNPRINTF;
-    int result = precision >= 0
-                     ? snprintf_ptr(begin, capacity, format, precision, value)
-                     : snprintf_ptr(begin, capacity, format, value);
+    int result = precision >= 0 ? snprintf_ptr(begin, capacity, format, precision, value)
+                                : snprintf_ptr(begin, capacity, format, value);
     if (result < 0) {
       // The buffer will grow exponentially.
       buf.try_reserve(buf.capacity() + 1);
@@ -2499,14 +2449,13 @@ int snprintf_float(T value, int precision, float_specs specs,
 }
 }  // namespace detail
 
-template <> struct formatter<detail::bigint> {
-  FMT_CONSTEXPR format_parse_context::iterator parse(
-      format_parse_context& ctx) {
+template <>
+struct formatter<detail::bigint> {
+  FMT_CONSTEXPR format_parse_context::iterator parse(format_parse_context& ctx) {
     return ctx.begin();
   }
 
-  format_context::iterator format(const detail::bigint& n,
-                                  format_context& ctx) {
+  format_context::iterator format(const detail::bigint& n, format_context& ctx) {
     auto out = ctx.out();
     bool first = true;
     for (auto i = n.bigits_.size(); i > 0; --i) {
@@ -2519,8 +2468,7 @@ template <> struct formatter<detail::bigint> {
       out = format_to(out, FMT_STRING("{:08x}"), value);
     }
     if (n.exp_ > 0)
-      out = format_to(out, FMT_STRING("p{}"),
-                      n.exp_ * detail::bigint::bigit_bits);
+      out = format_to(out, FMT_STRING("p{}"), n.exp_ * detail::bigint::bigit_bits);
     return out;
   }
 };
@@ -2554,8 +2502,7 @@ FMT_FUNC void detail::error_handler::on_error(const char* message) {
   FMT_THROW(format_error(message));
 }
 
-FMT_FUNC void report_system_error(int error_code,
-                                  const char* message) FMT_NOEXCEPT {
+FMT_FUNC void report_system_error(int error_code, const char* message) FMT_NOEXCEPT {
   report_error(format_system_error, error_code, message);
 }
 
@@ -2582,9 +2529,8 @@ FMT_FUNC void print(std::FILE* f, string_view text) {
   if (_isatty(fd)) {
     detail::utf8_to_utf16 u16(string_view(text.data(), text.size()));
     auto written = detail::dword();
-    if (detail::WriteConsoleW(reinterpret_cast<void*>(_get_osfhandle(fd)),
-                              u16.c_str(), static_cast<uint32_t>(u16.size()),
-                              &written, nullptr)) {
+    if (detail::WriteConsoleW(reinterpret_cast<void*>(_get_osfhandle(fd)), u16.c_str(),
+                              static_cast<uint32_t>(u16.size()), &written, nullptr)) {
       return;
     }
     // Fallback to fwrite on failure. It can happen if the output has been
@@ -2606,8 +2552,7 @@ FMT_FUNC void vprint(std::FILE* f, string_view format_str, format_args args) {
 FMT_FUNC void detail::vprint_mojibake(std::FILE* f, string_view format_str,
                                       format_args args) {
   memory_buffer buffer;
-  detail::vformat_to(buffer, format_str,
-                     basic_format_args<buffer_context<char>>(args));
+  detail::vformat_to(buffer, format_str, basic_format_args<buffer_context<char>>(args));
   fwrite_fully(buffer.data(), 1, buffer.size(), f);
 }
 #endif

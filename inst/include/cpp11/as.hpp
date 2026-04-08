@@ -184,8 +184,14 @@ template <typename T>
 enable_if_c_string<T, T> as_cpp(SEXP from) {
   if (Rf_isString(from)) {
     if (Rf_xlength(from) == 1) {
-      // TODO: use vmaxget / vmaxset here?
-      return {unwind_protect([&] { return Rf_translateCharUTF8(STRING_ELT(from, 0)); })};
+      void* vmax = vmaxget();
+
+      const char* result =
+          unwind_protect([&] { return Rf_translateCharUTF8(STRING_ELT(from, 0)); });
+
+      vmaxset(vmax);
+
+      return {result};
     }
   }
 
