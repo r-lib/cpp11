@@ -4,6 +4,7 @@
 #include "cpp11/altrep.hpp"
 #include "cpp11/as.hpp"
 #include "cpp11/attribute_proxy.hpp"
+#include "cpp11/complexes.hpp"
 #include "cpp11/data_frame.hpp"
 #include "cpp11/doubles.hpp"
 #include "cpp11/environment.hpp"

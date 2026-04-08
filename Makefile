@@ -3,8 +3,13 @@ all:
 	@Rscript -e 'devtools::load_all("cpp11test")'
 	@echo "make: Leaving directory 'cpp11test/src'"
 
+install:
+	@Rscript -e 'devtools::document()'
+	@Rscript -e 'devtools::install()'
+
 test: all
-	@echo "make: Entering directory 'cpp11test/tests/testthat'"
+	@echo "make: Entering directory 'cpp11test'"
+	@Rscript -e 'devtools::document("cpp11test")'
 	@Rscript -e 'devtools::test("cpp11test")'
 	@echo "make: Leaving directory 'cpp11test/tests/testthat'"
 
