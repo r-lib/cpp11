@@ -236,6 +236,14 @@ rcpp_push_and_truncate_ <- function(size_sxp) {
   .Call(`_cpp11test_rcpp_push_and_truncate_`, size_sxp)
 }
 
+test_template_stop <- function() {
+  invisible(.Call(`_cpp11test_test_template_stop`))
+}
+
+test_template_warning <- function() {
+  invisible(.Call(`_cpp11test_test_template_warning`))
+}
+
 test_destruction_inner <- function() {
   invisible(.Call(`_cpp11test_test_destruction_inner`))
 }
