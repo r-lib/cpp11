@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* `cpp_source()` now works with multiple `file`s.
+
 # cpp11 0.5.4
 
 * Removed non-API usage of `R_NamespaceRegistry`.
