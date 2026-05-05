@@ -1,6 +1,6 @@
 # cpp11 (development version)
 
-* `cpp_source()` now works with multiple `file`s.
+* `cpp_source()` now works with multiple `file`s (#492).
 
 # cpp11 0.5.4
 
