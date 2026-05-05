@@ -78,6 +78,7 @@ are freely available, including <https://www.learncpp.com/> and
 We’ll use [cpp11](https://github.com/r-lib/cpp11) to call C++ from R:
 
 ``` r
+
 library(cpp11)
 ```
 
@@ -94,6 +95,7 @@ You’ll also need a working C++ compiler. To get it:
 allows you to write C++ functions in R:
 
 ``` r
+
 cpp_function('int add(int x, int y, int z) {
   int sum = x + y + z;
   return sum;
@@ -102,7 +104,7 @@ cpp_function('int add(int x, int y, int z) {
 add
 #> function (x, y, z) 
 #> {
-#>     .Call("_code_1eac7a9c5891_add", x, y, z, PACKAGE = "code_1eac7a9c5891")
+#>     .Call("_package_mwlefoodfi_add", x, y, z, PACKAGE = "package_mwlefoodfi")
 #> }
 add(1, 2, 3)
 #> [1] 6
@@ -129,6 +131,7 @@ Let’s start with a very simple function. It has no arguments and always
 returns the integer 1:
 
 ``` r
+
 one <- function() 1L
 ```
 
@@ -144,6 +147,7 @@ We can compile and use this from R with
 [`cpp_function()`](https://cpp11.r-lib.org/dev/reference/cpp_source.md)
 
 ``` r
+
 cpp_function('int one() {
   return 1;
 }')
@@ -176,6 +180,7 @@ The next example function implements a scalar version of the
 the input is positive, and -1 if it’s negative:
 
 ``` r
+
 sign_r <- function(x) {
   if (x > 0) {
     1
@@ -217,6 +222,7 @@ using a loop. If you’ve been programming in R a while, you’ll probably
 have a visceral reaction to this function!
 
 ``` r
+
 sum_r <- function(x) {
   total <- 0
   for (i in seq_along(x)) {
@@ -232,6 +238,7 @@ clearly express your intent; they’re not faster, but they can make your
 code easier to understand.
 
 ``` r
+
 cpp_function('double sum_cpp(doubles x) {
   int n = x.size();
   double total = 0;
@@ -273,6 +280,7 @@ the built-in (and highly optimised)
 orders of magnitude slower.
 
 ``` r
+
 x <- runif(1e3)
 bench::mark(
   sum(x),
@@ -282,9 +290,9 @@ bench::mark(
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 sum(x)       2.02µs   2.05µs   469136.        0B      0  
-#> 2 sum_cpp(x)    1.9µs   1.95µs   464937.        0B     46.5
-#> 3 sum_r(x)    25.94µs  26.24µs    37466.    31.7KB      0
+#> 1 sum(x)       2.02µs   2.05µs   470867.        0B     47.1
+#> 2 sum_cpp(x)   1.91µs   1.98µs   457391.        0B      0  
+#> 3 sum_r(x)    25.93µs  26.22µs    37468.    31.7KB      0
 ```
 
 ### Vector input, vector output
@@ -293,6 +301,7 @@ Next we’ll create a function that computes the Euclidean distance
 between a value and a vector of values:
 
 ``` r
+
 pdist_r <- function(x, ys) {
   sqrt((x - ys) ^ 2)
 }
@@ -304,6 +313,7 @@ That’s not a problem in the C++ version because we have to be explicit
 about types:
 
 ``` r
+
 cpp_function('doubles pdist_cpp(double x, doubles ys) {
   int n = ys.size();
   writable::doubles out(n);
@@ -329,6 +339,7 @@ Note that because the R version is fully vectorised, it’s already going
 to be fast.
 
 ``` r
+
 y <- runif(1e6)
 bench::mark(
   pdist_r(0.5, y),
@@ -337,8 +348,8 @@ bench::mark(
 #> # A tibble: 2 × 6
 #>   expression             min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr>        <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 pdist_r(0.5, y)     4.76ms   4.88ms      202.    7.63MB     103.
-#> 2 pdist_cpp(0.5, y)   3.75ms   3.82ms      261.    7.63MB     129.
+#> 1 pdist_r(0.5, y)     9.81ms   10.7ms      94.0    7.63MB     47.0
+#> 2 pdist_cpp(0.5, y)   3.72ms    4.3ms     239.     7.63MB    123.
 ```
 
 On my computer, it takes around 5 ms with a 1 million element `y`
@@ -548,6 +559,7 @@ double mpe(list mod) {
 ```
 
 ``` r
+
 mod <- lm(mpg ~ wt, data = mtcars)
 mpe(mod)
 #> [1] -0.01541615
@@ -573,6 +585,7 @@ sexp call_with_one(function f) {
 ```
 
 ``` r
+
 call_with_one(function(x) x + 1)
 #> [1] 2
 call_with_one(paste)
@@ -647,6 +660,7 @@ list scalar_missings() {
 ```
 
 ``` r
+
 str(scalar_missings())
 #> List of 4
 #>  $ : int NA
@@ -680,6 +694,7 @@ expression that involves a NaN (or in C++, NAN) always evaluates as
 FALSE:
 
 ``` r
+
 cpp_eval("NAN == 1")
 #> [1] FALSE
 cpp_eval("NAN < 1")
@@ -697,6 +712,7 @@ making it excellent for this sort of interactive experimentation.) But
 be careful when combining them with Boolean values:
 
 ``` r
+
 cpp_eval("NAN && TRUE")
 #> [1] TRUE
 cpp_eval("NAN || FALSE")
@@ -706,6 +722,7 @@ cpp_eval("NAN || FALSE")
 However, in numeric contexts NaNs will propagate NAs:
 
 ``` r
+
 cpp_eval("NAN + 1")
 #> [1] NaN
 cpp_eval("NAN - 1")
@@ -751,6 +768,7 @@ list missing_sampler() {
 ```
 
 ``` r
+
 str(missing_sampler())
 #> List of 4
 #>  $ : num NA
@@ -1097,6 +1115,7 @@ it another two to three times faster.
 The R code is as follows:
 
 ``` r
+
 gibbs_r <- function(N, thin) {
   mat <- matrix(nrow = N, ncol = 2)
   x <- y <- 0
@@ -1145,6 +1164,7 @@ Benchmarking the two implementations yields a significant speedup for
 running the loops in C++:
 
 ``` r
+
 bench::mark(
   r = {
     set.seed(42)
@@ -1160,8 +1180,8 @@ bench::mark(
 #> # A tibble: 2 × 6
 #>   expression   min median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <dbl>  <dbl>     <dbl>     <dbl>    <dbl>
-#> 1 r           26.5   26.7       1        32.3     16.5
-#> 2 cpp          1      1        26.6       1        1
+#> 1 r           26.8   27.1       1        32.3     19.0
+#> 2 cpp          1      1        26.9       1        1
 ```
 
 ### R vectorisation versus C++ vectorisation
@@ -1173,6 +1193,7 @@ The challenge is to predict a model response from three inputs. The
 basic R version of the predictor looks like:
 
 ``` r
+
 vacc1a <- function(age, female, ily) {
   p <- 0.25 + 0.3 * 1 / (1 - exp(0.04 * age)) + 0.1 * ily
   p <- p * if (female) 1.25 else 0.75
@@ -1186,6 +1207,7 @@ We want to be able to apply this function to many inputs, so we might
 write a vector-input version using a for loop.
 
 ``` r
+
 vacc1 <- function(age, female, ily) {
   n <- length(age)
   out <- numeric(n)
@@ -1209,6 +1231,7 @@ loops and function calls have much lower overhead in C++.
 Either approach is fairly straightforward. In R:
 
 ``` r
+
 vacc2 <- function(age, female, ily) {
   p <- 0.25 + 0.3 * 1 / (1 - exp(0.04 * age)) + 0.1 * ily
   p <- p * ifelse(female, 1.25, 0.75)
@@ -1255,6 +1278,7 @@ We next generate some sample data, and check that all three versions
 return the same values:
 
 ``` r
+
 n <- 1000
 age <- rnorm(n, mean = 50, sd = 10)
 female <- sample(c(T, F), n, rep = TRUE)
@@ -1270,6 +1294,7 @@ C++ version: it used `0.004` instead of `0.04`. Finally, we can
 benchmark our three approaches:
 
 ``` r
+
 bench::mark(
   vacc1 = vacc1(age, female, ily),
   vacc2 = vacc2(age, female, ily),
@@ -1278,9 +1303,9 @@ bench::mark(
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 vacc1        1.54ms   1.59ms      612.    7.86KB     25.3
-#> 2 vacc2       42.48µs  44.41µs    20609.  146.68KB     36.2
-#> 3 vacc3       12.12µs  12.35µs    79015.   14.02KB     15.8
+#> 1 vacc1         1.5ms   1.59ms      615.    7.86KB     45.9
+#> 2 vacc2        42.9µs  45.05µs    20779.  146.68KB     37.5
+#> 3 vacc3        12.3µs  12.57µs    77734.   14.02KB     15.5
 ```
 
 Not surprisingly, our original approach with loops is very slow.
@@ -1323,6 +1348,7 @@ Then the easiest way to configure everything is to call
   `R/pkgname-package.R`)
 
   ``` r
+
   #' @useDynLib pkgname, .registration = TRUE
   ```
 

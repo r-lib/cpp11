@@ -2,6 +2,10 @@
 
 ## cpp11 (development version)
 
+- [`cpp_source()`](https://cpp11.r-lib.org/dev/reference/cpp_source.md)
+  now works with multiple `file`s
+  ([\#492](https://github.com/r-lib/cpp11/issues/492)).
+
 ## cpp11 0.5.4
 
 CRAN release: 2026-04-04

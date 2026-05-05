@@ -101,6 +101,7 @@ double add_some_(double x, double amount) {
 ```
 
 ``` r
+
 add_some <- function(x, amount = 1) {
   add_some_(x, amount)
 }
@@ -136,6 +137,7 @@ bool is_named(cpp11::strings x) {
 ```
 
 ``` r
+
 is_named("foo")
 #> [1] FALSE
 
@@ -169,6 +171,7 @@ cpp11::writable::logicals my_both() {
 ```
 
 ``` r
+
 my_false()
 #> [1] FALSE
 
@@ -217,6 +220,7 @@ void set_foo(cpp11::environment x, double value) {
 ```
 
 ``` r
+
 x <- new.env()
 
 foo_exists(x)
@@ -250,6 +254,7 @@ cpp11::raws push_raws() {
 ```
 
 ``` r
+
 push_raws()
 #> [1] 68 69
 ```
@@ -336,12 +341,13 @@ void add_one(cpp11::sexp x_sexp) {
 ```
 
 ``` r
+
 x <- c(1L, 2L, 3L, 4L)
 .Internal(inspect(x))
-#> @564c46e47368 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4
+#> @5636557b5ae8 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4
 add_one(x)
 .Internal(inspect(x))
-#> @564c46e47368 13 INTSXP g0c2 [REF(5)] (len=4, tl=0) 2,3,4,5
+#> @5636557b5ae8 13 INTSXP g0c2 [REF(5)] (len=4, tl=0) 2,3,4,5
 x
 #> [1] 2 3 4 5
 ```
@@ -396,6 +402,7 @@ void test_destructor_bad() {
 ```
 
 ``` r
+
 test_destructor_ok()
 #> Error:
 #> ! oh no!
@@ -406,6 +413,7 @@ be destructed, and you’ll end up with a memory leak at best, and a much
 more sinister issue if your destructor is important:
 
 ``` r
+
 test_destructor_bad()
 #> Error: oh no!
 ```
@@ -578,6 +586,7 @@ cpp11::sexp test_extract_r_api(cpp11::strings x) {
 ```
 
 ``` r
+
 set.seed(123)
 x <- sample(letters, 1e6, replace = TRUE)
 
@@ -590,8 +599,8 @@ bench::mark(
 #> # A tibble: 2 × 6
 #>   expression                 min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr>            <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 test_extract_cpp11(x)  40.53ms  44.56ms      21.8        0B     39.6
-#> 2 test_extract_r_api(x)   1.86ms   1.88ms     508.         0B      0
+#> 1 test_extract_cpp11(x)  39.18ms  40.09ms      23.8        0B     49.6
+#> 2 test_extract_r_api(x)   2.18ms   2.19ms     454.         0B      0
 ```
 
 We plan to improve on this in the future, but for now this is one of the

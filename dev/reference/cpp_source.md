@@ -1,6 +1,6 @@
 # Compile C++ code
 
-`cpp_source()` compiles and loads a single C++ file for use in R.
+`cpp_source()` compiles and loads one or more C++ files for use in R.
 `cpp_function()` compiles and loads a single function for use in R.
 `cpp_eval()` evaluates a single C++ expression and returns the result.
 
@@ -38,7 +38,7 @@ cpp_eval(
 
 - file:
 
-  A file containing C++ code to compile
+  One or more files containing C++ code to compile
 
 - code:
 
@@ -83,6 +83,7 @@ external packages. This is equivalent to putting those packages in the
 ## Examples
 
 ``` r
+
 cpp_source(
   code = '#include "cpp11/integers.hpp"
 

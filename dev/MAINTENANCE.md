@@ -15,6 +15,7 @@ change, and then run `devtools::test("./cpp11test")`. Precisely, this
 looks like:
 
 ``` r
+
 # Install dev cpp11, clean the cpp11test dll manually since it thinks nothing
 # has changed, then recompile and run its tests.
 devtools::install()
