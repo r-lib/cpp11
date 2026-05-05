@@ -444,6 +444,22 @@ extern "C" SEXP _cpp11test_rcpp_push_and_truncate_(SEXP size_sxp) {
     return cpp11::as_sexp(rcpp_push_and_truncate_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(size_sxp)));
   END_CPP11
 }
+// template-1-stop.cpp
+void test_template_stop();
+extern "C" SEXP _cpp11test_test_template_stop() {
+  BEGIN_CPP11
+    test_template_stop();
+    return R_NilValue;
+  END_CPP11
+}
+// template-2-warn.cpp
+void test_template_warning();
+extern "C" SEXP _cpp11test_test_template_warning() {
+  BEGIN_CPP11
+    test_template_warning();
+    return R_NilValue;
+  END_CPP11
+}
 // test-protect-nested.cpp
 void test_destruction_inner();
 extern "C" SEXP _cpp11test_test_destruction_inner() {
@@ -534,6 +550,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cpp11test_sum_int_foreach_",         (DL_FUNC) &_cpp11test_sum_int_foreach_,         1},
     {"_cpp11test_test_destruction_inner",   (DL_FUNC) &_cpp11test_test_destruction_inner,   0},
     {"_cpp11test_test_destruction_outer",   (DL_FUNC) &_cpp11test_test_destruction_outer,   0},
+    {"_cpp11test_test_template_stop",       (DL_FUNC) &_cpp11test_test_template_stop,       0},
+    {"_cpp11test_test_template_warning",    (DL_FUNC) &_cpp11test_test_template_warning,    0},
     {"_cpp11test_upper_bound",              (DL_FUNC) &_cpp11test_upper_bound,              2},
     {"run_testthat_tests",                  (DL_FUNC) &run_testthat_tests,                  1},
     {NULL, NULL, 0}

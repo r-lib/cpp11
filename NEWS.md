@@ -1,5 +1,7 @@
 # cpp11 (development version)
 
+* Fixed an issue where `cpp11::stop()` and `cpp11::warning()` calls with the same template instantiation could cause a crash on some systems (#491, #295).
+
 * `cpp_source()` now works with multiple `file`s (#492).
 
 # cpp11 0.5.4
