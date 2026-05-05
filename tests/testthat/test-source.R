@@ -54,6 +54,20 @@ test_that("cpp_source works with files called `cpp11.cpp`", {
   expect_true(always_true())
 })
 
+test_that("cpp_source works with multiple `file`s", {
+  skip_on_os("solaris")
+
+  dll_info <- cpp_source(test_path(
+    "fixtures",
+    "test-two-files",
+    c("one.cpp", "two.cpp")
+  ))
+  on.exit(dyn.unload(dll_info[["path"]]), add = TRUE)
+
+  expect_identical(foo(), 1L)
+  expect_identical(bar(), 1)
+})
+
 test_that("cpp_source returns original file name on error", {
 
   expect_output(try(cpp_source(test_path("single_error.cpp"), clean = TRUE), silent = TRUE),
