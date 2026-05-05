@@ -33,7 +33,7 @@ cpp_eval(
 )
 }
 \arguments{
-\item{file}{A file containing C++ code to compile}
+\item{file}{One or more files containing C++ code to compile}
 
 \item{code}{If non-null, the C++ code to compile}
 
@@ -56,7 +56,7 @@ For \code{\link[=cpp_source]{cpp_source()}} and \verb{[cpp_function()]} the resu
 expression.
 }
 \description{
-\code{\link[=cpp_source]{cpp_source()}} compiles and loads a single C++ file for use in R.
+\code{\link[=cpp_source]{cpp_source()}} compiles and loads one or more C++ files for use in R.
 \code{\link[=cpp_function]{cpp_function()}} compiles and loads a single function for use in R.
 \code{\link[=cpp_eval]{cpp_eval()}} evaluates a single C++ expression and returns the result.
 }
