@@ -1,3 +1,5 @@
+# cpp11 (development version)
+
 # cpp11 0.5.5
 
 * Fixed an issue where `cpp11::stop()` and `cpp11::warning()` calls with the same template instantiation could cause a crash on some systems (#491, #295).
