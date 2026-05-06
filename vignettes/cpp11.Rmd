@@ -45,7 +45,7 @@ Typical bottlenecks that C++ can address include:
 The aim of this vignette is to discuss only those aspects of C++ and cpp11 that are absolutely necessary to help you eliminate bottlenecks in your code.
 We won't spend much time on advanced features like object-oriented programming or templates because the focus is on writing small, self-contained functions, not big programs.
 A working knowledge of C++ is helpful, but not essential.
-Many good tutorials and references are freely available, including <https://www.learncpp.com/> and <https://en.cppreference.com/w/cpp.html>.
+Many good tutorials and references are freely available, including <https://www.learncpp.com/> and <https://en.cppreference.com/cpp>.
 For more advanced topics, the *Effective C++* series by Scott Meyers is a popular choice.
 
 ### Outline
@@ -87,10 +87,12 @@ To get it:
 `cpp_function()` allows you to write C++ functions in R:
 
 ```{r add}
-cpp_function('int add(int x, int y, int z) {
+cpp_function(
+  'int add(int x, int y, int z) {
   int sum = x + y + z;
   return sum;
-}')
+}'
+)
 # add works like a regular R function
 add
 add(1, 2, 3)
@@ -127,9 +129,11 @@ int one() {
 We can compile and use this from R with `cpp_function()`
 
 ```{r one-cpp}
-cpp_function('int one() {
+cpp_function(
+  'int one() {
   return 1;
-}')
+}'
+)
 ```
 
 This small function illustrates a number of important differences between R and C++:
@@ -161,7 +165,8 @@ sign_r <- function(x) {
     -1
   }
 }
-cpp_function('int sign_cpp(int x) {
+cpp_function(
+  'int sign_cpp(int x) {
   if (x > 0) {
     return 1;
   } else if (x == 0) {
@@ -169,7 +174,8 @@ cpp_function('int sign_cpp(int x) {
   } else {
     return -1;
   }
-}')
+}'
+)
 ```
 
 In the C++ version:
@@ -201,14 +207,16 @@ In C++, loops have very little overhead, so it's fine to use them.
 In Section [stl](#stl), you'll see alternatives to `for` loops that more clearly express your intent; they're not faster, but they can make your code easier to understand.
 
 ```{r sum-cpp}
-cpp_function('double sum_cpp(doubles x) {
+cpp_function(
+  'double sum_cpp(doubles x) {
   int n = x.size();
   double total = 0;
   for(int i = 0; i < n; ++i) {
     total += x[i];
   }
   return total;
-}')
+}'
+)
 ```
 
 The C++ version is similar, but:
@@ -250,7 +258,7 @@ Next we'll create a function that computes the Euclidean distance between a valu
 
 ```{r pdist-r}
 pdist_r <- function(x, ys) {
-  sqrt((x - ys) ^ 2)
+  sqrt((x - ys)^2)
 }
 ```
 
@@ -258,14 +266,16 @@ In R, it's not obvious that we want `x` to be a scalar from the function definit
 That's not a problem in the C++ version because we have to be explicit about types:
 
 ```{r pdist-cpp}
-cpp_function('doubles pdist_cpp(double x, doubles ys) {
+cpp_function(
+  'doubles pdist_cpp(double x, doubles ys) {
   int n = ys.size();
   writable::doubles out(n);
   for(int i = 0; i < n; ++i) {
     out[i] = sqrt(pow(ys[i] - x, 2.0));
   }
   return out;
-}')
+}'
+)
 ```
 
 This function introduces a few new concepts:
@@ -510,7 +520,7 @@ f("x"_nm = "y", "value"_nm = 1);
 All R objects have attributes, which can be queried and modified with `.attr()`.
 cpp11 also provides `.names()` as an alias for the `names` attribute.
 The following code snippet illustrates these methods.
-Note the use of `{}` [initializer list](https://en.cppreference.com/w/cpp/utility/initializer_list.html) syntax.
+Note the use of `{}` [initializer list](https://en.cppreference.com/cpp/utility/initializer_list.html) syntax.
 This allows you to create an R vector from C++ scalar values:
 
 ```{r attribs, engine = "cpp11"}
@@ -736,7 +746,7 @@ local({
 ### Algorithms
 
 The `<algorithm>` header provides a large number of algorithms that work with iterators.
-A good reference is available at <https://en.cppreference.com/w/cpp/algorithm.html>.
+A good reference is available at <https://en.cppreference.com/cpp/algorithm.html>.
 For example, we could write a basic cpp11 version of `findInterval()` that takes two arguments, a vector of values and a vector of breaks, and locates the bin that each x falls into.
 This shows off a few more advanced iterator features.
 Read the code below and see if you can figure out how it works.
@@ -790,7 +800,7 @@ The most important of these data structures are the `vector`, the `unordered_set
 We'll focus on these three in this section, but using the others is similar: they just have different performance trade-offs.
 For example, the `deque` (pronounced "deck") has a very similar interface to vectors but a different underlying implementation that has different performance trade-offs.
 You may want to try it for your problem.
-A good reference for STL data structures is <https://en.cppreference.com/w/cpp/container.html> --- I recommend you keep it open while working with the STL.
+A good reference for STL data structures is <https://en.cppreference.com/cpp/container.html> --- I recommend you keep it open while working with the STL.
 
 cpp11 knows how to convert from many STL data structures to their R equivalents, so you can return them from your functions without explicitly converting to R data structures.
 
@@ -843,7 +853,7 @@ list rle_cpp(doubles x) {
 (An alternative implementation would be to replace `i` with the iterator `lengths.rbegin()` which always points to the last element of the vector.
 You might want to try implementing that.)
 
-Other methods of a vector are described at <https://en.cppreference.com/w/cpp/container/vector.html>.
+Other methods of a vector are described at <https://en.cppreference.com/cpp/container/vector.html>.
 
 ### Sets
 
@@ -854,7 +864,7 @@ Unordered sets can somtimes be much faster (because they use a hash table intern
 Often even if you need an ordered set, you could consider using an unordered set and then sorting the output.
 Benchmarking with your expected dataset is the best way to determine which is fastest for your data.
 Like vectors, sets are templated, so you need to request the appropriate type of set for your purpose: `unordered_set<int>`, `unordered_set<bool>`, etc.
-More details are available at <https://en.cppreference.com/w/cpp/container/set.html> and <https://en.cppreference.com/w/cpp/container/unordered_set.html>.
+More details are available at <https://en.cppreference.com/cpp/container/set.html> and <https://en.cppreference.com/cpp/container/unordered_set.html>.
 
 The following function uses an unordered set to implement an equivalent to `duplicated()` for integer vectors.
 Note the use of `seen.insert(x[i]).second`.
