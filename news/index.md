@@ -1,5 +1,18 @@
 # Changelog
 
+## cpp11 0.5.5
+
+- Fixed an issue where
+  [`cpp11::stop()`](https://rdrr.io/r/base/stop.html) and
+  [`cpp11::warning()`](https://rdrr.io/r/base/warning.html) calls with
+  the same template instantiation could cause a crash on some systems
+  ([\#491](https://github.com/r-lib/cpp11/issues/491),
+  [\#295](https://github.com/r-lib/cpp11/issues/295)).
+
+- [`cpp_source()`](https://cpp11.r-lib.org/reference/cpp_source.md) now
+  works with multiple `file`s
+  ([\#492](https://github.com/r-lib/cpp11/issues/492)).
+
 ## cpp11 0.5.4
 
 CRAN release: 2026-04-04

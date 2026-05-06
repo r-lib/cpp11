@@ -1,4 +1,4 @@
-pandoc: 3.1.11
+pandoc: 3.8.3
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
@@ -7,7 +7,7 @@ articles:
   FAQ: FAQ.html
   internals: internals.html
   motivations: motivations.html
-last_built: 2026-04-06T13:13Z
+last_built: 2026-05-06T15:16Z
 urls:
   reference: https://cpp11.r-lib.org/reference
   article: https://cpp11.r-lib.org/articles

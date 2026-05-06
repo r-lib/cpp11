@@ -101,6 +101,7 @@ double add_some_(double x, double amount) {
 ```
 
 ``` r
+
 add_some <- function(x, amount = 1) {
   add_some_(x, amount)
 }
@@ -136,6 +137,7 @@ bool is_named(cpp11::strings x) {
 ```
 
 ``` r
+
 is_named("foo")
 #> [1] FALSE
 
@@ -146,7 +148,7 @@ is_named(c(x = "foo"))
 #### 7. How do I return a `cpp11::writable::logicals` object with only a `FALSE` value?
 
 You need to use [list
-initialization](https://en.cppreference.com/w/cpp/language/list_initialization.html)
+initialization](https://en.cppreference.com/cpp/language/list_initialization.html)
 with [`{}`](https://rdrr.io/r/base/Paren.html) to create the object.
 
 ``` cpp
@@ -169,6 +171,7 @@ cpp11::writable::logicals my_both() {
 ```
 
 ``` r
+
 my_false()
 #> [1] FALSE
 
@@ -217,6 +220,7 @@ void set_foo(cpp11::environment x, double value) {
 ```
 
 ``` r
+
 x <- new.env()
 
 foo_exists(x)
@@ -250,6 +254,7 @@ cpp11::raws push_raws() {
 ```
 
 ``` r
+
 push_raws()
 #> [1] 68 69
 ```
@@ -336,12 +341,13 @@ void add_one(cpp11::sexp x_sexp) {
 ```
 
 ``` r
+
 x <- c(1L, 2L, 3L, 4L)
 .Internal(inspect(x))
-#> @56474bf39898 13 INTSXP g0c2 [MARK,REF(2)] (len=4, tl=0) 1,2,3,4
+#> @55870987e728 13 INTSXP g0c2 [REF(2)] (len=4, tl=0) 1,2,3,4
 add_one(x)
 .Internal(inspect(x))
-#> @56474bf39898 13 INTSXP g0c2 [MARK,REF(5)] (len=4, tl=0) 2,3,4,5
+#> @55870987e728 13 INTSXP g0c2 [REF(5)] (len=4, tl=0) 2,3,4,5
 x
 #> [1] 2 3 4 5
 ```
@@ -396,6 +402,7 @@ void test_destructor_bad() {
 ```
 
 ``` r
+
 test_destructor_ok()
 #> Error:
 #> ! oh no!
@@ -406,6 +413,7 @@ be destructed, and you’ll end up with a memory leak at best, and a much
 more sinister issue if your destructor is important:
 
 ``` r
+
 test_destructor_bad()
 #> Error: oh no!
 ```
@@ -578,6 +586,7 @@ cpp11::sexp test_extract_r_api(cpp11::strings x) {
 ```
 
 ``` r
+
 set.seed(123)
 x <- sample(letters, 1e6, replace = TRUE)
 
@@ -590,8 +599,8 @@ bench::mark(
 #> # A tibble: 2 × 6
 #>   expression                 min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr>            <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 test_extract_cpp11(x)  35.33ms  38.49ms      25.2        0B     46.5
-#> 2 test_extract_r_api(x)   1.44ms   1.45ms     687.         0B      0
+#> 1 test_extract_cpp11(x)  40.86ms   41.2ms      23.2        0B     48.4
+#> 2 test_extract_r_api(x)   1.73ms    1.9ms     526.         0B      0
 ```
 
 We plan to improve on this in the future, but for now this is one of the

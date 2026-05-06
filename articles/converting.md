@@ -85,13 +85,13 @@ R when you call the function.
 
 ### Functions
 
-| Rcpp                                         | cpp11                                        |
-|----------------------------------------------|----------------------------------------------|
-| `wrap()`                                     | `as_sexp()`                                  |
-| `as()`                                       | `as_cpp()`                                   |
+| Rcpp | cpp11 |
+|----|----|
+| `wrap()` | `as_sexp()` |
+| `as()` | `as_cpp()` |
 | [`stop()`](https://rdrr.io/r/base/stop.html) | [`stop()`](https://rdrr.io/r/base/stop.html) |
-| `checkUserInterrupt()`                       | `check_user_interrupt()`                     |
-| `CharacterVector::create("a", "b", "c")`     | `{"a", "b", "c"}`                            |
+| `checkUserInterrupt()` | `check_user_interrupt()` |
+| `CharacterVector::create("a", "b", "c")` | `{"a", "b", "c"}` |
 
 Note that [`cpp11::stop()`](https://rdrr.io/r/base/stop.html) and
 [`cpp11::warning()`](https://rdrr.io/r/base/warning.html) are thin

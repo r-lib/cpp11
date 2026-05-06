@@ -13,7 +13,7 @@ directory and add the following to your DESCRIPTION file:
 
 Then decorate C++ functions you want to expose to R with
 `[[cpp11::register]]`. *Note that this is a [C++11
-attribute](https://en.cppreference.com/w/cpp/language/attributes.html),
+attribute](https://en.cppreference.com/cpp/language/attributes.html),
 not a comment like is used in Rcpp.*
 
 cpp11 is a header only library with no hard dependencies and does not

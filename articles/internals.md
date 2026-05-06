@@ -8,6 +8,7 @@ The development repository for cpp11 is
 First install any dependencies needed for development.
 
 ``` r
+
 install.packages("remotes")
 remotes::install_deps(dependencies = TRUE)
 ```
@@ -15,12 +16,14 @@ remotes::install_deps(dependencies = TRUE)
 You can load the package in an interactive R session
 
 ``` r
+
 devtools::load_all()
 ```
 
 Or run the cpp11 tests with
 
 ``` r
+
 devtools::test()
 ```
 
@@ -33,6 +36,7 @@ If you change the cpp11 headers you will need to install the new version
 of cpp11 and then clean and recompile the cpp11test package:
 
 ``` r
+
 # Assuming your working directory is `cpp11test/`
 devtools::clean_dll()
 devtools::load_all()
@@ -42,6 +46,7 @@ To calculate code coverage of the cpp11 package run the following from
 the `cpp11` root directory.
 
 ``` r
+
 covr::report(cpp11_coverage())
 ```
 
@@ -126,7 +131,7 @@ In particular the [substitution failure is not an error
 (SFINAE)](https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error)
 technique is used to control overloading of the functions. If we could
 use C++20 a lot of this code would be made simpler with
-[Concepts](https://en.cppreference.com/w/cpp/language/constraints.html),
+[Concepts](https://en.cppreference.com/cpp/language/constraints.html),
 but alas.
 
 The most common C++ types are included in the test suite and should work
