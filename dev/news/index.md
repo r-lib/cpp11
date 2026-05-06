@@ -2,6 +2,8 @@
 
 ## cpp11 (development version)
 
+## cpp11 0.5.5
+
 - Fixed an issue where
   [`cpp11::stop()`](https://rdrr.io/r/base/stop.html) and
   [`cpp11::warning()`](https://rdrr.io/r/base/warning.html) calls with

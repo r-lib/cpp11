@@ -298,9 +298,9 @@ bench::mark(
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 sum(x)       2.03µs   2.05µs   472458.        0B     47.3
-#> 2 sum_cpp(x)   1.95µs   2.02µs   457329.        0B      0  
-#> 3 sum_r(x)    26.16µs  26.75µs    36839.    31.7KB      0
+#> 1 sum(x)       2.49µs   2.54µs   380437.        0B     38.0
+#> 2 sum_cpp(x)   2.03µs   2.17µs   420938.        0B      0  
+#> 3 sum_r(x)    28.62µs  29.42µs    33431.    31.7KB      0
 ```
 
 ### Vector input, vector output
@@ -358,8 +358,8 @@ bench::mark(
 #> # A tibble: 2 × 6
 #>   expression             min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr>        <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 pdist_r(0.5, y)     9.66ms   9.89ms      99.9    7.63MB     51.7
-#> 2 pdist_cpp(0.5, y)   3.65ms   3.75ms     264.     7.63MB    132.
+#> 1 pdist_r(0.5, y)    10.97ms  11.48ms      87.3    7.63MB     47.3
+#> 2 pdist_cpp(0.5, y)   4.13ms   4.48ms     221.     7.63MB    110.
 ```
 
 On my computer, it takes around 5 ms with a 1 million element `y`
@@ -1190,8 +1190,8 @@ bench::mark(
 #> # A tibble: 2 × 6
 #>   expression   min median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <dbl>  <dbl>     <dbl>     <dbl>    <dbl>
-#> 1 r           27.6   27.5       1        32.3     17.9
-#> 2 cpp          1      1        27.3       1        1
+#> 1 r           27.8   28.6       1        32.3     17.0
+#> 2 cpp          1      1        28.8       1        1
 ```
 
 ### R vectorisation versus C++ vectorisation
@@ -1313,9 +1313,9 @@ bench::mark(
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 vacc1        1.54ms   1.66ms      586.    7.86KB    44.0 
-#> 2 vacc2       45.11µs  80.69µs    12215.  146.68KB    22.7 
-#> 3 vacc3       12.17µs   15.8µs    61547.   14.02KB     6.16
+#> 1 vacc1        1.58ms   1.68ms      582.    7.86KB    50.6 
+#> 2 vacc2       44.55µs  49.06µs    17929.  146.68KB    36.4 
+#> 3 vacc3        11.3µs  11.63µs    82806.   14.02KB     8.28
 ```
 
 Not surprisingly, our original approach with loops is very slow.
