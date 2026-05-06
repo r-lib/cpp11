@@ -186,7 +186,7 @@ resources automatically even when errors occur.
 
 The C language does not have support for exceptions, so error handling
 is done a variety of ways. These include error codes like
-[errno](https://en.cppreference.com/w/c/error/errno), conditional
+[errno](https://en.cppreference.com/c/error/errno), conditional
 statements, and in the R codebase the
 [longjmp](https://cplusplus.com/reference/csetjmp/longjmp/) function.
 
@@ -417,16 +417,15 @@ C++11 provides a host of new features to the C++ language. cpp11 uses a
 number of these including
 
 - [move
-  semantics](https://en.cppreference.com/w/cpp/language/move_constructor.html)
-- [type
-  traits](https://en.cppreference.com/w/cpp/header/type_traits.html)
-- [initializer_list](https://en.cppreference.com/w/cpp/utility/initializer_list.html)
+  semantics](https://en.cppreference.com/cpp/language/move_constructor.html)
+- [type traits](https://en.cppreference.com/cpp/header/type_traits.html)
+- [initializer_list](https://en.cppreference.com/cpp/utility/initializer_list.html)
 - [variadic templates / parameter
-  packs](https://en.cppreference.com/w/cpp/language/parameter_pack.html)
+  packs](https://en.cppreference.com/cpp/language/parameter_pack.html)
 - [user defined
-  literals](https://en.cppreference.com/w/cpp/language/user_literal.html)
+  literals](https://en.cppreference.com/cpp/language/user_literal.html)
 - [user defined
-  attributes](https://en.cppreference.com/w/cpp/language/attributes.html)
+  attributes](https://en.cppreference.com/cpp/language/attributes.html)
 
 ### Simpler implementation
 
