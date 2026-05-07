@@ -4,6 +4,8 @@
 
 ## cpp11 0.5.5
 
+CRAN release: 2026-05-06
+
 - Fixed an issue where
   [`cpp11::stop()`](https://rdrr.io/r/base/stop.html) and
   [`cpp11::warning()`](https://rdrr.io/r/base/warning.html) calls with
