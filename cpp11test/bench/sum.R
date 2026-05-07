@@ -8,13 +8,15 @@ cases <- expand.grid(
 )
 
 # Add special case
-cases <- do.call(rbind,
+cases <- do.call(
+  rbind,
   list(
     list(len = 3e6, vector = "normal", method = "for2"),
     list(len = 3e6, vector = "normal", method = "foreach2"),
     list(len = 3e6, vector = "altrep", method = "foreach2"),
-    cases)
+    cases
   )
+)
 
 bench::press(
   .grid = cases,

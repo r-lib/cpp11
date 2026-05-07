@@ -4,7 +4,10 @@ local_package <- function() {
   withr::defer(unlink(dir, recursive = TRUE), parent.frame())
 
   writeLines("Package: testPkg", file.path(dir, "DESCRIPTION"))
-  writeLines("useDynLib(testPkg, .registration = TRUE)", file.path(dir, "NAMESPACE"))
+  writeLines(
+    "useDynLib(testPkg, .registration = TRUE)",
+    file.path(dir, "NAMESPACE")
+  )
   desc::desc(dir)
 }
 

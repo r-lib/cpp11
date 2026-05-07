@@ -34,10 +34,17 @@ cpp_vendor <- function(path = ".") {
   new <- file.path(path, "inst", "include", "cpp11")
 
   if (dir.exists(new)) {
-    stop("'", new, "' already exists\n * run unlink('", new, "', recursive = TRUE)", call. = FALSE)
+    stop(
+      "'",
+      new,
+      "' already exists\n * run unlink('",
+      new,
+      "', recursive = TRUE)",
+      call. = FALSE
+    )
   }
 
-  dir.create(new , recursive = TRUE, showWarnings = FALSE)
+  dir.create(new, recursive = TRUE, showWarnings = FALSE)
 
   current <- system.file("include", "cpp11", package = "cpp11")
   if (!nzchar(current)) {
@@ -46,12 +53,19 @@ cpp_vendor <- function(path = ".") {
 
   cpp11_version <- utils::packageVersion("cpp11")
 
-  cpp11_header <- sprintf("// cpp11 version: %s\n// vendored on: %s", cpp11_version, Sys.Date())
+  cpp11_header <- sprintf(
+    "// cpp11 version: %s\n// vendored on: %s",
+    cpp11_version,
+    Sys.Date()
+  )
 
   files <- list.files(current, full.names = TRUE)
 
   writeLines(
-    c(cpp11_header, readLines(system.file("include", "cpp11.hpp", package = "cpp11"))),
+    c(
+      cpp11_header,
+      readLines(system.file("include", "cpp11.hpp", package = "cpp11"))
+    ),
     file.path(dirname(new), "cpp11.hpp")
   )
 
